@@ -3,16 +3,20 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Framework.WpfInterop;
 using MonoGame.Framework.WpfInterop.Input;
+using SpriteFontPlus;
+using System;
+using System.IO;
+using System.Windows;
 using WpfTest.Components;
 
 namespace UseMapEditor.MonoGameControl
 {
     public class MapDrawer : WpfGame
     {
-        private MapData mapdata;
-        public void ChangeMap(MapData _mapdata)
+        private UseMapEditor.Control.MapEditor mapeditor;
+        public void ChangeMap(UseMapEditor.Control.MapEditor _mapeditor)
         {
-            mapdata = _mapdata;
+            mapeditor = _mapeditor;
         }
 
 
@@ -22,6 +26,7 @@ namespace UseMapEditor.MonoGameControl
 
         private SpriteBatch _spriteBatch;
         private SpriteFont _font;
+
 
 
         protected override void Initialize()
@@ -37,21 +42,50 @@ namespace UseMapEditor.MonoGameControl
             _mouse = new WpfMouse(this);
 
 
+
+
             //Components.Add(new FpsComponent(this));
 
             // must be called after the WpfGraphicsDeviceService instance was created
             base.Initialize();
 
             // content loading now possible
-            _font = Content.Load<SpriteFont>("DefaultFont");
+            var fontBakeResult = TtfFontBaker.Bake(File.ReadAllBytes(AppDomain.CurrentDomain.BaseDirectory + "\\Font\\NanumSquareRoundB.ttf"),25,1024,1024,new[]{CharacterRange.BasicLatin,
+        new CharacterRange((char) 44032, (char) 55203)});
+
+
+            _font = fontBakeResult.CreateSpriteFont(GraphicsDevice);
+
+
+            //_font = Content.Load<SpriteFont>("DefaultFont");
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+
+
+            if (!Global.WindowTool.GrpLoadCmp)
+            {
+                GrpLoad();
+                Global.WindowTool.GrpLoadCmp = true;
+            }
+            else
+            {
+                return;
+            }
         }
+
+
+        private void GrpLoad()
+        {
+            //System.Threading.Thread.Sleep(3000);
+        }
+
+
 
         protected override void Update(GameTime time)
         {
             // every update we can now query the keyboard & mouse for our WpfGame
             var mouseState = _mouse.GetState();
             var keyboardState = _keyboard.GetState();
+
         }
 
         protected override void Draw(GameTime time)
@@ -59,7 +93,7 @@ namespace UseMapEditor.MonoGameControl
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             _spriteBatch.Begin();
-            _spriteBatch.DrawString(_font, mapdata.FilePath, new Vector2(5), Color.White);
+            _spriteBatch.DrawString(_font, mapeditor.mapdata.FilePath, new Vector2(5), Color.White);
             _spriteBatch.End();
 
             base.Draw(time);

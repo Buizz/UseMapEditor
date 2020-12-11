@@ -8,165 +8,95 @@
              GotFocus="UserControl_GotFocus"
              SizeChanged="UserControl_SizeChanged"
              MouseEnter="UserControl_MouseEnter"
-             d:DesignHeight="450" d:DesignWidth="800">
+             Loaded="UserControl_Loaded"
+             d:DesignHeight="450" d:DesignWidth="1200">
 
     <DockPanel>
         <ToolBarTray DockPanel.Dock="Top" IsLocked="True">
-            <ToolBar 
-    Style="{DynamicResource MaterialDesignToolBar}"
-    ClipToBounds="False">
-                <Button
-      ToolTip="Save">
-                    <materialDesign:PackIcon
-        Kind="ContentSave" />
+            <ToolBar Style="{DynamicResource MaterialDesignToolBar}" ClipToBounds="False">
+                <Button ToolTip="새 맵" Click="NewBtn_Click">
+                    <materialDesign:PackIcon Kind="FileDocument" />
                 </Button>
-                <Separator />
-                <Button
-      Command="Cut"
-      ToolTip="Cut"
-      ToolBar.OverflowMode="AsNeeded">
-                    <materialDesign:PackIcon
-        Kind="ContentCut" />
+                <Button ToolTip="열기" Click="OpenBtn_Click">
+                    <materialDesign:PackIcon Kind="FolderOpen" />
                 </Button>
-                <Button
-      Command="Copy"
-      ToolTip="Copy that stuff"
-      ToolBar.OverflowMode="AsNeeded">
-                    <materialDesign:PackIcon
-        Kind="ContentCopy" />
+                <Button ToolTip="저장" Click="SaveBtn_Click">
+                    <materialDesign:PackIcon Kind="ContentSave" />
                 </Button>
-                <Separator />
-                <Button
-      Command="Paste"
-      ToolTip="Paste some stuff"
-      ToolBar.OverflowMode="AsNeeded">
-                    <materialDesign:PackIcon
-        Kind="ContentPaste" />
+                <Button ToolTip="다른 이름으로 저장" Click="SaveAsBtn_Click">
+                    <materialDesign:PackIcon Kind="ContentSaveEdit" />
                 </Button>
-                <!-- when badging in a toolbar, make sure the parent ToolBar.ClipToBounds="False", and
-                   manually apply the button style -->
-                <materialDesign:Badged
-      ToolBar.OverflowMode="AsNeeded"
-      Badge="{materialDesign:PackIcon Alert}"
-      CornerRadius="5">
-                    <Button
-        ToolTip="Badge it up!"
-        Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
-                        <materialDesign:PackIcon
-          Kind="AirplaneTakeoff" />
-                    </Button>
-                </materialDesign:Badged>
-                <Separator />
-                <ListBox>
-                    <ListBoxItem
-        ToolTip="This is a lonley toggle with TextBlock instead of icon">
-                        <TextBlock>
-        W
-                        </TextBlock>
-                    </ListBoxItem>
-                </ListBox>
-                <Separator />
-                <ListBox
-      SelectedIndex="0">
-                    <ListBox.ToolTip>
-                        <StackPanel>
-                            <TextBlock
-            Text="MaterialDesignToolToggleFlatListBox" />
-                            <TextBlock
-            Text="Exclusive selection" />
-                            <TextBlock
-            Text="ListBoxAssist.IsToggle allows more natural toggle behaviour" />
-                        </StackPanel>
-                    </ListBox.ToolTip>
-                    <ListBoxItem>
-                        <materialDesign:PackIcon
-          Kind="FormatAlignLeft" />
-                    </ListBoxItem>
-                    <ListBoxItem>
-                        <materialDesign:PackIcon
-          Kind="FormatAlignCenter" />
-                    </ListBoxItem>
-                    <ListBoxItem>
-                        <materialDesign:PackIcon
-          Kind="FormatAlignRight" />
-                    </ListBoxItem>
-                    <ListBoxItem>
-                        <materialDesign:PackIcon
-          Kind="FormatAlignJustify" />
-                    </ListBoxItem>
-                </ListBox>
-                <Separator />
-                <ListBox
-      SelectionMode="Extended">
-                    <ListBox.ToolTip>
-                        <StackPanel>
-                            <TextBlock
-            Text="MaterialDesignToolToggleListBox" />
-                            <TextBlock
-            Text="Multiple selection" />
-                            <TextBlock
-            Text="ListBoxAssist.IsToggle allows more natural toggle behaviour" />
-                        </StackPanel>
-                    </ListBox.ToolTip>
-                    <ListBoxItem>
-                        <materialDesign:PackIcon
-          Kind="FormatBold" />
-                    </ListBoxItem>
-                    <ListBoxItem>
-                        <materialDesign:PackIcon
-          Kind="FormatItalic" />
-                    </ListBoxItem>
-                    <ListBoxItem
-        x:Name="UnderlineCheckbox">
-                        <materialDesign:PackIcon
-          Kind="FormatUnderline" />
-                    </ListBoxItem>
-                </ListBox>
-                <Separator />
-                <Label
-      Content="Font size:"
-      VerticalAlignment="Center" />
-                <ComboBox>
-                    <ComboBoxItem
-        Content="10" />
-                    <ComboBoxItem
-        IsSelected="True"
-        Content="12" />
-                    <ComboBoxItem
-        Content="14" />
-                    <ComboBoxItem
-        Content="16" />
+                <Button ToolTip="닫기" Click="CloseBtn_Click">
+                    <materialDesign:PackIcon Kind="Close" />
+                </Button>
+                <Separator/>
+                <Label Content="배율:" VerticalAlignment="Center"/>
+                <ComboBox IsEditable="True">
+                    <ComboBoxItem Content="25%"/>
+                    <ComboBoxItem Content="50%"/>
+                    <ComboBoxItem Content="75%"/>
+                    <ComboBoxItem Content="100%" IsSelected="True"/>
+                    <ComboBoxItem Content="150%"/>
+                    <ComboBoxItem Content="200%"/>
                 </ComboBox>
-                <CheckBox>
-                    Check
-                </CheckBox>
-                <Button
-      ToolTip="Take a nap"
-      ToolBar.OverflowMode="Always">
-                    <materialDesign:PackIcon
-        Kind="Hotel" />
-                </Button>
-                <RadioButton
-      GroupName="XXX"
-      Content="Radio" />
-                <RadioButton
-      GroupName="XXX"
-      Content="Ga Ga" />
-                <Separator />
-                <RadioButton
-      GroupName="YYY"
-      Style="{StaticResource MaterialDesignToolRadioButton}">
-                    <materialDesign:PackIcon
-        Kind="Radio" />
-                </RadioButton>
-                <RadioButton
-      GroupName="YYY"
-      Style="{StaticResource MaterialDesignToolRadioButton}">
-                    <materialDesign:PackIcon
-        Kind="EmoticonPoop" />
-                </RadioButton>
-                <Separator />
+
+                <Label Content="그리드크기:" VerticalAlignment="Center"/>
+                <ComboBox>
+                    <ComboBoxItem Content="없음" IsSelected="True"/>
+                    <ComboBoxItem Content="8px"/>
+                    <ComboBoxItem Content="16px"/>
+                    <ComboBoxItem Content="32px"/>
+                    <ComboBoxItem Content="64px"/>
+                    <ComboBoxItem Content="128px"/>
+                    <ComboBoxItem Content="256px"/>
+                </ComboBox>
+
+                <ListBox SelectionMode="Extended" SelectionChanged="ListBox_SelectionChanged">
+                    <ListBoxItem>
+                        <materialDesign:PackIcon Kind="Waves" />
+                    </ListBoxItem>
+                    <ListBoxItem>
+                        <materialDesign:PackIcon Kind="HumanHandsdown" />
+                    </ListBoxItem>
+                    <ListBoxItem>
+                        <materialDesign:PackIcon Kind="Sprout" />
+                    </ListBoxItem>
+                    <ListBoxItem>
+                        <materialDesign:PackIcon Kind="AlphabetLBox" />
+                    </ListBoxItem>
+                    <ListBoxItem>
+                        <materialDesign:PackIcon Kind="Soundcloud" />
+                    </ListBoxItem>
+                </ListBox>
+                <Label Content="시야:" VerticalAlignment="Center"/>
+                <ComboBox>
+                    <ComboBoxItem Content="P1"/>
+                    <ComboBoxItem Content="P2"/>
+                    <ComboBoxItem Content="P3"/>
+                    <ComboBoxItem Content="P4"/>
+                    <ComboBoxItem Content="P5"/>
+                    <ComboBoxItem Content="P6"/>
+                    <ComboBoxItem Content="P7"/>
+                    <ComboBoxItem Content="P8"/>
+                    <ComboBoxItem Content="All" IsSelected="True"/>
+                </ComboBox>
+
+                <Separator/>
                 <ToggleButton />
+
+                <Button>
+                    <materialDesign:PackIcon Kind="Play" />
+                </Button>
+                <Button>
+                    <materialDesign:PackIcon Kind="PlaylistEdit" />
+                </Button>
+                <Button>
+                    <materialDesign:PackIcon Kind="LanguageTypescript" />
+                </Button>
+                <Button>
+                    <materialDesign:PackIcon Kind="PowerPlug" />
+                </Button>
+
             </ToolBar>
         </ToolBarTray>
 
@@ -216,8 +146,8 @@
 
         
         
-        <Grid>
-            <Image x:Name="MapTrace"/>
+        <Grid HorizontalAlignment="Left" VerticalAlignment="Top">
+            <Image x:Name="MapTrace" Stretch="None"/>
             <Grid x:Name="MapViewer" Background="#33000000" >
 
             </Grid>

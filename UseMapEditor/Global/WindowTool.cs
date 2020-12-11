@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,14 +16,101 @@ namespace UseMapEditor.Global
     {
         private static Grid currentView;
         private static MapEditor currentMapEditor;
-        private static MonoGameControl.MapDrawer MapViewer = new MonoGameControl.MapDrawer();
+        public static MonoGameControl.MapDrawer MapViewer;
+        public static bool GrpLoadCmp = false;
 
 
 
-        public static void ChangeView(MapEditor mapEditor)
+
+        public static bool LoadGrp()
         {
-            Grid MapGrid = mapEditor.MapViewer;
+            MapViewer = new MonoGameControl.MapDrawer();
+            return true;
+        }
 
+
+        public static List<MapEditor> GetMapEditorList()
+        {
+            List<MapEditor> mapEditors = new List<MapEditor>();
+
+            foreach (Window window in Application.Current.Windows)
+            {
+                if (window.GetType().Equals(typeof(MainWindow)))
+                {
+                    MainWindow mainWindow = (MainWindow)window;
+                    for (int i = 0; i < mainWindow.MainTab.Items.Count; i++)
+                    {
+                        mapEditors.Add((MapEditor)((TabItem)mainWindow.MainTab.Items[i]).Content);
+                    }
+                }
+            }
+
+
+
+
+
+            return mapEditors;
+        }
+
+
+
+
+        public static string OpenMap()
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "맵 파일|*.scx;*.scp";
+
+            if ((bool)openFileDialog.ShowDialog())
+            {
+                return openFileDialog.FileName;
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+
+        public static void ChangeView(MapEditor mapEditor, bool IsClose)
+        {
+            if(MapViewer == null)
+            {
+                return;
+            }
+
+
+            if (IsClose)
+            {
+                List<MapEditor> mapEditors = GetMapEditorList();
+
+                mapEditors.Remove(mapEditor);
+                if(mapEditors.Count != 0)
+                {
+                    mapEditor = mapEditors.First();
+                }
+                else
+                {
+                    return;
+                }
+
+
+                //if (currentView != null)
+                //{
+                //    currentView.Children.Clear();
+                //}
+                //if (MapViewer.Parent != null)
+                //{
+                //    Grid grid = (Grid)MapViewer.Parent;
+                //    grid.Children.Clear();
+                //}
+                //currentMapEditor = null;
+                //currentView = null;
+            }
+
+
+
+
+            Grid MapGrid = mapEditor.MapViewer;
             if (MapGrid != currentView)
             {
                 //다른 오브젝트일 경우
@@ -36,7 +124,7 @@ namespace UseMapEditor.Global
                 //비우기
                 if (currentView != null)
                 {
-                    currentView.Children.Remove(MapViewer);
+                    currentView.Children.Clear();
                 }
 
 
@@ -45,9 +133,9 @@ namespace UseMapEditor.Global
                 currentView = MapGrid;
                 
                 //배경 지우기
-                currentMapEditor.MapTrace.Source = null;
+                //currentMapEditor.MapTrace.Source = null;
 
-                MapViewer.ChangeMap(mapEditor.mapdata);
+                MapViewer.ChangeMap(mapEditor);
                 MapGrid.Children.Add(MapViewer);
             }
         }
@@ -56,6 +144,16 @@ namespace UseMapEditor.Global
 
         private static ImageSource SaveControlImage(FrameworkElement control)
         {
+            // Make a bitmap and draw on it.
+            int width = (int)control.ActualWidth;
+            int height = (int)control.ActualHeight;
+
+            if (width == 0 || height == 0)
+            {
+                return null;
+            }
+
+
             // Get the size of the Visual and its descendants.
             Rect rect = VisualTreeHelper.GetDescendantBounds(control);
 
@@ -71,9 +169,8 @@ namespace UseMapEditor.Global
                 ctx.DrawRectangle(brush, null, new Rect(rect.Size));
             }
 
-            // Make a bitmap and draw on it.
-            int width = (int)control.ActualWidth;
-            int height = (int)control.ActualHeight;
+
+
             RenderTargetBitmap rtb = new RenderTargetBitmap(
                 width, height, 96, 96, PixelFormats.Pbgra32);
             rtb.Render(dv);

@@ -9,42 +9,47 @@
         xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         xmlns:dockablz="http://dragablz.net/winfx/xaml/dockablz"
+        xmlns:control="clr-namespace:UseMapEditor.Control"
         mc:Ignorable="d"
+                  
+        Closing="MetroWindow_Closing"
+                       
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-        Title="UseMapEditor" Height="450" Width="800" MinHeight="200" MinWidth="200">
+        Title="UseMapEditor" Height="450" Width="800" MinHeight="400" MinWidth="500">
     
     
     <controls:MetroWindow.LeftWindowCommands>
         <controls:WindowCommands>
-            <Menu IsMainMenu="True">
+            <materialDesign:PackIcon Kind="EarthBox" Width="28" Height="28" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            <Menu IsMainMenu="True" >
                 <MenuItem Header="파일(_F)" Height="32" Background="{DynamicResource PrimaryHueDarkBrush}" Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}">
-                    <MenuItem Header="Save" >
+                    <MenuItem Header="새로 만들기(_N)" Click="NewMapBtn_Click" Foreground="{DynamicResource MaterialDesignBody}">
                         <MenuItem.Icon>
-                            <materialDesign:PackIcon Kind="ContentSave" />
+                            <materialDesign:PackIcon Kind="EarthBox" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="Save As.." />
-                    <MenuItem Header="Exit" InputGestureText="Ctrl+E">
+                    <MenuItem Header="열기(_O)" Click="OpenMapBtn_Click" Foreground="{DynamicResource MaterialDesignBody}">
+                        <MenuItem.Icon>
+                            <materialDesign:PackIcon Kind="FolderOpen" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="종료(_E)" Foreground="{DynamicResource MaterialDesignBody}">
                         <MenuItem.Icon>
                             <materialDesign:PackIcon Kind="ExitToApp" />
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="설정(_S)" Height="32" Background="{DynamicResource PrimaryHueDarkBrush}" Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}">
-                    <MenuItem Header="_Cut" Command="Cut">
+                    <MenuItem Header="디버그 설정" Foreground="{DynamicResource MaterialDesignBody}" Click="MenuItem_Click">
                         <MenuItem.Icon>
-                            <materialDesign:PackIcon Kind="ContentCut" />
+                            <materialDesign:PackIcon Kind="Bug" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="_Copy" Command="Copy">
+                    <MenuItem Header="프로그램 설정(_S)" Foreground="{DynamicResource MaterialDesignBody}" Click="MenuItem_Click_1">
                         <MenuItem.Icon>
-                            <materialDesign:PackIcon Kind="ContentCopy" />
-                        </MenuItem.Icon>
-                    </MenuItem>
-                    <MenuItem Header="_Paste" Command="Paste">
-                        <MenuItem.Icon>
-                            <materialDesign:PackIcon Kind="ContentPaste" />
+                            <materialDesign:PackIcon Kind="Settings" />
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
@@ -52,21 +57,13 @@
         </controls:WindowCommands>
     </controls:MetroWindow.LeftWindowCommands>
 
-
-    <Window.Resources>
-        <system:String x:Key="Partition">QuickStart</system:String>
-    </Window.Resources>
     <Grid>
-        <dockablz:Layout Partition="{StaticResource Partition}">
-            <dragablz:TabablzControl x:Name="MainTab" ShowDefaultCloseButton="True" >
-                <dragablz:TabablzControl.InterTabController>
-                    <dragablz:InterTabController Partition="{StaticResource Partition}" Height="0" />
-                </dragablz:TabablzControl.InterTabController>
-                <dragablz:TabablzControl.HeaderPrefixContent>
-                    <Border Height="40"/>
-                </dragablz:TabablzControl.HeaderPrefixContent>
-            </dragablz:TabablzControl>
-        </dockablz:Layout>
+        <dragablz:TabablzControl x:Name="MainTab" ShowDefaultCloseButton="True" IsEmptyChanged="MainTab_IsEmptyChanged">
+            <dragablz:TabablzControl.InterTabController>
+                <dragablz:InterTabController/>
+            </dragablz:TabablzControl.InterTabController>
+        </dragablz:TabablzControl>
+        <control:StartPage x:Name="StartPage"/>
     </Grid>
 
 </controls:MetroWindow>
