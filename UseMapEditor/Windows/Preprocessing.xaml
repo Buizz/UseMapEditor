@@ -1,0 +1,16 @@
+﻿<controls:MetroWindow  x:Class="UseMapEditor.Windows.Preprocessing"
+        xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:UseMapEditor.Windows"
+        mc:Ignorable="d"
+        Background="{DynamicResource PrimaryHueMidBrush}"
+        TextElement.Foreground="{DynamicResource PrimaryHueMidForegroundBrush}"
+        Title="그래픽 데이터 추출 하는 중..." Height="100" Width="500" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" WindowStyle="ToolWindow">
+    <DockPanel>
+        <ProgressBar x:Name="progres" DockPanel.Dock="Bottom"/>
+        <TextBlock Text="CascData 읽는 중..." FontSize="24" VerticalAlignment="Center" Margin="10,0"/>
+    </DockPanel>
+</controls:MetroWindow>

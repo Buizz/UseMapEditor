@@ -14,17 +14,40 @@ namespace UseMapEditor.Global
 {
     public static class WindowTool
     {
+        public static Dialog.ProgramStart programStart;
+        public static void CloseProgram()
+        {
+            int MainCount = 0;
+
+            foreach(Window window in Application.Current.Windows)
+            {
+                if (window.GetType().Equals(typeof(MainWindow)))
+                {
+                    MainCount++;
+                }
+            }
+            if(MainCount == 0)
+            {
+                programStart.Close();
+            }
+        }
+
+
+
+
+
         private static Grid currentView;
         private static MapEditor currentMapEditor;
         public static MonoGameControl.MapDrawer MapViewer;
         public static bool GrpLoadCmp = false;
 
 
-
+        public static string OpenedFilePath;
 
         public static bool LoadGrp()
         {
             MapViewer = new MonoGameControl.MapDrawer();
+            GrpLoadCmp = true;
             return true;
         }
 
@@ -38,10 +61,7 @@ namespace UseMapEditor.Global
                 if (window.GetType().Equals(typeof(MainWindow)))
                 {
                     MainWindow mainWindow = (MainWindow)window;
-                    for (int i = 0; i < mainWindow.MainTab.Items.Count; i++)
-                    {
-                        mapEditors.Add((MapEditor)((TabItem)mainWindow.MainTab.Items[i]).Content);
-                    }
+              
                 }
             }
 
@@ -73,6 +93,12 @@ namespace UseMapEditor.Global
 
         public static void ChangeView(MapEditor mapEditor, bool IsClose)
         {
+            if (!GrpLoadCmp)
+            {
+                return;
+            }
+
+
             if(MapViewer == null)
             {
                 return;
@@ -134,6 +160,15 @@ namespace UseMapEditor.Global
                 
                 //배경 지우기
                 //currentMapEditor.MapTrace.Source = null;
+
+                if(MapViewer.Parent != null)
+                {
+                    Grid pgrid = (Grid)MapViewer.Parent;
+                    pgrid.Children.Clear();
+                }
+
+
+
 
                 MapViewer.ChangeMap(mapEditor);
                 MapGrid.Children.Add(MapViewer);

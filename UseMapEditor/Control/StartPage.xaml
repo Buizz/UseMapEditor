@@ -7,38 +7,41 @@
              mc:Ignorable="d"
              Background="{DynamicResource MaterialDesignPaper}"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-             d:DesignHeight="450" d:DesignWidth="800">
-    <DockPanel Margin="40">
-        <TextBlock DockPanel.Dock="Top" FontSize="30" FontWeight="Bold">UseMapEditor vTEST</TextBlock>
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <DockPanel Grid.Column="0" Margin="10">
-                <TextBlock DockPanel.Dock="Top" FontSize="15" >최근 파일 열기</TextBlock>
-                <StackPanel>
+             Height="450" Width="800">
+    <materialDesign:Card>
+        <DockPanel Margin="40">
+            <TextBlock DockPanel.Dock="Top" FontSize="30" FontWeight="Bold">UseMapEditor vTEST</TextBlock>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <DockPanel Grid.Column="0" Margin="10">
+                    <TextBlock DockPanel.Dock="Top" FontSize="15" >최근 파일 열기</TextBlock>
+                    <StackPanel>
 
-                </StackPanel>
-            </DockPanel>
-            <DockPanel Grid.Column="1" Margin="10">
-                <TextBlock DockPanel.Dock="Top" FontSize="15" >빠른 시작</TextBlock>
-                <StackPanel>
-                    <Button Click="NewMapBtn_Click">
-                        <DockPanel>
-                            <materialDesign:PackIcon Kind="EarthBox" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                            <TextBlock Text="새로 만들기"/>
-                        </DockPanel>
-                    </Button>
-                    <Button Click="OpenMapBtn_Click">
-                        <DockPanel>
-                            <materialDesign:PackIcon Kind="FolderOpen" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-                            <TextBlock Text="불러오기"/>
-                        </DockPanel>
-                    </Button>
-                </StackPanel>
-            </DockPanel>
-        </Grid>
-    </DockPanel>
+                    </StackPanel>
+                </DockPanel>
+                <DockPanel Grid.Column="1" Margin="10">
+                    <TextBlock DockPanel.Dock="Top" FontSize="15" >빠른 시작</TextBlock>
+                    <StackPanel>
+                        <Button Click="NewMapBtn_Click">
+                            <DockPanel>
+                                <materialDesign:PackIcon Kind="EarthBox" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                                <TextBlock Text="새로 만들기"/>
+                            </DockPanel>
+                        </Button>
+                        <Button Click="OpenMapBtn_Click">
+                            <DockPanel>
+                                <materialDesign:PackIcon Kind="FolderOpen" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                                <TextBlock Text="불러오기"/>
+                            </DockPanel>
+                        </Button>
+                    </StackPanel>
+                </DockPanel>
+            </Grid>
+        </DockPanel>
+    </materialDesign:Card>
+    
 
 </UserControl>

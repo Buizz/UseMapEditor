@@ -27,70 +27,25 @@ namespace UseMapEditor
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        bool noTabItemClose;
-        private void ClosingTabItemHandlerImpl(ItemActionCallbackArgs<TabablzControl> args)
-        {
-            bool isclose = CloseTabItem((TabItem)args.DragablzItem.Content);
-
-            if (!isclose)
+       public void SetWindowName()
+       {
+            string pName = "USEMAPEDITOR V" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            if (mapeditor.IsLoad)
             {
-                args.Cancel();
+                if (mapeditor.IsDirty)
+                {
+                    Title = mapeditor.mapdata.SafeFileName + "* - " + pName;
+                }
+                else
+                {
+                    Title = mapeditor.mapdata.SafeFileName + " - " + pName;
+                }
             }
             else
             {
-                noTabItemClose = true;
+                Title = pName;
             }
-        }
-
-        public bool CloseTabItem(TabItem tabItem)
-        {
-            MapEditor map = (MapEditor)(tabItem).Content;
-
-            bool Isclosing = map.CloseMap();
-
-            if (Isclosing)
-            {
-
-                MainTab.RemoveFromSource(tabItem);
-
-
-
-
-                //Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate
-                //{
-                //    System.Threading.Thread.Sleep(1000);
-                //    MainTab.RemoveFromSource(tabItem);
-                //}));
-
-
-            }
-
-            return Isclosing;
-        }
-
-
-
-        /// <summary>
-        /// 윈도우 맵을 연다. 사실상 탭을 새로 생성하는 곳
-        /// </summary>
-        /// <returns></returns>
-        private bool OpenTab(string _filepath)
-        {
-            TabItem titem = new TabItem();
-            MapEditor mapEditor = new MapEditor(_filepath, titem);
-
-
-            if (mapEditor.IsLoad)
-            {
-                MainTab.AddToSource(titem);
-                if (MainTab.SelectedItem == null)
-                {
-                    MainTab.SelectedItem = titem;
-                }
-            }
-
-            return true;
-        }
+       }
 
 
 
@@ -99,82 +54,192 @@ namespace UseMapEditor
 
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (noTabItemClose == true)
+            if (mapeditor.IsLoad)
             {
-                noTabItemClose = false;
-                e.Cancel = true;
-                return;
-            }
+                bool result = CloseMapCommand();
 
-
-            //텝이 비어있을 경우 종료해도 됩니다.
-           if(MainTab.Items.Count != 0)
-            {
-                List<TabItem> tabItems = new List<TabItem>();
-
-
-                for (int i = 0; i < MainTab.Items.Count; i++)
+                if (!result)
                 {
-                    tabItems.Add((TabItem)MainTab.Items[i]);
-                }
-
-
-                    for (int i = 0; i < tabItems.Count; i++)
-                {
-                    bool isclose = CloseTabItem(tabItems[i]);
-
-                    //닫지 않았을 경우
-                    if (!isclose)
-                    {
-                        e.Cancel = true;
-                        return;
-                    }
+                    e.Cancel = true;
                 }
             }
         }
 
 
-        public void OpenMap()
-        {
-            string mapname = UseMapEditor.Global.WindowTool.OpenMap();
 
-            if (mapname != "")
+
+        private void NewMapBtn_Click(object sender, RoutedEventArgs e)
+        {
+            NewMapCommand();
+            //NewMap();
+        }
+
+        private void OpenMapBtn_Click(object sender, RoutedEventArgs e)
+        {
+            OpenMapCommand();
+            //OpenMap();
+        }
+
+        private void SaveMapBtn_Click(object sender, RoutedEventArgs e)
+        {
+            SaveMapCommand();
+        }
+
+        private void SaveAsMapBtn_Click(object sender, RoutedEventArgs e)
+        {
+            SaveAsMapCommand();
+        }
+
+        private void CloseMapBtn_Click(object sender, RoutedEventArgs e)
+        {
+            CloseMapCommand();
+        }
+
+        private void NewWindowBtn_Click(object sender, RoutedEventArgs e)
+        {
+            NewWindowCommand();
+        }
+
+        private void ExitBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ExitCommand();
+        }
+
+
+
+
+
+        public void NewMapCommand()
+        {
+            if (mapeditor.IsLoad)
             {
-                OpenTab(mapname);
+                //로드 되었을 경우 종료를 먼저 함.
+                if (!CloseMapCommand())
+                {
+                    //종료를 안함
+                    return;
+                }
             }
+
+
+            mapcreate.Visibility = Visibility.Visible;
+            mapeditor.Visibility = Visibility.Collapsed;
+            startpage.Visibility = Visibility.Collapsed;
+
+            SetWindowName();
+
+
+            //bool result = mapeditor.NewMap();
+            //if (result)
+            //{
+
+            //}
+            //SetWindowName();
+            //return result;
         }
 
 
-        public void NewMap()
+        public bool OpenMapCommand(string filename = "")
         {
-            OpenTab("");
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-        private void refreshStartPage()
-        {
-            if (MainTab.Items.Count != 0)
+            string mapname;
+            if (filename == "")
             {
-                //아이템이 있으면 숨기기
-                StartPage.Visibility = Visibility.Collapsed;
+                mapname = UseMapEditor.Global.WindowTool.OpenMap();
+                if(mapname == "")
+                {
+                    return false;
+                }
             }
             else
             {
-                //아이템이 없으면 나타나기
-                StartPage.Visibility = Visibility.Visible;
+                mapname = filename;
             }
+
+
+            if (mapeditor.IsLoad)
+            {
+                //로드 되었을 경우 종료를 먼저 함.
+                if (!CloseMapCommand())
+                {
+                    //종료를 안함
+                    return false;
+                }
+            }
+
+
+            bool result = mapeditor.LoadMap(mapname);
+            if (result)
+            {
+                mapcreate.Visibility = Visibility.Collapsed;
+                mapeditor.Visibility = Visibility.Visible;
+                startpage.Visibility = Visibility.Collapsed;
+            }
+            SetWindowName();
+            return result;
         }
+        public bool SaveMapCommand()
+        {
+            if (!mapeditor.IsLoad)
+            {
+                return false;
+            }
+
+            bool result = mapeditor.SaveMap();
+            if (result)
+            {
+
+            }
+            SetWindowName();
+            return result;
+        }
+        public bool SaveAsMapCommand()
+        {
+            if (!mapeditor.IsLoad)
+            {
+                return false;
+            }
+
+            bool result = mapeditor.SaveMap("SaveAs");
+            if (result)
+            {
+
+            }
+            SetWindowName();
+            return result;
+        }
+        public bool CloseMapCommand()
+        {
+            if (!mapeditor.IsLoad)
+            {
+                return false;
+            }
+
+            bool result = mapeditor.CloseMap();
+            if (result)
+            {
+                mapcreate.Visibility = Visibility.Collapsed;
+                mapeditor.Visibility = Visibility.Collapsed;
+                startpage.Visibility = Visibility.Visible;
+            }
+            SetWindowName();
+            return result;
+        }
+
+
+
+
+
+        public void NewWindowCommand()
+        {
+            MainWindow mainWindow = new MainWindow();
+            mainWindow.Show();
+        }
+
+        public void ExitCommand()
+        {
+            Close();
+        }
+
 
 
 
@@ -184,53 +249,27 @@ namespace UseMapEditor
         {
             InitializeComponent();
 
+            mapcreate.mainWindow = this;
+            mapeditor.mainWindow = this;
+            startpage.mainWindow = this;
+            SetWindowName();
 
 
-            MainTab.ClosingItemCallback += ClosingTabItemHandlerImpl;
 
-            StartPage.mainWindow = this;
-            PaletteHelper paletteHelper = new PaletteHelper();
-            ITheme theme = paletteHelper.GetTheme();
-
-            theme.SetBaseTheme(Theme.Dark);
-            paletteHelper.SetTheme(theme);
-            //OpenTab("D:\\User\\Desktop\\chk분석맵.scx");
-
-            //string[] maps = {"Asuna","Marin","Medic"};
-
-            //for (int i = 0; i < 3; i++)
-            //{
-            //    TabItem titem = new TabItem();
-            //    titem.Header = maps[i];
-            //    titem.Content = new MapEditor(maps[i]);
-
-            //    MainTab.AddToSource(titem);
-            //    //MainTab.Items.Add(titem);
-            //}
-
-            Global.WindowTool.LoadGrp();
+            if (Global.WindowTool.OpenedFilePath != null)
+            {
+                OpenMapCommand(Global.WindowTool.OpenedFilePath);
+                Global.WindowTool.OpenedFilePath = null;
+            }
         }
 
 
 
-        private void MainTab_IsEmptyChanged(object sender, RoutedPropertyChangedEventArgs<bool> e)
-        {
-            refreshStartPage();
-        }
 
-        private void NewMapBtn_Click(object sender, RoutedEventArgs e)
-        {
-            NewMap();
-        }
 
-        private void OpenMapBtn_Click(object sender, RoutedEventArgs e)
-        {
-            OpenMap();
-        }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            Global.WindowTool.LoadGrp();
         }
 
         private void MenuItem_Click_1(object sender, RoutedEventArgs e)
@@ -240,6 +279,22 @@ namespace UseMapEditor
 
 
 
+        }
+
+        private void ConnectExecMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process p = new System.Diagnostics.Process();
+            p.StartInfo.FileName = System.AppDomain.CurrentDomain.BaseDirectory + @"Data\ExtensionRegister.exe";
+            p.StartInfo.UseShellExecute = true;
+            p.StartInfo.Verb = "runas";
+            p.StartInfo.Arguments = System.AppDomain.CurrentDomain.BaseDirectory + "UseMapEditor.exe" + ",scx,scp";
+
+            p.Start();
+        }
+
+        private void MetroWindow_Closed(object sender, EventArgs e)
+        {
+            Global.WindowTool.CloseProgram();
         }
     }
 }

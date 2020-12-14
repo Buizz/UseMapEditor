@@ -13,7 +13,7 @@
         mc:Ignorable="d"
                   
         Closing="MetroWindow_Closing"
-                       
+        Closed="MetroWindow_Closed"
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Title="UseMapEditor" Height="450" Width="800" MinHeight="400" MinWidth="500">
@@ -21,9 +21,9 @@
     
     <controls:MetroWindow.LeftWindowCommands>
         <controls:WindowCommands>
-            <materialDesign:PackIcon Kind="EarthBox" Width="28" Height="28" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-            <Menu IsMainMenu="True" >
-                <MenuItem Header="파일(_F)" Height="32" Background="{DynamicResource PrimaryHueDarkBrush}" Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}">
+            <materialDesign:PackIcon Kind="Earth" Width="28" Height="28" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            <Menu IsMainMenu="True">
+                <MenuItem Header="파일(_F)" x:Name="FileMenuBtn" Height="32" Background="{DynamicResource PrimaryHueDarkBrush}" Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}">
                     <MenuItem Header="새로 만들기(_N)" Click="NewMapBtn_Click" Foreground="{DynamicResource MaterialDesignBody}">
                         <MenuItem.Icon>
                             <materialDesign:PackIcon Kind="EarthBox" />
@@ -35,13 +35,39 @@
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator/>
-                    <MenuItem Header="종료(_E)" Foreground="{DynamicResource MaterialDesignBody}">
+                    <MenuItem Header="저장(_S)" x:Name="SaveMenuBtn" Click="SaveMapBtn_Click" Foreground="{DynamicResource MaterialDesignBody}">
+                        <MenuItem.Icon>
+                            <materialDesign:PackIcon Kind="ContentSave" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="다른 이름으로 저장" x:Name="SaveAsMenuBtn" Click="SaveAsMapBtn_Click" Foreground="{DynamicResource MaterialDesignBody}">
+                        <MenuItem.Icon>
+                            <materialDesign:PackIcon Kind="ContentSaveEdit" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="닫기(_E)" x:Name="CloseMenuBtn" Click="CloseMapBtn_Click" Foreground="{DynamicResource MaterialDesignBody}">
+                        <MenuItem.Icon>
+                            <materialDesign:PackIcon Kind="Close" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="새 창에서 열기" Click="NewWindowBtn_Click" Foreground="{DynamicResource MaterialDesignBody}">
+                        <MenuItem.Icon>
+                            <materialDesign:PackIcon Kind="ExitToApp" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="종료(_E)" Click="ExitBtn_Click" Foreground="{DynamicResource MaterialDesignBody}">
                         <MenuItem.Icon>
                             <materialDesign:PackIcon Kind="ExitToApp" />
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
-                <MenuItem Header="설정(_S)" Height="32" Background="{DynamicResource PrimaryHueDarkBrush}" Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}">
+                <MenuItem Header="설정(_S)" x:Name="SettingMenuBtn" Height="32" Background="{DynamicResource PrimaryHueDarkBrush}" Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}">
+                    <MenuItem Header="확장자 연결" Foreground="{DynamicResource MaterialDesignBody}" Click="ConnectExecMenuItem_Click">
+                        <MenuItem.Icon>
+                            <materialDesign:PackIcon Kind="Extension" />
+                        </MenuItem.Icon>
+                    </MenuItem>
                     <MenuItem Header="디버그 설정" Foreground="{DynamicResource MaterialDesignBody}" Click="MenuItem_Click">
                         <MenuItem.Icon>
                             <materialDesign:PackIcon Kind="Bug" />
@@ -57,13 +83,11 @@
         </controls:WindowCommands>
     </controls:MetroWindow.LeftWindowCommands>
 
-    <Grid>
-        <dragablz:TabablzControl x:Name="MainTab" ShowDefaultCloseButton="True" IsEmptyChanged="MainTab_IsEmptyChanged">
-            <dragablz:TabablzControl.InterTabController>
-                <dragablz:InterTabController/>
-            </dragablz:TabablzControl.InterTabController>
-        </dragablz:TabablzControl>
-        <control:StartPage x:Name="StartPage"/>
+    <Grid x:Name="MainGrid">
+        <control:MapCreate x:Name="mapcreate" Visibility="Collapsed"/>
+        <control:MapEditor x:Name="mapeditor" Visibility="Collapsed"/>
+
+        <control:StartPage x:Name="startpage" HorizontalAlignment="Center" VerticalAlignment="Center"/>
     </Grid>
 
 </controls:MetroWindow>

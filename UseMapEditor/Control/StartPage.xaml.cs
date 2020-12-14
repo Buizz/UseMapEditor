@@ -29,12 +29,12 @@ namespace UseMapEditor.Control
 
         private void NewMapBtn_Click(object sender, RoutedEventArgs e)
         {
-            mainWindow.NewMap();
+            mainWindow.NewMapCommand();
         }
 
         private void OpenMapBtn_Click(object sender, RoutedEventArgs e)
         {
-            mainWindow.OpenMap();
+            mainWindow.OpenMapCommand();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Dragablz;
+﻿using Data.Map;
+using Dragablz;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -38,22 +39,18 @@ namespace UseMapEditor.Control
 
 
 
+        public MainWindow mainWindow;
 
 
 
-        public Data.MapData mapdata;
-        private TabItem tabitem;
+        public MapData mapdata;
 
         public bool IsLoad = false;
-        public MapEditor(string _filepath, TabItem _tabitem)
+        public MapEditor()
         {
             InitializeComponent();
 
-            mapdata = new Data.MapData();
-            tabitem = _tabitem;
-
-
-            IsLoad = LoadMap(_filepath);
+            mapdata = new MapData();
         }
 
 
@@ -61,7 +58,8 @@ namespace UseMapEditor.Control
         {
             //이름을 아무것도 안넣으면 새 맵
             bool Loadcmp = LoadMap("");
-
+            IsDirty = false;
+            IsLoad = true;
             return Loadcmp;
         }
         public bool OpenMap()
@@ -70,9 +68,12 @@ namespace UseMapEditor.Control
 
             if (mapname != "")
             {
-                return LoadMap(mapname);
-            }
+                bool result = LoadMap(mapname);
+                IsDirty = result;
 
+                return result;
+            }
+            IsLoad = false;
             return false;
         }
 
@@ -83,10 +84,11 @@ namespace UseMapEditor.Control
             bool LoadSucess = mapdata.LoadMap(_filepath);
             if (LoadSucess == true)
             {
-                tabitem.Header = mapdata.SafeFileName;
-                tabitem.Content = this;
+                //tabitem.Header = mapdata.SafeFileName;
+                //tabitem.Content = this;
             }
-
+            IsLoad = LoadSucess;
+            IsDirty = false;
             return LoadSucess;
         }
         public bool SaveMap(string _filepath = "")
@@ -96,15 +98,28 @@ namespace UseMapEditor.Control
             if (SaveSucess)
             {
                 IsDirty = false;
-                tabitem.Header = mapdata.SafeFileName;
+                //tabitem.Header = mapdata.SafeFileName;
             }
 
             return SaveSucess;
         }
 
 
+        private bool isdirty;
+        public bool IsDirty
+        {
+            get
+            {
+                return isdirty;
+            }
+            set
+            {
+                isdirty = value;
 
-        public bool IsDirty = true;
+                mainWindow.SetWindowName();
+            }
+
+        }
         public bool CloseMap()
         {
             if (IsDirty == true)
@@ -131,22 +146,26 @@ namespace UseMapEditor.Control
                     //저장 후 종료
                   if(!SaveMap())
                     {
+                        IsLoad = true;
                         return false;
                     }
                 }
                 else if (result == MessageBoxResult.No)
                 {
-                    //Global.WindowTool.ChangeView(this, true);
+                    IsLoad = false;
+                    Global.WindowTool.ChangeView(this, true);
                     return true;
                 }
                 else if (result == MessageBoxResult.Cancel)
                 {
+                    IsLoad = true;
                     return false;
                 }
             }
 
 
-            //Global.WindowTool.ChangeView(this,true);
+            Global.WindowTool.ChangeView(this,true);
+            IsLoad = false;
             return true;
         }
 
@@ -183,45 +202,27 @@ namespace UseMapEditor.Control
 
         private void NewBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (CloseMap())
-            {
-                NewMap();
-            }
+            mainWindow.NewMapCommand();
         }
 
         private void OpenBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (CloseMap())
-            {
-                OpenMap();
-            }
+            mainWindow.OpenMapCommand();
         }
 
         private void SaveBtn_Click(object sender, RoutedEventArgs e)
         {
-            SaveMap();
+            mainWindow.SaveMapCommand();
         }
 
         private void SaveAsBtn_Click(object sender, RoutedEventArgs e)
         {
-            SaveMap("SaveAs");
+            mainWindow.SaveAsMapCommand();
         }
 
         private void CloseBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (CloseMap())
-            {
-
-                TabablzControl tabablz = (TabablzControl)tabitem.Parent;
-                tabablz.RemoveFromSource(tabitem);
-                //Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate
-                //{
-                //    System.Threading.Thread.Sleep(1000);
-                //    TabablzControl tabablz = (TabablzControl)tabitem.Parent;
-                //    tabablz.RemoveFromSource(tabitem);
-                //}));
-                          
-            }
+            mainWindow.CloseMapCommand();
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -231,7 +232,7 @@ namespace UseMapEditor.Control
 
         private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            IsDirty = true;
             //Global.WindowTool.ChangeView(this, true);
         }
 
