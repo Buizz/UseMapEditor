@@ -19,6 +19,7 @@ using System.Windows.Shapes;
 using UseMapEditor.Control;
 using MaterialDesignThemes.Wpf;
 using System.Windows.Threading;
+using UseMapEditor.Windows;
 
 namespace UseMapEditor
 {
@@ -173,6 +174,7 @@ namespace UseMapEditor
                 mapcreate.Visibility = Visibility.Collapsed;
                 mapeditor.Visibility = Visibility.Visible;
                 startpage.Visibility = Visibility.Collapsed;
+                Global.WindowTool.AddLastOpenFile(mapname);
             }
             SetWindowName();
             return result;
@@ -220,6 +222,7 @@ namespace UseMapEditor
                 mapcreate.Visibility = Visibility.Collapsed;
                 mapeditor.Visibility = Visibility.Collapsed;
                 startpage.Visibility = Visibility.Visible;
+                startpage.LastOpenFIleRefresh();
             }
             SetWindowName();
             return result;
@@ -272,14 +275,6 @@ namespace UseMapEditor
         {
         }
 
-        private void MenuItem_Click_1(object sender, RoutedEventArgs e)
-        {
-            int a = 0;
-            a += 1;
-
-
-
-        }
 
         private void ConnectExecMenuItem_Click(object sender, RoutedEventArgs e)
         {
@@ -295,6 +290,12 @@ namespace UseMapEditor
         private void MetroWindow_Closed(object sender, EventArgs e)
         {
             Global.WindowTool.CloseProgram();
+        }
+
+        private void ProgramSetting_Click(object sender, RoutedEventArgs e)
+        {
+            ProgramSettingWindow programSettingWindow = new ProgramSettingWindow();
+            programSettingWindow.ShowDialog();
         }
     }
 }

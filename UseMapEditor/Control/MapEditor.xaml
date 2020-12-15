@@ -9,7 +9,7 @@
              SizeChanged="UserControl_SizeChanged"
              MouseEnter="UserControl_MouseEnter"
              Loaded="UserControl_Loaded"
-             d:DesignHeight="450" d:DesignWidth="1200">
+             d:DesignHeight="800" d:DesignWidth="600">
 
     <DockPanel>
         <ToolBarTray DockPanel.Dock="Top" IsLocked="True">
@@ -30,25 +30,24 @@
                     <materialDesign:PackIcon Kind="Close" />
                 </Button>
                 <Separator/>
+                <Button ToolTip="그래픽 타입" Click="grpTypeClick">
+                    <materialDesign:PackIcon Kind="Star" />
+                </Button>
+                
+                
                 <Label Content="배율:" VerticalAlignment="Center"/>
-                <ComboBox IsEditable="True">
-                    <ComboBoxItem Content="25%"/>
-                    <ComboBoxItem Content="50%"/>
-                    <ComboBoxItem Content="75%"/>
-                    <ComboBoxItem Content="100%" IsSelected="True"/>
-                    <ComboBoxItem Content="150%"/>
-                    <ComboBoxItem Content="200%"/>
-                </ComboBox>
+                <TextBox x:Name="ScaleTB" Text="100" TextChanged="ScaleTB_TextChanged" Width="40"/>
+                <Label Content="%" VerticalAlignment="Center" Margin="-5,0,0,0"/>
 
                 <Label Content="그리드크기:" VerticalAlignment="Center"/>
-                <ComboBox>
-                    <ComboBoxItem Content="없음" IsSelected="True"/>
-                    <ComboBoxItem Content="8px"/>
-                    <ComboBoxItem Content="16px"/>
-                    <ComboBoxItem Content="32px"/>
-                    <ComboBoxItem Content="64px"/>
-                    <ComboBoxItem Content="128px"/>
-                    <ComboBoxItem Content="256px"/>
+                <ComboBox x:Name="GridCB" SelectionChanged="GridCB_SelectionChanged">
+                    <ComboBoxItem Content="0px" IsSelected="True" Tag="0"/>
+                    <ComboBoxItem Content="8px" Tag="8"/>
+                    <ComboBoxItem Content="16px" Tag="16"/>
+                    <ComboBoxItem Content="32px" Tag="32"/>
+                    <ComboBoxItem Content="64px" Tag="64"/>
+                    <ComboBoxItem Content="128px" Tag="128"/>
+                    <ComboBoxItem Content="256px" Tag="256"/>
                 </ComboBox>
 
                 <ListBox SelectionMode="Extended" SelectionChanged="ListBox_SelectionChanged">
@@ -68,18 +67,6 @@
                         <materialDesign:PackIcon Kind="Soundcloud" />
                     </ListBoxItem>
                 </ListBox>
-                <Label Content="시야:" VerticalAlignment="Center"/>
-                <ComboBox>
-                    <ComboBoxItem Content="P1"/>
-                    <ComboBoxItem Content="P2"/>
-                    <ComboBoxItem Content="P3"/>
-                    <ComboBoxItem Content="P4"/>
-                    <ComboBoxItem Content="P5"/>
-                    <ComboBoxItem Content="P6"/>
-                    <ComboBoxItem Content="P7"/>
-                    <ComboBoxItem Content="P8"/>
-                    <ComboBoxItem Content="All" IsSelected="True"/>
-                </ComboBox>
 
                 <Separator/>
                 <ToggleButton />
@@ -126,31 +113,86 @@
                 </ListBox>
             </DockPanel>
         </Expander>
-        <Expander DockPanel.Dock="Right" ExpandDirection="Left">
-            <Expander.Header>
-                <TextBlock Text="팔레트" RenderTransformOrigin=".5,.5">
-                    <TextBlock.LayoutTransform>
-                        <RotateTransform Angle="-90" />
-                    </TextBlock.LayoutTransform>
-                </TextBlock>
-            </Expander.Header>
-            <DockPanel>
-                <Grid Width="256" Height="256" DockPanel.Dock="Top" Background="Black">
-                    
+
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="48"/>
+            </Grid.ColumnDefinitions>
+            
+            <Grid MouseMove="Grid_MouseMove">
+                <Image x:Name="MapTrace" Stretch="None"/>
+                <Grid x:Name="MapViewer" Background="#33000000" >
+
                 </Grid>
-                <ListBox>
-
-                </ListBox>
-            </DockPanel>
-        </Expander>
-
-        
-        
-        <Grid HorizontalAlignment="Left" VerticalAlignment="Top">
-            <Image x:Name="MapTrace" Stretch="None"/>
-            <Grid x:Name="MapViewer" Background="#33000000" >
-
             </Grid>
+            <Expander x:Name="ToolBarExpander" Grid.ColumnSpan="2" DockPanel.Dock="Right" ExpandDirection="Left" Background="Transparent" HorizontalAlignment="Right">
+                <Expander.Header >
+                    <TextBlock Text="팔레트" RenderTransformOrigin=".5,.5" >
+                        <TextBlock.LayoutTransform>
+                            <RotateTransform Angle="-90" />
+                        </TextBlock.LayoutTransform>
+                    </TextBlock>
+                </Expander.Header>
+                <DockPanel Width="256">
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                        <Button Padding="4" Style="{StaticResource MaterialDesignOutlinedButton}" Height="Auto" Click="TileButton_Click">
+                            <materialDesign:PackIcon Kind="Waves" Width="32" Height="32" />
+                        </Button>
+                        <Button Padding="4" Style="{StaticResource MaterialDesignOutlinedButton}" Height="Auto" Click="DoodadButton_Click">
+                            <materialDesign:PackIcon Kind="Sprout" Width="32" Height="32" />
+                        </Button>
+                        <Button Padding="4" Style="{StaticResource MaterialDesignOutlinedButton}" Height="Auto" Click="UnitButton_Click">
+                            <materialDesign:PackIcon Kind="HumanHandsdown" Width="32" Height="32" />
+                        </Button>
+                        <Button Padding="4" Style="{StaticResource MaterialDesignOutlinedButton}" Height="Auto" Click="SpriteButton_Click">
+                            <materialDesign:PackIcon Kind="PineTree" Width="32" Height="32" />
+                        </Button>
+                        <Button Padding="4" Style="{StaticResource MaterialDesignOutlinedButton}" Height="Auto" Click="LocationButton_Click">
+                            <materialDesign:PackIcon Kind="AlphabetLBox" Width="32" Height="32" />
+                        </Button>
+                        <Button Padding="4" Style="{StaticResource MaterialDesignOutlinedButton}" Height="Auto" Click="FogButton_Click">
+                            <materialDesign:PackIcon Kind="Soundcloud" Width="32" Height="32" />
+                        </Button>
+                    </StackPanel>
+                    <Grid>
+                        <DockPanel x:Name="TilePallet">
+                            <Grid DockPanel.Dock="Top" Height="32">
+                                <UniformGrid Columns="2">
+                                    <TextBox Margin="2"/>
+                                    <TextBox Margin="2"/>
+                                </UniformGrid>
+                            </Grid>
+                            <Separator DockPanel.Dock="Top"/>
+                            <Grid DockPanel.Dock="Top" Width="256" Height="64">
+
+                            </Grid>
+                            <Separator DockPanel.Dock="Top"/>
+                            <Grid>
+
+                            </Grid>
+                        </DockPanel>
+                        <DockPanel x:Name="DoodadPallet" Visibility="Collapsed" Background="{DynamicResource MaterialDesignPaper}">
+
+                        </DockPanel>
+                        <DockPanel x:Name="UnitPallet" Visibility="Collapsed" Background="{DynamicResource MaterialDesignPaper}">
+
+
+                        </DockPanel>
+                        <DockPanel x:Name="SpritePallet" Visibility="Collapsed" Background="{DynamicResource MaterialDesignPaper}">
+
+                        </DockPanel>
+                        <DockPanel x:Name="LocationPallet" Visibility="Collapsed" Background="{DynamicResource MaterialDesignPaper}">
+
+                        </DockPanel>
+                        <DockPanel x:Name="FogofWarPallet" Visibility="Collapsed" Background="{DynamicResource MaterialDesignPaper}">
+
+                        </DockPanel>
+                    </Grid>
+                </DockPanel>
+            </Expander>
         </Grid>
+        
     </DockPanel>
 </UserControl>

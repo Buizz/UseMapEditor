@@ -9,6 +9,7 @@
         mc:Ignorable="d"
         Loaded="Window_Loaded"
         WindowState="Minimized"
+        Topmost="True"
         Background="{DynamicResource PrimaryHueMidBrush}"
         TextElement.Foreground="{DynamicResource PrimaryHueMidForegroundBrush}"
         Title="시작하는 중..." Height="100" Width="500" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" WindowStyle="ToolWindow">

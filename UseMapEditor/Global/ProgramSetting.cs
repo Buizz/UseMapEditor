@@ -34,6 +34,7 @@ namespace UseMapEditor.Global
                     WriteSetting(settings, Vals[settings].ToString());
                 }
             }
+            Properties.Settings.Default.Save();
         }
 
 
@@ -105,8 +106,8 @@ namespace UseMapEditor.Global
 
 
         [DllImport("kernel32")]
-        private static extern long WritePrivateProfileString(string section, string key, string val, string filePath);
+        public static extern long WritePrivateProfileString(string section, string key, string val, string filePath);
         [DllImport("kernel32")]
-        private static extern int GetPrivateProfileString(string section, string key, string def, StringBuilder retVal, int size, string filePath);
+        public static extern int GetPrivateProfileString(string section, string key, string def, StringBuilder retVal, int size, string filePath);
     }
 }

@@ -13,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using UseMapEditor.FileData;
 
 namespace UseMapEditor.Windows
 {
@@ -62,7 +63,6 @@ namespace UseMapEditor.Windows
         }
 
 
-
         private void SaveToFile(byte[] bytes, string filename)
         {
             string[] paths = filename.Split('/');
@@ -72,7 +72,7 @@ namespace UseMapEditor.Windows
             string currentPath = AppDomain.CurrentDomain.BaseDirectory + @"\CascData";
 
 
-            foreach(string t in paths)
+            foreach (string t in paths)
             {
                 if (!System.IO.Directory.Exists(currentPath))
                 {
@@ -81,10 +81,37 @@ namespace UseMapEditor.Windows
                 currentPath = currentPath + "\\" + t;
             }
 
-
-
             System.IO.File.WriteAllBytes(currentPath, bytes);
         }
+
+        private void SaveToAnim(byte[] bytes, string filename, int img = -1)
+        {
+            string[] paths = filename.Split('/');
+
+
+
+            string currentPath = AppDomain.CurrentDomain.BaseDirectory + @"CascData";
+            string savePath = AppDomain.CurrentDomain.BaseDirectory + @"CascData\" + filename.Replace("/","\\");
+
+
+            for (int i = 0; i < paths.Length; i++)
+            {
+                string map = paths[i];
+
+                if (!System.IO.Directory.Exists(currentPath))
+                {
+                    System.IO.Directory.CreateDirectory(currentPath);
+                }
+                currentPath = currentPath + "\\" + map;
+            }
+
+
+            FileData.Anim.ReadAnim(bytes, savePath, img);
+            //System.IO.File.WriteAllBytes(currentPath, bytes);
+        }
+
+
+
 
 
 
@@ -97,7 +124,7 @@ namespace UseMapEditor.Windows
 
             data.OpenCascStorage();
 
-            SaveToFile(data.ReadFileCascStorage("SD/mainSD.anim"), @"SD/mainSD.anim");
+            SaveToAnim(data.ReadFileCascStorage("SD/mainSD.anim"), @"SD/anim/");
             worker.ReportProgress(percent++);
 
             for (int i = 0; i < 999; i++)
@@ -106,18 +133,17 @@ namespace UseMapEditor.Windows
                 {
                     string fname = $"HD2/anim/main_{num}.anim";
 
-                    string tname = $"HD/anim/main_{num}.anim";
-                    SaveToFile(data.ReadFileCascStorage(fname), tname);
+                    string tname = $"HD/anim/" + i + "/";
+                    SaveToAnim(data.ReadFileCascStorage(fname), tname, i);
                 }
                 {
                     string fname = $"HD2/anim/Carbot/main_{num}.anim";
 
-                    string tname = $"Carbot/anim/main_{num}.anim";
-                    SaveToFile(data.ReadFileCascStorage(fname), tname);
+                    string tname = $"CB/anim/" + i + "/";
+                    SaveToAnim(data.ReadFileCascStorage(fname), tname, i);
                 }
                 worker.ReportProgress(percent++);
             }
-
 
             foreach (string tile in tilelist)
             {
@@ -126,30 +152,24 @@ namespace UseMapEditor.Windows
                     SaveToFile(data.ReadFileCascStorage(fname), fname);
                 }
                 {
-                    string fname = $"SD/TileSet/{tile}.dds.grp";
-                    SaveToFile(data.ReadFileCascStorage(fname), fname);
-                }
-                {
                     string fname = $"HD2/TileSet/{tile}.dds.vr4";
                     string tname = $"HD/TileSet/{tile}.dds.vr4";
                     SaveToFile(data.ReadFileCascStorage(fname), tname);
                 }
                 {
-                    string fname = $"HD2/TileSet/{tile}.dds.grp";
-                    string tname = $"HD/TileSet/{tile}.dds.grp";
-                    SaveToFile(data.ReadFileCascStorage(fname), tname);
-                }
-                {
                     string fname = $"HD2/Carbot/TileSet/{tile}.dds.vr4";
-                    string tname = $"Carbot/TileSet/{tile}.dds.vr4";
-                    SaveToFile(data.ReadFileCascStorage(fname), tname);
-                }
-                {
-                    string fname = $"HD2/Carbot/TileSet/{tile}.dds.grp";
-                    string tname = $"Carbot/TileSet/{tile}.dds.grp";
+                    string tname = $"CB/TileSet/{tile}.dds.vr4";
                     SaveToFile(data.ReadFileCascStorage(fname), tname);
                 }
                 worker.ReportProgress(percent++);
+
+                {
+                    string cv5name = $"TileSet/{tile}.cv5";
+                    string vf4name = $"TileSet/{tile}.vf4";
+
+                    SaveToFile(data.ReadFileCascStorage(cv5name), cv5name);
+                    SaveToFile(data.ReadFileCascStorage(vf4name), vf4name);
+                }
             }
 
 

@@ -1,5 +1,4 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -52,6 +51,44 @@ namespace UseMapEditor.Global
         }
 
 
+        public static void AddLastOpenFile(string filepath)
+        {
+            List<string> strlist = new List<string>();
+
+            strlist.AddRange(Properties.Settings.Default.LastOpend.Split('|'));
+
+
+            if(strlist.Last() == filepath)
+            {
+                return;
+            }
+
+
+            if(strlist.Count > 4)
+            {
+                strlist.RemoveAt(0);
+
+            }
+            strlist.Add(filepath);
+            
+            Properties.Settings.Default.LastOpend = String.Join("|", strlist.ToArray());
+        }
+        public static string[] GetLastOpenfile()
+        {
+            return Properties.Settings.Default.LastOpend.Split('|');
+        }
+
+
+
+
+
+
+
+
+
+
+
+
         public static List<MapEditor> GetMapEditorList()
         {
             List<MapEditor> mapEditors = new List<MapEditor>();
@@ -75,12 +112,14 @@ namespace UseMapEditor.Global
 
 
 
+        public static System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog();
         public static string OpenMap()
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "맵 파일|*.scx;*.scp";
 
-            if ((bool)openFileDialog.ShowDialog())
+
+
+            if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 return openFileDialog.FileName;
             }
@@ -172,6 +211,7 @@ namespace UseMapEditor.Global
 
                 MapViewer.ChangeMap(mapEditor);
                 MapGrid.Children.Add(MapViewer);
+                MapViewer.IsEnabled = true;
             }
         }
 

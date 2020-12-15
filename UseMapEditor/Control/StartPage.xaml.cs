@@ -25,6 +25,39 @@ namespace UseMapEditor.Control
         public StartPage()
         {
             InitializeComponent();
+
+            LastOpenFIleRefresh();
+        }
+        public void LastOpenFIleRefresh()
+        {
+            LastOpendPanel.Children.Clear();
+
+            string[] FileList = Global.WindowTool.GetLastOpenfile();
+
+            for (int i = FileList.Length - 1; i >= 0; i--)
+            {
+                if(FileList[i] != "")
+                {
+                    Button button = new Button();
+
+                    button.Padding = new Thickness(4);
+                    button.Height = double.NaN;
+                    button.Content = new LastOpenFileControl(FileList[i]);
+                    button.Tag = FileList[i];
+                    button.Style = (Style)Application.Current.Resources["MaterialDesignOutlinedButton"];
+
+                    button.Click += Button_Click;
+
+                    LastOpendPanel.Children.Add(button);
+                }        
+            }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            string filepath = (string)((Button)sender).Tag;
+
+            mainWindow.OpenMapCommand(filepath);
         }
 
         private void NewMapBtn_Click(object sender, RoutedEventArgs e)

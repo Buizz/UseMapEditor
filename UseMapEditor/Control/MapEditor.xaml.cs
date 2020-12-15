@@ -1,5 +1,6 @@
 ﻿using Data.Map;
 using Dragablz;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -17,6 +18,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using UseMapEditor.Dialog;
+using UseMapEditor.MonoGameControl;
 
 namespace UseMapEditor.Control
 {
@@ -25,17 +27,142 @@ namespace UseMapEditor.Control
     /// </summary>
     public partial class MapEditor : UserControl
     {
-        public double opt_scale = 1;
+
+        private int _opt_xpos = 0;
+        private int _opt_ypos = 0;
+
+
+
+
+        public int opt_xpos
+        {
+            get
+            {
+                return _opt_xpos;
+            }
+            set
+            {
+                _opt_xpos = value;
+                //if (_opt_xpos < 0)
+                //{
+                //    _opt_xpos = 0;
+                //}
+            }
+        }
+        public int opt_ypos
+        {
+
+            get
+            {
+                return _opt_ypos;
+            }
+            set
+            {
+                _opt_ypos = value;
+                //if (_opt_ypos < 0)
+                //{
+                //    _opt_ypos = 0;
+                //}
+            }
+        }
+
+
+
+
+        public Vector2 PosScreenToMap(Vector2 pos)
+        {
+            //화면의 좌표를 맵 좌표로 변형한다.
+            //opt_xpos 좌표로 부터 pos.x*scale만큼 더 가면 된다.
+
+            return new Vector2((float)(opt_xpos + pos.X / opt_scalepercent), (float)(opt_ypos + pos.Y / opt_scalepercent));
+        }
+
+        public Vector2 PosMapToScreen(Vector2 pos)
+        {
+            //맵의 좌표를 화면의 좌표로 반환한다.
+            //현재 모서리 좌표와 맵의 좌표간의 사이의 거리를 구한다.
+            //
+            return new Vector2((float)((pos.X - opt_xpos) * opt_scalepercent), (float)((pos.Y - opt_ypos) * opt_scalepercent));
+        }
+
+
+
+
+
+
+
+
+        public DrawType opt_drawType;
+        public enum DrawType
+        {
+            SD,
+            HD,
+            CB
+        }
+
+        private int _opt_scale = 100;
+        public int opt_scale
+        {
+            get
+            {
+                return _opt_scale;
+            }
+            set
+            {
+                _opt_scale = value;
+                if(_opt_scale < 25)
+                {
+                    _opt_scale = 25;
+                }
+                if(_opt_scale > 800)
+                {
+                    _opt_scale = 800;
+                }
+
+                if ((90 < _opt_scale) & (_opt_scale < 110))
+                {
+                    _opt_scale = 100;
+                }
+            }
+        }
+        public double opt_scalepercent
+        {
+            get
+            {
+                return opt_scale / 100d;
+            }
+        }
+
+
         public int opt_grid = 0;
         public bool opt_tile = true;
         public bool opt_unit = true;
         public bool opt_sprite = true;
         public bool opt_location = false;
         public bool opt_fogofwar = false;
-        public int opt_vision = -1;
-
-
         public bool opt_eudeditor = false;
+
+
+        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+            //Global.WindowTool.ChangeView(this, true);
+        }
+
+
+
+
+
+        public bool IsToolBarOpen()
+        {
+            return ToolBarExpander.IsExpanded;
+        }
+
+
+
+
+
+
 
 
 
@@ -44,15 +171,28 @@ namespace UseMapEditor.Control
 
 
         public MapData mapdata;
+        public Microsoft.Xna.Framework.Color[] minimapcolor;
 
         public bool IsLoad = false;
+        public bool IsMinimapLoad = false;
+        public bool ChangeMiniMap = false;
         public MapEditor()
         {
             InitializeComponent();
 
             mapdata = new MapData();
+            minimapcolor = new Microsoft.Xna.Framework.Color[16384];
         }
 
+
+        private void optionReset()
+        {
+            IsMinimapLoad = false;
+            ScaleTB.Text = 100.ToString();
+            opt_xpos = 0;
+            opt_ypos = 0;
+
+        }
 
         public bool NewMap()
         {
@@ -60,6 +200,7 @@ namespace UseMapEditor.Control
             bool Loadcmp = LoadMap("");
             IsDirty = false;
             IsLoad = true;
+            
             return Loadcmp;
         }
         public bool OpenMap()
@@ -81,15 +222,26 @@ namespace UseMapEditor.Control
 
         public bool LoadMap(string _filepath)
         {
-            bool LoadSucess = mapdata.LoadMap(_filepath);
-            if (LoadSucess == true)
+            try
             {
-                //tabitem.Header = mapdata.SafeFileName;
-                //tabitem.Content = this;
+                bool LoadSucess = mapdata.LoadMap(_filepath);
+                if (LoadSucess == true)
+                {
+                    optionReset();
+                    //tabitem.Header = mapdata.SafeFileName;
+                    //tabitem.Content = this;
+                }
+                IsLoad = LoadSucess;
+                IsDirty = false;
+                return LoadSucess;
             }
-            IsLoad = LoadSucess;
-            IsDirty = false;
-            return LoadSucess;
+            catch (Exception e)
+            {
+                Dialog.MsgDialog msgDialog = new MsgDialog("열 수 없는 맵입니다.\n" + e.Message, MessageBoxButton.OK, MessageBoxImage.Error);
+                msgDialog.ShowDialog();
+                return false;
+            }
+
         }
         public bool SaveMap(string _filepath = "")
         {
@@ -230,15 +382,154 @@ namespace UseMapEditor.Control
             ChangeView();
         }
 
-        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+
+        private void GridCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            IsDirty = true;
-            //Global.WindowTool.ChangeView(this, true);
+            int v = 0;
+            string str = (string)((ComboBoxItem)GridCB.SelectedItem).Tag;
+
+            if (int.TryParse(str, out v))
+            {
+                opt_grid = v;
+            }
+        }
+        private void grpTypeClick(object sender, RoutedEventArgs e)
+        {
+            opt_drawType += 1;
+            if((int)opt_drawType >= 3)
+            {
+                opt_drawType = 0;
+            }
         }
 
+        private void ScaleTB_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            int v;
+            if(int.TryParse(ScaleTB.Text, out v))
+            {
+                opt_scale = v;
+            }
+        }
+        public void ScaleUp(Vector2 MousePos)
+        {
+            Vector2 oldMouseMap = PosScreenToMap(MousePos);
+            double LastScale = opt_scalepercent;
 
+            opt_scale = (int)(opt_scale * 1.1);
+            ScaleTB.Text = opt_scale.ToString();
 
+            if(LastScale == opt_scalepercent)
+            {
+                return;
+            }
 
+            Vector2 newMouseMap = PosScreenToMap(MousePos);
+
+            opt_xpos += (int)(oldMouseMap.X - newMouseMap.X);
+            opt_ypos += (int)(oldMouseMap.Y - newMouseMap.Y);
+        }
+        public void ScaleDown(Vector2 MousePos)
+        {
+            Vector2 oldMouseMap = PosScreenToMap(MousePos);
+            double LastScale = opt_scalepercent;
+
+            opt_scale = (int)(opt_scale * 0.9);
+            ScaleTB.Text = opt_scale.ToString();
+
+            if (LastScale == opt_scalepercent)
+            {
+                return;
+            }
+
+            Vector2 newMouseMap = PosScreenToMap(MousePos);
+
+            opt_xpos += (int)(oldMouseMap.X - newMouseMap.X);
+            opt_ypos += (int)(oldMouseMap.Y - newMouseMap.Y);
+        }
+
+        private void Grid_MouseMove(object sender, MouseEventArgs e)
+        {
+
+            if (IsToolBarOpen())
+            {
+                if (e.GetPosition(MapViewer).X < (MapViewer.ActualWidth - 256))
+                {
+                    if(MapViewer.Children.Count != 0)
+                    {
+                        MapDrawer mapDrawer = (MapDrawer)MapViewer.Children[0];
+                        mapDrawer.IsEnabled = true;
+                    }
+                }
+            }
+            else
+            {
+                if (MapViewer.Children.Count != 0)
+                {
+                    MapDrawer mapDrawer = (MapDrawer)MapViewer.Children[0];
+                    mapDrawer.IsEnabled = true;
+                }
+            }
+        }
+
+        private void TileButton_Click(object sender, RoutedEventArgs e)
+        {
+            TilePallet.Visibility = Visibility.Visible;
+            DoodadPallet.Visibility = Visibility.Collapsed;
+            UnitPallet.Visibility = Visibility.Collapsed;
+            SpritePallet.Visibility = Visibility.Collapsed;
+            LocationPallet.Visibility = Visibility.Collapsed;
+            FogofWarPallet.Visibility = Visibility.Collapsed;
+        }
+
+        private void DoodadButton_Click(object sender, RoutedEventArgs e)
+        {
+            TilePallet.Visibility = Visibility.Collapsed;
+            DoodadPallet.Visibility = Visibility.Visible;
+            UnitPallet.Visibility = Visibility.Collapsed;
+            SpritePallet.Visibility = Visibility.Collapsed;
+            LocationPallet.Visibility = Visibility.Collapsed;
+            FogofWarPallet.Visibility = Visibility.Collapsed;
+        }
+
+        private void UnitButton_Click(object sender, RoutedEventArgs e)
+        {
+            TilePallet.Visibility = Visibility.Collapsed;
+            DoodadPallet.Visibility = Visibility.Collapsed;
+            UnitPallet.Visibility = Visibility.Visible;
+            SpritePallet.Visibility = Visibility.Collapsed;
+            LocationPallet.Visibility = Visibility.Collapsed;
+            FogofWarPallet.Visibility = Visibility.Collapsed;
+        }
+
+        private void SpriteButton_Click(object sender, RoutedEventArgs e)
+        {
+            TilePallet.Visibility = Visibility.Collapsed;
+            DoodadPallet.Visibility = Visibility.Collapsed;
+            UnitPallet.Visibility = Visibility.Collapsed;
+            SpritePallet.Visibility = Visibility.Visible;
+            LocationPallet.Visibility = Visibility.Collapsed;
+            FogofWarPallet.Visibility = Visibility.Collapsed;
+        }
+
+        private void LocationButton_Click(object sender, RoutedEventArgs e)
+        {
+            TilePallet.Visibility = Visibility.Collapsed;
+            DoodadPallet.Visibility = Visibility.Collapsed;
+            UnitPallet.Visibility = Visibility.Collapsed;
+            SpritePallet.Visibility = Visibility.Collapsed;
+            LocationPallet.Visibility = Visibility.Visible;
+            FogofWarPallet.Visibility = Visibility.Collapsed;
+        }
+
+        private void FogButton_Click(object sender, RoutedEventArgs e)
+        {
+            TilePallet.Visibility = Visibility.Collapsed;
+            DoodadPallet.Visibility = Visibility.Collapsed;
+            UnitPallet.Visibility = Visibility.Collapsed;
+            SpritePallet.Visibility = Visibility.Collapsed;
+            LocationPallet.Visibility = Visibility.Collapsed;
+            FogofWarPallet.Visibility = Visibility.Visible;
+        }
 
 
 

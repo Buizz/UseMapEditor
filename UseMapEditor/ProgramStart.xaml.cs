@@ -97,92 +97,92 @@ namespace UseMapEditor.Dialog
 
 
 
-            if (!File.Exists(Global.Setting.Vals[Global.Setting.Settings.Program_StarCraftPath]))
+            this.WindowState = WindowState.Normal;
+            BackgroundWorker backgroundWorker = new BackgroundWorker();
+            backgroundWorker.DoWork += delegate (object _sender, DoWorkEventArgs _e)
             {
-                //스타크래프트 파일이 존재하지 않을 경우
-                MsgDialog msg = new MsgDialog("StarCraft 실행파일을 지정하겠습니까?\n지정하지 않으면 그래픽을 로드 하지 않습니다.", MessageBoxButton.YesNo, MessageBoxImage.Information);
-                msg.ShowDialog();
-                if(msg.msgresult == MessageBoxResult.No)
-                {
-                    LoadCmp();
-                    return;
-                }
-                else
-                {
-                    OpenFileDialog openFileDialog = new OpenFileDialog();
-                    openFileDialog.Filter = "스타크래프트 실행파일|StarCraft Launcher.exe";
+                System.Threading.Thread.Sleep(500);
+            };
 
-                    if ((bool)openFileDialog.ShowDialog())
+            backgroundWorker.RunWorkerCompleted += delegate (object _sender, RunWorkerCompletedEventArgs _e)
+            {
+                if (!File.Exists(Global.Setting.Vals[Global.Setting.Settings.Program_StarCraftPath]))
+                {
+                    //스타크래프트 파일이 존재하지 않을 경우
+                    MsgDialog msg = new MsgDialog("StarCraft 실행파일을 지정하겠습니까?\n지정하지 않으면 그래픽을 로드 하지 않습니다.", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                    msg.ShowDialog();
+                    if (msg.msgresult == MessageBoxResult.No)
                     {
-                        Global.Setting.Vals[Global.Setting.Settings.Program_StarCraftPath] = openFileDialog.FileName;
-                    }
-                    else
-                    {
-                        //다이어로그 취소함
                         LoadCmp();
                         return;
                     }
-                }
-            }
+                    else
+                    {
+                        OpenFileDialog openFileDialog = new OpenFileDialog();
+                        openFileDialog.Filter = "스타크래프트 실행파일|StarCraft Launcher.exe";
 
-            if(Global.Setting.Vals[Global.Setting.Settings.Program_GRPLoad] == "false")
-            {
-                //GRP전처리 과정을 수행하지 않음.
-                this.Visibility = Visibility.Collapsed;
-                MsgDialog msg = new MsgDialog("그래픽 전처리 과정을 수행하겠습니까?\n이 작업은 몇분 정도 걸릴 수 있습니다.\n지정하지 않으면 그래픽을 로드 하지 않습니다.", MessageBoxButton.YesNo, MessageBoxImage.Information);
-                msg.ShowDialog();
-                this.Visibility = Visibility.Visible;
-                if (msg.msgresult == MessageBoxResult.No)
-                {
-                    LoadCmp();
-                    return;
+                        if ((bool)openFileDialog.ShowDialog())
+                        {
+                            Global.Setting.Vals[Global.Setting.Settings.Program_StarCraftPath] = openFileDialog.FileName;
+                        }
+                        else
+                        {
+                            //다이어로그 취소함
+                            LoadCmp();
+                            return;
+                        }
+                    }
                 }
-                else
+
+                if (Global.Setting.Vals[Global.Setting.Settings.Program_GRPLoad] == "false")
                 {
+                    //GRP전처리 과정을 수행하지 않음.
                     this.Visibility = Visibility.Collapsed;
-                    Preprocessing preprocessing = new Preprocessing();
-                    preprocessing.ShowDialog();
+                    MsgDialog msg = new MsgDialog("그래픽 전처리 과정을 수행하겠습니까?\n이 작업은 몇분 정도 걸릴 수 있습니다.\n지정하지 않으면 그래픽을 로드 하지 않습니다.", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                    msg.ShowDialog();
                     this.Visibility = Visibility.Visible;
-                    if (!preprocessing.IsClose)
+                    if (msg.msgresult == MessageBoxResult.No)
                     {
                         LoadCmp();
                         return;
                     }
                     else
                     {
-                        Global.Setting.Vals[Global.Setting.Settings.Program_GRPLoad] = "true";
+                        this.Visibility = Visibility.Collapsed;
+                        Preprocessing preprocessing = new Preprocessing();
+                        preprocessing.ShowDialog();
+                        this.Visibility = Visibility.Visible;
+                        if (!preprocessing.IsClose)
+                        {
+                            LoadCmp();
+                            return;
+                        }
+                        else
+                        {
+                            Global.Setting.Vals[Global.Setting.Settings.Program_GRPLoad] = "true";
+                        }
                     }
                 }
-            }
 
 
+
+
+                //GrpTestLoad.Children.Clear();
+
+
+                LoadCmp();
+            };
+
+            backgroundWorker.RunWorkerAsync();
+        }
+
+        private void LoadCmp()
+        {
 
             Global.WindowTool.LoadGrp();
             GrpTestLoad.Children.Add(Global.WindowTool.MapViewer);
 
-            //GrpTestLoad.Children.Clear();
 
-
-            LoadCmp();
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        private void LoadCmp()
-        {
             this.WindowState = WindowState.Normal;
             LoadComplete = true;
             MainWindow main = new MainWindow();

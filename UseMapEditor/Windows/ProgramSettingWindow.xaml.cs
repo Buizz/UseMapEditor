@@ -181,12 +181,22 @@ namespace UseMapEditor.Windows
 
         private void DarkToggleBtn_Checked(object sender, RoutedEventArgs e)
         {
+            Global.Setting.Vals[Global.Setting.Settings.Program_IsDark] = "true";
 
+            PaletteHelper paletteHelper = new PaletteHelper();
+            ITheme theme = paletteHelper.GetTheme();
+            theme.SetBaseTheme(Theme.Dark);
+            paletteHelper.SetTheme(theme);
         }
 
         private void DarkToggleBtn_Unchecked(object sender, RoutedEventArgs e)
         {
+            Global.Setting.Vals[Global.Setting.Settings.Program_IsDark] = "false";
 
+            PaletteHelper paletteHelper = new PaletteHelper();
+            ITheme theme = paletteHelper.GetTheme();
+            theme.SetBaseTheme(Theme.Light);
+            paletteHelper.SetTheme(theme);
         }
 
         private void SCMapBtn_Click(object sender, RoutedEventArgs e)

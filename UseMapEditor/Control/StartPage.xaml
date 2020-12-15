@@ -18,13 +18,13 @@
                 </Grid.ColumnDefinitions>
                 <DockPanel Grid.Column="0" Margin="10">
                     <TextBlock DockPanel.Dock="Top" FontSize="15" >최근 파일 열기</TextBlock>
-                    <StackPanel>
+                    <StackPanel x:Name="LastOpendPanel" Background="#19808080" >
 
                     </StackPanel>
                 </DockPanel>
                 <DockPanel Grid.Column="1" Margin="10">
                     <TextBlock DockPanel.Dock="Top" FontSize="15" >빠른 시작</TextBlock>
-                    <StackPanel>
+                    <StackPanel Background="#19808080" >
                         <Button Click="NewMapBtn_Click">
                             <DockPanel>
                                 <materialDesign:PackIcon Kind="EarthBox" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>

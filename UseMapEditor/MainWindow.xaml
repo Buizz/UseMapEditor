@@ -73,7 +73,7 @@
                             <materialDesign:PackIcon Kind="Bug" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="프로그램 설정(_S)" Foreground="{DynamicResource MaterialDesignBody}" Click="MenuItem_Click_1">
+                    <MenuItem Header="프로그램 설정(_S)" Foreground="{DynamicResource MaterialDesignBody}" Click="ProgramSetting_Click">
                         <MenuItem.Icon>
                             <materialDesign:PackIcon Kind="Settings" />
                         </MenuItem.Icon>

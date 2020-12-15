@@ -174,17 +174,28 @@
     <Compile Include="Casc\CascLib.cs" />
     <Compile Include="Casc\Data.cs" />
     <Compile Include="Components\FpsComponent.cs" />
+    <Compile Include="Control\LastOpenFileControl.xaml.cs">
+      <DependentUpon>LastOpenFileControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Control\MapCreate.xaml.cs">
       <DependentUpon>MapCreate.xaml</DependentUpon>
     </Compile>
     <Compile Include="Control\StartPage.xaml.cs">
       <DependentUpon>StartPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Data\Map\Load.cs" />
+    <Compile Include="Data\Map\ChkTool.cs" />
+    <Compile Include="Data\Map\Save.cs" />
     <Compile Include="FileData\Anim.cs" />
-    <Compile Include="FileData\ddsgrp.cs" />
+    <Compile Include="FileData\StromLib.cs" />
+    <Compile Include="FileData\TileSet.cs" />
     <Compile Include="Data\Map\MapData.cs" />
     <Compile Include="Data\StarCraft\StarCraftData.cs" />
     <Compile Include="Data\StarCraft\GRP.cs" />
+    <Compile Include="MonoGameControl\ImageDraw.cs" />
+    <Compile Include="MonoGameControl\PalletUI.cs" />
+    <Compile Include="MonoGameControl\TileDraw.cs" />
+    <Compile Include="MonoGameControl\UnitDraw.cs" />
     <Compile Include="Windows\Preprocessing.xaml.cs">
       <DependentUpon>Preprocessing.xaml</DependentUpon>
     </Compile>
@@ -194,6 +205,10 @@
     <Compile Include="Windows\TestWindow.xaml.cs">
       <DependentUpon>TestWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="Control\LastOpenFileControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Control\MapCreate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -353,6 +368,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Content\AnyConv.com__main_000-000-diffuse.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="StormLib.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
