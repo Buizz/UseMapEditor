@@ -40,14 +40,14 @@ namespace UseMapEditor.MonoGameControl
 
 
 
-        public GRP GetImageTexture(Control.MapEditor.DrawType drawType, int imageindex, bool IsColor)
+        public GRP GetImageTexture(Control.MapEditor.DrawType drawType, int imageindex)
         {
             GRP rgrp = GRPDATA[drawType][imageindex];
 
             if (!rgrp.IsLoad)
             {
                 //GRP로드가 되지 않았을 경우.
-                string fname = $"CascData\\{drawType.ToString()}\\anim\\" + imageindex.ToString() + "\\diffuse.png";
+                string fname =  $"CascData\\{drawType.ToString()}\\anim\\" + imageindex.ToString() + "\\diffuse.png";
                 string fcolorname = $"CascData\\{drawType.ToString()}\\anim\\" + imageindex.ToString() + "\\teamcolor.png";
 
                 if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + fname))

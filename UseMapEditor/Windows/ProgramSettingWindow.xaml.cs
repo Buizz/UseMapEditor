@@ -1,5 +1,6 @@
 ﻿using MahApps.Metro.Controls;
 using MaterialDesignThemes.Wpf;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -42,10 +43,6 @@ namespace UseMapEditor.Windows
 
 
 
-            Global.Setting.LoadSetting();
-
-
-
             PaletteHelper paletteHelper = new PaletteHelper();
             ITheme theme = paletteHelper.GetTheme();
             if (Global.Setting.Vals[Global.Setting.Settings.Program_IsDark] == "true")
@@ -68,16 +65,17 @@ namespace UseMapEditor.Windows
 
             if (Global.Setting.Vals[Global.Setting.Settings.Program_GRPLoad] == "true")
             {
-                GrpLoadBtn.Content = "그래픽 로드";
-                GrpLoadBtn.IsEnabled = false;
-                ButtonProgressAssist.SetIsIndeterminate(GrpLoadBtn, true);
-                GrpLoad();
+                RenderSetting.IsEnabled = true;
             }
             else
             {
-                GrpLoadBtn.Content = "그래픽 전 처리";
+                RenderSetting.IsEnabled = false;
+                ErrorText.Text = "그래픽이 로드되지 않았습니다.";
             }
 
+
+            MaxFrameTB.Text = Global.Setting.Vals[Global.Setting.Settings.Render_MaxFrame];
+            UseVFRCB.IsChecked = (Global.Setting.Vals[Global.Setting.Settings.Render_UseVFR] == "true");
 
 
 
@@ -89,95 +87,6 @@ namespace UseMapEditor.Windows
             //Close();
         }
 
-
-        private void Dataprocessing()
-        {
-            //데이터를 모두 처리하는 함수
-            BackgroundWorker databgWorker = new BackgroundWorker();
-
-            databgWorker.RunWorkerCompleted += DatabgWorker_RunWorkerCompleted;
-            databgWorker.DoWork += DatabgWorker_DoWork;
-
-
-            databgWorker.RunWorkerAsync();
-
-
-
-
-        }
-
-        private void DatabgWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            System.Threading.Thread.Sleep(4000);
-        }
-
-        private void DatabgWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            if (e.Error == null)
-            {
-                Global.Setting.Vals[Global.Setting.Settings.Program_GRPLoad] = "true";
-                GrpLoadBtn.Content = "그래픽 로드";
-                GrpLoad();
-            }
-            else
-            {
-                ErrorText.Text = "그래픽 전처리에 실패했습니다.";
-                GrpLoadBtn.IsEnabled = true;
-                ButtonProgressAssist.SetIsIndeterminate(GrpLoadBtn, false);
-            }
-        }
-
-
-
-        private void GrpLoad()
-        {
-            //기본 데이터를 불러오는 함수
-
-            this.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate
-            {
-
-
-
-
-
-                GrpLoadBtn.Content = "그래픽 로드 완료";
-                GrpLoadBtn.IsEnabled = false;
-                ButtonProgressAssist.SetIsIndeterminate(GrpLoadBtn, false);
-            }));
-
-
-
-            //BackgroundWorker grploadWorker = new BackgroundWorker();
-
-            //grploadWorker.RunWorkerCompleted += GrploadWorker_RunWorkerCompleted;
-            //grploadWorker.DoWork += GrploadWorker_DoWork;
-
-
-            //grploadWorker.RunWorkerAsync();
-
-        }
-
-        private void GrploadWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-
-
-        }
-
-        private void GrploadWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            if (e.Error == null)
-            {
-                GrpLoadBtn.Content = "그래픽 로드 완료";
-                GrpLoadBtn.IsEnabled = false;
-                ButtonProgressAssist.SetIsIndeterminate(GrpLoadBtn, false);
-            }
-            else
-            {
-                ErrorText.Text = "그래픽 로드에 실패했습니다.\n" + e.Error.ToString();
-                GrpLoadBtn.IsEnabled = true;
-                ButtonProgressAssist.SetIsIndeterminate(GrpLoadBtn, false);
-            }
-        }
 
         private void DarkToggleBtn_Checked(object sender, RoutedEventArgs e)
         {
@@ -201,12 +110,31 @@ namespace UseMapEditor.Windows
 
         private void SCMapBtn_Click(object sender, RoutedEventArgs e)
         {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "스타크래프트 실행파일|StarCraft Launcher.exe";
 
+            if ((bool)openFileDialog.ShowDialog())
+            {
+                Global.Setting.Vals[Global.Setting.Settings.Program_StarCraftPath] = openFileDialog.FileName;
+                SCPathTB.Text = openFileDialog.FileName;
+                ErrorText.Text = "그래픽을 다시 로드하려면 프로그램을 껐다켜야 합니다.";
+                Global.Setting.Vals[Global.Setting.Settings.Program_GRPLoad] = "false";
+            }
+            else
+            {
+                return;
+            }
         }
 
-        private void GrpLoadBtn_Click(object sender, RoutedEventArgs e)
-        {
 
+        private void MetroWindow_Closing(object sender, CancelEventArgs e)
+        {
+            int mf;
+            if (int.TryParse(MaxFrameTB.Text, out mf))
+            {
+                Global.Setting.Vals[Global.Setting.Settings.Render_MaxFrame] = mf.ToString();
+            }
+            Global.Setting.Vals[Global.Setting.Settings.Render_UseVFR] = UseVFRCB.IsChecked.ToString().ToLower();
         }
     }
 }

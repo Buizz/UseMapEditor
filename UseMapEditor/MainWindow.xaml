@@ -11,6 +11,7 @@
         xmlns:dockablz="http://dragablz.net/winfx/xaml/dockablz"
         xmlns:control="clr-namespace:UseMapEditor.Control"
         mc:Ignorable="d"
+        materialDesign:ShadowAssist.CacheMode="{x:Null}"
                   
         Closing="MetroWindow_Closing"
         Closed="MetroWindow_Closed"

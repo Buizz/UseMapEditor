@@ -42,11 +42,25 @@ namespace UseMapEditor.Control
             }
             set
             {
+
                 _opt_xpos = value;
-                //if (_opt_xpos < 0)
-                //{
-                //    _opt_xpos = 0;
-                //}
+                int MapLeft = -(int)(MapViewer.ActualWidth / opt_scalepercent / 2);
+                int MapRight = mapdata.WIDTH * 32 + MapLeft;
+
+                Vector2 MapMin = PosMapToScreen(new Vector2(0, 0));
+                Vector2 MapMax = PosMapToScreen(new Vector2(mapdata.WIDTH, mapdata.HEIGHT) * 32);
+                Vector2 MapSize = MapMax - MapMin;
+                if (!((MapSize.X < MapViewer.ActualWidth) & (MapSize.Y < MapViewer.ActualHeight)))
+                {
+                    if (_opt_xpos < MapLeft)
+                    {
+                        _opt_xpos = MapLeft;
+                    }
+                    if (_opt_xpos > MapRight)
+                    {
+                        _opt_xpos = MapRight;
+                    }
+                }
             }
         }
         public int opt_ypos
@@ -59,10 +73,23 @@ namespace UseMapEditor.Control
             set
             {
                 _opt_ypos = value;
-                //if (_opt_ypos < 0)
-                //{
-                //    _opt_ypos = 0;
-                //}
+                int MapUp = -(int)(MapViewer.ActualHeight / opt_scalepercent / 2);
+                int MapDown = mapdata.HEIGHT * 32 + MapUp;
+
+                Vector2 MapMin = PosMapToScreen(new Vector2(0, 0));
+                Vector2 MapMax = PosMapToScreen(new Vector2(mapdata.WIDTH, mapdata.HEIGHT) * 32);
+                Vector2 MapSize = MapMax - MapMin;
+                if (!((MapSize.X < MapViewer.ActualWidth) & (MapSize.Y < MapViewer.ActualHeight)))
+                {
+                    if (_opt_ypos < MapUp)
+                    {
+                        _opt_ypos = MapUp;
+                    }
+                    if (_opt_ypos > MapDown)
+                    {
+                        _opt_ypos = MapDown;
+                    }
+                }
             }
         }
 
@@ -110,14 +137,36 @@ namespace UseMapEditor.Control
             set
             {
                 _opt_scale = value;
-                if(_opt_scale < 25)
+
+                int MinScale = 20;
+                if (mapdata != null)
                 {
-                    _opt_scale = 25;
+                    int MaxMap = Math.Max(mapdata.WIDTH, mapdata.HEIGHT);
+
+                    MinScale = (int)(128d / MaxMap * 20);
                 }
+                //MaxMap = 128일때 스케일 = 20
+                //MaxMap = 64일때 스케일 = 40
+
+                //128/MaxMap * 20
+                if(MinScale == 0)
+                {
+                    MinScale = 20;
+                }
+
+                if (_opt_scale < MinScale)
+                {
+                    _opt_scale = MinScale;
+                }
+
+
                 if(_opt_scale > 800)
                 {
                     _opt_scale = 800;
                 }
+
+                //_opt_scale = (int)(Math.Ceiling((_opt_scale / 2d)) * 2);
+
 
                 if ((90 < _opt_scale) & (_opt_scale < 110))
                 {
@@ -159,6 +208,10 @@ namespace UseMapEditor.Control
         }
 
 
+        public double GetToolBarWidth()
+        {
+            return ToolBarExpander.ActualWidth - 48;
+        }
 
 
 
@@ -181,16 +234,16 @@ namespace UseMapEditor.Control
             InitializeComponent();
 
             mapdata = new MapData();
-            minimapcolor = new Microsoft.Xna.Framework.Color[16384];
+            minimapcolor = new Microsoft.Xna.Framework.Color[256 * 256];
+            RefreshGRPIcon();
         }
 
 
         private void optionReset()
         {
             IsMinimapLoad = false;
-            ScaleTB.Text = 100.ToString();
-            opt_xpos = 0;
-            opt_ypos = 0;
+            opt_scale = 10;
+            ScaleTB.Text = opt_scale.ToString();
 
         }
 
@@ -395,12 +448,47 @@ namespace UseMapEditor.Control
         }
         private void grpTypeClick(object sender, RoutedEventArgs e)
         {
+            NextgrpType();
+        }
+
+
+        public void NextgrpType()
+        {
             opt_drawType += 1;
-            if((int)opt_drawType >= 3)
+            if ((int)opt_drawType >= 3)
             {
                 opt_drawType = 0;
             }
+            RefreshGRPIcon();
+
         }
+        public void SetGrpType(DrawType drawType)
+        {
+            opt_drawType = drawType;
+            RefreshGRPIcon();
+        }
+
+
+        private void RefreshGRPIcon()
+        {
+            switch (opt_drawType)
+            {
+                case DrawType.SD:
+                    grpImg.Source = new BitmapImage(new Uri("/Resources/SD.png", UriKind.RelativeOrAbsolute));
+                    break;
+                case DrawType.HD:
+                    grpImg.Source = new BitmapImage(new Uri("/Resources/HD.png", UriKind.RelativeOrAbsolute));
+                    break;
+                case DrawType.CB:
+                    grpImg.Source = new BitmapImage(new Uri("/Resources/CB.png", UriKind.RelativeOrAbsolute));
+                    break;
+            }
+            IsMinimapLoad = false;
+        }
+
+
+
+
 
         private void ScaleTB_TextChanged(object sender, TextChangedEventArgs e)
         {

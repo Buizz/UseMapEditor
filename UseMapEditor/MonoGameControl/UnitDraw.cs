@@ -15,9 +15,13 @@ namespace UseMapEditor.MonoGameControl
 {
     public partial class MapDrawer : WpfGame
     {
-        private void DrawUnit()
+        private void DrawUnit(bool IsDrawGrp)
         {
+            _spriteBatch.Begin();
+            _spriteBatch.Draw(GetImageTexture(Control.MapEditor.DrawType.SD,0).MainGRP, new Vector2(30, 30), new Rectangle(0, 0, 30, 30), Color.White, 0, Vector2.Zero, 1f, SpriteEffects.None, 0);
+            _spriteBatch.End();
 
+            
         }
     }
 }

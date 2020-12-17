@@ -69,6 +69,12 @@ namespace UseMapEditor.Global
                     case Settings.Program_StarCraftPath:
                         rv = "";
                         break;
+                    case Settings.Render_MaxFrame:
+                        rv = "60";
+                        break;
+                    case Settings.Render_UseVFR:
+                        rv = "true";
+                        break;
                 }
             }
 
@@ -93,8 +99,9 @@ namespace UseMapEditor.Global
         {
             Program_StarCraftPath,
             Program_GRPLoad,
-            Program_IsDark
-
+            Program_IsDark,
+            Render_MaxFrame,
+            Render_UseVFR
         }
 
 

@@ -29,8 +29,6 @@ namespace UseMapEditor.MonoGameControl
         private SpriteBatch _spriteBatch;
         private SpriteFont _font;
 
-        private Texture2D texture;
-
 
         protected override void Initialize()
         {
@@ -45,14 +43,14 @@ namespace UseMapEditor.MonoGameControl
             _mouse = new WpfMouse(this);
 
 
-
-
-
             //Components.Add(new FpsComponent(this));
 
             // must be called after the WpfGraphicsDeviceService instance was created
             base.Initialize();
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+
+
+            DownKeys = new List<Microsoft.Xna.Framework.Input.Keys>();
         }
 
         private Texture2D gridtexture;
@@ -65,7 +63,6 @@ namespace UseMapEditor.MonoGameControl
             // content loading now possible
             var fontBakeResult = TtfFontBaker.Bake(File.ReadAllBytes(AppDomain.CurrentDomain.BaseDirectory + "\\Font\\NanumSquareRoundB.ttf"), 25, 4096, 4096, new[]{
                  CharacterRange.BasicLatin, Hangle, new CharacterRange((char) 12593, (char) 12643), new CharacterRange((char) 8200, (char) 9900)});
-            //new CharacterRange((char) 44032, (char) 55203)});
 
             CharacterRange characterRange = CharacterRange.BasicLatin;
 
@@ -88,20 +85,6 @@ namespace UseMapEditor.MonoGameControl
 
 
 
-        public List<Texture2D> SD_GRP;
-        public List<Texture2D> SD_Color;
-        public List<Texture2D> HD_GRP;
-        public List<Texture2D> HD_Color;
-        public List<Texture2D> CB_GRP;
-        public List<Texture2D> CB_Color;
-
-
-
-
-        public Dictionary<FileData.TileSet.TileType, List<Texture2D>> SDTileSet;
-        public Dictionary<FileData.TileSet.TileType, List<Texture2D>> HDTileSet;
-        public Dictionary<FileData.TileSet.TileType, List<Texture2D>> CBTileSet;
-
 
         public TileSet tileSet;
         private void GrpLoad()
@@ -116,20 +99,17 @@ namespace UseMapEditor.MonoGameControl
             //texture.SetData(textureData, dxtHeaderOffset, textureData.Length - dxtHeaderOffset);
 
 
-            texture = Texture2D.FromFile(GraphicsDevice, "Content\\AnyConv.com__main_000-000-diffuse.png");
+            //texture = Texture2D.FromFile(GraphicsDevice, "Content\\AnyConv.com__main_000-000-diffuse.png");
 
 
-            minimap = new Texture2D(GraphicsDevice, 128, 128);
+            minimap = new Texture2D(GraphicsDevice, 256, 256);
 
 
             //Anim anim = new Anim(this);
 
-            SDTileSet = new Dictionary<TileSet.TileType, List<Texture2D>>();
-            HDTileSet = new Dictionary<TileSet.TileType, List<Texture2D>>();
-            CBTileSet = new Dictionary<TileSet.TileType, List<Texture2D>>();
-            FileData.TileSet.ReadTileSet(this);
+            //FileData.TileSet.ReadTileSet(this);
 
-            tileSet = new TileSet();
+            tileSet = new TileSet(this);
 
 
 
@@ -198,6 +178,7 @@ namespace UseMapEditor.MonoGameControl
                 return;
             }
 
+
             MousePos = mouseState.Position.ToVector2();
 
 
@@ -233,7 +214,8 @@ namespace UseMapEditor.MonoGameControl
                 LastScroll = mouseState.ScrollWheelValue;
             }
 
-
+            KeyboardEvent(keyboardState);
+            MiniMapClick(mouseState);
 
             screenwidth = (float)this.ActualWidth;
             screenheight = (float)this.ActualHeight;
@@ -244,23 +226,41 @@ namespace UseMapEditor.MonoGameControl
             if ((MapSize.X < screenwidth) & (MapSize.Y < screenheight))
             {
                 //화면이 충분히 작을 경우
-                mapeditor.opt_xpos = -(int)(((screenwidth - MapSize.X)) / 2 / mapeditor.opt_scalepercent);
-                mapeditor.opt_ypos = -(int)(((screenheight - MapSize.Y)) / 2 / mapeditor.opt_scalepercent);
+                mapeditor.opt_xpos = -(int)((screenwidth - (int)MapSize.X) / 2 / mapeditor.opt_scalepercent);
+                mapeditor.opt_ypos = -(int)((screenheight - (int)MapSize.Y) / 2 / mapeditor.opt_scalepercent);
             }
 
             if (mapeditor.IsToolBarOpen())
             {
-                if (MousePos.X > (screenwidth - 256))
+                if (MousePos.X > (screenwidth - CloseTimer))
                 {
                     this.IsEnabled = false;
                 }
             }
 
-
+            _timeElapsed += time.ElapsedGameTime;
+            if (_timeElapsed >= TimeSpan.FromSeconds(1))
+            {
+                _timeElapsed -= TimeSpan.FromSeconds(1);
+                _frames = _liveFrames;
+                _liveFrames = 0;
+            }
         }
+        private int _frames;
+        private int _liveFrames;
+        private TimeSpan _timeElapsed;
+
+
 
         float screenwidth;
         float screenheight;
+
+
+        float drawtimer;
+
+
+
+        float VarFrame = 0;
         protected override void Draw(GameTime time)
         {
             if (mapeditor == null)
@@ -272,41 +272,93 @@ namespace UseMapEditor.MonoGameControl
                 return;
             }
 
+
+            int MaxFrame = 60;
+            int.TryParse(Global.Setting.Vals[Global.Setting.Settings.Render_MaxFrame], out MaxFrame);
+
+
+
+            float updateTime;
+            //프레임이 원하는 만큼 나오지 않을 경우
+            if (Global.Setting.Vals[Global.Setting.Settings.Render_UseVFR] == "true")
+            {
+                float framediffer = MaxFrame - _frames;
+                if(framediffer > 5)
+                {
+                    VarFrame = (float)(100 * mapeditor.opt_scalepercent);
+                }
+                else
+                {
+                    VarFrame = MaxFrame;
+                }
+
+
+
+                updateTime = 1f / VarFrame;
+            }
+            else
+            {
+                updateTime = 1f / MaxFrame;
+            }
+
+
+            drawtimer += (float)time.ElapsedGameTime.TotalSeconds;
+            if (drawtimer >= updateTime)
+            {
+                drawtimer -= updateTime;
+            }
+            else
+            {
+                return;
+            }
+
+
             screenwidth = (float)this.ActualWidth;
             screenheight = (float)this.ActualHeight;
 
 
 
             bool IsDrawGrp = (Global.Setting.Vals[Global.Setting.Settings.Program_GRPLoad] == "true");
-
-            GraphicsDevice.Clear(Color.LightGray);
-
-
+            GraphicsDevice.Clear(Color.DimGray);
 
             //_spriteBatch.Draw(HD_GRP[(test / 10) % 999], new Vector2(20, 20), new Rectangle(0, 0, 300, 300), Color.White, 0.5f, Vector2.Zero, 0.5f, SpriteEffects.FlipVertically, 0);
-
-
             TileDraw(IsDrawGrp);
             GridDraw();
-            DrawUnit();
+            DrawUnit(IsDrawGrp);
             //두데드 그리기
-
-
             DrawPallet();
 
 
 
+
+
+
+
+
+            _liveFrames++;
             _spriteBatch.Begin();
-            _spriteBatch.DrawString(_font, mapeditor.mapdata.FilePath, new Vector2(5), Color.White);
+            //_spriteBatch.DrawString(_font, mapeditor.mapdata.FilePath, new Vector2(5), Color.White);
             //string status = "화면 좌표(" + mapeditor.opt_xpos.ToString() + "," + mapeditor.opt_ypos.ToString() + ")" + " 마우스좌표(" + MousePos.X.ToString() + "," + MousePos.Y.ToString() + ")" +
             //    "T(" + mapeditor.PosScreenToMap(MousePos).ToString() + ")";
-            string status =  mapeditor.PosScreenToMap(MousePos).ToString() ;
+            string status = "FPS:" + _frames + "\n";
+
+            status += mapeditor.mapdata.FilePath + "\n";
+            status += mapeditor.mapdata.TILETYPE.ToString() + ":";
+            status += mapeditor.mapdata.WIDTH + "," + mapeditor.mapdata.HEIGHT + "\n";
+
+
+            Vector2 MapMouse = mapeditor.PosScreenToMap(MousePos);
+            status += "(" + (int)MapMouse.X + "," + (int)MapMouse.X + ")" + "(" + (int)(MapMouse.X / 32) + "," + (int)(MapMouse.Y / 32) + ")";
+
 
 
             //_spriteBatch.Draw(HD_GRP[3], new Vector2(20, 20), new Rectangle(0, 0, 300, 300), Color.White, 0.5f, Vector2.Zero, 0.5f, SpriteEffects.FlipVertically, 0);
             //_spriteBatch.DrawString(_font, mapeditor.opt_xpos.ToString() + "," + mapeditor.opt_ypos.ToString(), new Vector2(5, 30), Color.White);
-            _spriteBatch.DrawString(_font, status, new Vector2(5, 30), Color.White);
+            _spriteBatch.DrawString(_font, status, new Vector2(5), Color.White);
             _spriteBatch.End();
+
+
+
 
             base.Draw(time);
         }

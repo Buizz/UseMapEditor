@@ -30,8 +30,8 @@
                     <materialDesign:PackIcon Kind="Close" />
                 </Button>
                 <Separator/>
-                <Button ToolTip="그래픽 타입" Click="grpTypeClick">
-                    <materialDesign:PackIcon Kind="Star" />
+                <Button ToolTip="그래픽 타입" Click="grpTypeClick" Padding="4" Width="54" Height="54">
+                    <Image x:Name="grpImg"/>
                 </Button>
                 
                 
@@ -135,7 +135,7 @@
                         </TextBlock.LayoutTransform>
                     </TextBlock>
                 </Expander.Header>
-                <DockPanel Width="256">
+                <DockPanel Width="512">
                     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
                         <Button Padding="4" Style="{StaticResource MaterialDesignOutlinedButton}" Height="Auto" Click="TileButton_Click">
                             <materialDesign:PackIcon Kind="Waves" Width="32" Height="32" />

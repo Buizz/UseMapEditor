@@ -45,7 +45,9 @@ namespace UseMapEditor.Control
                     button.Content = new LastOpenFileControl(FileList[i]);
                     button.Tag = FileList[i];
                     button.Style = (Style)Application.Current.Resources["MaterialDesignOutlinedButton"];
+                    button.Foreground = (Brush)Application.Current.Resources["MaterialDesignBody"];
 
+                    
                     button.Click += Button_Click;
 
                     LastOpendPanel.Children.Add(button);

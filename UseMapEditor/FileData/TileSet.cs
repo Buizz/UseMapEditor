@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,6 +12,25 @@ namespace UseMapEditor.FileData
 {
     public class TileSet
     {
+        private Dictionary<FileData.TileSet.TileType, List<Texture2D>> SDTileSet;
+        private Dictionary<FileData.TileSet.TileType, List<Texture2D>> HDTileSet;
+        private Dictionary<FileData.TileSet.TileType, List<Texture2D>> CBTileSet;
+        public Dictionary<FileData.TileSet.TileType, List<Texture2D>> GetTileDic(Control.MapEditor.DrawType drawType)
+        {
+            switch (drawType)
+            {
+                case Control.MapEditor.DrawType.SD:
+                    return SDTileSet;
+                case Control.MapEditor.DrawType.HD:
+                    return HDTileSet;
+                case Control.MapEditor.DrawType.CB:
+                    return CBTileSet;
+            }
+            return null;
+        }
+
+
+
         public enum TileType{
             badlands,
             platform,
@@ -54,15 +74,51 @@ namespace UseMapEditor.FileData
         public Dictionary<TileType,cv5[]> cv5data;
 
 
-        public TileSet()
+        public TileSet(MapDrawer mapDrawer)
         {
+            SDTileSet = new Dictionary<TileType, List<Texture2D>>();
+            HDTileSet = new Dictionary<TileType, List<Texture2D>>();
+            CBTileSet = new Dictionary<TileType, List<Texture2D>>();
+
+            SDTileSetMiniMap = new Dictionary<TileType, List<Color>>();
+            HDTileSetMiniMap = new Dictionary<TileType, List<Color>>();
+            CBTileSetMiniMap = new Dictionary<TileType, List<Color>>();
+            foreach (TileType settings in Enum.GetValues(typeof(TileType)))
+            {
+                {
+                    List<Texture2D> texture2Ds = new List<Texture2D>();
+                    List<Color> colrlist = new List<Color>();
+
+                    ReadTile(mapDrawer, settings, "SD", texture2Ds, colrlist);
+                    SDTileSetMiniMap.Add(settings, colrlist);
+                    SDTileSet.Add(settings, texture2Ds);
+                }
+                {
+                    List<Texture2D> texture2Ds = new List<Texture2D>();
+                    List<Color> colrlist = new List<Color>();
+
+                    ReadTile(mapDrawer, settings, "HD", texture2Ds, colrlist);
+
+                    HDTileSetMiniMap.Add(settings, colrlist);
+                    HDTileSet.Add(settings, texture2Ds);
+                }
+                {
+                    List<Texture2D> texture2Ds = new List<Texture2D>();
+                    List<Color> colrlist = new List<Color>();
+
+                    ReadTile(mapDrawer, settings, "CB", texture2Ds, colrlist);
+
+                    CBTileSetMiniMap.Add(settings, colrlist);
+                    CBTileSet.Add(settings, texture2Ds);
+                }
+            }
 
             cv5data = new Dictionary<TileType, cv5[]>();
 
             foreach (TileType tileType in Enum.GetValues(typeof(TileType)))
             {
                 {
-                    string fname = $"CascData\\TileSet\\{tileType.ToString()}.cv5";
+                    string fname = AppDomain.CurrentDomain.BaseDirectory + $"CascData\\TileSet\\{tileType.ToString()}.cv5";
                     BinaryReader br = new BinaryReader(new MemoryStream(File.ReadAllBytes(fname)));
 
                     int cv5count = (int)br.BaseStream.Length / 52;
@@ -94,7 +150,7 @@ namespace UseMapEditor.FileData
                     br.Close();
                 }
                 {
-                    string fname = $"CascData\\TileSet\\{tileType.ToString()}.vf4";
+                    string fname = AppDomain.CurrentDomain.BaseDirectory + $"CascData\\TileSet\\{tileType.ToString()}.vf4";
                     BinaryReader br = new BinaryReader(new MemoryStream(File.ReadAllBytes(fname)));
 
                     br.Close();
@@ -102,48 +158,45 @@ namespace UseMapEditor.FileData
             }
              
         }
-        public Texture2D GetTile(TileType tileType,Dictionary<TileType, List<Texture2D>> tlist, int vMTXM)
+        public Texture2D GetTile(Control.MapEditor.DrawType drawType, TileType tileType, ushort MTXM)
         {
-            int group = (vMTXM >> 4);
-            int index = (vMTXM & 0xf);
+            int group = (MTXM >> 4);
+            int index = (MTXM & 0xf);
 
-            return tlist[tileType][cv5data[tileType][group].tiles[index]];
+            return GetTileDic(drawType)[tileType][cv5data[tileType][group].tiles[index]];
+        }
+
+        public Texture2D GetTile(Control.MapEditor.DrawType drawType, TileType tileType, ushort group, ushort index)
+        {
+            return GetTileDic(drawType)[tileType][cv5data[tileType][group].tiles[index]];
         }
 
 
 
-
-        public static void ReadTileSet(MapDrawer mapDrawer)
+        private Dictionary<FileData.TileSet.TileType, List<Color>> SDTileSetMiniMap;
+        private Dictionary<FileData.TileSet.TileType, List<Color>> HDTileSetMiniMap;
+        private Dictionary<FileData.TileSet.TileType, List<Color>> CBTileSetMiniMap;
+        public Color GetTileColor(Control.MapEditor.DrawType drawType , UseMapEditor.FileData.TileSet.TileType tileType, ushort MTXM)
         {
-            foreach (TileType settings in Enum.GetValues(typeof(TileType)))
+            int group = (MTXM >> 4);
+            int index = (MTXM & 0xf);
+            switch (drawType)
             {
-                {
-                    List<Texture2D> texture2Ds = new List<Texture2D>();
-
-                    ReadTile(mapDrawer, settings, "SD", texture2Ds);
-
-                    mapDrawer.SDTileSet.Add(settings, texture2Ds);
-                }
-                {
-                    List<Texture2D> texture2Ds = new List<Texture2D>();
-
-                    ReadTile(mapDrawer, settings, "HD", texture2Ds);
-
-                    mapDrawer.HDTileSet.Add(settings, texture2Ds);
-                }
-                {
-                    List<Texture2D> texture2Ds = new List<Texture2D>();
-
-                    ReadTile(mapDrawer, settings, "CB", texture2Ds);
-
-                    mapDrawer.CBTileSet.Add(settings, texture2Ds);
-                }
+                case Control.MapEditor.DrawType.SD:
+                    return SDTileSetMiniMap[tileType][cv5data[tileType][group].tiles[index]];
+                case Control.MapEditor.DrawType.HD:
+                    return HDTileSetMiniMap[tileType][cv5data[tileType][group].tiles[index]];
+                case Control.MapEditor.DrawType.CB:
+                    return CBTileSetMiniMap[tileType][cv5data[tileType][group].tiles[index]];
             }
+            return Color.Black;
         }
 
-        private static void ReadTile(MapDrawer mapDrawer, TileType tileType, string _fname, List<Texture2D> texture2Ds)
+
+
+        private void ReadTile(MapDrawer mapDrawer, TileType tileType, string _fname, List<Texture2D> texture2Ds, List<Color> MiniMapColor)
         {
-            string fname = $"CascData\\{_fname}\\TileSet\\{tileType.ToString()}.dds.vr4";
+            string fname = AppDomain.CurrentDomain.BaseDirectory + $"CascData\\{_fname}\\TileSet\\{tileType.ToString()}.dds.vr4";
 
             BinaryReader br = new BinaryReader(new MemoryStream(File.ReadAllBytes(fname)));
 
@@ -181,7 +234,7 @@ namespace UseMapEditor.FileData
                     Texture2D texture = new Texture2D(mapDrawer.GraphicsDevice, 32, 32, false, SurfaceFormat.Color);
                     texture.SetData(textureData, 0, 1024);
 
-
+                    MiniMapColor.Add(new Color(textureData[0]));
                     texture2Ds.Add(texture);
                 }
             }
@@ -204,6 +257,7 @@ namespace UseMapEditor.FileData
                     texture.SetData(textureData, dxtHeaderOffset, textureData.Length - dxtHeaderOffset);
 
 
+                    MiniMapColor.Add(Dxt1.DecompressBlock(8,8, width, textureData));
                     texture2Ds.Add(texture);
                 }
             }

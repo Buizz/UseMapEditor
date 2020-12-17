@@ -98,6 +98,12 @@ namespace UseMapEditor.Dialog
 
 
             this.WindowState = WindowState.Normal;
+            int W = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea.Width; //모니터 스크린 가로크기
+            int H = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea.Height; //모니터 스크린 세로크기
+
+            this.Left = (W - this.Width) / 2;
+            this.Top = (H - this.Height) / 2;
+
             BackgroundWorker backgroundWorker = new BackgroundWorker();
             backgroundWorker.DoWork += delegate (object _sender, DoWorkEventArgs _e)
             {
@@ -187,6 +193,7 @@ namespace UseMapEditor.Dialog
             LoadComplete = true;
             MainWindow main = new MainWindow();
             main.Show();
+            main.Focus();
             Visibility = Visibility.Collapsed;
         }
 

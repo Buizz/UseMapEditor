@@ -15,6 +15,14 @@ namespace UseMapEditor.MonoGameControl
 {
     public partial class MapDrawer : WpfGame
     {
+        public void DrawRect(SpriteBatch spriteBatch, Vector2 point1, Vector2 point2, Color color, float thickness = 1f)
+        {
+            DrawLine(spriteBatch, new Vector2(point1.X, point1.Y), new Vector2(point2.X, point1.Y), color, thickness);
+            DrawLine(spriteBatch, new Vector2(point1.X, point1.Y), new Vector2(point1.X, point2.Y), color, thickness);
+            DrawLine(spriteBatch, new Vector2(point2.X, point1.Y), new Vector2(point2.X, point2.Y), color, thickness);
+            DrawLine(spriteBatch, new Vector2(point2.X, point2.Y), new Vector2(point1.X, point2.Y), color, thickness);
+        }
+
         public void DrawLine(SpriteBatch spriteBatch, Vector2 point1, Vector2 point2, Color color, float thickness = 1f)
         {
             var distance = Vector2.Distance(point1, point2);
@@ -74,6 +82,8 @@ namespace UseMapEditor.MonoGameControl
             return;
         }
 
+
+      
 
         private void TileDraw(bool IsDrawGrp)
         {
@@ -141,20 +151,14 @@ namespace UseMapEditor.MonoGameControl
                         {
                             case Control.MapEditor.DrawType.SD:
                                 {
-                                    Texture2D texture2D = tileSet.GetTile(mapeditor.mapdata.TILETYPE, SDTileSet, MTXM);
-                                    _spriteBatch.Draw(texture2D, new Vector2(xi, yi), null, Color.White, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent, SpriteEffects.None, 1);
+                                    Texture2D texture2D = tileSet.GetTile(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, MTXM);
+                                    _spriteBatch.Draw(texture2D, new Vector2(xi, yi), null, Color.White, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent, SpriteEffects.None, 0);
                                 }
                                 break;
-                            case Control.MapEditor.DrawType.HD:
+                            case Control.MapEditor.DrawType.HD: case Control.MapEditor.DrawType.CB:
                                 {
-                                    Texture2D texture2D = tileSet.GetTile(mapeditor.mapdata.TILETYPE, HDTileSet, MTXM);
-                                    _spriteBatch.Draw(texture2D, new Vector2(xi, yi), null, Color.White, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent / 2, SpriteEffects.None, 1);
-                                }
-                                break;
-                            case Control.MapEditor.DrawType.CB:
-                                {
-                                    Texture2D texture2D = tileSet.GetTile(mapeditor.mapdata.TILETYPE, CBTileSet, MTXM);
-                                    _spriteBatch.Draw(texture2D, new Vector2(xi, yi), null, Color.White, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent / 2, SpriteEffects.None, 1);
+                                    Texture2D texture2D = tileSet.GetTile(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, MTXM);
+                                    _spriteBatch.Draw(texture2D, new Vector2(xi, yi), null, Color.White, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent / 2, SpriteEffects.None, 0);
                                 }
                                 break;
                         }

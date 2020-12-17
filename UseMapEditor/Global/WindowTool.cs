@@ -63,14 +63,19 @@ namespace UseMapEditor.Global
                 return;
             }
 
-
-            if(strlist.Count > 4)
+            if (strlist.Contains(filepath))
+            {
+                strlist.Remove(filepath);
+            }
+            if (strlist.Count > 4)
             {
                 strlist.RemoveAt(0);
 
             }
             strlist.Add(filepath);
-            
+
+
+
             Properties.Settings.Default.LastOpend = String.Join("|", strlist.ToArray());
         }
         public static string[] GetLastOpenfile()
