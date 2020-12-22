@@ -3,7 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:UseMapEditor.Control" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:local="clr-namespace:UseMapEditor.Control"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
+             xmlns:mapeditorcontrol="clr-namespace:UseMapEditor.Control.MapEditorControl"
              mc:Ignorable="d" 
              GotFocus="UserControl_GotFocus"
              SizeChanged="UserControl_SizeChanged"
@@ -50,9 +53,9 @@
                     <ComboBoxItem Content="256px" Tag="256"/>
                 </ComboBox>
 
-                <ListBox SelectionMode="Extended" SelectionChanged="ListBox_SelectionChanged">
+                <ListBox x:Name="ViewOptionListBox" SelectionMode="Extended" SelectionChanged="ListBox_SelectionChanged">
                     <ListBoxItem>
-                        <materialDesign:PackIcon Kind="Waves" />
+                        <materialDesign:PackIcon Kind="Waves"/>
                     </ListBoxItem>
                     <ListBoxItem>
                         <materialDesign:PackIcon Kind="HumanHandsdown" />
@@ -102,15 +105,32 @@
                 </TextBlock>
             </Expander.Header>
             <DockPanel>
-                <ListBox>
-                    <ListBoxItem Content="맵"/>
-                    <ListBoxItem Content="세력"/>
-                    <ListBoxItem Content="유닛"/>
-                    <ListBoxItem Content="업그레이드"/>
-                    <ListBoxItem Content="테크"/>
-                    <ListBoxItem Content="사운드"/>
-                    <ListBoxItem Content="스트링"/>
-                </ListBox>
+                <dragablz:TabablzControl FixedHeaderCount="7" Background="{DynamicResource MaterialDesignPaper}" TabStripPlacement="Left">
+                    <TabItem Header="맵">
+                        <mapeditorcontrol:MapSetting x:Name="MapSettingTabItem"/>
+                    </TabItem>
+                    <TabItem Header="플레이어">
+                        <mapeditorcontrol:PlayerSettingPanel x:Name="PlayerSettingTabItem"/>
+                    </TabItem>
+                    <TabItem Header="세력">
+
+                    </TabItem>
+                    <TabItem Header="유닛">
+
+                    </TabItem>
+                    <TabItem Header="업그레이드">
+
+                    </TabItem>
+                    <TabItem Header="테크">
+
+                    </TabItem>
+                    <TabItem Header="사운드">
+
+                    </TabItem>
+                    <TabItem Header="스트링">
+
+                    </TabItem>
+                </dragablz:TabablzControl>
             </DockPanel>
         </Expander>
 

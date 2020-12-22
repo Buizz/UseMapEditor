@@ -20,6 +20,8 @@ using UseMapEditor.Control;
 using MaterialDesignThemes.Wpf;
 using System.Windows.Threading;
 using UseMapEditor.Windows;
+using System.ComponentModel;
+using UseMapEditor.Dialog;
 
 namespace UseMapEditor
 {
@@ -179,6 +181,8 @@ namespace UseMapEditor
             SetWindowName();
             return result;
         }
+
+
         public bool SaveMapCommand()
         {
             if (!mapeditor.IsLoad)
@@ -190,6 +194,11 @@ namespace UseMapEditor
             if (result)
             {
 
+            }
+            else
+            {
+                Dialog.MsgDialog msgDialog = new MsgDialog("저장에 실패했습니다.", MessageBoxButton.OK, MessageBoxImage.Error);
+                msgDialog.ShowDialog();
             }
             SetWindowName();
             return result;

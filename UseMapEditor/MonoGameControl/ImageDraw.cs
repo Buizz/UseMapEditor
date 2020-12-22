@@ -47,14 +47,14 @@ namespace UseMapEditor.MonoGameControl
             if (!rgrp.IsLoad)
             {
                 //GRP로드가 되지 않았을 경우.
-                string fname =  $"CascData\\{drawType.ToString()}\\anim\\" + imageindex.ToString() + "\\diffuse.png";
-                string fcolorname = $"CascData\\{drawType.ToString()}\\anim\\" + imageindex.ToString() + "\\teamcolor.png";
+                string fname = AppDomain.CurrentDomain.BaseDirectory + $"CascData\\{drawType.ToString()}\\anim\\" + imageindex.ToString() + "\\diffuse.png";
+                string fcolorname = AppDomain.CurrentDomain.BaseDirectory + $"CascData\\{drawType.ToString()}\\anim\\" + imageindex.ToString() + "\\teamcolor.png";
 
-                if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + fname))
+                if (File.Exists(fname))
                 {
                     rgrp.MainGRP = LoadFromFile(fname);
                 }
-                if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + fcolorname))
+                if (File.Exists(fcolorname))
                 {
                     rgrp.Color = LoadFromFile(fcolorname);
                 }

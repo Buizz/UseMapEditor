@@ -17,6 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using UseMapEditor.DataBinding;
 using UseMapEditor.Dialog;
 using UseMapEditor.MonoGameControl;
 
@@ -27,6 +28,8 @@ namespace UseMapEditor.Control
     /// </summary>
     public partial class MapEditor : UserControl
     {
+        public MapDataBinding mapDataBinding;
+
 
         private int _opt_xpos = 0;
         private int _opt_ypos = 0;
@@ -195,6 +198,7 @@ namespace UseMapEditor.Control
         private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
+            //mapDataBinding.TileSet = ViewOptionListBox.SelectedItems.Count;
             //Global.WindowTool.ChangeView(this, true);
         }
 
@@ -236,6 +240,11 @@ namespace UseMapEditor.Control
             mapdata = new MapData();
             minimapcolor = new Microsoft.Xna.Framework.Color[256 * 256];
             RefreshGRPIcon();
+
+            MapSettingTabItem.SetMapEditor(this);
+            mapDataBinding = new MapDataBinding(this);
+            PlayerSettingTabItem.SetMapEditor(this);
+            this.DataContext = mapDataBinding;
         }
 
 
@@ -245,6 +254,7 @@ namespace UseMapEditor.Control
             opt_scale = 10;
             ScaleTB.Text = opt_scale.ToString();
 
+            mapDataBinding.PropertyChangeAll();
         }
 
         public bool NewMap()
@@ -311,6 +321,10 @@ namespace UseMapEditor.Control
 
 
         private bool isdirty;
+        public void SetDirty()
+        {
+            IsDirty = true;
+        }
         public bool IsDirty
         {
             get

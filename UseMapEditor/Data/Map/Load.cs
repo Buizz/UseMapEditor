@@ -19,7 +19,7 @@ namespace Data.Map
                 filepath = "제목없음";
                 return true;
             }
-
+            MapDataReset();
 
             //맵 파일을 연다.
             //chk를 추출한다.
@@ -47,14 +47,16 @@ namespace Data.Map
                 UseMapEditor.FileData.StromLib.SFileCloseArchive(hmpq);
                 //TODO:MPQ오픈 실패
                 throw new Exception("scenario.chk를 열지 못했습니다.");
-                return false;
             }
 
             //음원파일을 추출한다.
 
             using (BinaryReader br = new BinaryReader(new MemoryStream(buffer)))
             {
-                ApplychkAll(br);
+                if (!ApplychkAll(br))
+                {
+                    return false;
+                }
 
             }
                 

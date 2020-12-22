@@ -187,7 +187,7 @@ namespace UseMapEditor.MonoGameControl
                 for (int x = 0; x < mapeditor.mapdata.WIDTH; x++)
                 {
                     int tileindex = x + y * mapeditor.mapdata.WIDTH;
-                    ushort MTXM = mapeditor.mapdata.MTXM[tileindex];
+                    ushort MTXM = mapeditor.mapdata.TILE[tileindex];
 
                     mapeditor.minimapcolor[x + y * 256] = tileSet.GetTileColor(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, MTXM);
                 }

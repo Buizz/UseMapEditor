@@ -34,7 +34,7 @@ namespace UseMapEditor.Dialog
             InitializeComponent();
         }
 
-        string tempfolder = AppDomain.CurrentDomain.BaseDirectory + @"\Data\temp";
+        public static string tempfolder = AppDomain.CurrentDomain.BaseDirectory + @"\Data\temp";
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             if (!System.IO.Directory.Exists(tempfolder))

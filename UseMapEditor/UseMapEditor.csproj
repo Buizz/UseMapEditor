@@ -111,6 +111,9 @@
     <Reference Include="MonoGame.Framework.WpfInterop, Version=1.8.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MonoGame.Framework.WpfInterop.1.8.0\lib\net452\MonoGame.Framework.WpfInterop.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Pfim, Version=0.9.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Pfim.0.9.1\lib\netstandard2.0\Pfim.dll</HintPath>
     </Reference>
@@ -174,15 +177,29 @@
     <Compile Include="Casc\CascLib.cs" />
     <Compile Include="Casc\Data.cs" />
     <Compile Include="Components\FpsComponent.cs" />
+    <Compile Include="Control\ColorPicker.xaml.cs">
+      <DependentUpon>ColorPicker.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Control\LastOpenFileControl.xaml.cs">
       <DependentUpon>LastOpenFileControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Control\MapCreate.xaml.cs">
       <DependentUpon>MapCreate.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DataBinding\MapDataBinding.cs" />
+    <Compile Include="Control\MapEditorControl\MapSetting.xaml.cs">
+      <DependentUpon>MapSetting.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Control\MapEditorControl\PlayerSetting.xaml.cs">
+      <DependentUpon>PlayerSetting.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Control\MapEditorControl\PlayerSettingPanel.xaml.cs">
+      <DependentUpon>PlayerSettingPanel.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Control\StartPage.xaml.cs">
       <DependentUpon>StartPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DataBinding\PlayerBinding.cs" />
     <Compile Include="Data\Map\Load.cs" />
     <Compile Include="Data\Map\ChkTool.cs" />
     <Compile Include="Data\Map\Save.cs" />
@@ -207,6 +224,10 @@
     <Compile Include="Windows\TestWindow.xaml.cs">
       <DependentUpon>TestWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="Control\ColorPicker.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Control\LastOpenFileControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -216,6 +237,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Control\MapEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Control\MapEditorControl\MapSetting.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Control\MapEditorControl\PlayerSetting.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Control\MapEditorControl\PlayerSettingPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -328,12 +361,12 @@
     <Resource Include="mainicon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Icon\scx.ico">
+    <None Include="Data\Icons\scx.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Icon\scp.ico">
+    <None Include="Data\Icons\scp.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

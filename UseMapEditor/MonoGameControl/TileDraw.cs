@@ -143,7 +143,7 @@ namespace UseMapEditor.MonoGameControl
 
 
                     tileindex = cxti + cyti * mapeditor.mapdata.WIDTH;
-                    ushort MTXM = mapeditor.mapdata.MTXM[tileindex];
+                    ushort MTXM = mapeditor.mapdata.TILE[tileindex];
                     if (IsDrawGrp)
                     {
 
