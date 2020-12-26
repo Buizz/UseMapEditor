@@ -27,9 +27,12 @@ namespace UseMapEditor.MonoGameControl
         private WpfMouse _mouse;
 
         private SpriteBatch _spriteBatch;
+        private SpriteBatch _colorBatch;
         private SpriteFont _font;
 
+        BlendState ColorBlend;
 
+        private Vector2[] SDGRPSIZE;
         protected override void Initialize()
         {
             // must be initialized. required by Content loading and rendering (will add itself to the Services)
@@ -48,9 +51,24 @@ namespace UseMapEditor.MonoGameControl
             // must be called after the WpfGraphicsDeviceService instance was created
             base.Initialize();
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+            _colorBatch = new SpriteBatch(GraphicsDevice);
 
+            ColorBlend = new BlendState();
+            ColorBlend.ColorBlendFunction = BlendFunction.Add;
+            ColorBlend.ColorSourceBlend = Blend.DestinationColor;
+            ColorBlend.ColorDestinationBlend = Blend.InverseSourceAlpha;
 
             DownKeys = new List<Microsoft.Xna.Framework.Input.Keys>();
+
+            BinaryReader br = new BinaryReader(new FileStream(AppDomain.CurrentDomain.BaseDirectory + "\\Data\\SDGRPSIZE", FileMode.Open));
+
+            SDGRPSIZE = new Vector2[999];
+            for (int i = 0; i < 999; i++)
+            {
+                SDGRPSIZE[i] = new Vector2(br.ReadUInt32(), br.ReadUInt32());
+            }
+
+            br.Close();
         }
 
         private Texture2D gridtexture;
@@ -72,9 +90,10 @@ namespace UseMapEditor.MonoGameControl
 
             gridtexture = new Texture2D(GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
             gridtexture.SetData(new[] {Color.White});
-            
 
 
+
+            tileSet = new TileSet();
 
 
             if (Global.Setting.Vals[Global.Setting.Settings.Program_GRPLoad] == "true")
@@ -103,13 +122,13 @@ namespace UseMapEditor.MonoGameControl
 
 
             minimap = new Texture2D(GraphicsDevice, 256, 256);
-
+            minimapUnit = new Texture2D(GraphicsDevice, 256, 256);
 
             //Anim anim = new Anim(this);
 
             //FileData.TileSet.ReadTileSet(this);
 
-            tileSet = new TileSet(this);
+            tileSet.TextureLoad(this);
 
 
 
@@ -135,6 +154,24 @@ namespace UseMapEditor.MonoGameControl
                 GRPDATA.Add(drawType, gRPs);
             }
 
+            byte[] grpexist = File.ReadAllBytes(AppDomain.CurrentDomain.BaseDirectory + @"\CascData\grplist");
+
+
+            grpdic = new Dictionary<int, int>();
+            for (int i = 0; i < 999; i++)
+            {
+                int grpindex = (int)Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.images, "GRP File", i).Data;
+
+
+                if (grpexist[i] == 1)
+                {
+                    if (!grpdic.ContainsKey(grpindex))
+                    {
+                        grpdic.Add(grpindex, i);
+                    }
+                }
+            }
+            grpdic.Add(868, 920);
         }
 
 
@@ -311,8 +348,6 @@ namespace UseMapEditor.MonoGameControl
             {
                 return;
             }
-
-
             screenwidth = (float)this.ActualWidth;
             screenheight = (float)this.ActualHeight;
 
@@ -321,20 +356,52 @@ namespace UseMapEditor.MonoGameControl
             bool IsDrawGrp = (Global.Setting.Vals[Global.Setting.Settings.Program_GRPLoad] == "true");
             GraphicsDevice.Clear(Color.DimGray);
 
-            //_spriteBatch.Draw(HD_GRP[(test / 10) % 999], new Vector2(20, 20), new Rectangle(0, 0, 300, 300), Color.White, 0.5f, Vector2.Zero, 0.5f, SpriteEffects.FlipVertically, 0);
-            TileDraw(IsDrawGrp);
+            ImageList.Clear();
+
+
+            RenderTile(IsDrawGrp);
+            RenderDoodad(IsDrawGrp);
             GridDraw();
-            DrawUnit(IsDrawGrp);
-            //두데드 그리기
-            DrawPallet();
+
+            if (IsDrawGrp)
+            {
+                RenderUnit(IsDrawGrp);
+                RenderSprite(IsDrawGrp);
+
+
+                //모아진 유닛들을 그린다
+                ImageList.Sort((x1, x2) => x1.drawsort.CompareTo(x2.drawsort));
+                float scale = 1;
+                float grpscale = 1;
+                switch (mapeditor.opt_drawType)
+                {
+                    case Control.MapEditor.DrawType.SD:
+                        scale = (float)mapeditor.opt_scalepercent;
+                        grpscale = 1;
+
+                        break;
+                    case Control.MapEditor.DrawType.HD:
+                    case Control.MapEditor.DrawType.CB:
+                        scale = (float)mapeditor.opt_scalepercent;
+                        grpscale = 2;
+                        break;
+                }
+                for (int i = 0; i < ImageList.Count; i++)
+                {
+                    DrawImage(mapeditor.opt_drawType, ImageList[i], scale, grpscale);
+                }
+            }
+            DrawPallet(IsDrawGrp);
 
 
 
+            SystemDraw();
 
+            base.Draw(time);
+        }
 
-
-
-
+        private void SystemDraw()
+        {
             _liveFrames++;
             _spriteBatch.Begin();
             //_spriteBatch.DrawString(_font, mapeditor.mapdata.FilePath, new Vector2(5), Color.White);
@@ -356,11 +423,6 @@ namespace UseMapEditor.MonoGameControl
             //_spriteBatch.DrawString(_font, mapeditor.opt_xpos.ToString() + "," + mapeditor.opt_ypos.ToString(), new Vector2(5, 30), Color.White);
             _spriteBatch.DrawString(_font, status, new Vector2(5), Color.White);
             _spriteBatch.End();
-
-
-
-
-            base.Draw(time);
         }
     }
 }

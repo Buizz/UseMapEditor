@@ -56,25 +56,58 @@ namespace UseMapEditor.FileData
         {
             public ushort Index;
             public ushort Flags;
-            public ushort Left;
+            //0x0001 = Edge?
+            //0x0004 = Cliff?
+            //0x0040 = Creep
+            //0x0080 = Unbuildable
+            //0x0n00 = Deprecated ground height?
+            //0x1000 = Sprites.dat Reference
+            //0x2000 = Units.dat Reference(unit sprite)
+            //0x4000 = Overlay is Flipped
+            //0x8000 = Buildable for Start Location and Beacons
+            public ushort Left_OverlayID;
             public ushort Top;
-            public ushort Right;
+            public ushort Right_DoodadGroupString;
             public ushort Bottom;
-            public ushort Unknown1;
-            public ushort EdgeUp;
-            public ushort Unknown2;
+            public ushort Unknown1_DoodadID;
+            public ushort EdgeUp_Width;
+            public ushort Unknown2_Height;
             public ushort EdgeDown;
             public ushort[] tiles;
         }
+        public class DoodadPallet
+        {
+            public ushort dddID;
+            public string tblString;
+            public ushort dddGroup;
+            public ushort dddWidth;
+            public ushort dddHeight;
+
+            public ushort dddOverlayID;
+            public ushort dddFlags;
+            //0x0001 = Edge?
+            //0x0004 = Cliff?
+            //0x0040 = Creep
+            //0x0080 = Unbuildable
+            //0x0n00 = Deprecated ground height?
+            //0x1000 = Sprites.dat Reference
+            //0x2000 = Units.dat Reference(unit sprite)
+            //0x4000 = Overlay is Flipped
+            //0x8000 = Buildable for Start Location and Beacons
+        }
+
+
+
         public struct vf4
         {
             ushort[] tiles;
         }
 
-        public Dictionary<TileType,cv5[]> cv5data;
+        public Dictionary<TileType, cv5[]> cv5data;
+        public Dictionary<TileType, Dictionary<ushort, DoodadPallet>> DoodadPallets;
 
 
-        public TileSet(MapDrawer mapDrawer)
+        public void TextureLoad(MapDrawer mapDrawer)
         {
             SDTileSet = new Dictionary<TileType, List<Texture2D>>();
             HDTileSet = new Dictionary<TileType, List<Texture2D>>();
@@ -112,29 +145,44 @@ namespace UseMapEditor.FileData
                     CBTileSet.Add(settings, texture2Ds);
                 }
             }
+        }
 
+
+        public TileSet()
+        {
             cv5data = new Dictionary<TileType, cv5[]>();
+            DoodadPallets = new Dictionary<TileType, Dictionary<ushort, DoodadPallet>>();
 
             foreach (TileType tileType in Enum.GetValues(typeof(TileType)))
             {
                 {
-                    string fname = AppDomain.CurrentDomain.BaseDirectory + $"CascData\\TileSet\\{tileType.ToString()}.cv5";
+                    string fname = AppDomain.CurrentDomain.BaseDirectory + $"Data\\TileSet\\{tileType.ToString()}.cv5";
+
+                    if (Global.Setting.Vals[Global.Setting.Settings.Program_GRPLoad] == "true")
+                    {
+                        fname = AppDomain.CurrentDomain.BaseDirectory + $"CascData\\TileSet\\{tileType.ToString()}.cv5";
+                    }
+
+
                     BinaryReader br = new BinaryReader(new MemoryStream(File.ReadAllBytes(fname)));
+
+
 
                     int cv5count = (int)br.BaseStream.Length / 52;
                     cv5[] _cv5data = new cv5[cv5count];
+                    Dictionary<ushort, DoodadPallet> DoodadDic = new Dictionary<ushort, DoodadPallet>();
                     for (int i = 0; i < cv5count; i++)
                     {
                         cv5 _cv5 = new cv5();
                         _cv5.Index = br.ReadUInt16();
                         _cv5.Flags = br.ReadUInt16();
-                        _cv5.Left = br.ReadUInt16();
+                        _cv5.Left_OverlayID = br.ReadUInt16();
                         _cv5.Top = br.ReadUInt16();
-                        _cv5.Right = br.ReadUInt16();
+                        _cv5.Right_DoodadGroupString = br.ReadUInt16();
                         _cv5.Bottom = br.ReadUInt16();
-                        _cv5.Unknown1 = br.ReadUInt16();
-                        _cv5.EdgeUp = br.ReadUInt16();
-                        _cv5.Unknown2 = br.ReadUInt16();
+                        _cv5.Unknown1_DoodadID = br.ReadUInt16();
+                        _cv5.EdgeUp_Width = br.ReadUInt16();
+                        _cv5.Unknown2_Height = br.ReadUInt16();
                         _cv5.EdgeDown = br.ReadUInt16();
                         _cv5.tiles = new ushort[16];
 
@@ -143,21 +191,71 @@ namespace UseMapEditor.FileData
                             _cv5.tiles[p] = br.ReadUInt16();
                         }
                         _cv5data[i] = _cv5;
+
+
+
+                        if(_cv5.Index == 1)
+                        {
+                            //두데드
+                            ushort dddID = _cv5.Unknown1_DoodadID;
+                            ushort tblString = _cv5.Right_DoodadGroupString;
+                            ushort dddWidth = _cv5.EdgeUp_Width;
+                            ushort dddHeight = _cv5.Unknown2_Height;
+
+                            ushort dddOverlayID = _cv5.Left_OverlayID;
+                            ushort dddFlags = _cv5.Flags;
+
+
+                            ushort dddGroup = (ushort)i;
+                            if (!DoodadDic.ContainsKey(dddID))
+                            {
+                                DoodadPallet doodadPallet = new DoodadPallet();
+
+                                doodadPallet.dddID = dddID;
+                                doodadPallet.tblString = Global.WindowTool.stat_txt.Strings[tblString].val1;
+                                doodadPallet.dddWidth = dddWidth;
+                                doodadPallet.dddHeight = dddHeight;
+                                doodadPallet.dddOverlayID = dddOverlayID;
+                                doodadPallet.dddFlags = dddFlags;
+                                doodadPallet.dddGroup = dddGroup;
+
+
+                                DoodadDic.Add(dddID, doodadPallet);
+                            }
+                        }
+
+
+
                     }
 
                     cv5data.Add(tileType, _cv5data);
+                    DoodadPallets.Add(tileType, DoodadDic);
 
                     br.Close();
                 }
                 {
-                    string fname = AppDomain.CurrentDomain.BaseDirectory + $"CascData\\TileSet\\{tileType.ToString()}.vf4";
+                    string fname = AppDomain.CurrentDomain.BaseDirectory + $"Data\\TileSet\\{tileType.ToString()}.vf4";
+
+                    if (Global.Setting.Vals[Global.Setting.Settings.Program_GRPLoad] == "true")
+                    {
+                        fname = AppDomain.CurrentDomain.BaseDirectory + $"CascData\\TileSet\\{tileType.ToString()}.vf4";
+                    }
+
                     BinaryReader br = new BinaryReader(new MemoryStream(File.ReadAllBytes(fname)));
 
                     br.Close();
                 }
             }
-             
         }
+
+
+
+
+
+
+
+
+
         public Texture2D GetTile(Control.MapEditor.DrawType drawType, TileType tileType, ushort MTXM)
         {
             int group = (MTXM >> 4);
@@ -169,6 +267,11 @@ namespace UseMapEditor.FileData
         public Texture2D GetTile(Control.MapEditor.DrawType drawType, TileType tileType, ushort group, ushort index)
         {
             return GetTileDic(drawType)[tileType][cv5data[tileType][group].tiles[index]];
+        }
+
+        public bool IsBlack(TileType tileType, ushort group, ushort index)
+        {
+            return (cv5data[tileType][group].tiles[index] == 0);
         }
 
 

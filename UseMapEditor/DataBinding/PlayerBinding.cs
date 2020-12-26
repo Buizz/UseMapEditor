@@ -138,6 +138,7 @@ namespace UseMapEditor.DataBinding
                     mapEditor.mapdata.CRGBIND[PlayerID] = (byte)(value - 22);
                 }
 
+                mapEditor.IsMinimapUnitRefresh = false;
                 mapEditor.SetDirty();
                 OnPropertyChanged("Color");
                 OnPropertyChanged("BackColor");
@@ -205,12 +206,16 @@ namespace UseMapEditor.DataBinding
             }
         }
 
+
+
+
         public Microsoft.Xna.Framework.Color CustomColor
         {
             set
             {
                 Color = 24;
                 mapEditor.mapdata.CRGB[PlayerID] = value;
+                mapEditor.IsMinimapUnitRefresh = false;
             }
         }
 

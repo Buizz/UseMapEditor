@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UseMapEditor;
+using UseMapEditor.FileData;
+using static UseMapEditor.FileData.TileSet;
 
 namespace Data.Map
 {
@@ -34,6 +36,58 @@ namespace Data.Map
             }
         }
 
+
+        public Encoding ENCODING;
+        public void SetEncoding(int codepage)
+        {
+            ENCODING = System.Text.Encoding.GetEncoding(codepage);
+        }
+
+        public void MapDataReset()
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                CRGB[i] = new Microsoft.Xna.Framework.Color(0, 0, 0);
+
+                CRGBIND[i] = (byte)CRGBINDTYPE.UseCOLRselection;
+                COLR[i] = (byte)i;
+            }
+            UNIT.Clear();
+
+            MTXM = null;
+            TILE = null;
+            LOADSTR = null;
+            LOADSTRx = null;
+            IOWN = new byte[12];
+            SIDE = new byte[12];
+            FORCE = new byte[8];
+            FORCENAME = new StringData[4];
+            FORCENAME[0] = new StringData(this, "세력 1");
+            FORCENAME[1] = new StringData(this, "세력 2");
+            FORCENAME[2] = new StringData(this, "세력 3");
+            FORCENAME[3] = new StringData(this, "세력 4");
+
+
+            FORCEFLAG = new byte[4];
+            WIDTH = 0;
+            HEIGHT = 0;
+
+            SCEARIONAME = new StringData(this, "제목 없음");
+            SCEARIODES = new StringData(this, "시나리오 설명이 없습니다.");
+
+            ENCODING = null;// System.Text.Encoding.
+
+            BYTESTR = null;
+            BYTESTRx = null;
+
+            DD2.Clear();
+            THG2.Clear();
+
+            MASK = null;
+
+            MRGN = new CMRGN[255];
+            DDDTHG2.Clear();
+        }
 
 
         public UseMapEditor.FileData.TileSet.TileType TILETYPE;
@@ -99,6 +153,12 @@ namespace Data.Map
             0x72, 0xC7, 0x7F, 0x90, 0x4D, 0x1B, 0x96, 0x10, 0x13, 0x05, 0x68, 0x68, 0x35, 0xC0, 0x7B, 0xFF, 0x46, 0x85, 0x43,
             0x2A, 0x01, 0x04, 0x05, 0x06, 0x02, 0x01, 0x05, 0x02, 0x00, 0x03, 0x07, 0x07, 0x05, 0x04, 0x06, 0x03};
 
+        public StringData SCEARIONAME = new StringData(null, "");
+        public StringData SCEARIODES = new StringData(null, "");
+
+
+
+
         public byte[] IOWN = new byte[12];
         public enum IOWNTYPE
         {
@@ -108,6 +168,24 @@ namespace Data.Map
             HUMAN = 6,
             NEUTRAL = 7
         }
+        public string GetIOWNTYPEName(IOWNTYPE index)
+        {
+            switch (index)
+            {
+                case IOWNTYPE.NOPLAYER:
+                    return "사용안함";
+                case IOWNTYPE.RESCUABLE:
+                    return "구조가능";
+                case IOWNTYPE.COMPUTER:
+                    return "컴퓨터";
+                case IOWNTYPE.HUMAN:
+                    return "사람";
+                case IOWNTYPE.NEUTRAL:
+                    return "중립";
+            }
+            return "알수없음";
+        }
+
 
 
         public byte[] SIDE = new byte[12];
@@ -119,6 +197,33 @@ namespace Data.Map
             Userselectable = 5,
             Inactive = 7
         }
+        public string GetSIDETYPEName(SIDETYPE index)
+        {
+            switch (index)
+            {
+                case SIDETYPE.Zerg:
+                    return "저그";
+                case SIDETYPE.Terran:
+                    return "테란";
+                case SIDETYPE.Protoss:
+                    return "프로토스";
+                case SIDETYPE.Userselectable:
+                    return "유저선택";
+                case SIDETYPE.Inactive:
+                    return "비활성";
+            }
+            return "알수없음";
+        }
+
+        public byte[] FORCE = new byte[8];
+        public StringData[] FORCENAME = new StringData[4];
+        public byte[] FORCEFLAG = new byte[4];
+        //Bit 0 - Random start location
+        //Bit 1 - Allies
+        //Bit 2 - Allied victory
+        //Bit 3 - Shared vision
+        //Bit 4-7 - Unused
+
 
         public byte[] COLR = new byte[8];
         public byte[] CRGBIND = new byte[8];
@@ -170,6 +275,37 @@ namespace Data.Map
 
 
 
+        public Microsoft.Xna.Framework.Color UnitColor(int PlayerID)
+        {
+            if(PlayerID < 8)
+            {
+                if ((CRGBINDTYPE)CRGBIND[PlayerID] == CRGBINDTYPE.UseCOLRselection)
+                {
+                    return MapData.PlayerColors[CRGB[PlayerID].B];
+                }
+                else
+                {
+                    if ((CRGBINDTYPE)CRGBIND[PlayerID] == CRGBINDTYPE.CustomRGBColor)
+                    {
+
+                        return CRGB[PlayerID];
+
+                    }
+                    else
+                    {
+                        return new Color();
+                    }
+                }
+            }
+            else
+            {
+                return PlayerColors[PlayerID];
+            }
+
+
+
+        }
+
 
 
 
@@ -179,6 +315,196 @@ namespace Data.Map
 
 
         public ushort[] TILE;
+        public ushort[] MTXM;
+
+
+        public List<CDD2> DD2 = new List<CDD2>();
+        public class CDD2
+        {
+            public int alpha;
+
+            public ushort ID;//u16: Number of the doodad.Size of the doodad is dependent on this. Doodads are different for each tileset.
+            public ushort X;//u16: X coordinate of the doodad unit
+            public ushort Y;//u16: Y coordinate of the doodad unit
+            public byte PLAYER;//u8: Player number that owns the doodad
+            public byte FLAG;//u8: Enabled flag
+                             //00 - Doodad is enabled (trap can attack, door is closed, etc)
+                             //01 - Doodad is disabled
+
+
+            MapData mapData;
+
+
+            public void ImageReset()
+            {
+                DoodadPallet pallete = UseMapEditor.Global.WindowTool.MapViewer.tileSet.DoodadPallets[mapData.TILETYPE][ID];
+                if ((pallete.dddFlags & 0x1000) > 0)
+                {
+                    //0x1000 = Sprites.dat Reference
+                    int ImageID = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.sprites, "Image File", pallete.dddOverlayID).Data;
+
+                    CImage p = new CImage(alpha, Images, ImageID, 0, 0, _drawType: CImage.DrawType.Normal, level: 8);
+                    Images.Add(p);
+                }
+                if ((pallete.dddFlags & 0x2000) > 0)
+                {
+                    //0x2000 = Units.dat Reference(unit sprite)
+                    int Graphics = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "Graphics", pallete.dddOverlayID).Data;
+                    int Sprite = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.flingy, "Sprite", Graphics).Data;
+                    int ImageID = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.sprites, "Image File", Sprite).Data;
+
+                    CImage p = new CImage(alpha, Images, ImageID, 0, 0, _drawType: CImage.DrawType.Normal, level: 8);
+                    Images.Add(p);
+                }
+            }
+            public CDD2(BinaryReader br, MapData _mapData)
+            {
+                alpha = UseMapEditor.Global.WindowTool.random.Next();
+                mapData = _mapData;
+
+                ID = br.ReadUInt16();
+                X = br.ReadUInt16();
+                Y = br.ReadUInt16();
+                PLAYER = br.ReadByte();
+                FLAG = br.ReadByte();
+
+
+                Images = new List<CImage>();
+
+                ImageReset();
+            }
+
+
+
+            public List<CImage> Images;
+        }
+
+        public List<CTHG2> DDDTHG2 = new List<CTHG2>();
+        public List<CTHG2> THG2 = new List<CTHG2>();
+        public class CTHG2
+        {
+            public int alpha;
+
+
+            public ushort ID;//u16: Unit/Sprite number of the sprite
+            public ushort X;//u16: X coordinate of the doodad unit
+            public ushort Y;//u16: Y coordinate of the doodad unit
+            public byte PLAYER;//u8: Player number that owns the doodad
+            public byte UNUSED;//u8: Unused
+            public ushort FLAG;//u16: Flags
+                               //Bit 0-11 - Unused
+                               //Bit 12 - Pure Sprite
+                               //Bit 13 - Unit Sprite
+                               //Bit 14 - Flipped
+                               //Bit 15 - Disabled(Only valid if Draw as sprite is unchecked, disables the unit)
+
+            public CTHG2()
+            {
+                alpha = UseMapEditor.Global.WindowTool.random.Next();
+            }
+
+            public CTHG2(BinaryReader br)
+            {
+                alpha = UseMapEditor.Global.WindowTool.random.Next();
+
+                ID = br.ReadUInt16();
+                X = br.ReadUInt16();
+                Y = br.ReadUInt16();
+                PLAYER = br.ReadByte();
+                UNUSED = br.ReadByte();
+                FLAG = br.ReadUInt16();
+
+                Images = new List<CImage>();
+
+                ImageReset();
+            }
+
+
+            public int BoxWidth;
+            public int BoxHeight;
+
+
+            public void ImageReset()
+            {
+                Images.Clear();
+                int ImageID = 0;
+
+                if ((FLAG & (1 << 12)) > 0)
+                {
+                    //Pure
+                    ImageID = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.sprites, "Image File", ID).Data;
+
+                    BoxWidth = 256;
+                    BoxHeight = 256;
+
+                    CImage p = new CImage(alpha, Images, ImageID, 0, PLAYER, _drawType: CImage.DrawType.Normal, level: 8);
+                    Images.Add(p);
+                }
+
+                if ((FLAG & (1 << 13)) > 0)
+                {
+                    //Unit
+                    BoxWidth = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "StarEdit Placement Box Width", ID).Data;
+                    BoxHeight = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "StarEdit Placement Box Height", ID).Data;
+
+                    int Graphics = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "Graphics", ID).Data;
+                    int Level = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "Elevation Level", ID).Data;
+                    int Sprite = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.flingy, "Sprite", Graphics).Data;
+                    ImageID = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.sprites, "Image File", Sprite).Data;
+
+                    int Dir = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "Unit Direction", ID).Data;
+
+                    if (Dir == 32)
+                    {
+                        Dir = -1;
+                    }
+
+                    CImage p = new CImage(alpha, Images, ImageID, Dir, PLAYER, _drawType: CImage.DrawType.Normal, level: Level);
+                    Images.Add(p);
+
+                    int Subunit = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "Subunit 1", ID).Data;
+                    if (Subunit != 228)
+                    {
+                        Graphics = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "Graphics", Subunit).Data;
+                        Level = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "Elevation Level", Subunit).Data;
+                        Sprite = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.flingy, "Sprite", Graphics).Data;
+                        ImageID = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.sprites, "Image File", Sprite).Data;
+
+                        if (ImageID == 254)
+                        {
+                            Dir += 16;
+                        }
+                        Images.Add(new CImage(alpha, Images, ImageID, Dir, PLAYER, _parentImage: p, level: Level + 1));
+                    }
+                }
+            }
+
+
+            public List<CImage> Images;
+        }
+
+        public byte[] MASK;
+
+
+
+
+        public CMRGN[] MRGN;
+        public class CMRGN
+        {
+            public uint Left;//u32: Left(X1) coordinate of location, in pixels(usually 32 pt grid aligned)
+            public uint Top;//u32: Top(Y1) coordinate of location, in pixels
+            public uint Right;//u32: Right(X2) coordinate of location, in pixels
+            public uint Bottom;//u32: Bottom(Y2) coordinate of location, in pixels
+            public StringData String;//u16: String number of the name of this location
+            public ushort Flag;//u16: Location elevation flags.If an elevation is disabled in the location, it's bit will be on (1)
+            //Bit 0 - Low elevation
+            //Bit 1 - Medium elevation
+            //Bit 2 - High elevation
+            //Bit 3 - Low air
+            //Bit 4 - Medium air
+            //Bit 5 - High air
+            //Bit 6-15 - Unused
+        }
 
 
 
@@ -186,5 +512,174 @@ namespace Data.Map
 
 
 
+
+
+
+        public List<CUNIT> UNIT = new List<CUNIT>();
+        public class CUNIT
+        {
+            public CUNIT(BinaryReader br)
+            {
+                unitclass = br.ReadUInt32();
+                x = br.ReadUInt16();
+                y = br.ReadUInt16();
+                unitID = br.ReadUInt16();
+                linkFlag = br.ReadUInt16();
+                validstatusFlag = br.ReadUInt16();
+                validunitFlag = br.ReadUInt16();
+                player = br.ReadByte();
+                hitPoints = br.ReadByte();
+                shieldPoints = br.ReadByte();
+                energyPoints = br.ReadByte();
+                resoruceAmount = br.ReadUInt32();
+                hangar = br.ReadUInt16();
+                stateFlag = br.ReadUInt16();
+                unused = br.ReadUInt32();
+                linkedUnit = br.ReadUInt32();
+
+                Images = new List<CImage>();
+
+
+
+                ImageReset();
+            }
+            public void ImageReset()
+            {
+                Images.Clear();
+
+
+                int Graphics = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "Graphics", unitID).Data;
+                int Level = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "Elevation Level", unitID).Data;
+                int Sprite = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.flingy, "Sprite", Graphics).Data;
+                int ImageID = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.sprites, "Image File", Sprite).Data;
+
+
+                BoxWidth = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "StarEdit Placement Box Width", unitID).Data;
+                BoxHeight = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "StarEdit Placement Box Height", unitID).Data;
+
+
+                int Dir = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "Unit Direction", unitID).Data;
+
+                if (Dir == 32)
+                {
+                    Dir = -1;
+                }
+
+                CImage.DrawType drawType = CImage.DrawType.Normal;
+
+                int startanim = 0;
+                if ((stateFlag & 0b1) > 0)
+                {
+                    //Unit is cloaked
+                    drawType = CImage.DrawType.Clock;
+                }
+                if ((stateFlag & 0b10) > 0)
+                {
+                    //Unit is burrowed
+                    startanim = 25;
+                }
+                if ((stateFlag & 0b100) > 0)
+                {
+                    //Building is in transit
+                    startanim = 18;
+                }
+                if ((stateFlag & 0b1000) > 0)
+                {
+                    //Unit is hallucinated
+                    drawType = CImage.DrawType.Hallaction;
+                }
+
+
+                int StatusFlag = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "Special Ability Flags", unitID).Data;
+                if((StatusFlag & 0b10) > 0)
+                {
+                    if ((linkFlag & 0b1000000000) > 0)
+                    {
+                        //Bit 10 - Addon Link
+                        startanim = 17;
+                    }
+                    else
+                    {
+                        startanim = 18;
+                    }
+                }
+
+
+
+                CImage p = new CImage(unitclass, Images, ImageID, Dir, player, _drawType: drawType, level: Level, _StartAnim: startanim);
+                Images.Add(p);
+                int Subunit = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "Subunit 1", unitID).Data;
+                if(Subunit != 228)
+                {
+                    Graphics = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "Graphics", Subunit).Data;
+                    Level = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "Elevation Level", Subunit).Data;
+                    Sprite = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.flingy, "Sprite", Graphics).Data;
+                    ImageID = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.sprites, "Image File", Sprite).Data;
+
+                    if(ImageID == 254)
+                    {
+                        Dir += 16;
+                    }
+                    Images.Add(new CImage(unitclass, Images, ImageID, Dir, player, _parentImage: p, _drawType: drawType, level: Level + 1, _StartAnim: startanim));
+                }
+            }
+
+
+
+            public int BoxWidth;
+            public int BoxHeight;
+
+
+            public uint unitclass;//u32: The unit's class instance (sort of a "serial number")
+            public ushort x;//U16: X coordinate of unit
+            public ushort y;//U16: Y coordinate of unit
+            public ushort unitID;//u16: Unit ID
+            public ushort linkFlag;//u16: Type of relation to another building (i.e. add-on, nydus link)
+                                   //Bit 9 - Nydus Link
+                                   //Bit 10 - Addon Link
+            public ushort validstatusFlag;//u16: Flags of special properties which can be applied to the unit and are valid:
+                                          //Bit 0 - Cloak is valid
+                                          //Bit 1 - Burrow is valid
+                                          //Bit 2 - In transit is valid
+                                          //Bit 3 - Hallucinated is valid
+                                          //Bit 4 - Invincible is valid
+                                          //Bit 5-15 - Unused
+            public ushort validunitFlag;//u16: Out of the elements of the unit data, the properties which can be changed by the map maker:
+                                        //Bit 0 - Owner player is valid (the unit is not a critter, start location, etc.; not a neutral unit)
+                                        //Bit 1 - HP is valid
+                                        //Bit 2 - Shields is valid
+                                        //Bit 3 - Energy is valid (unit is a wraith, etc.)
+                                        //Bit 4 - Resource amount is valid (unit is a mineral patch, vespene geyser, etc.)
+                                        //Bit 5 - Amount in hangar is valid (unit is a reaver, carrier, etc.)
+                                        //Bit 6-15 - Unused
+            public byte player;//u8: Player number of owner (0-based)
+            public byte hitPoints;//u8: Hit points % (1-100)
+            public byte shieldPoints;//u8: Shield points % (1-100)
+            public byte energyPoints;//u8: Energy points % (1-100)
+            public uint resoruceAmount;//u32: Resource amount
+            public ushort hangar;//u16: Number of units in hangar
+            public ushort stateFlag;//u16: Unit state flags
+                                    //Bit 0 - Unit is cloaked
+                                    //Bit 1 - Unit is burrowed
+                                    //Bit 2 - Building is in transit
+                                    //Bit 3 - Unit is hallucinated
+                                    //Bit 4 - Unit is invincible
+                                    //Bit 5-15 - Unused
+            public uint unused;//u32: Unused
+            public uint linkedUnit;//u32: Class instance of the unit to which this unit is related to (i.e. via an add-on, nydus link, etc.). It is "0" if the unit is not linked to any other unit.
+
+
+            public List<CImage> Images;
+
+        }
+
+
+
+        public string[] LOADSTR;
+        public string[] LOADSTRx;
+
+
+        public List<byte[]> BYTESTR;
+        public List<byte[]> BYTESTRx;
     }
 }

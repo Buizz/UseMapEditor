@@ -41,7 +41,7 @@ namespace Data.Map
             uint hmpq = 0;
 
 
-
+           
             string chkFilename = @"staredit\scenario.chk";
             string SaveFilename = ProgramStart.tempfolder + @"\scenario.chk";
             BinaryWriter bw = new BinaryWriter(new FileStream(SaveFilename, FileMode.Create));

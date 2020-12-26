@@ -18,28 +18,12 @@ namespace UseMapEditor.FileData
         }
 
 
-
-
-        public void ReadUnitData()
-        {
-            //ReadAnim(@"CascData\SD\mainSD.anim");
-
-
-            //for (int i = 0; i < 999; i++)
-            //{
-            //    string num = String.Format("{0:000}", i);
-            //    ReadAnim($"CascData\\HD\\anim\\main_{num}.anim");
-            //    ReadAnim($"CascData\\Carbot\\anim\\main_{num}.anim");
-            //}
-        }
-
-
-        public static void ReadAnim(byte[] bytes, string filename, int img = -1)
+        public static bool ReadAnim(byte[] bytes, string filename, int img = -1)
         {
             BinaryReader mr =  new BinaryReader(new MemoryStream(bytes));
             if (mr.BaseStream.Length == 0)
             {
-                return;
+                return false;
             }
 
             //==================header==================
@@ -135,7 +119,7 @@ namespace UseMapEditor.FileData
 
                                 //bmp
                                 System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(binaryWriter.BaseStream);
-
+                                bitmap.MakeTransparent(System.Drawing.Color.Black);
                                 savepath = filename + entryindex;
 
                                 if (!System.IO.Directory.Exists(savepath))
@@ -145,6 +129,7 @@ namespace UseMapEditor.FileData
 
                                 savefolder = savepath + "\\";
                                 savepath = savepath + "\\" + layerstrs[layindex] + ".png";
+                                bitmap.RotateFlip(System.Drawing.RotateFlipType.RotateNoneFlipY);
                                 bitmap.Save(savepath, System.Drawing.Imaging.ImageFormat.Png);
                                 binaryWriter.Close();
                             }
@@ -180,6 +165,7 @@ namespace UseMapEditor.FileData
 
                                         if (version == 0x101)
                                         {
+                                            bitmap.MakeTransparent(System.Drawing.Color.Black);
                                             savepath = filename + entryindex;
 
                                             if (!System.IO.Directory.Exists(savepath))
@@ -195,6 +181,11 @@ namespace UseMapEditor.FileData
                                             savefolder = filename;
                                             savepath = filename + layerstrs[layindex] + ".png";
                                         }
+                                        if(layerstrs[layindex] == "teamcolor")
+                                        {
+                                            bitmap.MakeTransparent(System.Drawing.Color.Black);
+                                        }
+
 
                                         bitmap.Save(savepath, System.Drawing.Imaging.ImageFormat.Png);
                                     }
@@ -262,6 +253,7 @@ namespace UseMapEditor.FileData
                 }
             }
             mr.Close();
+            return true;
         }
 
 

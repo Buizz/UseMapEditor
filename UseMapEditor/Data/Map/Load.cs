@@ -12,6 +12,7 @@ namespace Data.Map
 
         public bool LoadMap(string _filepath)
         {
+
             filepath = _filepath;
             //맵 파일의 이름이 ""일 경우 새맵
             if (filepath == "")
@@ -45,7 +46,6 @@ namespace Data.Map
             else
             {
                 UseMapEditor.FileData.StromLib.SFileCloseArchive(hmpq);
-                //TODO:MPQ오픈 실패
                 throw new Exception("scenario.chk를 열지 못했습니다.");
             }
 

@@ -113,22 +113,22 @@
                         <mapeditorcontrol:PlayerSettingPanel x:Name="PlayerSettingTabItem"/>
                     </TabItem>
                     <TabItem Header="세력">
-
+                        <mapeditorcontrol:ForceSettingPanel x:Name="ForceSettingTabItem"/>
                     </TabItem>
                     <TabItem Header="유닛">
-
+                        <mapeditorcontrol:UnitSetting x:Name="UnitSettingTabItem"/>
                     </TabItem>
                     <TabItem Header="업그레이드">
-
+                        <mapeditorcontrol:UpgradeSetting x:Name="UpgradeSettingTabItem"/>
                     </TabItem>
                     <TabItem Header="테크">
-
+                        <mapeditorcontrol:TechSetting x:Name="TechSettingTabItem"/>
                     </TabItem>
                     <TabItem Header="사운드">
-
+                        <mapeditorcontrol:SoundSetting x:Name="SoundSettingTabItem"/>
                     </TabItem>
                     <TabItem Header="스트링">
-
+                        <mapeditorcontrol:StringSetting x:Name="StringSettingTabItem"/>
                     </TabItem>
                 </dragablz:TabablzControl>
             </DockPanel>
@@ -157,27 +157,27 @@
                 </Expander.Header>
                 <DockPanel Width="512">
                     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
-                        <Button Padding="4" Style="{StaticResource MaterialDesignOutlinedButton}" Height="Auto" Click="TileButton_Click">
+                        <Button x:Name="TilePalleteBtn" Padding="4" Style="{StaticResource MaterialDesignOutlinedButton}" Height="Auto" Click="TileButton_Click">
                             <materialDesign:PackIcon Kind="Waves" Width="32" Height="32" />
                         </Button>
-                        <Button Padding="4" Style="{StaticResource MaterialDesignOutlinedButton}" Height="Auto" Click="DoodadButton_Click">
+                        <Button x:Name="DoodadPalleteBtn" Padding="4" Style="{StaticResource MaterialDesignOutlinedButton}" Height="Auto" Click="DoodadButton_Click">
                             <materialDesign:PackIcon Kind="Sprout" Width="32" Height="32" />
                         </Button>
-                        <Button Padding="4" Style="{StaticResource MaterialDesignOutlinedButton}" Height="Auto" Click="UnitButton_Click">
+                        <Button x:Name="UnitPalleteBtn" Padding="4" Style="{StaticResource MaterialDesignOutlinedButton}" Height="Auto" Click="UnitButton_Click">
                             <materialDesign:PackIcon Kind="HumanHandsdown" Width="32" Height="32" />
                         </Button>
-                        <Button Padding="4" Style="{StaticResource MaterialDesignOutlinedButton}" Height="Auto" Click="SpriteButton_Click">
+                        <Button x:Name="SpritePalleteBtn" Padding="4" Style="{StaticResource MaterialDesignOutlinedButton}" Height="Auto" Click="SpriteButton_Click">
                             <materialDesign:PackIcon Kind="PineTree" Width="32" Height="32" />
                         </Button>
-                        <Button Padding="4" Style="{StaticResource MaterialDesignOutlinedButton}" Height="Auto" Click="LocationButton_Click">
+                        <Button x:Name="LocationPalleteBtn" Padding="4" Style="{StaticResource MaterialDesignOutlinedButton}" Height="Auto" Click="LocationButton_Click">
                             <materialDesign:PackIcon Kind="AlphabetLBox" Width="32" Height="32" />
                         </Button>
-                        <Button Padding="4" Style="{StaticResource MaterialDesignOutlinedButton}" Height="Auto" Click="FogButton_Click">
+                        <Button x:Name="FogPalleteBtn" Padding="4" Style="{StaticResource MaterialDesignOutlinedButton}" Height="Auto" Click="FogButton_Click">
                             <materialDesign:PackIcon Kind="Soundcloud" Width="32" Height="32" />
                         </Button>
                     </StackPanel>
                     <Grid>
-                        <DockPanel x:Name="TilePallet">
+                        <DockPanel x:Name="TilePallet" Visibility="Collapsed">
                             <Grid DockPanel.Dock="Top" Height="32">
                                 <UniformGrid Columns="2">
                                     <TextBox Margin="2"/>

@@ -10,6 +10,8 @@ using System.IO;
 using System.Windows;
 using UseMapEditor.FileData;
 using WpfTest.Components;
+using static Data.Map.MapData;
+using static UseMapEditor.FileData.TileSet;
 
 namespace UseMapEditor.MonoGameControl
 {
@@ -85,7 +87,7 @@ namespace UseMapEditor.MonoGameControl
 
       
 
-        private void TileDraw(bool IsDrawGrp)
+        private void RenderTile(bool IsDrawGrp)
         {
             float width = (float)this.ActualWidth;
             float height = (float)this.ActualHeight;
@@ -99,7 +101,7 @@ namespace UseMapEditor.MonoGameControl
 
 
             _spriteBatch.Begin();
-            _spriteBatch.Draw(gridtexture, new Rectangle((int)MapMin.X, (int)MapMin.Y, (int)MapSize.X, (int)MapSize.Y), Color.Black);
+            _spriteBatch.Draw(gridtexture, new Rectangle((int)MapMin.X, (int)MapMin.Y, (int)MapSize.X, (int)MapSize.Y), null, Color.Black,0, new Vector2(), SpriteEffects.None,0);
             _spriteBatch.End();
 
 
@@ -172,6 +174,100 @@ namespace UseMapEditor.MonoGameControl
                 cyti++;
             }
             _spriteBatch.End();
+        }
+        private void RenderDoodad(bool IsDrawGrp)
+        {
+            if (!IsDrawGrp)
+            {
+                return;
+            }
+
+
+
+            _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+            for (int i = 0; i < mapeditor.mapdata.DD2.Count; i++)
+            {
+                DrawDooDad(mapeditor.mapdata.DD2[i]);
+            }
+            _spriteBatch.End();
+        }
+
+        private void DrawDooDad(CDD2 cDD2)
+        {
+            DoodadPallet pallete = tileSet.DoodadPallets[mapeditor.mapdata.TILETYPE][cDD2.ID];
+
+            int _x = cDD2.X / 32 * 32 - (pallete.dddWidth / 2) * 32;
+            int _y = cDD2.Y / 32 * 32 - (pallete.dddHeight / 2) * 32;
+
+
+            Vector2 screen = mapeditor.PosMapToScreen(new Vector2(_x, _y));
+            Vector2 spritescreen = mapeditor.PosMapToScreen(new Vector2(cDD2.X, cDD2.Y));
+
+
+
+            int grpwidth = (int)(pallete.dddWidth * 32 * mapeditor.opt_scalepercent);
+            int grpheight = (int)(pallete.dddHeight * 32 * mapeditor.opt_scalepercent);
+
+
+            float mag = (float)(32 * mapeditor.opt_scalepercent);
+
+
+            float minX = 0 - grpwidth;
+            float minY = 0 - grpheight;
+            float maxX = screenwidth + grpwidth * 2;
+            float maxY = screenheight + grpheight * 2;
+
+            if ((minX < screen.X) & (screen.X < maxX))
+            {
+                if ((minY < screen.Y) & (screen.Y < maxY))
+                {
+
+                    for (int y = 0; y < pallete.dddHeight; y++)
+                    {
+                        for (int x = 0; x < pallete.dddWidth; x++)
+                        {
+                            ushort group = (ushort)(pallete.dddGroup + y);
+                            ushort index = (ushort)x;
+
+
+                            if(tileSet.IsBlack(mapeditor.mapdata.TILETYPE, group, index))
+                            {
+                                continue;
+                            }
+
+                            switch (mapeditor.opt_drawType)
+                            {
+                                case Control.MapEditor.DrawType.SD:
+                                    {
+                                        Texture2D texture2D = tileSet.GetTile(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, group, index);
+                                        _spriteBatch.Draw(texture2D, screen + new Vector2(x,y) * mag, null, Color.White, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent, SpriteEffects.None, 0);
+                                    }
+                                    break;
+                                case Control.MapEditor.DrawType.HD:
+                                case Control.MapEditor.DrawType.CB:
+                                    {
+                                        Texture2D texture2D = tileSet.GetTile(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, group, index);
+                                        _spriteBatch.Draw(texture2D, screen + new Vector2(x, y) * mag, null, Color.White, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent / 2, SpriteEffects.None, 0);
+                                    }
+                                    break;
+                            }
+
+
+
+                            if(cDD2.Images.Count == 0)
+                            {
+                                cDD2.ImageReset();
+                            }
+                            for (int i = 0; i < cDD2.Images.Count; i++)
+                            {
+                                cDD2.Images[i].screen = spritescreen;
+                                ImageList.Add(cDD2.Images[i]);
+                                cDD2.Images[i].PlayScript();
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

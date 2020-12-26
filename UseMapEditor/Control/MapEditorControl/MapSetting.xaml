@@ -41,12 +41,12 @@
         <Separator/>
         <TextBlock Text="제목" Margin="0,5" FontSize="16"/>
         <StackPanel Margin="10" >
-            <TextBox/>
+            <TextBox Text="{Binding Path=Title, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
         </StackPanel>
         <Separator/>
         <TextBlock Text="설명" Margin="0,5" FontSize="16"/>
         <StackPanel Margin="10" >
-            <TextBox AcceptsReturn="True" Height="100"/>
+            <TextBox Text="{Binding Path=Description, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" AcceptsReturn="True" Height="100"/>
         </StackPanel>
     </StackPanel>
 </UserControl>

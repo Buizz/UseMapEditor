@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using UseMapEditor.Control;
+using UseMapEditor.FileData;
 
 namespace UseMapEditor.Global
 {
@@ -30,6 +32,20 @@ namespace UseMapEditor.Global
                 programStart.Close();
             }
         }
+
+
+        public static Random random = new Random();
+
+
+
+        public static SCData scdata;
+        public static Iscript iscript;
+        public static Iscript iscriptX;
+
+
+        public static tblreader stat_txt;
+        public static tblreader stat_txt_kor_eng;
+        public static tblreader stat_txt_kor_kor;
 
 
 

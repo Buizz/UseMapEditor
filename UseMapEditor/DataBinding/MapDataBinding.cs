@@ -20,14 +20,23 @@ namespace UseMapEditor.DataBinding
 
 
         public List<PlayerBinding> playerBindings = new List<PlayerBinding>();
+        public List<ForceBinding> forceBindings = new List<ForceBinding>();
+        
+
         public void PropertyChangeAll()
         {
             for (int i = 0; i < playerBindings.Count; i++)
             {
                 playerBindings[i].PropertyChangeAll();
             }
+            for (int i = 0; i < forceBindings.Count; i++)
+            {
+                forceBindings[i].PropertyChangeAll();
+            }
             mapEditor.SetDirty();
             OnPropertyChanged("TileSet");
+            OnPropertyChanged("Title");
+            OnPropertyChanged("Description");
         }
 
         public int TileSet
@@ -43,6 +52,33 @@ namespace UseMapEditor.DataBinding
             }
         }
 
+
+
+        public string Title
+        {
+            get {return mapEditor.mapdata.SCEARIONAME.String;}
+            set
+            {
+                mapEditor.mapdata.SCEARIONAME.String = value;
+
+                mapEditor.SetDirty();
+                OnPropertyChanged("Title");
+            }
+        }
+
+        public string Description
+        {
+            get {return mapEditor.mapdata.SCEARIODES.String;}
+            set
+            {
+                mapEditor.mapdata.SCEARIODES.String = value;
+
+                mapEditor.SetDirty();
+                OnPropertyChanged("Description");
+            }
+        }
+
+        
 
 
 

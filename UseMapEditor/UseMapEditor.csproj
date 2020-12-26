@@ -186,6 +186,28 @@
     <Compile Include="Control\MapCreate.xaml.cs">
       <DependentUpon>MapCreate.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Control\MapEditorControl\ForceSetting.xaml.cs">
+      <DependentUpon>ForceSetting.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Control\MapEditorControl\ForceSettingPanel.xaml.cs">
+      <DependentUpon>ForceSettingPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Control\MapEditorControl\SoundSetting.xaml.cs">
+      <DependentUpon>SoundSetting.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Control\MapEditorControl\StringSetting.xaml.cs">
+      <DependentUpon>StringSetting.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Control\MapEditorControl\TechSetting.xaml.cs">
+      <DependentUpon>TechSetting.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Control\MapEditorControl\UnitSetting.xaml.cs">
+      <DependentUpon>UnitSetting.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Control\MapEditorControl\UpgradeSetting.xaml.cs">
+      <DependentUpon>UpgradeSetting.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DataBinding\ForceBinding.cs" />
     <Compile Include="DataBinding\MapDataBinding.cs" />
     <Compile Include="Control\MapEditorControl\MapSetting.xaml.cs">
       <DependentUpon>MapSetting.xaml</DependentUpon>
@@ -203,12 +225,19 @@
     <Compile Include="Data\Map\Load.cs" />
     <Compile Include="Data\Map\ChkTool.cs" />
     <Compile Include="Data\Map\Save.cs" />
+    <Compile Include="Data\Map\StringManager.cs" />
+    <Compile Include="Dialog\EncodingSelectDialog.xaml.cs">
+      <DependentUpon>EncodingSelectDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="FileData\Anim.cs" />
+    <Compile Include="FileData\DatFile.cs" />
+    <Compile Include="FileData\CImage.cs" />
+    <Compile Include="FileData\Iscript.cs" />
     <Compile Include="FileData\StromLib.cs" />
+    <Compile Include="FileData\tblreader.cs" />
     <Compile Include="FileData\TileSet.cs" />
     <Compile Include="Data\Map\MapData.cs" />
     <Compile Include="Data\StarCraft\StarCraftData.cs" />
-    <Compile Include="Data\StarCraft\GRP.cs" />
     <Compile Include="MonoGameControl\Dxt1.cs" />
     <Compile Include="MonoGameControl\ImageDraw.cs" />
     <Compile Include="MonoGameControl\KeyboardEvent.cs" />
@@ -240,6 +269,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Control\MapEditorControl\ForceSetting.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Control\MapEditorControl\ForceSettingPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Control\MapEditorControl\MapSetting.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -252,11 +289,35 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Control\MapEditorControl\SoundSetting.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Control\MapEditorControl\StringSetting.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Control\MapEditorControl\TechSetting.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Control\MapEditorControl\UnitSetting.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Control\MapEditorControl\UpgradeSetting.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Control\MapViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Control\StartPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialog\EncodingSelectDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -337,7 +398,109 @@
     <None Include="Content\DefaultFont.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Data\DatFiles\flingy.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\DatFiles\images.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\DatFiles\orders.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\DatFiles\portdata.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\DatFiles\require.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\DatFiles\sfxdata.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\DatFiles\sprites.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\DatFiles\statusInfor.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\DatFiles\techdata.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\DatFiles\units.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\DatFiles\upgrades.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\DatFiles\weapons.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\iscript.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\iscriptx.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Data\ROOT">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\SDGRPSIZE">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\tbls\stat_txt.tbl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\tbls\stat_txt_kor_eng.tbl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\tbls\stat_txt_kor_kor.tbl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\TileSet\AshWorld.cv5">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\TileSet\AshWorld.vf4">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\TileSet\badlands.cv5">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\TileSet\badlands.vf4">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\TileSet\Desert.cv5">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\TileSet\Desert.vf4">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\TileSet\Ice.cv5">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\TileSet\Ice.vf4">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\TileSet\install.cv5">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\TileSet\install.vf4">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\TileSet\Jungle.cv5">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\TileSet\Jungle.vf4">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\TileSet\platform.cv5">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\TileSet\platform.vf4">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\TileSet\Twilight.cv5">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\TileSet\Twilight.vf4">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Font\NanumSquareRoundB.ttf">
@@ -419,6 +582,48 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\SD.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\DatFiles\flingy.def">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\DatFiles\images.def">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\DatFiles\orders.def">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\DatFiles\portdata.def">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\DatFiles\sfxdata.def">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\DatFiles\sprites.def">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\DatFiles\techdata.def">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\DatFiles\units.def">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\DatFiles\upgrades.def">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\DatFiles\weapons.def">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\AnimHeader.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\AnimOpcodes.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\MaterialDesignThemes.3.2.0\build\MaterialDesignThemes.targets" Condition="Exists('..\packages\MaterialDesignThemes.3.2.0\build\MaterialDesignThemes.targets')" />

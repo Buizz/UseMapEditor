@@ -8,7 +8,7 @@
              xmlns:c="clr-namespace:UseMapEditor.Control"
              mc:Ignorable="d" Height="48">
     <StackPanel Orientation="Horizontal">
-        <TextBlock x:Name="PlayerIndex" Text="플레이어1" VerticalAlignment="Bottom" Margin="5,15,5,5"/>
+        <TextBlock x:Name="PlayerIndex" Text="플레이어1" VerticalAlignment="Bottom" Margin="5,15,5,11"/>
         <ComboBox x:Name="OwnerCB" Width="100" materialDesign:TextFieldAssist.SuffixText="제어" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5,0" >
             <ComboBoxItem Content="사용안함" Tag="0"/>
             <ComboBoxItem Content="구조가능" Tag="3"/>
@@ -24,7 +24,7 @@
             <ComboBoxItem Content="비활성" Tag="7"/>
         </ComboBox>
         <Grid>
-            <Button x:Name="Colorize" Click="Colorize_Click" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}">
+            <Button x:Name="Colorize" Click="Colorize_Click" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}" Margin="0,8,0,0">
                 <materialDesign:PackIcon Kind="Colorize" Height="24" Width="24" />
             </Button>
             <Popup x:Name="ColorPickerPopup" StaysOpen="False">
@@ -34,7 +34,7 @@
             </Popup>
         </Grid>
 
-        <ComboBox x:Name="ColorCB" Width="100" Height="34"  VerticalContentAlignment="Bottom" Margin="5,0">
+        <ComboBox x:Name="ColorCB" Width="100" Height="40"  VerticalContentAlignment="Bottom" Margin="5,0">
         </ComboBox>
     </StackPanel>
 </UserControl>

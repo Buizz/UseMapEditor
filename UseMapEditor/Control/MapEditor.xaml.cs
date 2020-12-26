@@ -30,6 +30,13 @@ namespace UseMapEditor.Control
     {
         public MapDataBinding mapDataBinding;
 
+        public int ForceSelectID = -1;
+        public int ForceStartID = -1;
+        public List<int> ForceSelectPlayer = new List<int>();
+
+
+
+
 
         private int _opt_xpos = 0;
         private int _opt_ypos = 0;
@@ -66,6 +73,9 @@ namespace UseMapEditor.Control
                 }
             }
         }
+
+
+
         public int opt_ypos
         {
 
@@ -229,22 +239,56 @@ namespace UseMapEditor.Control
 
         public MapData mapdata;
         public Microsoft.Xna.Framework.Color[] minimapcolor;
+        public Microsoft.Xna.Framework.Color[] miniampUnit;
 
         public bool IsLoad = false;
         public bool IsMinimapLoad = false;
         public bool ChangeMiniMap = false;
+        public bool IsMinimapUnitRefresh = false;
+        public void MinimapRefresh()
+        {
+            IsMinimapLoad = false;
+        }
+        public void MinimapUnitRefresh()
+        {
+            IsMinimapUnitRefresh = false;
+        }
+
+
+
+
         public MapEditor()
         {
             InitializeComponent();
 
             mapdata = new MapData();
             minimapcolor = new Microsoft.Xna.Framework.Color[256 * 256];
+            miniampUnit = new Microsoft.Xna.Framework.Color[256 * 256];
             RefreshGRPIcon();
 
-            MapSettingTabItem.SetMapEditor(this);
             mapDataBinding = new MapDataBinding(this);
+            MapSettingTabItem.SetMapEditor(this);
             PlayerSettingTabItem.SetMapEditor(this);
+            ForceSettingTabItem.SetMapEditor(this);
+            UnitSettingTabItem.SetMapEditor(this);
+            UpgradeSettingTabItem.SetMapEditor(this);
+            TechSettingTabItem.SetMapEditor(this);
+            SoundSettingTabItem.SetMapEditor(this);
+            StringSettingTabItem.SetMapEditor(this);
             this.DataContext = mapDataBinding;
+
+            if(Global.Setting.Vals[ Global.Setting.Settings.Program_GRPLoad] == "false")
+            {
+                TilePalleteBtn.IsEnabled = false;
+                DoodadPalleteBtn.IsEnabled = false;
+                UnitPalleteBtn.IsEnabled = false;
+                SpritePalleteBtn.IsEnabled = false;
+                TabChange(4);
+            }
+            else
+            {
+                TabChange(0);
+            }
         }
 
 
@@ -573,64 +617,68 @@ namespace UseMapEditor.Control
             }
         }
 
-        private void TileButton_Click(object sender, RoutedEventArgs e)
+
+
+        private void TabChange(int index)
         {
-            TilePallet.Visibility = Visibility.Visible;
+            TilePallet.Visibility = Visibility.Collapsed;
             DoodadPallet.Visibility = Visibility.Collapsed;
             UnitPallet.Visibility = Visibility.Collapsed;
             SpritePallet.Visibility = Visibility.Collapsed;
             LocationPallet.Visibility = Visibility.Collapsed;
             FogofWarPallet.Visibility = Visibility.Collapsed;
+
+            switch (index)
+            {
+                case 0:
+                    TilePallet.Visibility = Visibility.Visible;
+                    break;
+                case 1:
+                    DoodadPallet.Visibility = Visibility.Visible;
+                    break;
+                case 2:
+                    UnitPallet.Visibility = Visibility.Visible;
+                    break;
+                case 3:
+                    SpritePallet.Visibility = Visibility.Visible;
+                    break;
+                case 4:
+                    LocationPallet.Visibility = Visibility.Visible;
+                    break;
+                case 5:
+                    FogofWarPallet.Visibility = Visibility.Visible;
+                    break;
+            }
+        }
+
+        private void TileButton_Click(object sender, RoutedEventArgs e)
+        {
+            TabChange(0);
         }
 
         private void DoodadButton_Click(object sender, RoutedEventArgs e)
         {
-            TilePallet.Visibility = Visibility.Collapsed;
-            DoodadPallet.Visibility = Visibility.Visible;
-            UnitPallet.Visibility = Visibility.Collapsed;
-            SpritePallet.Visibility = Visibility.Collapsed;
-            LocationPallet.Visibility = Visibility.Collapsed;
-            FogofWarPallet.Visibility = Visibility.Collapsed;
+            TabChange(1);
         }
 
         private void UnitButton_Click(object sender, RoutedEventArgs e)
         {
-            TilePallet.Visibility = Visibility.Collapsed;
-            DoodadPallet.Visibility = Visibility.Collapsed;
-            UnitPallet.Visibility = Visibility.Visible;
-            SpritePallet.Visibility = Visibility.Collapsed;
-            LocationPallet.Visibility = Visibility.Collapsed;
-            FogofWarPallet.Visibility = Visibility.Collapsed;
+            TabChange(2);
         }
 
         private void SpriteButton_Click(object sender, RoutedEventArgs e)
         {
-            TilePallet.Visibility = Visibility.Collapsed;
-            DoodadPallet.Visibility = Visibility.Collapsed;
-            UnitPallet.Visibility = Visibility.Collapsed;
-            SpritePallet.Visibility = Visibility.Visible;
-            LocationPallet.Visibility = Visibility.Collapsed;
-            FogofWarPallet.Visibility = Visibility.Collapsed;
+            TabChange(3);
         }
 
         private void LocationButton_Click(object sender, RoutedEventArgs e)
         {
-            TilePallet.Visibility = Visibility.Collapsed;
-            DoodadPallet.Visibility = Visibility.Collapsed;
-            UnitPallet.Visibility = Visibility.Collapsed;
-            SpritePallet.Visibility = Visibility.Collapsed;
-            LocationPallet.Visibility = Visibility.Visible;
-            FogofWarPallet.Visibility = Visibility.Collapsed;
+            TabChange(4);
         }
 
         private void FogButton_Click(object sender, RoutedEventArgs e)
         {
-            TilePallet.Visibility = Visibility.Collapsed;
-            DoodadPallet.Visibility = Visibility.Collapsed;
-            UnitPallet.Visibility = Visibility.Collapsed;
-            SpritePallet.Visibility = Visibility.Collapsed;
-            LocationPallet.Visibility = Visibility.Collapsed;
-            FogofWarPallet.Visibility = Visibility.Visible;
+            TabChange(5);
         }
 
 

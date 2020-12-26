@@ -1,4 +1,5 @@
-﻿using MahApps.Metro.Controls;
+﻿using Data;
+using MahApps.Metro.Controls;
 using MaterialDesignThemes.Wpf;
 using Microsoft.Win32;
 using System;
@@ -20,6 +21,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using UseMapEditor.FileData;
 using UseMapEditor.Windows;
 
 namespace UseMapEditor.Dialog
@@ -76,6 +78,20 @@ namespace UseMapEditor.Dialog
             
 
             Global.Setting.LoadSetting();
+
+
+
+
+
+
+            Global.WindowTool.scdata = new SCData();
+            Global.WindowTool.iscript = new Iscript(AppDomain.CurrentDomain.BaseDirectory + @"\Data\iscript.bin", false);
+            Global.WindowTool.iscriptX = new Iscript(AppDomain.CurrentDomain.BaseDirectory + @"\Data\iscriptx.bin", true);
+
+
+            Global.WindowTool.stat_txt = new tblreader(AppDomain.CurrentDomain.BaseDirectory + @"\Data\tbls\stat_txt.tbl");
+            Global.WindowTool.stat_txt_kor_eng = new tblreader(AppDomain.CurrentDomain.BaseDirectory + @"\Data\tbls\stat_txt_kor_eng.tbl");
+            Global.WindowTool.stat_txt_kor_kor = new tblreader(AppDomain.CurrentDomain.BaseDirectory + @"\Data\tbls\stat_txt_kor_kor.tbl");
 
 
 

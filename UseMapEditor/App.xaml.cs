@@ -33,7 +33,7 @@ namespace UseMapEditor
             MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             // OR whatever you want like logging etc. MessageBox it's just example
             // for quick debugging etc.
-            e.Handled = true;
+            e.Handled = false;
         }
 
         private void Application_Exit(object sender, ExitEventArgs e)

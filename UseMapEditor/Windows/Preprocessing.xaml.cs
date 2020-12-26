@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -84,7 +85,7 @@ namespace UseMapEditor.Windows
             System.IO.File.WriteAllBytes(currentPath, bytes);
         }
 
-        private void SaveToAnim(byte[] bytes, string filename, int img = -1)
+        private bool SaveToAnim(byte[] bytes, string filename, int img = -1)
         {
             string[] paths = filename.Split('/');
 
@@ -106,7 +107,7 @@ namespace UseMapEditor.Windows
             }
 
 
-            FileData.Anim.ReadAnim(bytes, savePath, img);
+            return FileData.Anim.ReadAnim(bytes, savePath, img);
             //System.IO.File.WriteAllBytes(currentPath, bytes);
         }
 
@@ -127,6 +128,7 @@ namespace UseMapEditor.Windows
             SaveToAnim(data.ReadFileCascStorage("SD/mainSD.anim"), @"SD/anim/");
             worker.ReportProgress(percent++);
 
+            byte[] ExistFlag = new byte[999];
             for (int i = 0; i < 999; i++)
             {
                 string num = String.Format("{0:000}", i);
@@ -134,7 +136,16 @@ namespace UseMapEditor.Windows
                     string fname = $"HD2/anim/main_{num}.anim";
 
                     string tname = $"HD/anim/" + i + "/";
-                    SaveToAnim(data.ReadFileCascStorage(fname), tname, i);
+
+                    bool exist = SaveToAnim(data.ReadFileCascStorage(fname), tname, i);
+                    if (exist)
+                    {
+                        ExistFlag[i] = 1;
+                    }
+                    else
+                    {
+                        ExistFlag[i] = 0;
+                    }
                 }
                 {
                     string fname = $"HD2/anim/Carbot/main_{num}.anim";
@@ -144,6 +155,11 @@ namespace UseMapEditor.Windows
                 }
                 worker.ReportProgress(percent++);
             }
+            BinaryWriter bw = new BinaryWriter(new FileStream(AppDomain.CurrentDomain.BaseDirectory + @"\CascData\grplist", FileMode.Create));
+            bw.Write(ExistFlag);
+            bw.Close();
+
+
 
             foreach (string tile in tilelist)
             {

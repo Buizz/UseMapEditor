@@ -1,0 +1,23 @@
+﻿<UserControl x:Class="UseMapEditor.Control.MapEditorControl.ForceSetting"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"              
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:local="clr-namespace:UseMapEditor.Control.MapEditorControl"
+             mc:Ignorable="d">
+    <DockPanel Margin="15" Width="250" Height="250">
+        <TextBox x:Name="MainTB" DockPanel.Dock="Top" materialDesign:HintAssist.Hint="세력 이름" Text="{Binding Path=ForceName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
+        <UniformGrid DockPanel.Dock="Bottom">
+            <CheckBox Content="동맹" IsChecked="{Binding Path=Allied, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <CheckBox Content="동맹승리" IsChecked="{Binding Path=AlliedVictory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <CheckBox Content="비전공유" IsChecked="{Binding Path=ShareVision, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <CheckBox Content="랜덤스타트" IsChecked="{Binding Path=Randomize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        </UniformGrid>
+        <ListBox x:Name="PlayerBox" DockPanel.Dock="Top" ItemsSource="{Binding Players, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                 MouseEnter="ListBox_MouseEnter" SelectionMode="Extended" MouseLeave="PlayerBox_MouseLeave"
+                 PreviewMouseUp="PlayerBox_PreviewMouseUp" SelectionChanged="PlayerBox_SelectionChanged">
+
+        </ListBox>
+    </DockPanel>
+</UserControl>
