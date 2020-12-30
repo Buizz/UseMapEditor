@@ -74,7 +74,7 @@ namespace UseMapEditor.MonoGameControl
             {
                 return;
             }
-            int frame = cImage.Frame;
+            int frame = cImage.Frame % gRP.frameCount;
 
             if (cImage.Turnable)
             {
@@ -145,32 +145,37 @@ namespace UseMapEditor.MonoGameControl
             _spriteBatch.Begin(SpriteSortMode.FrontToBack, blendState: BlendState.NonPremultiplied, samplerState: SamplerState.PointClamp);
 
             Color color;
-            if(cImage.drawType == CImage.DrawType.Shadow)
+
+            switch (cImage.drawType)
             {
-                color = new Color(0, 0, 0, 128);
-                //_spriteBatch.Draw(gRP.MainGRP, p, new Rectangle(fd.x, fd.y, fd.fwidth, fd.fheight), new Color(0, 0, 0, 128), 0, Vector2.Zero, scale / grpscale, SpriteEffects.None, 1 - cImage.Level / 30f);
-                _spriteBatch.Draw(gRP.MainGRP, p, new Rectangle(fd.x, fd.y, fd.fwidth, fd.fheight), color, 0, Vector2.Zero, scale / grpscale, spriteEffects, 1 - cImage.Level / 30f);
-                _spriteBatch.End();
-                return;
-            }
-            else
-            {
-                if (cImage.drawType == CImage.DrawType.Clock)
-                {
+                case CImage.DrawType.Shadow:
+                    color = new Color(0, 0, 0, 128);
+                    //_spriteBatch.Draw(gRP.MainGRP, p, new Rectangle(fd.x, fd.y, fd.fwidth, fd.fheight), new Color(0, 0, 0, 128), 0, Vector2.Zero, scale / grpscale, SpriteEffects.None, 1 - cImage.Level / 30f);
+                    _spriteBatch.Draw(gRP.MainGRP, p, new Rectangle(fd.x, fd.y, fd.fwidth, fd.fheight), color, 0, Vector2.Zero, scale / grpscale, spriteEffects, 1 - cImage.Level / 30f);
+                    _spriteBatch.End();
+                    return;
+                case CImage.DrawType.Clock:
                     color = new Color(255, 255, 255, 64);
-                }
-                else if (cImage.drawType == CImage.DrawType.Hallaction)
-                {
+                    break;
+                case CImage.DrawType.Hallaction:
                     color = new Color(64, 64, 255, 255);
                     _spriteBatch.Draw(gRP.MainGRP, p, new Rectangle(fd.x, fd.y, fd.fwidth, fd.fheight), color, 0, Vector2.Zero, scale / grpscale, spriteEffects, 1 - cImage.Level / 30f);
                     _spriteBatch.End();
                     return;
-                }
-                else
-                {
+                case CImage.DrawType.UnitSprite:
+                    color = new Color(255, 0, 0, 255);
+                    break;
+                case CImage.DrawType.PureSprite:
+                    color = new Color(0, 255, 0, 255);
+                    break;
+                default:
                     color = Color.White;
-                }
+                    break;
             }
+
+
+
+
 
             _spriteBatch.Draw(gRP.MainGRP, p, new Rectangle(fd.x, fd.y, fd.fwidth, fd.fheight), color, 0, Vector2.Zero, scale / grpscale, spriteEffects, 1 - cImage.Level / 30f);
 

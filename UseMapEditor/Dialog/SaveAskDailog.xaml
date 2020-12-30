@@ -7,7 +7,7 @@
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:local="clr-namespace:UseMapEditor.Dialog"
         Loaded="MetroWindow_Loaded"
-        mc:Ignorable="d"
+        mc:Ignorable="d" Topmost="True"
         Title="USEMAPEDITOR" Height="140" Width="400" WindowStyle="ToolWindow" WindowStartupLocation="Manual" ResizeMode="NoResize" ShowInTaskbar="False">
     <DockPanel>
         <StackPanel Margin="10" Orientation="Horizontal" DockPanel.Dock="Bottom" HorizontalAlignment="Right">

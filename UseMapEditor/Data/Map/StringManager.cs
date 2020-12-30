@@ -21,12 +21,59 @@ namespace Data.Map
             FORCENAME[2].AddToLisT(stringDatas);
             FORCENAME[3].AddToLisT(stringDatas);
 
+            for (int i = 1; i < LocationDatas.Count; i++)
+            {
+                LocationDatas[i].STRING.AddToLisT(stringDatas);
+            }
+
+
+            for (int i = 0; i < WAV.Length; i++)
+            {
+                WAV[i].AddToLisT(stringDatas);
+            }
+            for (int i = 0; i < SWNM.Length; i++)
+            {
+                SWNM[i].AddToLisT(stringDatas);
+            }
+
+
+            for (int i = 0; i < UNIx.STRING.Length; i++)
+            {
+                UNIx.STRING[i].AddToLisT(stringDatas);
+            }
+
+
+
+            for (int i = 0; i < TRIG.Count; i++)
+            {
+                for (int t = 0; t < TRIG[i].actions.Length; t++)
+                {
+                    if (TRIG[i].actions[t].HasString())
+                    {
+                        TRIG[i].actions[t].STRING.AddToLisT(stringDatas);
+                    }
+                }
+            }
+            for (int i = 0; i < MBRF.Count; i++)
+            {
+                for (int t = 0; t < MBRF[i].actions.Length; t++)
+                {
+                    if (MBRF[i].actions[t].HasString())
+                    {
+                        MBRF[i].actions[t].STRING.AddToLisT(stringDatas);
+                    }
+                }
+            }
+
+
+
 
             //TRIG,//Triggers                      STR사용
             //MBRF,//Mission Briefings             STR사용
+
             //WAV,//WAV String Indexes             STR사용
             //SWNM,//Switch Names                  STR사용
-            //MRGN,//Locations                     STR사용
+
             //UNIx,//BW Unit Settings              STR사용
         }
 
@@ -37,6 +84,7 @@ namespace Data.Map
 
             public int LoadedIndex;
             public bool IsLoaded;
+
 
             public int ResultIndex;
 
@@ -60,7 +108,15 @@ namespace Data.Map
 
             public void AddToLisT(List<StringData> stringDatas)
             {
-                if(stringDatas.Exists(x => x.String == String))
+                string str = String;
+                if (!IsLoaded)
+                {
+                    ResultIndex = 0;
+                    return;
+                }
+
+
+                if(stringDatas.Exists(x => x.String == str))
                 {
                     StringData s = stringDatas.Find(x => x.String.Contains(String));
                     ResultIndex = s.ResultIndex;
@@ -73,7 +129,11 @@ namespace Data.Map
                 ResultIndex = stringDatas.Count;
             }
 
-
+            public void UnLoaded()
+            {
+                LoadedIndex = -1;
+                IsLoaded = false;
+            }
 
             private string val;
             public string String
@@ -82,6 +142,10 @@ namespace Data.Map
                 {
                     if (!IsLoaded)
                     {
+                        if(LoadedIndex == -1 | LoadedIndex >= mapData.LOADSTRx.Length)
+                        {
+                            return "???";
+                        }
                         val = mapData.LOADSTRx[LoadedIndex];
                         IsLoaded = true;
                     }

@@ -3,10 +3,66 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:UseMapEditor.Control.MapEditorControl"
+             xmlns:local="clr-namespace:UseMapEditor.Control.MapEditorControl" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignWidth="800">
     <Grid>
-            
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <local:CodeSelecter x:Name="codeselecter" Grid.Column="0" MinWidth="260"/>
+
+        <StackPanel Grid.Column="1" x:Name="ContentPanel" MinWidth="300">
+            <StackPanel Orientation="Horizontal">
+                <Border DockPanel.Dock="Left" Height="32" Width="32" Background="Black">
+                    <Image Source="{Binding ImageIcon}"/>
+                </Border>
+                <TextBlock Text="{Binding Path=MainName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="20" Padding="4"/>
+            </StackPanel>
+            <Separator/>
+            <CheckBox x:Name="EnabledCheckBox" Content="값 수정하기" IsChecked="{Binding Path=USEDEFAULT, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <StackPanel IsEnabled="{Binding ElementName=EnabledCheckBox, Path=IsChecked}">
+                <materialDesign:Card Margin="5">
+                    <UniformGrid Columns="2" Rows="3" Margin="5">
+                        <TextBox materialDesign:HintAssist.Hint="미네랄" materialDesign:HintAssist.FloatingScale="1" materialDesign:HintAssist.FloatingOffset="0, -12"
+                    Text="{Binding Path=BASEMIN, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="10,0"/>
+                        <TextBox materialDesign:HintAssist.Hint="추가미네랄" materialDesign:HintAssist.FloatingScale="1" materialDesign:HintAssist.FloatingOffset="0, -12"
+                    Text="{Binding Path=BONUSMIN, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="10,0"/>
+                        <TextBox materialDesign:HintAssist.Hint="가스" materialDesign:HintAssist.FloatingScale="1" materialDesign:HintAssist.FloatingOffset="0, -12"
+                    Text="{Binding Path=BASEGAS, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="10,0"/>
+                        <TextBox materialDesign:HintAssist.Hint="추가가스" materialDesign:HintAssist.FloatingScale="1" materialDesign:HintAssist.FloatingOffset="0, -12"
+                    Text="{Binding Path=BONUSGAS, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="10,0"/>
+                        <TextBox materialDesign:HintAssist.Hint="시간" materialDesign:HintAssist.FloatingScale="1" materialDesign:HintAssist.FloatingOffset="0, -12"
+                    Text="{Binding Path=BASETIME, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="10,0"/>
+                        <TextBox materialDesign:HintAssist.Hint="추가시간" materialDesign:HintAssist.FloatingScale="1" materialDesign:HintAssist.FloatingOffset="0, -12"
+                    Text="{Binding Path=BONUSTIME, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="10,0"/>
+                    </UniformGrid>
+                </materialDesign:Card>
+            </StackPanel>
+            <materialDesign:Card Margin="5">
+                <StackPanel Margin="5">
+                    <DockPanel LastChildFill="False">
+                        <Label Content="단계 설정"/>
+                        <UniformGrid DockPanel.Dock="Right" Rows="1">
+                            <Label Content="기본값" Foreground="AliceBlue" Background="Gray" FontSize="10" Margin="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <Label Content="직접지정" Foreground="AliceBlue" Background="Green" FontSize="10" Margin="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </UniformGrid>
+                    </DockPanel>
+                    <UniformGrid Columns="3">
+                        <Border/>
+                        <Label Content="초기레벨" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <Label Content="최대레벨" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <Label Content="기본값" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBox Text="{Binding Path=DEFAULTSTARTLEVEL, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="4,0"/>
+                        <TextBox Text="{Binding Path=DEFAULTMAXLEVEL, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="4,0"/>
+                    </UniformGrid>
+
+                    <StackPanel x:Name="PlayerDatas">
+                    </StackPanel>
+                </StackPanel>
+            </materialDesign:Card>
+        </StackPanel>
+
     </Grid>
 </UserControl>

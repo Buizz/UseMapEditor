@@ -75,6 +75,9 @@ namespace UseMapEditor.Global
                     case Settings.Render_UseVFR:
                         rv = "true";
                         break;
+                    case Settings.language_StatLan:
+                        rv = "stat_txt_kor_kor";
+                        break;
                 }
             }
 
@@ -101,7 +104,8 @@ namespace UseMapEditor.Global
             Program_GRPLoad,
             Program_IsDark,
             Render_MaxFrame,
-            Render_UseVFR
+            Render_UseVFR,
+            language_StatLan
         }
 
 

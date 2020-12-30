@@ -7,6 +7,7 @@ using SpriteFontPlus;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Windows;
 using UseMapEditor.FileData;
 using WpfTest.Components;
@@ -17,6 +18,12 @@ namespace UseMapEditor.MonoGameControl
 {
     public partial class MapDrawer : WpfGame
     {
+
+
+
+
+
+
         public void DrawRect(SpriteBatch spriteBatch, Vector2 point1, Vector2 point2, Color color, float thickness = 1f)
         {
             DrawLine(spriteBatch, new Vector2(point1.X, point1.Y), new Vector2(point2.X, point1.Y), color, thickness);
@@ -221,7 +228,16 @@ namespace UseMapEditor.MonoGameControl
             {
                 if ((minY < screen.Y) & (screen.Y < maxY))
                 {
-
+                    if (cDD2.Images.Count == 0)
+                    {
+                        cDD2.ImageReset();
+                    }
+                    for (int i = 0; i < cDD2.Images.Count; i++)
+                    {
+                        cDD2.Images[i].screen = spritescreen;
+                        ImageList.Add(cDD2.Images[i]);
+                        cDD2.Images[i].PlayScript();
+                    }
                     for (int y = 0; y < pallete.dddHeight; y++)
                     {
                         for (int x = 0; x < pallete.dddWidth; x++)
@@ -252,18 +268,6 @@ namespace UseMapEditor.MonoGameControl
                                     break;
                             }
 
-
-
-                            if(cDD2.Images.Count == 0)
-                            {
-                                cDD2.ImageReset();
-                            }
-                            for (int i = 0; i < cDD2.Images.Count; i++)
-                            {
-                                cDD2.Images[i].screen = spritescreen;
-                                ImageList.Add(cDD2.Images[i]);
-                                cDD2.Images[i].PlayScript();
-                            }
                         }
                     }
                 }

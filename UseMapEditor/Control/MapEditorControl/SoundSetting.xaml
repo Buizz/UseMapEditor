@@ -3,10 +3,77 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:UseMapEditor.Control.MapEditorControl"
+             xmlns:local="clr-namespace:UseMapEditor.Control.MapEditorControl" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-            
-    </Grid>
+             d:DesignHeight="450" >
+    <DockPanel>
+        <DockPanel MinWidth="100" DockPanel.Dock="Left">
+            <TextBlock Text="맵 사운드" DockPanel.Dock="Top" FontSize="18" Margin="4"/>
+            <StackPanel DockPanel.Dock="Left">
+                <Button Style="{StaticResource MaterialDesignFlatButton}" Height="Auto" Width="40" Padding="4" Click="Play_Click" Margin="0">
+                    <materialDesign:PackIcon Kind="Play" Width="32" Height="32"/>
+                </Button>
+                <Button Style="{StaticResource MaterialDesignFlatButton}" Height="Auto" Width="40" Padding="4" Click="SoundStop_Click">
+                    <materialDesign:PackIcon Kind="Stop" Width="32" Height="32"/>
+                </Button>
+                <Button Style="{StaticResource MaterialDesignFlatButton}" Height="Auto" Width="40" Padding="4" Click="OpenSound_Click">
+                    <materialDesign:PackIcon Kind="FolderOpen" Width="32" Height="32"/>
+                </Button>
+                <Button Style="{StaticResource MaterialDesignFlatButton}" Height="Auto" Width="40" Padding="4" Click="Export_Click">
+                    <materialDesign:PackIcon Kind="Export" Width="32" Height="32"/>
+                </Button>
+                <Button Style="{StaticResource MaterialDesignFlatButton}" Height="Auto" Width="40" Padding="4" Click="Compression_Click">
+                    <materialDesign:PackIcon Kind="CompressedFile" Width="32" Height="32"/>
+                </Button>
+                <Button Style="{StaticResource MaterialDesignFlatButton}" Height="Auto" Width="40" Padding="4" Click="Delete_Click">
+                    <materialDesign:PackIcon Kind="DeleteForever" Width="32" Height="32"/>
+                </Button>
+            </StackPanel>
+
+            <DockPanel DockPanel.Dock="Top">
+                <materialDesign:PackIcon Kind="Search" HorizontalAlignment="Center" DockPanel.Dock="Left" VerticalAlignment="Center" Height="20" Width="20" Margin="2" />
+                <TextBox x:Name="MapSoundSearchBox" materialDesign:TextFieldAssist.HasClearButton="True" TextChanged="MapSoundSearchBox_TextChanged">
+
+                </TextBox>
+            </DockPanel>
+            <ListView x:Name="MainListbox" SelectionMode="Extended" MouseDoubleClick="MainListbox_MouseDoubleClick">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn DisplayMemberBinding="{Binding FileName}" Header="파일이름" Width="250"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Size}" Header="용량" Width="100"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </DockPanel>
+        <DockPanel DockPanel.Dock="Right" MinWidth="500">
+            <TextBlock Text="스타크래프트 사운드" DockPanel.Dock="Top" FontSize="18" Margin="4"/>
+            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                <Label Content="언어" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <ComboBox MinWidth="50" SelectedIndex="0" x:Name="SoundLan">
+                    <ComboBoxItem Content="공용" Tag=""/>
+                    <ComboBoxItem Content="한국어" Tag="locales/koKR/Assets/"/>
+                    <ComboBoxItem Content="영어" Tag="locales/enUS/Assets/"/>
+                </ComboBox>
+            </StackPanel>
+            <StackPanel>
+                <Button Style="{StaticResource MaterialDesignFlatButton}" Height="Auto" Width="40" Padding="4" Click="StarCraftSoundPlay_Click">
+                    <materialDesign:PackIcon Kind="Play" Width="32" Height="32"/>
+                </Button>
+                <Button Style="{StaticResource MaterialDesignFlatButton}" Height="Auto" Width="40" Padding="4" Click="StarCraftSoundImport_Click">
+                    <materialDesign:PackIcon Kind="Add" Width="32" Height="32"/>
+                </Button>
+            </StackPanel>
+            <DockPanel DockPanel.Dock="Top">
+                <materialDesign:PackIcon Kind="Search" HorizontalAlignment="Center" DockPanel.Dock="Left" VerticalAlignment="Center" Height="20" Width="20" Margin="2" />
+                <TextBox x:Name="StarSoundSearchBox" materialDesign:TextFieldAssist.HasClearButton="True" TextChanged="StarSoundSearchBox_TextChanged">
+
+                </TextBox>
+            </DockPanel>
+            <TreeView x:Name="MainTreeview" MouseDoubleClick="MainTreeview_MouseDoubleClick">
+                <TreeViewItem Header="아이템1"/>
+                <TreeViewItem Header="아이템1"/>
+                <TreeViewItem Header="아이템1"/>
+            </TreeView>
+        </DockPanel>
+    </DockPanel>
 </UserControl>

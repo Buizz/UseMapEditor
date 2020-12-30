@@ -10,7 +10,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <materialDesign:MahAppsBundledTheme BaseTheme="Inherit" PrimaryColor="LightBlue" SecondaryColor="LightBlue"/>
+                <materialDesign:MahAppsBundledTheme BaseTheme="Inherit" PrimaryColor="Green" SecondaryColor="Green"/>
 
                 <!-- MahApps -->
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />

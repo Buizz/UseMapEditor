@@ -25,7 +25,7 @@ namespace UseMapEditor.Control.MapEditorControl
         {
             mapEditor = _mapEditor;
 
-
+            MainGrid.Children.Clear();
             for (int i = 0; i < 4; i++)
             {
                 MainGrid.Children.Add(new ForceSetting(mapEditor, i));

@@ -63,33 +63,25 @@ namespace Data.Map
                  //지형
 
 
-            //MRGN,//Locations                     STR사용
-            
-            //UPRP,//CUWP Slots
-            //UPUS,//CUWP Slots Used
-            //TRIG,//Triggers                      STR사용
+            MRGN,//Locations                     STR사용
 
-            //MBRF,//Mission Briefings             STR사용
-            //WAV,//WAV String Indexes             STR사용
-            //SWNM,//Switch Names                  STR사용
+            UPRP,//CUWP Slots
+            UPUS,//CUWP Slots Used
+            WAV,//WAV String Indexes             STR사용
+            SWNM,//Switch Names                  STR사용
 
 
+            TRIG,//Triggers                      STR사용
+            MBRF,//Mission Briefings             STR사용
 
-            //PUNI,//Player Unit Restrictions
 
-            //UPGR,//Upgrade Restrictions
-            //PTEC,//Tech Restrictions
 
-            //UNIS,//Unit Settings                 STR사용
-            //UPGS,//Upgrade Settings
-            //TECS,//Tech Settings
-            //브르드워
-            //PUPx,//BW Upgrade Restrictions
-            //PTEx,//BW Tech Restrictions
-
-            //UNIx,//BW Unit Settings              STR사용
-            //UPGx,//BW Upgrade Settings
-            //TECx,//BW Tech Settings
+            PUNI,//Player Unit Restrictions
+            PUPx,//BW Upgrade Restrictions
+            PTEx,//BW Tech Restrictions
+            UNIx,// - Unit Settings                 STR사용
+            UPGx,//BW Upgrade Settings
+            TECx,//BW Tech Settings
         }
 
 
@@ -217,9 +209,28 @@ namespace Data.Map
                     break;
                 case TOKENTYPE.OWNR:
                     //TODO:스타트로케이션 확인 후 IOWN수정해야됨.
+                    OWNR = (byte[])IOWN.Clone();
+
+                    bool[] pexist = new bool[8];
+                    for (int i = 0; i < UNIT.Count; i++)
+                    {
+                        if(UNIT[i].unitID == 214)
+                        {
+                            pexist[UNIT[i].player] = true;
+                        }
+                    }
+                    for (int i = 0; i < 8; i++)
+                    {
+                        if (!pexist[i])
+                        {
+                            OWNR[i] = 0;
+                        }
+                    }
+
+
                     bw.Write(tokenbyte);
-                    bw.Write(IOWN.Length);
-                    bw.Write(IOWN);
+                    bw.Write(OWNR.Length);
+                    bw.Write(OWNR);
 
                     break;
                 case TOKENTYPE.SIDE:
@@ -420,7 +431,268 @@ namespace Data.Map
                     bw.Write((ushort)FORCENAME[3].ResultIndex);
                     bw.Write(FORCEFLAG);
                     break;
+                case TOKENTYPE.MRGN:
+                    bw.Write(tokenbyte);
+                    bw.Write((int)5100);
 
+                    for (int i = 0; i < 255; i++)
+                    {
+                        LocationData locationData = LocationDatas.Find(x => x.INDEX == (i + 1));
+
+                        if (locationData == null)
+                        {
+                            bw.Write(new byte[20]);
+                        }
+                        else
+                        {
+                            bw.Write(locationData.L);
+                            bw.Write(locationData.T);
+                            bw.Write(locationData.R);
+                            bw.Write(locationData.B);
+                            bw.Write((ushort)locationData.STRING.ResultIndex);
+                            bw.Write(locationData.FLAG);
+                        }
+                    }
+
+                    break;
+
+                case TOKENTYPE.UPRP:
+                    bw.Write(tokenbyte);
+                    bw.Write((int)UPRP.Length * 20);
+                    for (int i = 0; i < UPRP.Length; i++)
+                    {
+                        bw.Write(UPRP[i].STATUSVALID);
+                        bw.Write(UPRP[i].POINTVALID);
+                        bw.Write(UPRP[i].PLAYER);
+                        bw.Write(UPRP[i].HITPOINT);
+                        bw.Write(UPRP[i].SHIELDPOINT);
+                        bw.Write(UPRP[i].ENERGYPOINT);
+                        bw.Write(UPRP[i].RESOURCE);
+                        bw.Write(UPRP[i].HANGAR);
+                        bw.Write(UPRP[i].STATUSFLAG);
+                        bw.Write(UPRP[i].UNUSED);
+                    }
+                    break;
+                case TOKENTYPE.UPUS:
+                    bw.Write(tokenbyte);
+                    bw.Write((int)UPUS.Length);
+                    bw.Write(UPUS);
+                    break;
+                case TOKENTYPE.WAV:
+                    bw.Write(tokenbyte);
+                    bw.Write((int)WAV.Length * 4);
+
+                    for (int i = 0; i < WAV.Length; i++)
+                    {
+                        bw.Write(WAV[i].ResultIndex);
+                    }
+                    break;
+                case TOKENTYPE.SWNM:
+                    bw.Write(tokenbyte);
+                    bw.Write((int)SWNM.Length * 4);
+
+                    for (int i = 0; i < SWNM.Length; i++)
+                    {
+                        bw.Write(SWNM[i].ResultIndex);
+                    }
+                    break;
+                case TOKENTYPE.PUNI:
+                    bw.Write(tokenbyte);
+                    bw.Write((int)5700);
+                    for (int i = 0; i < 12; i++)
+                    {
+                        bw.Write(PUNI.UNITENABLED[i]);
+                    }
+                    bw.Write(PUNI.DEFAULT);
+                    for (int i = 0; i < 12; i++)
+                    {
+                        bw.Write(PUNI.USEDEFAULT[i]);
+                    }
+
+                    break;
+                case TOKENTYPE.PUPx:
+                    bw.Write(tokenbyte);
+                    bw.Write((int)2318);
+                    for (int i = 0; i < 12; i++)
+                    {
+                        bw.Write(PUPx.MAXLEVEL[i]);
+                    }
+                    for (int i = 0; i < 12; i++)
+                    {
+                        bw.Write(PUPx.STARTLEVEL[i]);
+                    }
+                    bw.Write(PUPx.DEFAULTMAXLEVEL);
+                    bw.Write(PUPx.DEFAULTSTARTLEVEL);
+                    for (int i = 0; i < 12; i++)
+                    {
+                        bw.Write(PUPx.USEDEFAULT[i]);
+                    }
+
+                    break;
+                case TOKENTYPE.PTEx:
+                    bw.Write(tokenbyte);
+                    bw.Write((int)1672);
+                    for (int i = 0; i < 12; i++)
+                    {
+                        bw.Write(PTEx.MAXLEVEL[i]);
+                    }
+                    for (int i = 0; i < 12; i++)
+                    {
+                        bw.Write(PTEx.STARTLEVEL[i]);
+                    }
+                    bw.Write(PTEx.DEFAULTMAXLEVEL);
+                    bw.Write(PTEx.DEFAULTSTARTLEVEL);
+                    for (int i = 0; i < 12; i++)
+                    {
+                        bw.Write(PTEx.USEDEFAULT[i]);
+                    }
+
+                    break;
+                case TOKENTYPE.UNIx:
+                    bw.Write(tokenbyte);
+                    bw.Write((int)4168);
+                    for (int i = 0; i < 228; i++)
+                        bw.Write(UNIx.USEDEFAULT[i]);
+
+                    for (int i = 0; i < 228; i++)
+                        bw.Write(UNIx.HIT[i]);
+                    for (int i = 0; i < 228; i++)
+                        bw.Write(UNIx.SHIELD[i]);
+                    for (int i = 0; i < 228; i++)
+                        bw.Write(UNIx.ARMOR[i]);
+                    for (int i = 0; i < 228; i++)
+                        bw.Write(UNIx.BUILDTIME[i]);
+                    for (int i = 0; i < 228; i++)
+                        bw.Write(UNIx.MIN[i]);
+                    for (int i = 0; i < 228; i++)
+                        bw.Write(UNIx.GAS[i]);
+                    for (int i = 0; i < 228; i++)
+                        bw.Write((ushort)UNIx.STRING[i].ResultIndex);
+                    for (int i = 0; i < 130; i++)
+                        bw.Write(UNIx.DMG[i]);
+                    for (int i = 0; i < 130; i++)
+                        bw.Write(UNIx.BONUSDMG[i]);
+
+                    break;
+                case TOKENTYPE.UPGx:
+                    bw.Write(tokenbyte);
+                    bw.Write((int)794);
+                    for (int i = 0; i < 61; i++)
+                        bw.Write(UPGx.USEDEFAULT[i]);
+                    bw.Write((byte)0);
+                    for (int i = 0; i < 61; i++)
+                        bw.Write(UPGx.BASEMIN[i]);
+                    for (int i = 0; i < 61; i++)
+                        bw.Write(UPGx.BONUSMIN[i]);
+                    for (int i = 0; i < 61; i++)
+                        bw.Write(UPGx.BASEGAS[i]);
+                    for (int i = 0; i < 61; i++)
+                        bw.Write(UPGx.BONUSGAS[i]);
+                    for (int i = 0; i < 61; i++)
+                        bw.Write(UPGx.BASETIME[i]);
+                    for (int i = 0; i < 61; i++)
+                        bw.Write(UPGx.BONUSTIME[i]);
+
+                    break;
+                case TOKENTYPE.TECx:
+                    bw.Write(tokenbyte);
+                    bw.Write((int)396);
+                    for (int i = 0; i < 44; i++)
+                        bw.Write(TECx.USEDEFAULT[i]);
+                    for (int i = 0; i < 44; i++)
+                        bw.Write(TECx.MIN[i]);
+                    for (int i = 0; i < 44; i++)
+                        bw.Write(TECx.GAS[i]);
+                    for (int i = 0; i < 44; i++)
+                        bw.Write(TECx.BASETIME[i]);
+                    for (int i = 0; i < 44; i++)
+                        bw.Write(TECx.ENERGY[i]);
+
+                    break;
+                case TOKENTYPE.TRIG:
+                    bw.Write(tokenbyte);
+                    bw.Write((int)2400 * TRIG.Count);
+                    for (int i = 0; i < TRIG.Count; i++)
+                    {
+                        for (int c = 0; c < 16; c++)
+                        {
+                            bw.Write(TRIG[i].conditions[c].locid);
+                            bw.Write(TRIG[i].conditions[c].player);
+                            bw.Write(TRIG[i].conditions[c].amount);
+                            bw.Write(TRIG[i].conditions[c].unitid);
+                            bw.Write(TRIG[i].conditions[c].comparison);
+                            bw.Write(TRIG[i].conditions[c].condtype);
+                            bw.Write(TRIG[i].conditions[c].restype);
+                            bw.Write(TRIG[i].conditions[c].flags);
+                            bw.Write(TRIG[i].conditions[c].maskflag);
+                        }
+                        for (int a = 0; a < 64; a++)
+                        {
+                            bw.Write(TRIG[i].actions[a].locid1);
+
+                            bw.Write(TRIG[i].actions[a].STRING.ResultIndex);
+
+                            bw.Write(TRIG[i].actions[a].wavid);
+                            bw.Write(TRIG[i].actions[a].time);
+                            bw.Write(TRIG[i].actions[a].player1);
+                            bw.Write(TRIG[i].actions[a].player2);
+                            bw.Write(TRIG[i].actions[a].unitid);
+                            bw.Write(TRIG[i].actions[a].acttype);
+                            bw.Write(TRIG[i].actions[a].amount);
+                            bw.Write(TRIG[i].actions[a].flags);
+                            bw.Write(TRIG[i].actions[a].padding);
+                            bw.Write(TRIG[i].actions[a].maskflag);
+                        }
+
+                        bw.Write(TRIG[i].exeflag);
+                        bw.Write(TRIG[i].playerlist);
+                        bw.Write(TRIG[i].trigindex);
+                    }
+
+
+                    break;
+                case TOKENTYPE.MBRF:
+                    bw.Write(tokenbyte);
+                    bw.Write((int)2400 * MBRF.Count);
+                    for (int i = 0; i < MBRF.Count; i++)
+                    {
+                        for (int c = 0; c < 16; c++)
+                        {
+                            bw.Write(MBRF[i].conditions[c].locid);
+                            bw.Write(MBRF[i].conditions[c].player);
+                            bw.Write(MBRF[i].conditions[c].amount);
+                            bw.Write(MBRF[i].conditions[c].unitid);
+                            bw.Write(MBRF[i].conditions[c].comparison);
+                            bw.Write(MBRF[i].conditions[c].condtype);
+                            bw.Write(MBRF[i].conditions[c].restype);
+                            bw.Write(MBRF[i].conditions[c].flags);
+                            bw.Write(MBRF[i].conditions[c].maskflag);
+                        }
+                        for (int a = 0; a < 64; a++)
+                        {
+                            bw.Write(MBRF[i].actions[a].locid1);
+
+                            bw.Write(TRIG[i].actions[a].STRING.ResultIndex);
+
+                            bw.Write(MBRF[i].actions[a].wavid);
+                            bw.Write(MBRF[i].actions[a].time);
+                            bw.Write(MBRF[i].actions[a].player1);
+                            bw.Write(MBRF[i].actions[a].player2);
+                            bw.Write(MBRF[i].actions[a].unitid);
+                            bw.Write(MBRF[i].actions[a].acttype);
+                            bw.Write(MBRF[i].actions[a].amount);
+                            bw.Write(MBRF[i].actions[a].flags);
+                            bw.Write(MBRF[i].actions[a].padding);
+                            bw.Write(MBRF[i].actions[a].maskflag);
+                        }
+
+                        bw.Write(MBRF[i].exeflag);
+                        bw.Write(MBRF[i].playerlist);
+                        bw.Write(MBRF[i].trigindex);
+                    }
+
+
+                    break;
             }
         }
 
@@ -456,9 +728,14 @@ namespace Data.Map
                 LOADSTRx = (string[])LOADSTR.Clone();
             }
 
+            if (IOWN == null)
+            {
+                //IOWN = (byte[])OWNR.Clone();
+                throw new Exception("");
+            }
 
             //만약 인코딩이 없을 경우
-            if(ENCODING == null)
+            if (ENCODING == null)
             {
                 ENCODING = System.Text.Encoding.UTF8;
 
@@ -471,14 +748,9 @@ namespace Data.Map
                 LOADSTRx[i] = ENCODING.GetString(BYTESTRx[i]);
             }
 
-
-
             for (int i = 0; i < DD2.Count; i++)
             {
                 DoodadPallet pallete = UseMapEditor.Global.WindowTool.MapViewer.tileSet.DoodadPallets[TILETYPE][DD2[i].ID]; ;
-
-
-
 
                 if (THG2.Exists(x => (x.X == DD2[i].X) & (x.Y == DD2[i].Y)))
                 {
@@ -492,13 +764,28 @@ namespace Data.Map
             }
 
 
+            //soundDatas
+            uint hmpq = OpenArchive();
+
+            soundDatas.Clear();
+            for (int i = 0; i < WAV.Length; i++)
+            {
+                string d = WAV[i].String;
+                if (WAV[i].IsLoaded)
+                {
+                    SoundData soundData = new SoundData();
+                    soundData.path = d;
+                    soundData.bytes = ReadMPQFileC(hmpq, d);
+                    if(soundData.bytes.Length != 0)
+                    {
+                        soundDatas.Add(soundData);
+                    }
+                }
+            }
+            CloseArchive(hmpq);
 
 
-            ////Byte로부터 에디터로 넣는 함수
-            //foreach (TOKENTYPE cHKTYPE in Enum.GetValues(typeof(TOKENTYPE)))
-            //{
-            //    Applychk(br, cHKTYPE);
-            //}
+
 
 
             return true;
@@ -507,6 +794,7 @@ namespace Data.Map
         {
             CHKToken cHKToken = GetNextCHK(br);
             br.BaseStream.Position = cHKToken.start;
+
 
 
             //Byte로부터 에디터로 넣는 함수
@@ -522,6 +810,7 @@ namespace Data.Map
                     break;
                 case TOKENTYPE.OWNR:
                     //넘기기
+                    OWNR = br.ReadBytes(12);
 
                     break;
                 case TOKENTYPE.SIDE:
@@ -529,7 +818,13 @@ namespace Data.Map
 
                     break;
                 case TOKENTYPE.ERA:
-                    TILETYPE = (UseMapEditor.FileData.TileSet.TileType)br.ReadUInt16();
+                    ushort tile = br.ReadUInt16();
+                    if(tile > 7)
+                    {
+                        throw new Exception("");
+                    }
+                    TILETYPE = (TileType)tile;
+
 
                     break;
                 case TOKENTYPE.COLR:
@@ -701,40 +996,301 @@ namespace Data.Map
 
                     FORCEFLAG = br.ReadBytes(4);
                     break;
+                case TOKENTYPE.MRGN:
+                    LocationDatas.Clear();
+                    LocationDatas.Add(new LocationData());
+                    for (int i = 0; i < 255; i++)
+                    {
+                        LocationData locationData = new LocationData();
+
+                        locationData.INDEX = i + 1;
+
+                        locationData.L = br.ReadUInt32();
+                        locationData.T = br.ReadUInt32();
+                        locationData.R = br.ReadUInt32();
+                        locationData.B = br.ReadUInt32();
+                        locationData.STRING = new StringData(this, br.ReadUInt16());
+                        locationData.FLAG = br.ReadUInt16();
+
+                        if(locationData.L == 0 & locationData.T == 0 & locationData.L == 0 & locationData.T == 0 &
+                            locationData.STRING.LoadedIndex == -1 & locationData.FLAG == 0)
+                        {
+                            continue;
+                        }
 
 
-                    /*
-                    DD2,//StarEdit Sprites (Doodads)
-                    THG2,//StarCraft Sprites
-                    MASK,//Fog of War Layer
+                        LocationDatas.Add(locationData);
+                    }
+                    //u32: Left(X1) coordinate of location, in pixels(usually 32 pt grid aligned)
+                    //u32: Top(Y1) coordinate of location, in pixels
+                    //u32: Right(X2) coordinate of location, in pixels
+                    //u32: Bottom(Y2) coordinate of location, in pixels
+                    //u16: String number of the name of this location
+                    //u16: Location elevation flags.If an elevation is disabled in the location, it's bit will be on (1)
+                    //Bit 0 - Low elevation
+                    //Bit 1 - Medium elevation
+                    //Bit 2 - High elevation
+                    //Bit 3 - Low air
+                    //Bit 4 - Medium air
+                    //Bit 5 - High air
+                    //Bit 6 - 15 - Unused
 
 
-                    UPRP,//CUWP Slots
-                    UPUS,//CUWP Slots Used
-                    TRIG,//Triggers                      STR사용
+                    break;
+                case TOKENTYPE.UPRP:
+                    UPRP = new CUPRP[64];
+                    for (int i = 0; i < 64; i++)
+                    {
+                        CUPRP cUPRP = new CUPRP();
+                        cUPRP.STATUSVALID = br.ReadUInt16();
+                        cUPRP.POINTVALID = br.ReadUInt16();
 
-                    MBRF,//Mission Briefings             STR사용
-                    WAV,//WAV String Indexes             STR사용
-                    SWNM,//Switch Names                  STR사용
-                    MRGN,//Locations                     STR사용
+                        cUPRP.PLAYER = br.ReadByte();
+                        cUPRP.HITPOINT = br.ReadByte();
+                        cUPRP.SHIELDPOINT = br.ReadByte();
+                        cUPRP.ENERGYPOINT = br.ReadByte();
 
 
+                        cUPRP.RESOURCE = br.ReadUInt32();
+                        cUPRP.HANGAR = br.ReadUInt16();
+                        cUPRP.STATUSFLAG = br.ReadUInt16();
+                        cUPRP.UNUSED = br.ReadUInt32();
 
-                    PUNI,//Player Unit Restrictions
+                        UPRP[i] = cUPRP;
+                    }
+                    break;
+                case TOKENTYPE.UPUS:
+                    UPUS = br.ReadBytes(64);
+                    break;
+                case TOKENTYPE.WAV:
+                    WAV = new StringData[512];
+                    for (int i = 0; i < 512; i++)
+                    {
+                        WAV[i] = new StringData(this, br.ReadInt32());
+                    }
+                    break;
+                case TOKENTYPE.SWNM:
+                    SWNM = new StringData[256];
+                    for (int i = 0; i < 256; i++)
+                    {
+                        SWNM[i] = new StringData(this, br.ReadInt32());
+                    }
+                    break;
+                case TOKENTYPE.PUNI:
+                    PUNI = new CPUNI();
+                    for (int i = 0; i < 12; i++)
+                    {
+                        PUNI.UNITENABLED[i] = br.ReadBytes(228);
+                    }
+                    PUNI.DEFAULT = br.ReadBytes(228);
+                    for (int i = 0; i < 12; i++)
+                    {
+                        PUNI.USEDEFAULT[i] = br.ReadBytes(228);
+                    }
 
-                    UPGR,//Upgrade Restrictions
-                    PTEC,//Tech Restrictions
-                    UNIS,//Unit Settings                 STR사용
-                    UPGS,//Upgrade Settings
-                    TECS,//Tech Settings
-                    //브르드워
-                    PUPx,//BW Upgrade Restrictions
-                    PTEx,//BW Tech Restrictions
-                    UNIx,//BW Unit Settings              STR사용
-                    UPGx,//BW Upgrade Settings
-                    TECx,//BW Tech Settings
-                    */
+                    break;
+                case TOKENTYPE.PUPx:
+                    PUPx = new CPUPx();
+                    for (int i = 0; i < 12; i++)
+                    {
+                        PUPx.MAXLEVEL[i] = br.ReadBytes(61);
+                    }
+                    for (int i = 0; i < 12; i++)
+                    {
+                        PUPx.STARTLEVEL[i] = br.ReadBytes(61);
+                    }
+                    PUPx.DEFAULTMAXLEVEL = br.ReadBytes(61);
+                    PUPx.DEFAULTSTARTLEVEL = br.ReadBytes(61);
+                    for (int i = 0; i < 12; i++)
+                    {
+                        PUPx.USEDEFAULT[i] = br.ReadBytes(61);
+                    }
 
+                    break;
+                case TOKENTYPE.PTEx:
+                    PTEx = new CPTEx();
+                    for (int i = 0; i < 12; i++)
+                    {
+                        PTEx.MAXLEVEL[i] = br.ReadBytes(44);
+                    }
+                    for (int i = 0; i < 12; i++)
+                    {
+                        PTEx.STARTLEVEL[i] = br.ReadBytes(44);
+                    }
+                    PTEx.DEFAULTMAXLEVEL = br.ReadBytes(44);
+                    PTEx.DEFAULTSTARTLEVEL = br.ReadBytes(44);
+                    for (int i = 0; i < 12; i++)
+                    {
+                        PTEx.USEDEFAULT[i] = br.ReadBytes(44);
+                    }
+
+                    break;
+                case TOKENTYPE.UNIx:
+                    UNIx = new CUNIx();
+                    for (int i = 0; i < 228; i++)
+                        UNIx.USEDEFAULT[i] = br.ReadByte();
+
+                    for (int i = 0; i < 228; i++)
+                        UNIx.HIT[i] = br.ReadUInt32();
+                    for (int i = 0; i < 228; i++)
+                        UNIx.SHIELD[i] = br.ReadUInt16();
+                    for (int i = 0; i < 228; i++)
+                        UNIx.ARMOR[i] = br.ReadByte();
+                    for (int i = 0; i < 228; i++)
+                        UNIx.BUILDTIME[i] = br.ReadUInt16();
+                    for (int i = 0; i < 228; i++)
+                        UNIx.MIN[i] = br.ReadUInt16();
+                    for (int i = 0; i < 228; i++)
+                        UNIx.GAS[i] = br.ReadUInt16();
+                    for (int i = 0; i < 228; i++)
+                        UNIx.STRING[i] = new StringData(this, br.ReadUInt16());
+                    for (int i = 0; i < 130; i++)
+                        UNIx.DMG[i] = br.ReadUInt16();
+                    for (int i = 0; i < 130; i++)
+                        UNIx.BONUSDMG[i] = br.ReadUInt16();
+
+                    break;
+                case TOKENTYPE.UPGx:
+                    UPGx = new CUPGx();
+                    for (int i = 0; i < 61; i++)
+                        UPGx.USEDEFAULT[i] = br.ReadByte();
+                    br.ReadByte();
+                    for (int i = 0; i < 61; i++)
+                        UPGx.BASEMIN[i] = br.ReadUInt16();
+                    for (int i = 0; i < 61; i++)
+                        UPGx.BONUSMIN[i] = br.ReadUInt16();
+                    for (int i = 0; i < 61; i++)
+                        UPGx.BASEGAS[i] = br.ReadUInt16();
+                    for (int i = 0; i < 61; i++)
+                        UPGx.BONUSGAS[i] = br.ReadUInt16();
+                    for (int i = 0; i < 61; i++)
+                        UPGx.BASETIME[i] = br.ReadUInt16();
+                    for (int i = 0; i < 61; i++)
+                        UPGx.BONUSTIME[i] = br.ReadUInt16();
+
+                    break;
+                case TOKENTYPE.TECx:
+                    TECx = new CTECx();
+                    for (int i = 0; i < 44; i++)
+                        TECx.USEDEFAULT[i] = br.ReadByte();
+                    for (int i = 0; i < 44; i++)
+                        TECx.MIN[i] = br.ReadUInt16();
+                    for (int i = 0; i < 44; i++)
+                        TECx.GAS[i] = br.ReadUInt16();
+                    for (int i = 0; i < 44; i++)
+                        TECx.BASETIME[i] = br.ReadUInt16();
+                    for (int i = 0; i < 44; i++)
+                        TECx.ENERGY[i] = br.ReadUInt16();
+
+                    break;
+                case TOKENTYPE.TRIG:
+                    TRIG.Clear();
+
+                    for (int i = 0; i < cHKToken.size/2400; i++)
+                    {
+                        TRIGMBRF trig = new TRIGMBRF();
+
+                        for (int c = 0; c < 16; c++)
+                        {
+                            TRIGMBRF.Condition condition = new TRIGMBRF.Condition();
+
+                            condition.locid = br.ReadUInt32();//u32: Location number for the condition (1 based -- 0 refers to No Location), EUD Bitmask for a Death condition if the MaskFlag is set to "SC"
+                            condition.player = br.ReadUInt32();//u32: Group that the condition applies to
+                            condition.amount = br.ReadUInt32();//u32: Qualified number(how many/resource amount)
+                            condition.unitid = br.ReadUInt16();//u16: Unit ID condition applies to
+                            condition.comparison = br.ReadByte();//u8: Numeric comparison, switch state
+                            condition.condtype = br.ReadByte();//u8: Condition byte
+                            condition.restype = br.ReadByte();//u8: Resource type, score type, Switch number(0-based)
+                            condition.flags = br.ReadByte();//u8: Flags
+                            condition.maskflag = br.ReadUInt16();//u16: MaskFlag: set to "SC" (0x53, 0x43) when using the bitmask for EUDs, 0 otherwise
+
+                            trig.conditions[c] = condition;
+                        }
+                        for (int a = 0; a < 64; a++)
+                        {
+                            TRIGMBRF.Action action = new TRIGMBRF.Action();
+
+                            action.locid1 = br.ReadUInt32();//u32: Location - source location in "Order" and "Move Unit", dest location in "Move Location" (1 based -- 0 refers to No Location), EUD Bitmask for a Death action if the MaskFlag is set to "SC"
+                            action.strid = br.ReadUInt32();//u32: String number for trigger text(0 means no string)
+                            action.wavid = br.ReadUInt32();//u32: WAV string number(0 means no string)
+                            action.time = br.ReadUInt32();//u32: Seconds/milliseconds of time
+                            action.player1 = br.ReadUInt32();//u32: First(or only) Group/Player affected.
+                            action.player2 = br.ReadUInt32();//u32: Second group affected, secondary location (1-based), CUWP #, number, AI script (4-byte string), switch (0-based #)
+                            action.unitid = br.ReadUInt16();//u16: Unit type, score type, resource type, alliance status
+                            action.acttype = br.ReadByte();//u8: Action byte
+                            action.amount = br.ReadByte();//u8: Number of units(0 means All Units), action state, unit order, number modifier
+                            action.flags = br.ReadByte();//u8: Flags
+                            action.padding = br.ReadByte();//u8: Padding
+                            action.maskflag = br.ReadUInt16();//u16 (2 bytes): MaskFlag: set to "SC"(0x53, 0x43) when using the bitmask for EUDs, 0 otherwise
+
+                            trig.actions[a] = action;
+
+                            action.STRING = new StringData(this, (int)action.strid);
+                        }
+
+                        trig.exeflag = br.ReadUInt32();
+                        trig.playerlist = br.ReadBytes(27);
+                        trig.trigindex = br.ReadByte();
+
+                        TRIG.Add(trig);
+                    }
+
+
+                    break;
+                case TOKENTYPE.MBRF:
+                    MBRF.Clear();
+
+                    for (int i = 0; i < cHKToken.size / 2400; i++)
+                    {
+                        TRIGMBRF mbrf = new TRIGMBRF();
+
+                        for (int c = 0; c < 16; c++)
+                        {
+                            TRIGMBRF.Condition condition = new TRIGMBRF.Condition();
+
+                            condition.locid = br.ReadUInt32();//u32: Location number for the condition (1 based -- 0 refers to No Location), EUD Bitmask for a Death condition if the MaskFlag is set to "SC"
+                            condition.player = br.ReadUInt32();//u32: Group that the condition applies to
+                            condition.amount = br.ReadUInt32();//u32: Qualified number(how many/resource amount)
+                            condition.unitid = br.ReadUInt16();//u16: Unit ID condition applies to
+                            condition.comparison = br.ReadByte();//u8: Numeric comparison, switch state
+                            condition.condtype = br.ReadByte();//u8: Condition byte
+                            condition.restype = br.ReadByte();//u8: Resource type, score type, Switch number(0-based)
+                            condition.flags = br.ReadByte();//u8: Flags
+                            condition.maskflag = br.ReadUInt16();//u16: MaskFlag: set to "SC" (0x53, 0x43) when using the bitmask for EUDs, 0 otherwise
+
+                            mbrf.conditions[i] = condition;
+                        }
+                        for (int a = 0; a < 64; a++)
+                        {
+                            TRIGMBRF.Action action = new TRIGMBRF.Action();
+
+                            action.locid1 = br.ReadUInt32();//u32: Location - source location in "Order" and "Move Unit", dest location in "Move Location" (1 based -- 0 refers to No Location), EUD Bitmask for a Death action if the MaskFlag is set to "SC"
+                            action.strid = br.ReadUInt32();//u32: String number for trigger text(0 means no string)
+                            action.wavid = br.ReadUInt32();//u32: WAV string number(0 means no string)
+                            action.time = br.ReadUInt32();//u32: Seconds/milliseconds of time
+                            action.player1 = br.ReadUInt32();//u32: First(or only) Group/Player affected.
+                            action.player2 = br.ReadUInt32();//u32: Second group affected, secondary location (1-based), CUWP #, number, AI script (4-byte string), switch (0-based #)
+                            action.unitid = br.ReadUInt16();//u16: Unit type, score type, resource type, alliance status
+                            action.acttype = br.ReadByte();//u8: Action byte
+                            action.amount = br.ReadByte();//u8: Number of units(0 means All Units), action state, unit order, number modifier
+                            action.flags = br.ReadByte();//u8: Flags
+                            action.padding = br.ReadByte();//u8: Padding
+                            action.maskflag = br.ReadUInt16();//u16 (2 bytes): MaskFlag: set to "SC"(0x53, 0x43) when using the bitmask for EUDs, 0 otherwise
+
+                            mbrf.actions[i] = action;
+
+                            action.STRING = new StringData(this, (int)action.strid);
+                        }
+
+                        mbrf.exeflag = br.ReadUInt32();
+                        mbrf.playerlist = br.ReadBytes(27);
+                        mbrf.trigindex = br.ReadByte();
+
+                        MBRF.Add(mbrf);
+                    }
+
+
+                    break;
             }
 
 

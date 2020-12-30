@@ -336,5 +336,10 @@ namespace UseMapEditor.FileData
                 }
             }
         }
+
+        internal object Values(DatFiles weapons, string v, long weaponNum)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

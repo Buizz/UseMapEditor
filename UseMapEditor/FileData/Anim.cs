@@ -2,6 +2,7 @@
 using Pfim;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -53,6 +54,8 @@ namespace UseMapEditor.FileData
 
             for (int entryindex = 0; entryindex < entries; entryindex++)
             {
+                bool IsSaveIcon = false;
+                System.Drawing.Bitmap iconbitmap = null;
                 if (version == 0x101)
                 {
                     mr.BaseStream.Position = images[entryindex];
@@ -165,6 +168,7 @@ namespace UseMapEditor.FileData
 
                                         if (version == 0x101)
                                         {
+
                                             bitmap.MakeTransparent(System.Drawing.Color.Black);
                                             savepath = filename + entryindex;
 
@@ -175,6 +179,8 @@ namespace UseMapEditor.FileData
 
                                             savefolder = savepath + "\\";
                                             savepath = savepath + "\\" + layerstrs[layindex] + ".png";
+                                            IsSaveIcon = true;
+                                            iconbitmap = bitmap;
                                         }
                                         else
                                         {
@@ -214,7 +220,7 @@ namespace UseMapEditor.FileData
                     bw.Write(width);
                     bw.Write(height);
 
-
+                    ushort[] iconframe = new ushort[4];
                     {
                         //==================frame==================
                         mr.BaseStream.Position = frameptr;
@@ -237,11 +243,46 @@ namespace UseMapEditor.FileData
                             bw.Write(fheight);
                             bw.Write(funk1);
                             bw.Write(funk2);
+
+
+                            if (IsSaveIcon & findex == 0)
+                            {
+                                iconframe[0] = x;
+                                iconframe[1] = y;
+                                iconframe[2] = fwidth;
+                                iconframe[3] = fheight;
+                            }
                         }
                         //==================frame==================
                     }
 
                     bw.Close();
+
+
+
+                    //아이콘 만들기
+                    if (IsSaveIcon)
+                    {
+                        string tsavepath = AppDomain.CurrentDomain.BaseDirectory + @"CascData\icon";
+                        if (!System.IO.Directory.Exists(tsavepath))
+                        {
+                            System.IO.Directory.CreateDirectory(tsavepath);
+                        }
+
+                        Rectangle cropRect = new Rectangle(iconframe[0], iconframe[1], iconframe[2], iconframe[3]);
+                        Bitmap target = new Bitmap(cropRect.Width, cropRect.Height);
+
+                        using (Graphics g = Graphics.FromImage(target))
+                        {
+                            g.DrawImage(iconbitmap, new Rectangle(0, 0, target.Width, target.Height),
+                                             cropRect,
+                                             GraphicsUnit.Pixel);
+                        }
+                        tsavepath += "\\" + entryindex + ".png";
+
+
+                        target.Save(tsavepath, System.Drawing.Imaging.ImageFormat.Png);
+                    }
                 }
                 else
                 {

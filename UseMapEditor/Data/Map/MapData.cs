@@ -14,8 +14,6 @@ namespace Data.Map
 {
     public partial class MapData
     {
-
-
         private string filepath;
         public string FilePath
         {
@@ -45,6 +43,7 @@ namespace Data.Map
 
         public void MapDataReset()
         {
+            cHKTokens = new List<CHKToken>();
             for (int i = 0; i < 8; i++)
             {
                 CRGB[i] = new Microsoft.Xna.Framework.Color(0, 0, 0);
@@ -54,12 +53,7 @@ namespace Data.Map
             }
             UNIT.Clear();
 
-            MTXM = null;
-            TILE = null;
-            LOADSTR = null;
-            LOADSTRx = null;
-            IOWN = new byte[12];
-            SIDE = new byte[12];
+
             FORCE = new byte[8];
             FORCENAME = new StringData[4];
             FORCENAME[0] = new StringData(this, "세력 1");
@@ -68,25 +62,68 @@ namespace Data.Map
             FORCENAME[3] = new StringData(this, "세력 4");
 
 
+            SIDE = new byte[12];
             FORCEFLAG = new byte[4];
             WIDTH = 0;
             HEIGHT = 0;
+            MASK = null;
+            MTXM = null;
+            TILE = null;
+
+            BYTESTR = new List<byte[]>();
+            BYTESTRx = new List<byte[]>();
+            LOADSTR = new string[0];
+            LOADSTRx = new string[0];
+            IOWN = null;
+            OWNR = null;
+            //LocationDatas.Add(new LocationData());
+
 
             SCEARIONAME = new StringData(this, "제목 없음");
             SCEARIODES = new StringData(this, "시나리오 설명이 없습니다.");
 
             ENCODING = null;// System.Text.Encoding.
 
-            BYTESTR = null;
-            BYTESTRx = null;
 
             DD2.Clear();
             THG2.Clear();
 
-            MASK = null;
 
-            MRGN = new CMRGN[255];
             DDDTHG2.Clear();
+            LocationDatas.Clear();
+            LocationDatas.Add(new LocationData());
+
+            UPRP = new CUPRP[64];
+            for (int i = 0; i < 64; i++)
+            {
+                UPRP[i] = new CUPRP();
+            }
+
+
+            UPUS = new byte[64];
+
+            WAV = new StringData[512];
+            for (int i = 0; i < 512; i++)
+            {
+                WAV[i] = new StringData(this);
+            }
+            SWNM = new StringData[256];
+            for (int i = 0; i < 256; i++)
+            {
+                SWNM[i] = new StringData(this);
+            }
+
+            TRIG.Clear();
+            MBRF.Clear();
+
+            PUNI = new CPUNI(true);
+            PUPx = new CPUPx(true);
+            PTEx = new CPTEx(true);
+            UNIx = new CUNIx(this, true);
+            UPGx = new CUPGx(true);
+            TECx = new CTECx(true);
+
+            soundDatas = new List<SoundData>();
         }
 
 
@@ -160,6 +197,7 @@ namespace Data.Map
 
 
         public byte[] IOWN = new byte[12];
+        public byte[] OWNR = new byte[12];
         public enum IOWNTYPE
         {
             NOPLAYER = 0,
@@ -299,7 +337,7 @@ namespace Data.Map
             }
             else
             {
-                return PlayerColors[PlayerID];
+                return PlayerColors[PlayerID % PlayerColors.Length];
             }
 
 
@@ -437,7 +475,7 @@ namespace Data.Map
                     BoxWidth = 256;
                     BoxHeight = 256;
 
-                    CImage p = new CImage(alpha, Images, ImageID, 0, PLAYER, _drawType: CImage.DrawType.Normal, level: 8);
+                    CImage p = new CImage(alpha, Images, ImageID, 0, PLAYER, _drawType: CImage.DrawType.PureSprite, level: 8);
                     Images.Add(p);
                 }
 
@@ -459,7 +497,7 @@ namespace Data.Map
                         Dir = -1;
                     }
 
-                    CImage p = new CImage(alpha, Images, ImageID, Dir, PLAYER, _drawType: CImage.DrawType.Normal, level: Level);
+                    CImage p = new CImage(alpha, Images, ImageID, Dir, PLAYER, _drawType: CImage.DrawType.UnitSprite, level: Level);
                     Images.Add(p);
 
                     int Subunit = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "Subunit 1", ID).Data;
@@ -474,7 +512,7 @@ namespace Data.Map
                         {
                             Dir += 16;
                         }
-                        Images.Add(new CImage(alpha, Images, ImageID, Dir, PLAYER, _parentImage: p, level: Level + 1));
+                        Images.Add(new CImage(alpha, Images, ImageID, Dir, PLAYER, _drawType: CImage.DrawType.UnitSprite,  _parentImage: p, level: Level + 1));
                     }
                 }
             }
@@ -484,30 +522,6 @@ namespace Data.Map
         }
 
         public byte[] MASK;
-
-
-
-
-        public CMRGN[] MRGN;
-        public class CMRGN
-        {
-            public uint Left;//u32: Left(X1) coordinate of location, in pixels(usually 32 pt grid aligned)
-            public uint Top;//u32: Top(Y1) coordinate of location, in pixels
-            public uint Right;//u32: Right(X2) coordinate of location, in pixels
-            public uint Bottom;//u32: Bottom(Y2) coordinate of location, in pixels
-            public StringData String;//u16: String number of the name of this location
-            public ushort Flag;//u16: Location elevation flags.If an elevation is disabled in the location, it's bit will be on (1)
-            //Bit 0 - Low elevation
-            //Bit 1 - Medium elevation
-            //Bit 2 - High elevation
-            //Bit 3 - Low air
-            //Bit 4 - Medium air
-            //Bit 5 - High air
-            //Bit 6-15 - Unused
-        }
-
-
-
 
 
 
@@ -606,7 +620,7 @@ namespace Data.Map
 
 
 
-                CImage p = new CImage(unitclass, Images, ImageID, Dir, player, _drawType: drawType, level: Level, _StartAnim: startanim);
+                CImage p = new CImage((int)unitclass, Images, ImageID, Dir, player, _drawType: drawType, level: Level, _StartAnim: startanim);
                 Images.Add(p);
                 int Subunit = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "Subunit 1", unitID).Data;
                 if(Subunit != 228)
@@ -620,7 +634,7 @@ namespace Data.Map
                     {
                         Dir += 16;
                     }
-                    Images.Add(new CImage(unitclass, Images, ImageID, Dir, player, _parentImage: p, _drawType: drawType, level: Level + 1, _StartAnim: startanim));
+                    Images.Add(new CImage((int)unitclass, Images, ImageID, Dir, player, _parentImage: p, _drawType: drawType, level: Level + 1, _StartAnim: startanim));
                 }
             }
 
@@ -681,5 +695,294 @@ namespace Data.Map
 
         public List<byte[]> BYTESTR;
         public List<byte[]> BYTESTRx;
+
+
+
+        public CUPRP[] UPRP;
+        public class CUPRP
+        {
+            public ushort STATUSVALID;//u16: Flag of which special properties can be applied to unit, and are valid.
+            //Bit 0 - Cloak bit is valid
+            //Bit 1 - Burrowed bit is valid
+            //Bit 2 - In transit bit is valid
+            //Bit 3 - Hallucinated bit is valid
+            //Bit 4 - Invincible bit is valid
+            //Bit 5-15 - Unknown/unused
+            public ushort POINTVALID;//u16: Which elements of the unit data are valid, which properties can be changed by the map maker.
+            //Bit 0 - Owner player is valid (unit is not neutral)
+            //Bit 1 - HP is valid
+            //Bit 2 - Shields is valid
+            //Bit 3 - Energy is valid
+            //Bit 4 - Resource amount is valid(unit is a resource)
+            //Bit 5 - Amount in hanger is valid
+            //Bit 6 - Unknown/unused
+            public byte PLAYER;//u8: Player number that owns unit.Will always be NULL in this section(0)
+            public byte HITPOINT;//u8: Hit point % (1-100)
+            public byte SHIELDPOINT;//u8: Shield point % (1-100)
+            public byte ENERGYPOINT;//u8: Energy point % (1-100)
+            public uint RESOURCE;//u32: Resource amount(for resources only)
+            public ushort HANGAR;//u16: # of units in hangar
+            public ushort STATUSFLAG;//u16: Flags
+            //Bit 0 - Unit is cloaked
+            //Bit 1 - Unit is burrowed
+            //Bit 2 - Building is in transit
+            //Bit 3 - Unit is hallucinated
+            //Bit 4 - Unit is invincible
+            //Bit 5-15 - Unknown/unused
+            public uint UNUSED;//u32: Unknown/unused.Padding?
+        }
+
+        public byte[] UPUS = new byte[64];
+
+
+        public StringData[] WAV;//512개
+
+
+
+        
+        
+        public StringData[] SWNM;//256개
+
+
+
+        //PUNI,//Player Unit Restrictions
+        public CPUNI PUNI;
+        public class CPUNI
+        {
+            public CPUNI(bool IsInit = false)
+            {
+                for (int i = 0; i < 12; i++)
+                {
+                    UNITENABLED[i] = new byte[228];
+                    USEDEFAULT[i] = new byte[228];
+                }
+            }
+
+            public byte[][] UNITENABLED = new byte[12][];//u8[228][12]: 해당플레이어가 해당 유닛을 사용하지 않습니다.
+            //00 - That unit is not available for production if the player has 'override defaults' on
+            //01 - That unit is available for production if the player has 'override defaults' on
+            public byte[] DEFAULT = new byte[228];//u8[228]: 모든플레이어에게 적용되는 디폴트 값입니다. 해당플레이어가 디폴트 사용할때 해당 값을 참조합니다.
+            //00 - That unit is not available for production
+            //01 - That unit is available for production
+            public byte[][] USEDEFAULT = new byte[12][];//u8[228][12]: 해당플레이어가 디폴트값을 사용합니다.
+                                      //00 - Player overrides defaults for this unit
+                                      //01 - Player uses defaults for this unit
+
+
+            //SCMD에서 disenabled면 UNITENABLED이 0이되고 USEDEFAULT이 0이됨
+            //SCMD에서 enabled면 UNITENABLED이 1이되고 USEDEFAULT이 0이됨
+            //SCMD에서 DEFAULT면 UNITENABLED이 1이되고 USEDEFAULT이 1이됨
+            //USEDEFAULT가 UNITENABLED보다 우선도가 높음
+        }
+
+        //PUPx,//BW Upgrade Restrictions
+        public CPUPx PUPx;
+        public class CPUPx
+        {
+            public CPUPx(bool IsInit = false)
+            {
+                for (int i = 0; i < 12; i++)
+                {
+                    MAXLEVEL[i] = new byte[61];
+                    STARTLEVEL[i] = new byte[61];
+                    USEDEFAULT[i] = new byte[61];
+                }
+            }
+            public byte[][] MAXLEVEL = new byte[12][];//u8[61][12]: 1 byte for the maximum level a player can upgrade to, in order of its upgrade id, then each player
+            public byte[][] STARTLEVEL = new byte[12][];//u8[61][12]: 1 byte for the level of an upgrade a player starts off with, in order of its upgrade id, then each player
+            public byte[] DEFAULTMAXLEVEL = new byte[61];//u8[61]: 1 byte for the global default maximum level of each upgrade, in order of its upgrade id.
+            public byte[] DEFAULTSTARTLEVEL = new byte[61];//u8[61]: 1 byte for the global default starting level of each upgrade, in order of its upgrade id.
+            public byte[][] USEDEFAULT = new byte[12][];//u8[61][12]: 해당유저가 글로벌 설정을 따라갈건지 정합니다.
+            //00 - Player does not use global upgrade defaults for this upgrade
+            //01 - Player uses upgrade defaults for this upgrade
+        }
+
+        //PTEx,//BW Tech Restrictions
+        public CPTEx PTEx;
+        public class CPTEx
+        {
+            public CPTEx(bool IsInit = false)
+            {
+                for (int i = 0; i < 12; i++)
+                {
+                    MAXLEVEL[i] = new byte[44];
+                    STARTLEVEL[i] = new byte[44];
+                    USEDEFAULT[i] = new byte[44];
+                }
+            }
+            public byte[][] MAXLEVEL = new byte[12][];//u8[44][12]: 1 byte for each technology id, then each player, for player availability:
+            //00 - Technology is not available for a player
+            //01 - Technology is available for a player
+            public byte[][] STARTLEVEL = new byte[12][];//u8[44][12]: 1 byte for each technology id, then each player, for "already researched" status:
+            //00 - Technology is not already researched
+            //01 - Technology is already researched
+            public byte[] DEFAULTMAXLEVEL = new byte[44];//u8[44]: 1 byte for each technology for global availability defaults:
+            //00 - Technology is not available by default
+            //01 - Technology is available by default
+            public byte[] DEFAULTSTARTLEVEL = new byte[44];//u8[44]: 1 byte for each technology for global "already researched" defaults:
+            //00 - Technology is not already researched by default
+            //01 - Technology is already researched by default
+            public byte[][] USEDEFAULT = new byte[12][];//u8[44][12]: 1 byte for each technology in order of its technology id, then each player, indicating whether a player uses the global defaults:
+            //00 - Technology overrides defaults for player
+            //01 - Technology uses default settings for player
+        }
+
+        //UNIx - Unit Settings                 STR사용
+        public CUNIx UNIx;
+        public class CUNIx
+        {
+            public CUNIx()
+            {
+            }
+            public CUNIx(MapData mapData, bool IsInit = false)
+            {
+                for (int i = 0; i < 228; i++)
+                {
+                    STRING[i] = new StringData(mapData);
+                }
+            }
+            public byte[] USEDEFAULT = new byte[228];//u8[228]: 1 byte for each unit, in order of Unit ID
+            //00 - Unit does not use default settings
+            //01 - Unit does use default settings
+            public uint[] HIT = new uint[228];//u32[228]: Hit points for unit(Note the displayed value is this value / 256, with the low byte being a fractional HP value)
+            public ushort[] SHIELD = new ushort[228];//u16[228]: Shield points, in order of Unit ID
+            public byte[] ARMOR = new byte[228];//u8[228]: Armor points, in order of Unit ID
+            public ushort[] BUILDTIME = new ushort[228];//u16[228]: Build time(1/60 seconds), in order of Unit ID
+            public ushort[] MIN = new ushort[228];//u16[228]: Mineral cost, in order of Unit ID
+            public ushort[] GAS = new ushort[228];//u16[228]: Gas cost, in order of Unit ID
+            public StringData[] STRING = new StringData[228];//u16[228]: String number, in order of Unit ID
+            public ushort[] DMG = new ushort[130];//u16[130]: Base weapon damage the weapon does, in weapon ID order(#List of Unit Weapon IDs)
+            public ushort[] BONUSDMG = new ushort[130];//u16[130]: Upgrade bonus weapon damage, in weapon ID order
+        }
+
+        //UPGx,//BW Upgrade Settings
+        public CUPGx UPGx;
+        public class CUPGx
+        {
+            public CUPGx(bool IsInit = false)
+            {
+
+            }
+            public byte[] USEDEFAULT = new byte[61];//u8[61]: 1 byte per each upgrade, in order of upgrade id.
+            //00 - Upgrade uses custom settings
+            //01 - Upgrade uses default settings
+            public byte UNUSED;//u8: Unused.
+            public ushort[] BASEMIN = new ushort[61];//u16[61]: 1 integer per upgrade, base mineral cost for each upgrade, in order of upgrade id.
+            public ushort[] BONUSMIN = new ushort[61];//u16[61]: 1 integer per upgrade, mineral cost factor for each upgrade, in order of upgrade id.
+            public ushort[] BASEGAS = new ushort[61];//u16[61]: 1 integer per upgrade, base gas cost for each upgrade, in order of upgrade id.
+            public ushort[] BONUSGAS = new ushort[61];//u16[61]: 1 integer per upgrade, gas cost factor for each upgrade, in order of upgrade id.
+            public ushort[] BASETIME = new ushort[61];//u16[61]: 1 integer per upgrade, base time for each upgrade, in order of upgrade id.
+            public ushort[] BONUSTIME = new ushort[61];//u16[61]: 1 integer per upgrade, gas time factor for each upgrade, in order of upgrade id.
+        }
+
+        //TECx,//BW Tech Settings
+        public CTECx TECx;
+        public class CTECx
+        {
+            public CTECx(bool IsInit = false)
+            {
+
+            }
+            public byte[] USEDEFAULT = new byte[44];//u8[44]: 1 byte per each technology, specifies if the tech overrides the default settings.In order of technology id
+            //00 - Technology uses custom settings
+            //01 - Technology uses default settings
+            public ushort[] MIN = new ushort[44];//u16[44]: Mineral cost to develop technology.In order of technology id.
+            public ushort[] GAS = new ushort[44];//u16[44]: Gas cost to develop technology.In order of technology id.
+            public ushort[] BASETIME = new ushort[44];//u16[44]: Time required to develop technology.In order of technology id.
+            public ushort[] ENERGY = new ushort[44];//u16[44]: Energy cost to cast technology/special ability.In order of technology id.
+        }
+
+        public List<TRIGMBRF> TRIG = new List<TRIGMBRF>();
+        public List<TRIGMBRF> MBRF = new List<TRIGMBRF>();
+        public class TRIGMBRF
+        {
+            //function Condition(locid, player, amount, unitid, comparison, condtype, restype, flags)
+            //return {locid, player, amount, unitid, comparison, condtype, restype, flags}
+            //end
+
+            //function Action(locid1, strid, wavid, time, player1, player2, unitid, acttype, amount, flags)
+            //return {locid1, strid, wavid, time, player1, player2, unitid, acttype, amount}
+            //end
+
+            //2400byte
+            //16 Conditions(20 byte struct)
+            public Condition[] conditions = new Condition[16];
+            public class Condition
+            {
+                //Every trigger has 16 of the following format, even if only one condition is used.See the appendix for information on which items are used for what conditions.
+                public uint locid;//u32: Location number for the condition (1 based -- 0 refers to No Location), EUD Bitmask for a Death condition if the MaskFlag is set to "SC"
+                public uint player;//u32: Group that the condition applies to
+                public uint amount;//u32: Qualified number(how many/resource amount)
+                public ushort unitid;//u16: Unit ID condition applies to
+                public byte comparison;//u8: Numeric comparison, switch state
+                public byte condtype;//u8: Condition byte
+                public byte restype;//u8: Resource type, score type, Switch number(0-based)
+                public byte flags;//u8: Flags
+                                  //Bit 0 - Unknown/unused
+                                  //Bit 1 - Enabled flag.If on, the trigger action/condition is disabled/ignored
+                                  //Bit 2 - Always display flag.
+                                  //Bit 3 - Unit properties is used. (Note: This is used in *.trg files)
+                                  //Bit 4 - Unit type is used.Cleared in "Offset + Mask" EUD conditions.May not be necessary otherwise?
+                                  //Bit 5-7 - Unknown/unused
+                public ushort maskflag;//u16: MaskFlag: set to "SC" (0x53, 0x43) when using the bitmask for EUDs, 0 otherwise
+                public LocationData LOC;
+            }
+
+
+            public Action[] actions = new Action[64];
+            //64 Actions(32 byte struct)
+            public class Action
+            {
+                //Immediately following the 16 conditions, there are 64 actions.There will always be 64 of the following structure, even if some of them are unused.
+                public uint locid1;//u32: Location - source location in "Order" and "Move Unit", dest location in "Move Location" (1 based -- 0 refers to No Location), EUD Bitmask for a Death action if the MaskFlag is set to "SC"
+                public uint strid;//u32: String number for trigger text(0 means no string)
+                public uint wavid;//u32: WAV string number(0 means no string)
+                public uint time;//u32: Seconds/milliseconds of time
+                public uint player1;//u32: First(or only) Group/Player affected.
+                public uint player2;//u32: Second group affected, secondary location (1-based), CUWP #, number, AI script (4-byte string), switch (0-based #)
+                public ushort unitid;//u16: Unit type, score type, resource type, alliance status
+                public byte acttype;//u8: Action byte
+                public byte amount;//u8: Number of units(0 means All Units), action state, unit order, number modifier
+                public byte flags;//u8: Flags
+                                  //Bit 0 - Ignore a wait/transmission once.
+                                  //Bit 1 - Enabled flag. If on, the trigger action/condition is disabled.
+                                  //Bit 2 - Always display flag - when not set: if the user has turned off subtitles (see sound options) the text will not display, when set: text will always display
+                                  //Bit 3 - Unit properties is used.Staredit uses this for *.trg files.
+                                  //Bit 4 - Unit type is used.Cleared in "Offset + Mask" EUD actions.
+                                  //Bit 5-7 - Unknown/unused
+                public byte padding;//u8: Padding
+                public ushort maskflag;//u16 (2 bytes): MaskFlag: set to "SC"(0x53, 0x43) when using the bitmask for EUDs, 0 otherwise
+                public StringData STRING;
+                public LocationData LOC1;
+                public LocationData LOC2;
+                public bool HasString()
+                {
+                    string d = STRING.String;
+
+
+                    return STRING.IsLoaded;
+                }
+            }
+
+
+
+
+            //Player Execution
+            //Following the 16 conditions and 64 actions, every trigger also has this structure
+            public uint exeflag;//u32: execution flags
+            //Bit 0 - All conditions are met, executing actions, cleared on the next trigger loop.
+            //Bit 1 - Ignore the following actions: Defeat, Draw.
+            //Bit 2 - Preserve trigger. (Can replace Preserve Trigger action)
+            //Bit 3 - Ignore execution.
+            //Bit 4 - Ignore all of the following actions for this trigger until the next trigger loop: Wait, PauseGame, Transmission, PlayWAV, DisplayTextMessage, CenterView, MinimapPing, TalkingPortrait, and MuteUnitSpeech.
+            //Bit 5 - This trigger has paused the game, ignoring subsequent calls to Pause Game(Unpause Game clears this flag only in the same trigger), may automatically call unpause at the end of action execution ?
+            //Bit 6 - Wait skipping disabled for this trigger, cleared on next trigger loop.
+            //Bit 7 - 31 - Unknown / unused
+            public byte[] playerlist = new byte[27];//u8[27]: 1 byte for each player in the #List of Players/Group IDs
+            //00 - Trigger is not executed for player
+            //01 - Trigger is executed for player
+            public byte trigindex;//u8: Index of the current action, in StarCraft this is incremented after each action is executed, trigger execution ends when this is 64(Max Actions) or an action is encountered with Action byte as 0
+
+        }
     }
 }

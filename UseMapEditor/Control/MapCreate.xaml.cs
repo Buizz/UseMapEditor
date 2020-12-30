@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Data.Map;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,6 +25,50 @@ namespace UseMapEditor.Control
         public MapCreate()
         {
             InitializeComponent();
+        }
+
+        private void Cancle_Click(object sender, RoutedEventArgs e)
+        {
+            mainWindow.CancleNewMapCommand();
+        }
+
+        private void Create_Click(object sender, RoutedEventArgs e)
+        {
+            int Width;
+            int Height;
+
+            int TileType = TileTypeListbox.SelectedIndex;
+
+            int startTile = 0;
+
+            if (!int.TryParse(MapWidth.Text, out Width))
+            {
+                return;
+            }
+            if (!int.TryParse(MapHeight.Text, out Height))
+            {
+                return;
+            }
+            if(TileType == -1)
+            {
+                return;
+            }
+
+
+
+            MapEditor mapeditor = new MapEditor();
+            mapeditor.mainWindow = mainWindow;
+
+            mapeditor.NewMap(Width, Height, TileType, startTile);
+            mapeditor.InitControl();
+
+
+            mainWindow.mapcreate.Visibility = Visibility.Collapsed;
+            mainWindow.mapEditorGrid.Children.Add(mapeditor);
+            mainWindow.startpage.Visibility = Visibility.Collapsed;
+            mainWindow.WindowState = WindowState.Maximized;
+            mainWindow.mapeditor = mapeditor;
+            mainWindow.SetWindowName();
         }
     }
 }

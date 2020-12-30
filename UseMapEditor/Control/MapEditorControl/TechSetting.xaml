@@ -3,10 +3,64 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:UseMapEditor.Control.MapEditorControl"
+             xmlns:local="clr-namespace:UseMapEditor.Control.MapEditorControl" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-            
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <local:CodeSelecter x:Name="codeselecter" Grid.Column="0" MinWidth="260"/>
+
+        <StackPanel Grid.Column="1" x:Name="ContentPanel" MinWidth="300">
+            <StackPanel Orientation="Horizontal">
+                <Border DockPanel.Dock="Left" Height="32" Width="32" Background="Black">
+                    <Image Source="{Binding ImageIcon}"/>
+                </Border>
+                <TextBlock Text="{Binding Path=MainName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="20" Padding="4"/>
+            </StackPanel>
+            <Separator/>
+            <CheckBox x:Name="EnabledCheckBox" Content="값 수정하기" IsChecked="{Binding Path=USEDEFAULT, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <StackPanel IsEnabled="{Binding ElementName=EnabledCheckBox, Path=IsChecked}">
+                <materialDesign:Card Margin="5">
+                    <UniformGrid Columns="2" Rows="2" Margin="5">
+                        <TextBox materialDesign:HintAssist.Hint="미네랄" materialDesign:HintAssist.FloatingScale="1" materialDesign:HintAssist.FloatingOffset="0, -12"
+                    Text="{Binding Path=MIN, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="10,0"/>
+                        <TextBox materialDesign:HintAssist.Hint="시간" materialDesign:HintAssist.FloatingScale="1" materialDesign:HintAssist.FloatingOffset="0, -12"
+                    Text="{Binding Path=GAS, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="10,0"/>
+                        <TextBox materialDesign:HintAssist.Hint="가스" materialDesign:HintAssist.FloatingScale="1" materialDesign:HintAssist.FloatingOffset="0, -12"
+                    Text="{Binding Path=BASETIME, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="10,0"/>
+                        <TextBox materialDesign:HintAssist.Hint="에너지" materialDesign:HintAssist.FloatingScale="1" materialDesign:HintAssist.FloatingOffset="0, -12"
+                    Text="{Binding Path=ENERGY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="10,0"/>
+                    </UniformGrid>
+                </materialDesign:Card>
+            </StackPanel>
+            <materialDesign:Card Margin="5">
+                <StackPanel Margin="5">
+                    <DockPanel LastChildFill="False">
+                        <Label Content="생산 가능 설정"/>
+                        <UniformGrid DockPanel.Dock="Right" Rows="1">
+                            <Label Content="사용불가" Foreground="AliceBlue" Background="Red" FontSize="10" Margin="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <Label Content="기본값" Foreground="AliceBlue" Background="Gray" FontSize="10" Margin="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <Label Content="연구가능" Foreground="AliceBlue" Background="Orange" FontSize="10" Margin="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <Label Content="연구됨" Foreground="AliceBlue" Background="Green" FontSize="10" Margin="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </UniformGrid>
+                    </DockPanel>
+                    <Button Margin="5" Background="{Binding Path=UNITDEFAULTCOLOR, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="AliceBlue" Content="기본값" Click="Button_Click"/>
+                    <UniformGrid Columns="4" Margin="5">
+                        <Button Background="{Binding Path=UNITENABLECOLOR0, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="AliceBlue" Content="P1" Click="Button_Click_1"/>
+                        <Button Background="{Binding Path=UNITENABLECOLOR1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="AliceBlue" Content="P2" Click="Button_Click_2"/>
+                        <Button Background="{Binding Path=UNITENABLECOLOR2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="AliceBlue" Content="P3" Click="Button_Click_3"/>
+                        <Button Background="{Binding Path=UNITENABLECOLOR3, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="AliceBlue" Content="P4" Click="Button_Click_4"/>
+                        <Button Background="{Binding Path=UNITENABLECOLOR4, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="AliceBlue" Content="P5" Click="Button_Click_5"/>
+                        <Button Background="{Binding Path=UNITENABLECOLOR5, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="AliceBlue" Content="P6" Click="Button_Click_6"/>
+                        <Button Background="{Binding Path=UNITENABLECOLOR6, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="AliceBlue" Content="P7" Click="Button_Click_7"/>
+                        <Button Background="{Binding Path=UNITENABLECOLOR7, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="AliceBlue" Content="P8" Click="Button_Click_8"/>
+                    </UniformGrid>
+                </StackPanel>
+            </materialDesign:Card>
+        </StackPanel>
+
     </Grid>
 </UserControl>

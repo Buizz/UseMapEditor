@@ -29,6 +29,7 @@ namespace UseMapEditor.MonoGameControl
         private SpriteBatch _spriteBatch;
         private SpriteBatch _colorBatch;
         private SpriteFont _font;
+        private SpriteFont _locationfont;
 
         BlendState ColorBlend;
 
@@ -79,14 +80,14 @@ namespace UseMapEditor.MonoGameControl
 
             CharacterRange Hangle = new CharacterRange((char)44032, (char)55203);
             // content loading now possible
-            var fontBakeResult = TtfFontBaker.Bake(File.ReadAllBytes(AppDomain.CurrentDomain.BaseDirectory + "\\Font\\NanumSquareRoundB.ttf"), 25, 4096, 4096, new[]{
+            var fontBakeResult = TtfFontBaker.Bake(File.ReadAllBytes(AppDomain.CurrentDomain.BaseDirectory + "\\Font\\NanumBarunGothicBold.ttf"), 25, 4096, 4096, new[]{
                  CharacterRange.BasicLatin, Hangle, new CharacterRange((char) 12593, (char) 12643), new CharacterRange((char) 8200, (char) 9900)});
 
-            CharacterRange characterRange = CharacterRange.BasicLatin;
+
 
 
             _font = fontBakeResult.CreateSpriteFont(GraphicsDevice);
-
+            _locationfont = fontBakeResult.CreateSpriteFont(GraphicsDevice);
 
             gridtexture = new Texture2D(GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
             gridtexture.SetData(new[] {Color.White});
@@ -172,6 +173,7 @@ namespace UseMapEditor.MonoGameControl
                 }
             }
             grpdic.Add(868, 920);
+            grpdic.Add(620, 643);
         }
 
 
@@ -391,6 +393,9 @@ namespace UseMapEditor.MonoGameControl
                     DrawImage(mapeditor.opt_drawType, ImageList[i], scale, grpscale);
                 }
             }
+            RenderLocation();
+
+
             DrawPallet(IsDrawGrp);
 
 

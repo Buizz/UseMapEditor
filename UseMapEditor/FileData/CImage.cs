@@ -35,7 +35,9 @@ namespace UseMapEditor.FileData
             Normal,
             Clock,
             Shadow,
-            Hallaction
+            Hallaction,
+            PureSprite,
+            UnitSprite
         }
 
 
@@ -141,30 +143,6 @@ namespace UseMapEditor.FileData
             Init();
         }
 
-        public CImage(uint unitclass, List<CImage> images, int imageID, int dir, byte player, CImage _parentImage, DrawType _drawType, int level, int _StartAnim)
-        {
-            this.unitclass = unitclass;
-            this.images = images;
-            this.imageID = imageID;
-            this.dir = dir;
-            this.player = player;
-            parentImage = _parentImage;
-            drawType = _drawType;
-            Level = level;
-            StartAnim = _StartAnim;
-        }
-
-        public CImage(uint unitclass, List<CImage> images, int imageID, int dir, byte player, DrawType _drawType, int level, int _StartAnim)
-        {
-            this.unitclass = unitclass;
-            this.images = images;
-            this.imageID = imageID;
-            this.dir = dir;
-            this.player = player;
-            drawType = _drawType;
-            Level = level;
-            StartAnim = _StartAnim;
-        }
 
         public void Init()
         {
@@ -226,7 +204,10 @@ namespace UseMapEditor.FileData
 
             byte opcode = iscript.ReadByte(ref iscriptOffset);
             List<uint> values = new List<uint>();
-
+            if(opcode >= 69)
+            {
+                return;
+            }
             
             if((opcode == 0x19) & (opcode == 0x1C))
             {
@@ -258,6 +239,11 @@ namespace UseMapEditor.FileData
             int t;
             int t2;
             Random random = Global.WindowTool.random;
+
+            if(imageID == 698)
+            {
+
+            }
 
 
 

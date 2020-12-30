@@ -58,10 +58,10 @@ namespace UseMapEditor.MonoGameControl
                 if ((minY < screen.Y) & (screen.Y < maxY))
                 {
 
-                    if (cTHG2.Images.Count == 0)
-                    {
-                        cTHG2.ImageReset();
-                    }
+                    //if (cTHG2.Images.Count == 0)
+                    //{
+                    //    cTHG2.ImageReset();
+                    //}
 
                     for (int i = 0; i < cTHG2.Images.Count; i++)
                     {
@@ -105,10 +105,10 @@ namespace UseMapEditor.MonoGameControl
 
 
 
-                    if (cUNIT.Images.Count == 0)
-                    {
-                        cUNIT.ImageReset();
-                    }
+                    //if (cUNIT.Images.Count == 0)
+                    //{
+                    //    cUNIT.ImageReset();
+                    //}
                     for (int i = 0; i < cUNIT.Images.Count; i++)
                     {
                         cUNIT.Images[i].screen = screen;

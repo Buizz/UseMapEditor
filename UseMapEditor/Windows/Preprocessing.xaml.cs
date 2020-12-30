@@ -2,8 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -112,7 +114,134 @@ namespace UseMapEditor.Windows
         }
 
 
+        private void SaveToDdsgrp(byte[] bytes, string filename)
+        {
+            string[] paths = filename.Split('/');
 
+
+
+            string currentPath = AppDomain.CurrentDomain.BaseDirectory + @"\CascData";
+
+
+            foreach (string t in paths)
+            {
+                if (!System.IO.Directory.Exists(currentPath))
+                {
+                    System.IO.Directory.CreateDirectory(currentPath);
+                }
+                currentPath = currentPath + "\\" + t;
+            }
+
+            BinaryReader br = new BinaryReader(new MemoryStream(bytes));
+            uint filesize = br.ReadUInt32();
+            ushort frame = br.ReadUInt16(); //count
+            ushort unknown = br.ReadUInt16();// (file version ?); -- value appears to always be 0x1001 in the files I've seen.
+
+            for (int i = 0; i < frame; i++)
+            {            //File Entry:
+                uint unk = br.ReadUInt32(); // --always zero ?
+                ushort width = br.ReadUInt16();
+                ushort height = br.ReadUInt16();
+                uint size = br.ReadUInt32();
+
+
+
+                byte[] textureData = br.ReadBytes((int)size);
+                //System.IO.File.WriteAllBytes(currentPath + i + ".dds", textureData);
+
+
+
+                using (var image = Pfim.Pfim.FromStream(new MemoryStream(textureData)))
+                {
+                    System.Drawing.Imaging.PixelFormat format;
+
+                    // Convert from Pfim's backend agnostic image format into GDI+'s image format
+                    switch (image.Format)
+                    {
+                        case Pfim.ImageFormat.Rgba32:
+                            format = System.Drawing.Imaging.PixelFormat.Format32bppArgb;
+                            break;
+                        case Pfim.ImageFormat.Rgb24:
+                            format = System.Drawing.Imaging.PixelFormat.Format24bppRgb;
+                            break;
+                        default:
+                            // see the sample for more details
+                            throw new NotImplementedException();
+                    }
+
+                    // Pin pfim's data array so that it doesn't get reaped by GC, unnecessary
+                    // in this snippet but useful technique if the data was going to be used in
+                    // control like a picture box
+                    var handle = GCHandle.Alloc(image.Data, GCHandleType.Pinned);
+                    try
+                    {
+                        var data = Marshal.UnsafeAddrOfPinnedArrayElement(image.Data, 0);
+                        var bitmap = new System.Drawing.Bitmap(image.Width, image.Height, image.Stride, format, data);
+
+                        bitmap.MakeTransparent(System.Drawing.Color.Black);
+
+                        for (int y = 0; y < bitmap.Height; y++)
+                        {
+                            for (int x = 0; x < bitmap.Width; x++)
+                            {
+                                System.Drawing.Color co = bitmap.GetPixel(x, y);
+
+                                double[] a = new double[3];
+                                a[0] = co.R / 256d;
+                                a[1] = co.G / 256d;
+                                a[2] = co.B / 256d;
+
+                                double[] b = new double[3];
+                                b[0] = 255 / 256d;
+                                b[1] = 228 / 256d;
+                                b[2] = 0;
+
+
+                                double[] c = new double[3];
+
+
+                                for (int t = 0; t < 3; t++)
+                                {
+                                    if(a[t] < 0.5)
+                                    {
+                                        c[t] = 2 * a[t] * b[t];
+                                    }
+                                    else
+                                    {
+                                        c[t] = 1 - 2 * (1 - a[t]) * (1 - b[t]);
+                                    }
+                                }
+
+
+
+
+                                c[0] *= 256;
+                                c[1] *= 256;
+                                c[2] *= 256;
+
+
+                                bitmap.SetPixel(x, y, System.Drawing.Color.FromArgb((int)c[0], (int)c[1], (int)c[2]));
+                            }
+                        }
+
+
+
+                        bitmap.Save(currentPath + i + ".png", System.Drawing.Imaging.ImageFormat.Png);
+                    }
+                    finally
+                    {
+                        handle.Free();
+                    }
+                }
+            }
+
+            br.Close();
+
+
+
+
+            //System.IO.File.WriteAllBytes(currentPath, bytes);
+        }
 
 
 
@@ -125,6 +254,10 @@ namespace UseMapEditor.Windows
 
             data.OpenCascStorage();
 
+
+
+
+            SaveToDdsgrp(data.ReadFileCascStorage("SD/unit/cmdicons/cmdicons.dds.grp"), @"cmdicons/");
             SaveToAnim(data.ReadFileCascStorage("SD/mainSD.anim"), @"SD/anim/");
             worker.ReportProgress(percent++);
 

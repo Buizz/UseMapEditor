@@ -1,6 +1,7 @@
 ﻿using Data;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,44 @@ namespace UseMapEditor.Global
 {
     public static class WindowTool
     {
+
+        public static string[] unitgroup = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + @"\Data\Group\Unit.txt");
+        public static string[] upgradegroup = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + @"\Data\Group\Upgrade.txt");
+        public static string[] techgroup = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + @"\Data\Group\Tech.txt");
+        public static string[] spritegroup = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + @"\Data\Group\Sprite.txt");
+
+
+        public static string[] soundlist = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + @"\Data\SoundList.txt");
+
+        public static BitmapSource GetBitmapSource(System.IO.Stream stream)
+        {
+            BitmapImage bitmapImage = new BitmapImage();
+            bitmapImage.BeginInit();
+
+            bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+            bitmapImage.StreamSource = stream;
+
+            bitmapImage.EndInit();
+            bitmapImage.Freeze();
+
+            BitmapSource bitmapSource = new FormatConvertedBitmap(bitmapImage, PixelFormats.Pbgra32, null, 0);
+            WriteableBitmap writeableBitmap = new WriteableBitmap(bitmapSource);
+
+            int width = writeableBitmap.PixelWidth;
+            int height = writeableBitmap.PixelHeight;
+
+            int[] pixelArray = new int[width * height];
+            int stride = writeableBitmap.PixelWidth * (writeableBitmap.Format.BitsPerPixel / 8);
+            writeableBitmap.CopyPixels(pixelArray, stride, 0);
+            writeableBitmap.WritePixels(new Int32Rect(0, 0, width, height), pixelArray, stride, 0);
+            bitmapImage = null;
+            return writeableBitmap;
+        }
+
+
+
+
+
         public static Dialog.ProgramStart programStart;
         public static void CloseProgram()
         {
@@ -46,7 +85,23 @@ namespace UseMapEditor.Global
         public static tblreader stat_txt;
         public static tblreader stat_txt_kor_eng;
         public static tblreader stat_txt_kor_kor;
-
+        public static string GetStat_txt(int index)
+        {
+            if(index == -1)
+            {
+                return "없음";
+            }
+            switch (Global.Setting.Vals[Setting.Settings.language_StatLan])
+            {
+                case "stat_txt":
+                    return stat_txt.Strings[index].val1;
+                case "stat_txt_kor_eng":
+                    return stat_txt_kor_eng.Strings[index].val1;
+                case "stat_txt_kor_kor":
+                    return stat_txt_kor_kor.Strings[index].val1;
+            }
+            return stat_txt.Strings[index].val1;
+        }
 
 
 
@@ -83,7 +138,7 @@ namespace UseMapEditor.Global
             {
                 strlist.Remove(filepath);
             }
-            if (strlist.Count > 4)
+            if (strlist.Count > 10)
             {
                 strlist.RemoveAt(0);
 

@@ -105,7 +105,7 @@
                 </TextBlock>
             </Expander.Header>
             <DockPanel>
-                <dragablz:TabablzControl FixedHeaderCount="7" Background="{DynamicResource MaterialDesignPaper}" TabStripPlacement="Left">
+                <dragablz:TabablzControl x:Name="scenTabControl" SelectionChanged="TabablzControl_SelectionChanged" FixedHeaderCount="10" Background="{DynamicResource MaterialDesignPaper}" TabStripPlacement="Left">
                     <TabItem Header="맵">
                         <mapeditorcontrol:MapSetting x:Name="MapSettingTabItem"/>
                     </TabItem>

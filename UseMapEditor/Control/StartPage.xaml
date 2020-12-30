@@ -7,7 +7,7 @@
              mc:Ignorable="d"
              Background="{DynamicResource MaterialDesignPaper}"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-             Height="450" Width="800">
+             Height="500" Width="800">
     <materialDesign:Card>
         <DockPanel Margin="40">
             <TextBlock DockPanel.Dock="Top" FontSize="30" FontWeight="Bold">UseMapEditor vTEST</TextBlock>
@@ -18,9 +18,11 @@
                 </Grid.ColumnDefinitions>
                 <DockPanel Grid.Column="0" Margin="10">
                     <TextBlock DockPanel.Dock="Top" FontSize="15" >최근 파일 열기</TextBlock>
-                    <StackPanel x:Name="LastOpendPanel" Background="#19808080" >
+                    <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto">
+                        <StackPanel x:Name="LastOpendPanel" Background="#19808080" >
 
-                    </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
                 </DockPanel>
                 <DockPanel Grid.Column="1" Margin="10">
                     <TextBlock DockPanel.Dock="Top" FontSize="15" >빠른 시작</TextBlock>

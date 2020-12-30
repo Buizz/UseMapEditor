@@ -12,12 +12,12 @@
         xmlns:control="clr-namespace:UseMapEditor.Control"
         mc:Ignorable="d"
         materialDesign:ShadowAssist.CacheMode="{x:Null}"
-                  
+        Loaded="MetroWindow_Loaded"
         Closing="MetroWindow_Closing"
         Closed="MetroWindow_Closed"
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-        Title="UseMapEditor" Height="450" Width="800" MinHeight="400" MinWidth="500">
+        Title="UseMapEditor" Height="500" Width="800" MinHeight="500" MinWidth="500" WindowStartupLocation="CenterOwner">
     
     
     <controls:MetroWindow.LeftWindowCommands>
@@ -86,9 +86,10 @@
 
     <Grid x:Name="MainGrid">
         <control:MapCreate x:Name="mapcreate" Visibility="Collapsed"/>
-        <control:MapEditor x:Name="mapeditor" Visibility="Collapsed"/>
-
         <control:StartPage x:Name="startpage" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Grid x:Name="mapEditorGrid">
+            
+        </Grid>
     </Grid>
 
 </controls:MetroWindow>

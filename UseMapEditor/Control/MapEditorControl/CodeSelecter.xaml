@@ -1,0 +1,52 @@
+﻿<UserControl x:Class="UseMapEditor.Control.MapEditorControl.CodeSelecter"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:UseMapEditor.Control.MapEditorControl"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="260">
+    <Control.Resources>
+        <DataTemplate x:Key="ListItem">
+            <Grid x:Name="itemGrid" Margin="-12,-8,0,-8" MinHeight="32">
+                <DockPanel Margin="12,8">
+                    <Border DockPanel.Dock="Left" Height="{Binding ElementName=itemGrid, Path=ActualHeight}" Width="32" Margin="-6,-8,0,-8" Background="Black">
+                        <Image Source="{Binding ImageIcon}"/>
+                    </Border>
+                    <StackPanel Margin="8,0,0,0">
+                        <TextBlock Foreground="{DynamicResource PrimaryHueMidBrush}" Text="{Binding MainName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" FontSize="{Binding MainNameSize, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                        <TextBlock Text="{Binding SecondName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Visibility="{Binding SecondNameVisble, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" FontSize="15"/>
+                    </StackPanel>
+                </DockPanel>
+            </Grid>
+        </DataTemplate>
+    </Control.Resources>
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+            <Button Style="{StaticResource MaterialDesignToolButton}" Width="30" Click="NumBtn_Click">
+                <materialDesign:PackIcon Kind="SortNumerically" />
+            </Button>
+            <Button Style="{StaticResource MaterialDesignToolButton}" Width="30" Click="AlphaBtn_Click">
+                <materialDesign:PackIcon Kind="SortByAlpha" />
+            </Button>
+            <Button Style="{StaticResource MaterialDesignToolButton}" Width="30" Click="TreeBtn_Click">
+                <materialDesign:PackIcon Kind="FileTree" />
+            </Button>
+        </StackPanel>
+        <DockPanel DockPanel.Dock="Top">
+            <materialDesign:PackIcon Kind="Search" HorizontalAlignment="Center" DockPanel.Dock="Left" VerticalAlignment="Center" Height="20" Width="20" Margin="2" />
+            <TextBox x:Name="SearchBox" materialDesign:TextFieldAssist.HasClearButton="True" TextChanged="SearchBox_TextChanged">
+
+            </TextBox>
+        </DockPanel>
+        <Grid DockPanel.Dock="Top">
+            <ListBox x:Name="MainListbox" ItemTemplate="{StaticResource ListItem}" SelectionChanged="MainListbox_SelectionChanged">
+
+            </ListBox>
+            <TreeView x:Name="MainTreeview" SelectedItemChanged="MainTreeview_SelectedItemChanged">
+
+            </TreeView>
+        </Grid>
+    </DockPanel>
+</UserControl>

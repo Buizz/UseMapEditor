@@ -24,8 +24,22 @@ namespace UseMapEditor.Control.MapEditorControl
         public void SetMapEditor(MapEditor _mapEditor)
         {
             mapEditor = _mapEditor;
+
+            MainList.Items.Clear();
+
         }
 
+
+        public void MainListRefresh()
+        {
+            mapEditor.mapdata.LoadString();
+
+            MainList.Items.Clear();
+            for (int i = 0; i < mapEditor.mapdata.stringDatas.Count; i++)
+            {
+                MainList.Items.Add(mapEditor.mapdata.stringDatas[i].String);
+            }
+        }
 
 
         public StringSetting()

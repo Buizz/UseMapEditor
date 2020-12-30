@@ -26,6 +26,8 @@ namespace UseMapEditor.Control.MapEditorControl
         }
         public void SetMapEditor(MapEditor mapEditor)
         {
+            PlayerPanel.Children.Clear();
+
             for (int i = 0; i < 8; i++)
             {
                 PlayerPanel.Children.Add(new PlayerSetting(mapEditor, i));

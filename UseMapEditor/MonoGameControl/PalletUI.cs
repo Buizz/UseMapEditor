@@ -190,12 +190,30 @@ namespace UseMapEditor.MonoGameControl
 
         private void DrawMiniMapRect()
         {
-            int MapW = mapeditor.mapdata.WIDTH;
-            int MapH = mapeditor.mapdata.HEIGHT;
-            int MaxWidth = Math.Max(MapW, MapH);
-            double mapScale = 128d / MaxWidth;
             int StartX = (int)(screenwidth - CloseTimer) - 128;
             int StartY = 0;
+            int MapW = mapeditor.mapdata.WIDTH;
+            int MapH = mapeditor.mapdata.HEIGHT;
+
+            int MaxWidth = Math.Max(MapW, MapH);
+            double mapScale = 128d / MaxWidth;
+
+            MapW = (int)(MapW * mapScale);
+            MapH = (int)(MapH * mapScale);
+
+            StartX += (128 - MapW) / 2;
+            StartY += (128 - MapH) / 2;
+
+
+
+            //int MapW = mapeditor.mapdata.WIDTH;
+            //int MapH = mapeditor.mapdata.HEIGHT;
+            //int MaxWidth = Math.Max(MapW, MapH);
+            //double mapScale = 128d / MaxWidth;
+            //int StartX = (int)(screenwidth - CloseTimer) - 128;
+            //int StartY = 0;
+
+
 
             _spriteBatch.Begin();
             Vector2 MiniMin = new Vector2(mapeditor.opt_xpos, mapeditor.opt_ypos) / 32;

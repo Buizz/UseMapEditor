@@ -21,21 +21,67 @@
                     <ComboBoxItem Content="얼음"/>
                     <ComboBoxItem Content="황혼"/>
                 </ComboBox>
-                <ComboBox Width="40" IsEditable="True">
-                    <ComboBoxItem Content="64"/>
-                    <ComboBoxItem Content="96"/>
-                    <ComboBoxItem Content="128"/>
-                    <ComboBoxItem Content="192"/>
-                    <ComboBoxItem Content="256"/>
-                </ComboBox>
+                <Label Content="{Binding Path=WIDTH, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" VerticalAlignment="Center"/>
                 <TextBlock Text="X" VerticalAlignment="Center" Margin="10,0"/>
-                <ComboBox Width="40" IsEditable="True">
-                    <ComboBoxItem Content="64"/>
-                    <ComboBoxItem Content="96"/>
-                    <ComboBoxItem Content="128"/>
-                    <ComboBoxItem Content="192"/>
-                    <ComboBoxItem Content="256"/>
-                </ComboBox>
+                <Label Content="{Binding Path=HEIGHT, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" VerticalAlignment="Center"/>
+                <materialDesign:PopupBox StaysOpen="True" Opened="PopupBox_Opened" x:Name="SizeChangePopupBox">
+                    <materialDesign:PopupBox.ToggleContent>
+                        <materialDesign:PackIcon Kind="Resize" />
+                    </materialDesign:PopupBox.ToggleContent>
+                    <DockPanel Margin="8">
+                        <Button Click="SizeChange_Click" Content="크기 변경" Style="{StaticResource MaterialDesignFlatButton}" DockPanel.Dock="Bottom"/>
+                        <DockPanel>
+                            <UniformGrid DockPanel.Dock="Top" Rows="1">
+                                <ComboBox IsEditable="True" Margin="4" x:Name="MapWidth">
+                                    <ComboBoxItem Content="64"/>
+                                    <ComboBoxItem Content="96"/>
+                                    <ComboBoxItem Content="128"/>
+                                    <ComboBoxItem Content="192"/>
+                                    <ComboBoxItem Content="256"/>
+                                </ComboBox>
+                                <ComboBox IsEditable="True" Margin="4" x:Name="MapHeight">
+                                    <ComboBoxItem Content="64"/>
+                                    <ComboBoxItem Content="96"/>
+                                    <ComboBoxItem Content="128"/>
+                                    <ComboBoxItem Content="192"/>
+                                    <ComboBoxItem Content="256"/>
+                                </ComboBox>
+                            </UniformGrid>
+                            <UniformGrid Columns="3" Rows="3" Margin="10" Background="#19808080" x:Name="BtnPanel">
+                                <Button x:Name="UpLeftBtn" Click="SizePosBtn_Click" Style="{StaticResource MaterialDesignOutlinedButton}">
+                                    <materialDesign:PackIcon Kind="PanUpLeft"/>
+                                </Button>
+                                <Button x:Name="TopBtn" Click="SizePosBtn_Click" Style="{StaticResource MaterialDesignOutlinedButton}">
+                                    <materialDesign:PackIcon Kind="PanUp"/>
+                                </Button>
+                                <Button x:Name="UpRightBtn" Click="SizePosBtn_Click" Style="{StaticResource MaterialDesignOutlinedButton}">
+                                    <materialDesign:PackIcon Kind="PanUpRight"/>
+                                </Button>
+                                <Button x:Name="LeftBtn" Click="SizePosBtn_Click" Style="{StaticResource MaterialDesignOutlinedButton}">
+                                    <materialDesign:PackIcon Kind="PanLeft"/>
+                                </Button>
+                                <Button x:Name="ExpandBtn" Click="SizePosBtn_Click" Style="{StaticResource MaterialDesignOutlinedButton}">
+                                    <materialDesign:PackIcon Kind="Pan"/>
+                                </Button>
+                                <Button x:Name="RightBtn" Click="SizePosBtn_Click" Style="{StaticResource MaterialDesignOutlinedButton}">
+                                    <materialDesign:PackIcon Kind="PanRight"/>
+                                </Button>
+                                <Button x:Name="DownLeftBtn" Click="SizePosBtn_Click" Style="{StaticResource MaterialDesignOutlinedButton}">
+                                    <materialDesign:PackIcon Kind="PanDownLeft"/>
+                                </Button>
+                                <Button x:Name="DownBtn" Click="SizePosBtn_Click" Style="{StaticResource MaterialDesignOutlinedButton}">
+                                    <materialDesign:PackIcon Kind="PanDown"/>
+                                </Button>
+                                <Button x:Name="DownRightBtn" Click="SizePosBtn_Click" IsEnabled="False" Style="{StaticResource MaterialDesignOutlinedButton}">
+                                    <materialDesign:PackIcon Kind="PanDownRight"/>
+                                </Button>
+                            </UniformGrid>
+                        </DockPanel>
+                        <ListBox x:Name="AddedTileSet">
+                            <ListBoxItem Content="Null지형"/>
+                        </ListBox>
+                    </DockPanel>
+                </materialDesign:PopupBox>
             </StackPanel>
         </StackPanel>
         <Separator/>

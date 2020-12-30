@@ -30,10 +30,23 @@ namespace UseMapEditor
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
+        public MapEditor mapeditor;
+        public bool MapIsLoad()
+        {
+            if(mapeditor == null)
+            {
+                return false;
+            }
+
+
+            return mapeditor.IsLoad;
+        }
+
+
        public void SetWindowName()
        {
             string pName = "USEMAPEDITOR V" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-            if (mapeditor.IsLoad)
+            if (MapIsLoad())
             {
                 if (mapeditor.IsDirty)
                 {
@@ -57,7 +70,7 @@ namespace UseMapEditor
 
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (mapeditor.IsLoad)
+            if (MapIsLoad())
             {
                 bool result = CloseMapCommand();
 
@@ -110,11 +123,18 @@ namespace UseMapEditor
 
 
 
+        public void CancleNewMapCommand()
+        {
+            mapcreate.Visibility = Visibility.Collapsed;
+            mapEditorGrid.Children.Clear();
+            startpage.Visibility = Visibility.Visible;
 
+            SetWindowName();
+        }
 
         public void NewMapCommand()
         {
-            if (mapeditor.IsLoad)
+            if (MapIsLoad())
             {
                 //로드 되었을 경우 종료를 먼저 함.
                 if (!CloseMapCommand())
@@ -126,7 +146,7 @@ namespace UseMapEditor
 
 
             mapcreate.Visibility = Visibility.Visible;
-            mapeditor.Visibility = Visibility.Collapsed;
+            mapEditorGrid.Children.Clear();
             startpage.Visibility = Visibility.Collapsed;
 
             SetWindowName();
@@ -159,7 +179,7 @@ namespace UseMapEditor
             }
 
 
-            if (mapeditor.IsLoad)
+            if (MapIsLoad())
             {
                 //로드 되었을 경우 종료를 먼저 함.
                 if (!CloseMapCommand())
@@ -168,15 +188,20 @@ namespace UseMapEditor
                     return false;
                 }
             }
-
+            if(mapeditor == null)
+            {
+                mapeditor = new MapEditor();
+                mapeditor.mainWindow = this;
+            }
 
             bool result = mapeditor.LoadMap(mapname);
             if (result)
             {
                 mapcreate.Visibility = Visibility.Collapsed;
-                mapeditor.Visibility = Visibility.Visible;
+                mapEditorGrid.Children.Add(mapeditor);
                 startpage.Visibility = Visibility.Collapsed;
                 Global.WindowTool.AddLastOpenFile(mapname);
+                this.WindowState = WindowState.Maximized;
             }
             SetWindowName();
             return result;
@@ -185,7 +210,7 @@ namespace UseMapEditor
 
         public bool SaveMapCommand()
         {
-            if (!mapeditor.IsLoad)
+            if (!MapIsLoad())
             {
                 return false;
             }
@@ -205,7 +230,7 @@ namespace UseMapEditor
         }
         public bool SaveAsMapCommand()
         {
-            if (!mapeditor.IsLoad)
+            if (!MapIsLoad())
             {
                 return false;
             }
@@ -220,7 +245,7 @@ namespace UseMapEditor
         }
         public bool CloseMapCommand()
         {
-            if (!mapeditor.IsLoad)
+            if (!MapIsLoad())
             {
                 return false;
             }
@@ -229,7 +254,7 @@ namespace UseMapEditor
             if (result)
             {
                 mapcreate.Visibility = Visibility.Collapsed;
-                mapeditor.Visibility = Visibility.Collapsed;
+                mapEditorGrid.Children.Clear();
                 startpage.Visibility = Visibility.Visible;
                 startpage.LastOpenFIleRefresh();
             }
@@ -262,7 +287,6 @@ namespace UseMapEditor
             InitializeComponent();
 
             mapcreate.mainWindow = this;
-            mapeditor.mainWindow = this;
             startpage.mainWindow = this;
             SetWindowName();
 
@@ -305,6 +329,16 @@ namespace UseMapEditor
         {
             ProgramSettingWindow programSettingWindow = new ProgramSettingWindow();
             programSettingWindow.ShowDialog();
+        }
+
+        private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Normal;
+            int W = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea.Width; //모니터 스크린 가로크기
+            int H = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea.Height; //모니터 스크린 세로크기
+
+            this.Left = (W - this.Width) / 2;
+            this.Top = (H - this.Height) / 2;
         }
     }
 }

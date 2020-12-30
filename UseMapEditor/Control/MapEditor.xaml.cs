@@ -19,6 +19,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using UseMapEditor.DataBinding;
 using UseMapEditor.Dialog;
+using UseMapEditor.FileData;
 using UseMapEditor.MonoGameControl;
 
 namespace UseMapEditor.Control
@@ -205,6 +206,76 @@ namespace UseMapEditor.Control
         public bool opt_eudeditor = false;
 
 
+
+        public enum Codetype
+        {
+            Unit,
+            Upgrade,
+            Tech,
+            Sprite
+        }
+
+        public bool IsCustomUnitName(int index)
+        {
+            string d = mapdata.UNIx.STRING[index].String;
+            return mapdata.UNIx.STRING[index].IsLoaded;
+        }
+        public string GetUnitName(int index)
+        {
+            string d = mapdata.UNIx.STRING[index].String;
+            if (mapdata.UNIx.STRING[index].IsLoaded)
+            {
+                return d;
+            }
+
+            return "???";
+        }
+        public string GetMapUnitName(int index)
+        {
+            string org = Global.WindowTool.GetStat_txt(index);
+            return org;
+        }
+
+
+
+
+        public string GetCodeName(Codetype codetype, int index)
+        {
+            if (!IsLoad)
+            {
+                return "NotLoad";
+            }
+            int label;
+            switch (codetype)
+            {
+                case Codetype.Unit:
+                    string d = mapdata.UNIx.STRING[index].String;
+                    string org = Global.WindowTool.GetStat_txt(index);
+                    if (mapdata.UNIx.STRING[index].IsLoaded)
+                    {
+                        return d +  "\n" + org;
+                    }
+
+                    return org;
+                case Codetype.Upgrade:
+                    label = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.upgrades, "Label", index).Data-1;
+
+
+                    return Global.WindowTool.GetStat_txt(label);
+                case Codetype.Tech:
+                    label = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.techdata, "Label", index).Data-1;
+
+
+                    return Global.WindowTool.GetStat_txt(label);
+                case Codetype.Sprite:
+                    return "Sprite";
+            }
+            return "???";
+        }
+
+
+
+
         private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
@@ -264,20 +335,9 @@ namespace UseMapEditor.Control
             mapdata = new MapData();
             minimapcolor = new Microsoft.Xna.Framework.Color[256 * 256];
             miniampUnit = new Microsoft.Xna.Framework.Color[256 * 256];
-            RefreshGRPIcon();
 
-            mapDataBinding = new MapDataBinding(this);
-            MapSettingTabItem.SetMapEditor(this);
-            PlayerSettingTabItem.SetMapEditor(this);
-            ForceSettingTabItem.SetMapEditor(this);
-            UnitSettingTabItem.SetMapEditor(this);
-            UpgradeSettingTabItem.SetMapEditor(this);
-            TechSettingTabItem.SetMapEditor(this);
-            SoundSettingTabItem.SetMapEditor(this);
-            StringSettingTabItem.SetMapEditor(this);
-            this.DataContext = mapDataBinding;
 
-            if(Global.Setting.Vals[ Global.Setting.Settings.Program_GRPLoad] == "false")
+            if (Global.Setting.Vals[Global.Setting.Settings.Program_GRPLoad] == "false")
             {
                 TilePalleteBtn.IsEnabled = false;
                 DoodadPalleteBtn.IsEnabled = false;
@@ -291,23 +351,40 @@ namespace UseMapEditor.Control
             }
         }
 
+        public void InitControl()
+        {
+            RefreshGRPIcon();
+
+            mapDataBinding = new MapDataBinding(this);
+            MapSettingTabItem.SetMapEditor(this);
+            PlayerSettingTabItem.SetMapEditor(this);
+            ForceSettingTabItem.SetMapEditor(this);
+            UnitSettingTabItem.SetMapEditor(this);
+            UpgradeSettingTabItem.SetMapEditor(this);
+            TechSettingTabItem.SetMapEditor(this);
+            SoundSettingTabItem.SetMapEditor(this);
+            StringSettingTabItem.SetMapEditor(this);
+            this.DataContext = mapDataBinding;
+        }
+
 
         private void optionReset()
         {
             IsMinimapLoad = false;
             opt_scale = 10;
             ScaleTB.Text = opt_scale.ToString();
-
-            mapDataBinding.PropertyChangeAll();
         }
 
-        public bool NewMap()
+        public bool NewMap(int Width, int Height, int TileType, int startTile)
         {
             //이름을 아무것도 안넣으면 새 맵
-            bool Loadcmp = LoadMap("");
+            bool Loadcmp = mapdata.NewMap(Width, Height, TileType, startTile);
             IsDirty = false;
             IsLoad = true;
-            
+
+
+
+
             return Loadcmp;
         }
         public bool OpenMap()
@@ -332,19 +409,22 @@ namespace UseMapEditor.Control
             try
             {
                 bool LoadSucess = mapdata.LoadMap(_filepath);
+                IsLoad = LoadSucess;
+                IsDirty = false;
                 if (LoadSucess == true)
                 {
                     optionReset();
                     //tabitem.Header = mapdata.SafeFileName;
                     //tabitem.Content = this;
+                    InitControl();
+                    mapDataBinding.PropertyChangeAll();
                 }
-                IsLoad = LoadSucess;
-                IsDirty = false;
+
                 return LoadSucess;
             }
             catch (Exception e)
             {
-                Dialog.MsgDialog msgDialog = new MsgDialog("열 수 없는 맵입니다.\n" + e.Message, MessageBoxButton.OK, MessageBoxImage.Error);
+                Dialog.MsgDialog msgDialog = new MsgDialog(System.IO.Path.GetFileName(_filepath) + "는 열 수 없는 맵입니다.\n" + e.Message, MessageBoxButton.OK, MessageBoxImage.Error);
                 msgDialog.ShowDialog();
                 return false;
             }
@@ -679,6 +759,20 @@ namespace UseMapEditor.Control
         private void FogButton_Click(object sender, RoutedEventArgs e)
         {
             TabChange(5);
+        }
+
+        private int lasttabindex;
+        private void TabablzControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            int sindex = scenTabControl.SelectedIndex;
+            if(lasttabindex != sindex)
+            {
+                lasttabindex = sindex;
+                if(sindex == 7)
+                {
+                    StringSettingTabItem.MainListRefresh();
+                }
+            }
         }
 
 

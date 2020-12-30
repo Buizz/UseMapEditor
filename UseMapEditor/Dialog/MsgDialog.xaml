@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:UseMapEditor.Dialog"
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Topmost="True"
+        Topmost="True" 
         Title="usemapeditor" Height="150" Width="400" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" WindowStyle="ToolWindow">
     <DockPanel>
         <StackPanel x:Name="BtnPanel" Orientation="Horizontal" DockPanel.Dock="Bottom" HorizontalAlignment="Right" Margin="20,5">

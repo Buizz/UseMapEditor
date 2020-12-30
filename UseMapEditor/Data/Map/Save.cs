@@ -41,20 +41,9 @@ namespace Data.Map
             uint hmpq = 0;
 
 
-           
-            string chkFilename = @"staredit\scenario.chk";
-            string SaveFilename = ProgramStart.tempfolder + @"\scenario.chk";
-            BinaryWriter bw = new BinaryWriter(new FileStream(SaveFilename, FileMode.Create));
-
-            GetCHKAll(bw);
-
-            bw.Close();
-
-
-
             if (!File.Exists(_filepath))
             {
-                StromLib.SFileCreateArchive(_filepath, 0, 65535, ref hmpq);
+                StromLib.SFileCreateArchive(_filepath, 0, 0, ref hmpq);
             }
             else
             {
@@ -62,7 +51,51 @@ namespace Data.Map
             }
 
 
-            bool chkfilesave = StromLib.SFileAddFileEx(hmpq, SaveFilename, chkFilename, StromLib.MPQ_FILE_COMPRESS | StromLib.MPQ_FILE_ENCRYPTED | StromLib.MPQ_FILE_REPLACEEXISTING, StromLib.MPQ_COMPRESSION_ZLIB, StromLib.MPQ_COMPRESSION_ZLIB);
+
+
+            {
+                string chkFilename = @"staredit\scenario.chk";
+                string SaveFilename = UseMapEditor.Dialog.ProgramStart.tempfolder + @"\scenario.chk";
+                BinaryWriter bw = new BinaryWriter(new FileStream(SaveFilename, FileMode.Create));
+                GetCHKAll(bw);
+                bw.Close();
+                AddMPQFile(hmpq, SaveFilename, chkFilename);
+            }
+
+
+            for (int i = 0; i < mpqfileList.Count; i++)
+            {
+                SoundData soundData = soundDatas.Find((x) => x.path == mpqfileList[i]);
+                if(soundData == null)
+                {
+                    RemoveMPQFile(hmpq, mpqfileList[i]);
+                }
+            }
+
+
+            mpqfileList.Clear();
+
+            for (int i = 0; i < soundDatas.Count; i++)
+            {
+                string chkFilename = soundDatas[i].path;
+                string SaveFilename = UseMapEditor.Dialog.ProgramStart.tempfolder + "\\temp" + i;
+                BinaryWriter bw = new BinaryWriter(new FileStream(SaveFilename, FileMode.Create));
+                bw.Write(soundDatas[i].bytes);
+                bw.Close();
+                bool rbool = AddMPQFile(hmpq, SaveFilename, chkFilename);
+
+                mpqfileList.Add(soundDatas[i].path);
+            }
+
+
+
+
+
+
+
+
+
+
             StromLib.SFileCompactArchive(hmpq, null, false);
 
 
@@ -70,7 +103,7 @@ namespace Data.Map
 
 
 
-            return chkfilesave;
+            return true;
         }
     }
 }

@@ -78,33 +78,68 @@ namespace UseMapEditor.DataBinding
             {
                 byte cvalue = mapEditor.mapdata.SIDE[PlayerID];
 
-                int cindex = 0;
-                foreach (SIDETYPE sIDETYPE in Enum.GetValues(typeof(SIDETYPE)))
+                switch (cvalue)
                 {
-                    if (cvalue == (byte)sIDETYPE)
-                    {
-                        return cindex;
-                    }
-                    cindex++;
+                    case 0:
+                        return 0;
+                    case 1:
+                        return 1;
+                    case 2:
+                        return 2;
+                    case 5:
+                        return 3;
+                    case 7:
+                        return 4;
                 }
                 return -1;
+
+                //int cindex = 0;
+                //foreach (SIDETYPE sIDETYPE in Enum.GetValues(typeof(SIDETYPE)))
+                //{
+                //    if (cvalue == (byte)sIDETYPE)
+                //    {
+                //        return cindex;
+                //    }
+                //    cindex++;
+                //}
+                //return -1;
             }
             set
             {
                 int cvalue = value;
-                byte rvalue = 0;
-                int cindex = 0;
-                foreach (IOWNTYPE sIDETYPE in Enum.GetValues(typeof(SIDETYPE)))
+                //byte rvalue = 0;
+                //int cindex = 0;
+                //foreach (IOWNTYPE sIDETYPE in Enum.GetValues(typeof(SIDETYPE)))
+                //{
+                //    if (cvalue == cindex)
+                //    {
+                //        rvalue = (byte)sIDETYPE;
+                //        break;
+                //    }
+                //    cindex++;
+                //}
+
+                switch (cvalue)
                 {
-                    if (cvalue == cindex)
-                    {
-                        rvalue = (byte)sIDETYPE;
+                    case 0:
+                        cvalue = 0;
                         break;
-                    }
-                    cindex++;
+                    case 1:
+                        cvalue = 1;
+                        break;
+                    case 2:
+                        cvalue = 2;
+                        break;
+                    case 3:
+                        cvalue = 5;
+                        break;
+                    case 4:
+                        cvalue = 7;
+                        break;
                 }
 
-                mapEditor.mapdata.SIDE[PlayerID] = rvalue;
+
+                mapEditor.mapdata.SIDE[PlayerID] = (byte)cvalue;
                 mapEditor.SetDirty();
                 OnPropertyChanged("Race");
             }
