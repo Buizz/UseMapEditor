@@ -84,11 +84,23 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Assisticant, Version=2.3.0.0, Culture=neutral, PublicKeyToken=19e83a8289e31a8f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Assisticant.1.1.4\lib\net45\Assisticant.dll</HintPath>
+    </Reference>
+    <Reference Include="Assisticant.Facades, Version=1.1.0.0, Culture=neutral, PublicKeyToken=8693a7693e4d4e55, processorArchitecture=MSIL">
+      <HintPath>..\packages\Assisticant.Facades.1.1.0.0\lib\net45\Assisticant.Facades.dll</HintPath>
+    </Reference>
+    <Reference Include="Assisticant.XAML, Version=2.3.0.0, Culture=neutral, PublicKeyToken=19e83a8289e31a8f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Assisticant.1.1.4\lib\net45\Assisticant.XAML.dll</HintPath>
+    </Reference>
     <Reference Include="ControlzEx, Version=4.0.0.0, Culture=neutral, PublicKeyToken=69f1c32f803d307e, processorArchitecture=MSIL">
       <HintPath>..\packages\ControlzEx.4.4.0\lib\net462\ControlzEx.dll</HintPath>
     </Reference>
     <Reference Include="Dragablz, Version=0.0.3.223, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Dragablz.0.0.3.223\lib\net45\Dragablz.dll</HintPath>
+    </Reference>
+    <Reference Include="JungleControls, Version=1.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\JungleControls.1.8.0.0\lib\net45\JungleControls.dll</HintPath>
     </Reference>
     <Reference Include="MahApps.Metro, Version=2.0.0.0, Culture=neutral, PublicKeyToken=51482d6f650b2b3f, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.2.4.3\lib\net47\MahApps.Metro.dll</HintPath>
@@ -185,6 +197,7 @@
     </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -235,11 +248,20 @@
     <Compile Include="Control\MapEditorControl\TechSetting.xaml.cs">
       <DependentUpon>TechSetting.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Control\MapEditorControl\TriggerEditor\TriggerEditor.xaml.cs">
+      <DependentUpon>TriggerEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Control\MapEditorControl\TriggerEditor\TriggerEditWindow.cs" />
+    <Compile Include="Control\MapEditorControl\TriggerEditor\TriggerItemEditWindow.cs" />
+    <Compile Include="Control\MapEditorControl\TriggerEditor\TriggerItemTypeSelecter.cs" />
     <Compile Include="Control\MapEditorControl\UnitSetting.xaml.cs">
       <DependentUpon>UnitSetting.xaml</DependentUpon>
     </Compile>
     <Compile Include="Control\MapEditorControl\UpgradeSetting.xaml.cs">
       <DependentUpon>UpgradeSetting.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Control\MapEditorControl\ValueSelecter.xaml.cs">
+      <DependentUpon>ValueSelecter.xaml</DependentUpon>
     </Compile>
     <Compile Include="DataBinding\ForceBinding.cs" />
     <Compile Include="DataBinding\MapDataBinding.cs" />
@@ -259,6 +281,9 @@
     <Compile Include="DataBinding\TechDataBinding.cs" />
     <Compile Include="DataBinding\UnitDataBinding.cs" />
     <Compile Include="DataBinding\UpgradeDataBinding.cs" />
+    <Compile Include="Data\Map\CodeManager.cs" />
+    <Compile Include="Data\Map\UPRP.cs" />
+    <Compile Include="FileData\CTrigger.cs" />
     <Compile Include="Data\Map\Load.cs" />
     <Compile Include="Data\Map\ChkTool.cs" />
     <Compile Include="Data\Map\LocationManager.cs" />
@@ -266,6 +291,7 @@
     <Compile Include="Data\Map\Save.cs" />
     <Compile Include="Data\Map\SoundManager.cs" />
     <Compile Include="Data\Map\StringManager.cs" />
+    <Compile Include="Data\Map\TriggerMapdata.cs" />
     <Compile Include="Dialog\EncodingSelectDialog.xaml.cs">
       <DependentUpon>EncodingSelectDialog.xaml</DependentUpon>
     </Compile>
@@ -278,6 +304,7 @@
     <Compile Include="FileData\TileSet.cs" />
     <Compile Include="Data\Map\MapData.cs" />
     <Compile Include="Data\StarCraft\StarCraftData.cs" />
+    <Compile Include="FileData\TriggerManger.cs" />
     <Compile Include="MonoGameControl\Dxt1.cs" />
     <Compile Include="MonoGameControl\ImageDraw.cs" />
     <Compile Include="MonoGameControl\KeyboardEvent.cs" />
@@ -349,11 +376,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Control\MapEditorControl\TriggerEditor\TriggerEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Control\MapEditorControl\UnitSetting.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Control\MapEditorControl\UpgradeSetting.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Control\MapEditorControl\ValueSelecter.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -555,6 +590,18 @@
     <None Include="Data\TileSet\Twilight.vf4">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Data\TriggerEditor\Args\ko-KR.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\TriggerEditor\Args\TEP.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\TriggerEditor\Briefing.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\TriggerEditor\Conditions.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Font\NanumBarunGothicBold.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -709,6 +756,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\ffmpeg.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\TriggerEditor\Actions.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

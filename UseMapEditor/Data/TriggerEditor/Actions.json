@@ -1,0 +1,1146 @@
+﻿[
+    {
+        "NAME": "Victory",
+        "SUMMARY": "플레이어가 게임에서 승리합니다.",
+        "TYPE": 1,
+        "FLAG": 4,
+        "argDefines": []
+    },
+    {
+        "NAME": "Defeat",
+        "SUMMARY": "플레이어가 게임에서 패배합니다.",
+        "TYPE": 2,
+        "FLAG": 4,
+        "argDefines": []
+    },
+    {
+        "NAME": "PreserveTrigger",
+        "SUMMARY": "트리거를 무한 반복 합니다.",
+        "TYPE": 3,
+        "FLAG": 4,
+        "argDefines": []
+    },
+    {
+        "NAME": "Wait",
+        "SUMMARY": "[Time]만큼 기다립니다.",
+        "TYPE": 4,
+        "FLAG": 4,
+        "argDefines": [
+            {
+                "argtype": "VALUE",
+                "argname": "Time",
+                "pos": 3
+            }
+        ]
+    },
+    {
+        "NAME": "PauseGame",
+        "SUMMARY": "게임을 멈춥니다.",
+        "TYPE": 5,
+        "FLAG": 4,
+        "argDefines": []
+    },
+    {
+        "NAME": "UnpauseGame",
+        "SUMMARY": "게임을 재개합니다.",
+        "TYPE": 6,
+        "FLAG": 4,
+        "argDefines": []
+    },
+    {
+        "NAME": "Transmission",
+        "SUMMARY": "[Where]에 위치하는 [Unit]의 말하는 애니메이션을 [WAV]을 재생하면서 보여줍니다. 트랜스 미션 시간을 [Time] 만큼 [TimeModifier]합니다. [Text]를 보여줍니다. [AlwaysDisplay]",
+        "TYPE": 7,
+        "argDefines": [
+            {
+                "argtype": "UNIT",
+                "argname": "Unit",
+                "pos": 6
+            },
+            {
+                "argtype": "LOCATION",
+                "argname": "Where",
+                "pos": 0
+            },
+            {
+                "argtype": "WAV",
+                "argname": "WAV",
+                "pos": 2
+            },
+            {
+                "argtype": "NUMBERMODIFIERS",
+                "argname": "TimeModifier",
+                "pos": 8
+            },
+            {
+                "argtype": "VALUE",
+                "argname": "Time",
+                "pos": 5
+            },
+            {
+                "argtype": "STRING",
+                "argname": "Text",
+                "pos": 1
+            },
+            {
+                "argtype": "ALWAYSDISPLAY",
+                "argname": "AlwaysDisplay",
+                "pos": 9
+            }
+        ]
+    },
+    {
+        "NAME": "PlayWAV",
+        "SUMMARY": "[WAV]을 재생합니다.",
+        "TYPE": 8,
+        "FLAG": 4,
+        "argDefines": [
+            {
+                "argtype": "WAV",
+                "argname": "WAV",
+                "pos": 2
+            }
+        ]
+    },
+    {
+        "NAME": "DisplayText",
+        "SUMMARY": "[Text]를 [AlwaysDisplay]의 속성으로 해당 플레이어에게 출력합니다.",
+        "TYPE": 9,
+        "argDefines": [
+            {
+                "argtype": "STRING",
+                "argname": "Text",
+                "pos": 1
+            },
+            {
+                "argtype": "ALWAYSDISPLAY",
+                "argname": "AlwaysDisplay",
+                "pos": 9
+            }
+        ]
+    },
+    {
+        "NAME": "CenterView",
+        "SUMMARY": "화면을 [Where]로 이동시킵니다.",
+        "TYPE": 10,
+        "FLAG": 4,
+        "argDefines": [
+            {
+                "argtype": "LOCATION",
+                "argname": "Where",
+                "pos": 0
+            }
+        ]
+    },
+    {
+        "NAME": "CreateUnitWithProperties",
+        "SUMMARY": "[Where]에 [Player]의 [Unit](을)를 [Count]만큼 [Properties](으)로 생성합니다.",
+        "TYPE": 11,
+        "FLAG": 20,
+        "argDefines": [
+            {
+                "argtype": "VALUE",
+                "argname": "Count",
+                "pos": 8
+            },
+            {
+                "argtype": "UNIT",
+                "argname": "Unit",
+                "pos": 6
+            },
+            {
+                "argtype": "LOCATION",
+                "argname": "Where",
+                "pos": 0
+            },
+            {
+                "argtype": "PLAYER",
+                "argname": "Player",
+                "pos": 4
+            },
+            {
+                "argtype": "UPRP",
+                "argname": "Properties",
+                "pos": 5
+            }
+        ]
+    },
+    {
+        "NAME": "SetMissionObjectives",
+        "SUMMARY": "미션 오브젝트 내용을 [Text]로  설정합니다.",
+        "TYPE": 12,
+        "FLAG": 4,
+        "argDefines": [
+            {
+                "argtype": "STRING",
+                "argname": "Text",
+                "pos": 1
+            }
+        ]
+    },
+    {
+        "NAME": "SetSwitch",
+        "SUMMARY": "스위치 [Switch]의 상태를 [State]로 설정합니다.",
+        "TYPE": 13,
+        "FLAG": 4,
+        "argDefines": [
+            {
+                "argtype": "SWITCH",
+                "argname": "Switch",
+                "pos": 5
+            },
+            {
+                "argtype": "ACTIONSWITCHSTATES",
+                "argname": "State",
+                "pos": 8
+            }
+        ]
+    },
+    {
+        "NAME": "SetCountdownTimer",
+        "SUMMARY": "카운트 타이머를 [Time]만큼 [TimeModifier]합니다.",
+        "TYPE": 14,
+        "FLAG": 4,
+        "argDefines": [
+            {
+                "argtype": "NUMBERMODIFIERS",
+                "argname": "TimeModifier",
+                "pos": 8
+            },
+            {
+                "argtype": "VALUE",
+                "argname": "Time",
+                "pos": 3
+            }
+        ]
+    },
+    {
+        "NAME": "RunAIScript",
+        "SUMMARY": "인공지능 [Script]을 실행합니다.",
+        "TYPE": 15,
+        "FLAG": 4,
+        "argDefines": [
+            {
+                "argtype": "AISCRIPT",
+                "argname": "Script",
+                "pos": 5
+            }
+        ]
+    },
+    {
+        "NAME": "RunAIScriptAt",
+        "SUMMARY": "인공지능 [Script]을 [Where]에서 실행합니다.",
+        "TYPE": 16,
+        "FLAG": 4,
+        "argDefines": [
+            {
+                "argtype": "AISCRIPT",
+                "argname": "Script",
+                "pos": 5
+            },
+            {
+                "argtype": "LOCATION",
+                "argname": "Where",
+                "pos": 0
+            }
+        ]
+    },
+    {
+        "NAME": "LeaderBoardControl",
+        "SUMMARY": "[Unit]의 보유 수를 [Label]리더보드로 띄웁니다.",
+        "TYPE": 17,
+        "FLAG": 20,
+        "argDefines": [
+            {
+                "argtype": "UNIT",
+                "argname": "Unit",
+                "pos": 6
+            },
+            {
+                "argtype": "STRING",
+                "argname": "Label",
+                "pos": 1
+            }
+        ]
+    },
+    {
+        "NAME": "LeaderBoardControlAt",
+        "SUMMARY": "[Location]에 위치하는 [Unit]의 보유 수를 [Label]리더보드로 띄웁니다.",
+        "TYPE": 18,
+        "FLAG": 20,
+        "argDefines": [
+            {
+                "argtype": "UNIT",
+                "argname": "Unit",
+                "pos": 6
+            },
+            {
+                "argtype": "LOCATION",
+                "argname": "Location",
+                "pos": 0
+            },
+            {
+                "argtype": "STRING",
+                "argname": "Label",
+                "pos": 1
+            }
+        ]
+    },
+    {
+        "NAME": "LeaderBoardResources",
+        "SUMMARY": "[ResourceType]의 채집 량을 [Label]리더보드로 띄웁니다.",
+        "TYPE": 19,
+        "FLAG": 4,
+        "argDefines": [
+            {
+                "argtype": "RESOURCETYPES",
+                "argname": "ResourceType",
+                "pos": 6
+            },
+            {
+                "argtype": "STRING",
+                "argname": "Label",
+                "pos": 1
+            }
+        ]
+    },
+    {
+        "NAME": "LeaderBoardKills",
+        "SUMMARY": "[Unit]를 죽인 수를 [Label]리더보드로 띄웁니다.",
+        "TYPE": 20,
+        "FLAG": 20,
+        "argDefines": [
+            {
+                "argtype": "UNIT",
+                "argname": "Unit",
+                "pos": 6
+            },
+            {
+                "argtype": "STRING",
+                "argname": "Label",
+                "pos": 1
+            }
+        ]
+    },
+    {
+        "NAME": "LeaderBoardScore",
+        "SUMMARY": "[ScoreType]를 [Label]리더보드로 띄웁니다.",
+        "TYPE": 21,
+        "FLAG": 4,
+        "argDefines": [
+            {
+                "argtype": "SCORETYPES",
+                "argname": "ScoreType",
+                "pos": 6
+            },
+            {
+                "argtype": "STRING",
+                "argname": "Label",
+                "pos": 1
+            }
+        ]
+    },
+    {
+        "NAME": "KillUnit",
+        "SUMMARY": "[Player]의 모든 [Unit]을 죽입니다.",
+        "TYPE": 22,
+        "FLAG": 20,
+        "argDefines": [
+            {
+                "argtype": "UNIT",
+                "argname": "Unit",
+                "pos": 6
+            },
+            {
+                "argtype": "PLAYER",
+                "argname": "Player",
+                "pos": 4
+            }
+        ]
+    },
+    {
+        "NAME": "KillUnitAt",
+        "SUMMARY": "[ForPlayer]의 [Where]에 위치하는 [Unit]을 [Count]만큼 죽입니다.",
+        "TYPE": 23,
+        "FLAG": 20,
+        "argDefines": [
+            {
+                "argtype": "VALUE",
+                "argname": "Count",
+                "pos": 8
+            },
+            {
+                "argtype": "UNIT",
+                "argname": "Unit",
+                "pos": 6
+            },
+            {
+                "argtype": "LOCATION",
+                "argname": "Where",
+                "pos": 0
+            },
+            {
+                "argtype": "PLAYER",
+                "argname": "ForPlayer",
+                "pos": 4
+            }
+        ]
+    },
+    {
+        "NAME": "RemoveUnit",
+        "SUMMARY": "[Player]의 모든 [Unit]을 제거합니다.",
+        "TYPE": 24,
+        "FLAG": 20,
+        "argDefines": [
+            {
+                "argtype": "UNIT",
+                "argname": "Unit",
+                "pos": 6
+            },
+            {
+                "argtype": "PLAYER",
+                "argname": "Player",
+                "pos": 4
+            }
+        ]
+    },
+    {
+        "NAME": "RemoveUnitAt",
+        "SUMMARY": "[ForPlayer]의 [Where]에 위치하는 [Unit]을 [Count]만큼 제거합니다.",
+        "TYPE": 25,
+        "FLAG": 20,
+        "argDefines": [
+            {
+                "argtype": "VALUE",
+                "argname": "Count",
+                "pos": 8
+            },
+            {
+                "argtype": "UNIT",
+                "argname": "Unit",
+                "pos": 6
+            },
+            {
+                "argtype": "LOCATION",
+                "argname": "Where",
+                "pos": 0
+            },
+            {
+                "argtype": "PLAYER",
+                "argname": "ForPlayer",
+                "pos": 4
+            }
+        ]
+    },
+    {
+        "NAME": "SetResources",
+        "SUMMARY": "[Player]의 [ResourceType]를 [Amount]만큼 [Modifier]합니다.",
+        "TYPE": 26,
+        "FLAG": 4,
+        "argDefines": [
+            {
+                "argtype": "PLAYER",
+                "argname": "Player",
+                "pos": 4
+            },
+            {
+                "argtype": "NUMBERMODIFIERS",
+                "argname": "Modifier",
+                "pos": 8
+            },
+            {
+                "argtype": "VALUE",
+                "argname": "Amount",
+                "pos": 5
+            },
+            {
+                "argtype": "RESOURCETYPES",
+                "argname": "ResourceType",
+                "pos": 6
+            }
+        ]
+    },
+    {
+        "NAME": "SetScore",
+        "SUMMARY": "[Player]의 [ScoreType]를 [Amount]만큼 [Modifier]합니다.",
+        "TYPE": 27,
+        "FLAG": 4,
+        "argDefines": [
+            {
+                "argtype": "PLAYER",
+                "argname": "Player",
+                "pos": 4
+            },
+            {
+                "argtype": "NUMBERMODIFIERS",
+                "argname": "Modifier",
+                "pos": 8
+            },
+            {
+                "argtype": "VALUE",
+                "argname": "Amount",
+                "pos": 5
+            },
+            {
+                "argtype": "SCORETYPES",
+                "argname": "ScoreType",
+                "pos": 6
+            }
+        ]
+    },
+    {
+        "NAME": "MinimapPing",
+        "SUMMARY": "[Where]에 미니맵 핑을 합니다.",
+        "TYPE": 28,
+        "FLAG": 4,
+        "argDefines": [
+            {
+                "argtype": "LOCATION",
+                "argname": "Where",
+                "pos": 0
+            }
+        ]
+    },
+    {
+        "NAME": "TalkingPortrait",
+        "SUMMARY": "[Unit]의 포트레잇을 [Time]간 띄웁니다.",
+        "TYPE": 29,
+        "FLAG": 20,
+        "argDefines": [
+            {
+                "argtype": "UNIT",
+                "argname": "Unit",
+                "pos": 6
+            },
+            {
+                "argtype": "VALUE",
+                "argname": "Time",
+                "pos": 3
+            }
+        ]
+    },
+    {
+        "NAME": "MuteUnitSpeech",
+        "SUMMARY": "게임 소리를 끕니다.",
+        "TYPE": 30,
+        "FLAG": 4,
+        "argDefines": []
+    },
+    {
+        "NAME": "UnMuteUnitSpeech",
+        "SUMMARY": "게임 소리를 킵니다.",
+        "TYPE": 31,
+        "FLAG": 4,
+        "argDefines": []
+    },
+    {
+        "NAME": "LeaderBoardComputerPlayers",
+        "SUMMARY": "리더보드에 컴퓨터 플레이어를 [State]합니다.",
+        "TYPE": 32,
+        "FLAG": 4,
+        "argDefines": [
+            {
+                "argtype": "ACTIONSTATES",
+                "argname": "State",
+                "pos": 8
+            }
+        ]
+    },
+    {
+        "NAME": "LeaderBoardGoalControl",
+        "SUMMARY": "[Unit]의 보유 수가 [Goal]와 가장 가까운 순으로 [Label]리더보드로 띄웁니다.",
+        "TYPE": 33,
+        "FLAG": 20,
+        "argDefines": [
+            {
+                "argtype": "VALUE",
+                "argname": "Goal",
+                "pos": 5
+            },
+            {
+                "argtype": "UNIT",
+                "argname": "Unit",
+                "pos": 6
+            },
+            {
+                "argtype": "STRING",
+                "argname": "Label",
+                "pos": 1
+            }
+        ]
+    },
+    {
+        "NAME": "LeaderBoardGoalControlAt",
+        "SUMMARY": "[Location]에 위치하는 [Unit]의 보유 수가 [Goal]와 가장 가까운 순으로 [Label]리더보드로 띄웁니다.",
+        "TYPE": 34,
+        "FLAG": 20,
+        "argDefines": [
+            {
+                "argtype": "VALUE",
+                "argname": "Goal",
+                "pos": 5
+            },
+            {
+                "argtype": "UNIT",
+                "argname": "Unit",
+                "pos": 6
+            },
+            {
+                "argtype": "LOCATION",
+                "argname": "Location",
+                "pos": 0
+            },
+            {
+                "argtype": "STRING",
+                "argname": "Label",
+                "pos": 1
+            }
+        ]
+    },
+    {
+        "NAME": "LeaderBoardGoalResources",
+        "SUMMARY": "[ResourceType]의 채집 량이 [Goal]와 가장 가까운 순으로 [Label]리더보드로 띄웁니다.",
+        "TYPE": 35,
+        "FLAG": 1,
+        "argDefines": [
+            {
+                "argtype": "VALUE",
+                "argname": "Goal",
+                "pos": 5
+            },
+            {
+                "argtype": "RESOURCETYPES",
+                "argname": "ResourceType",
+                "pos": 6
+            },
+            {
+                "argtype": "STRING",
+                "argname": "Label",
+                "pos": 1
+            }
+        ]
+    },
+    {
+        "NAME": "LeaderBoardGoalKills",
+        "SUMMARY": "[Unit]을 죽인 수가 [Goal]와 가장 가까운 순으로 [Label]리더보드로 띄웁니다.",
+        "TYPE": 36,
+        "FLAG": 20,
+        "argDefines": [
+            {
+                "argtype": "VALUE",
+                "argname": "Goal",
+                "pos": 5
+            },
+            {
+                "argtype": "UNIT",
+                "argname": "Unit",
+                "pos": 6
+            },
+            {
+                "argtype": "STRING",
+                "argname": "Label",
+                "pos": 1
+            }
+        ]
+    },
+    {
+        "NAME": "LeaderBoardGoalScore",
+        "SUMMARY": "[ScoreType]이 [Goal]와 가장 가까운 순으로 [Label]리더보드로 띄웁니다.",
+        "TYPE": 37,
+        "FLAG": 4,
+        "argDefines": [
+            {
+                "argtype": "VALUE",
+                "argname": "Goal",
+                "pos": 5
+            },
+            {
+                "argtype": "SCORETYPES",
+                "argname": "ScoreType",
+                "pos": 6
+            },
+            {
+                "argtype": "STRING",
+                "argname": "Label",
+                "pos": 1
+            }
+        ]
+    },
+    {
+        "NAME": "MoveLocation",
+        "SUMMARY": "[Location]을 [DestLocation]에 위치하는 [Owner]의 [OnUnit]으로 옮깁니다.",
+        "TYPE": 38,
+        "FLAG": 20,
+        "argDefines": [
+            {
+                "argtype": "LOCATION",
+                "argname": "Location",
+                "pos": 5
+            },
+            {
+                "argtype": "UNIT",
+                "argname": "OnUnit",
+                "pos": 6
+            },
+            {
+                "argtype": "PLAYER",
+                "argname": "Owner",
+                "pos": 4
+            },
+            {
+                "argtype": "LOCATION",
+                "argname": "DestLocation",
+                "pos": 0
+            }
+        ]
+    },
+    {
+        "NAME": "MoveUnit",
+        "SUMMARY": "[Owner]의 [UnitType]을 [Count]만큼 [StartLocation]에서 [DestLocation]으로 옮깁니다.",
+        "TYPE": 39,
+        "FLAG": 20,
+        "argDefines": [
+            {
+                "argtype": "COUNT",
+                "argname": "Count",
+                "pos": 8
+            },
+            {
+                "argtype": "UNIT",
+                "argname": "UnitType",
+                "pos": 6
+            },
+            {
+                "argtype": "PLAYER",
+                "argname": "Owner",
+                "pos": 4
+            },
+            {
+                "argtype": "LOCATION",
+                "argname": "StartLocation",
+                "pos": 0
+            },
+            {
+                "argtype": "LOCATION",
+                "argname": "DestLocation",
+                "pos": 5
+            }
+        ]
+    },
+    {
+        "NAME": "LeaderBoardGreed",
+        "SUMMARY": "미네랄과 가스의 채집 량이 [Goal]와 가장 가까운 순으로 동시에 리더보드로 띄웁니다.",
+        "TYPE": 40,
+        "FLAG": 4,
+        "argDefines": [
+            {
+                "argtype": "VALUE",
+                "argname": "Goal",
+                "pos": 5
+            }
+        ]
+    },
+    {
+        "NAME": "SetNextScenario",
+        "SUMMARY": "[ScenarioName]을 다음 시나리오로 설정합니다.",
+        "TYPE": 41,
+        "FLAG": 4,
+        "argDefines": [
+            {
+                "argtype": "STRING",
+                "argname": "ScenarioName",
+                "pos": 1
+            }
+        ]
+    },
+    {
+        "NAME": "SetDoodadState",
+        "SUMMARY": "[Where]에 위치하는 [Owner]의 [Unit]를 [State]로 설정합니다.",
+        "TYPE": 42,
+        "FLAG": 20,
+        "argDefines": [
+            {
+                "argtype": "ACTIONSTATES",
+                "argname": "State",
+                "pos": 8
+            },
+            {
+                "argtype": "UNIT",
+                "argname": "Unit",
+                "pos": 6
+            },
+            {
+                "argtype": "PLAYER",
+                "argname": "Owner",
+                "pos": 4
+            },
+            {
+                "argtype": "LOCATION",
+                "argname": "Where",
+                "pos": 0
+            }
+        ]
+    },
+    {
+        "NAME": "SetInvincibility",
+        "SUMMARY": "[Where]에 위치하는 [Owner]의 [Unit]의 무적 상태를 [State]로 설정합니다.",
+        "TYPE": 43,
+        "FLAG": 20,
+        "argDefines": [
+            {
+                "argtype": "ACTIONSTATES",
+                "argname": "State",
+                "pos": 8
+            },
+            {
+                "argtype": "UNIT",
+                "argname": "Unit",
+                "pos": 6
+            },
+            {
+                "argtype": "PLAYER",
+                "argname": "Owner",
+                "pos": 4
+            },
+            {
+                "argtype": "LOCATION",
+                "argname": "Where",
+                "pos": 0
+            }
+        ]
+    },
+    {
+        "NAME": "CreateUnit",
+        "SUMMARY": "[ForPlayer]의 [Unit]을 [Number]만큼 [Where]에 생성합니다.",
+        "TYPE": 44,
+        "FLAG": 20,
+        "argDefines": [
+            {
+                "argtype": "VALUE",
+                "argname": "Number",
+                "pos": 8
+            },
+            {
+                "argtype": "UNIT",
+                "argname": "Unit",
+                "pos": 6
+            },
+            {
+                "argtype": "LOCATION",
+                "argname": "Where",
+                "pos": 0
+            },
+            {
+                "argtype": "PLAYER",
+                "argname": "ForPlayer",
+                "pos": 4
+            }
+        ]
+    },
+    {
+        "NAME": "SetDeaths",
+        "SUMMARY": "[Player]의 [Unit]가 죽은 수를 [Number]만큼 [Modifier]합니다.",
+        "TYPE": 45,
+        "FLAG": 20,
+        "argDefines": [
+            {
+                "argtype": "PLAYER",
+                "argname": "Player",
+                "pos": 4
+            },
+            {
+                "argtype": "NUMBERMODIFIERS",
+                "argname": "Modifier",
+                "pos": 8
+            },
+            {
+                "argtype": "VALUE",
+                "argname": "Number",
+                "pos": 5
+            },
+            {
+                "argtype": "UNIT",
+                "argname": "Unit",
+                "pos": 6
+            }
+        ]
+    },
+    {
+        "NAME": "Order",
+        "SUMMARY": "[Owner]의 [Unit]를 [StartLocation]에서 [DestLocation]까지 [OrderType]합니다.",
+        "TYPE": 46,
+        "FLAG": 20,
+        "argDefines": [
+            {
+                "argtype": "UNIT",
+                "argname": "Unit",
+                "pos": 6
+            },
+            {
+                "argtype": "PLAYER",
+                "argname": "Owner",
+                "pos": 4
+            },
+            {
+                "argtype": "LOCATION",
+                "argname": "StartLocation",
+                "pos": 0
+            },
+            {
+                "argtype": "UNITORDERS",
+                "argname": "OrderType",
+                "pos": 8
+            },
+            {
+                "argtype": "LOCATION",
+                "argname": "DestLocation",
+                "pos": 5
+            }
+        ]
+    },
+    {
+        "NAME": "Comment",
+        "SUMMARY": "[Text]으로 주석처리합니다.",
+        "TYPE": 47,
+        "FLAG": 4,
+        "argDefines": [
+            {
+                "argtype": "STRING",
+                "argname": "Text",
+                "pos": 1
+            }
+        ]
+    },
+    {
+        "NAME": "GiveUnits",
+        "SUMMARY": "[Where]에 위치하는 [Owner]의 [Unit]을 [Count]만큼 [NewOwner]에게 줍니다.",
+        "TYPE": 48,
+        "FLAG": 20,
+        "argDefines": [
+            {
+                "argtype": "COUNT",
+                "argname": "Count",
+                "pos": 8
+            },
+            {
+                "argtype": "UNIT",
+                "argname": "Unit",
+                "pos": 6
+            },
+            {
+                "argtype": "PLAYER",
+                "argname": "Owner",
+                "pos": 4
+            },
+            {
+                "argtype": "LOCATION",
+                "argname": "Where",
+                "pos": 0
+            },
+            {
+                "argtype": "PLAYER",
+                "argname": "NewOwner",
+                "pos": 5
+            }
+        ]
+    },
+    {
+        "NAME": "ModifyUnitHitPoints",
+        "SUMMARY": "[Where]에 위치하는 [Owner]소유의 [Unit], [Count]의 체력을 [Percent]%로 설정합니다.",
+        "TYPE": 49,
+        "FLAG": 20,
+        "argDefines": [
+            {
+                "argtype": "VALUE",
+                "argname": "Count",
+                "pos": 8
+            },
+            {
+                "argtype": "UNIT",
+                "argname": "Unit",
+                "pos": 6
+            },
+            {
+                "argtype": "PLAYER",
+                "argname": "Owner",
+                "pos": 4
+            },
+            {
+                "argtype": "LOCATION",
+                "argname": "Where",
+                "pos": 0
+            },
+            {
+                "argtype": "VALUE",
+                "argname": "Percent",
+                "pos": 5
+            }
+        ]
+    },
+    {
+        "NAME": "ModifyUnitEnergy",
+        "SUMMARY": "[Where]에 위치하는 [Owner]소유의 [Unit], [Count]의 에너지를 [Percent]%로 설정합니다.",
+        "TYPE": 50,
+        "FLAG": 20,
+        "argDefines": [
+            {
+                "argtype": "VALUE",
+                "argname": "Count",
+                "pos": 8
+            },
+            {
+                "argtype": "UNIT",
+                "argname": "Unit",
+                "pos": 6
+            },
+            {
+                "argtype": "PLAYER",
+                "argname": "Owner",
+                "pos": 4
+            },
+            {
+                "argtype": "LOCATION",
+                "argname": "Where",
+                "pos": 0
+            },
+            {
+                "argtype": "VALUE",
+                "argname": "Percent",
+                "pos": 5
+            }
+        ]
+    },
+    {
+        "NAME": "ModifyUnitShields",
+        "SUMMARY": "[Where]에 위치하는 [Owner]소유의 [Unit], [Count]의 쉴드를 [Percent]%로 설정합니다.",
+        "TYPE": 51,
+        "FLAG": 20,
+        "argDefines": [
+            {
+                "argtype": "VALUE",
+                "argname": "Count",
+                "pos": 8
+            },
+            {
+                "argtype": "UNIT",
+                "argname": "Unit",
+                "pos": 6
+            },
+            {
+                "argtype": "PLAYER",
+                "argname": "Owner",
+                "pos": 4
+            },
+            {
+                "argtype": "LOCATION",
+                "argname": "Where",
+                "pos": 0
+            },
+            {
+                "argtype": "VALUE",
+                "argname": "Percent",
+                "pos": 5
+            }
+        ]
+    },
+    {
+        "NAME": "ModifyUnitResourceAmount",
+        "SUMMARY": "[Where]에 위치하는 [Owner]소유의 자원 [Count]개의 매장량을 [NewValue]로 설정합니다.",
+        "TYPE": 52,
+        "FLAG": 4,
+        "argDefines": [
+            {
+                "argtype": "VALUE",
+                "argname": "Count",
+                "pos": 8
+            },
+            {
+                "argtype": "PLAYER",
+                "argname": "Owner",
+                "pos": 4
+            },
+            {
+                "argtype": "LOCATION",
+                "argname": "Where",
+                "pos": 0
+            },
+            {
+                "argtype": "VALUE",
+                "argname": "NewValue",
+                "pos": 5
+            }
+        ]
+    },
+    {
+        "NAME": "ModifyUnitHangarCount",
+        "SUMMARY": "[Where]에 위치하는 [Owner]소유의 [Unit], [Count]의 격납 유닛을 [Add]만큼 추가합니다.",
+        "TYPE": 53,
+        "FLAG": 20,
+        "argDefines": [
+            {
+                "argtype": "VALUE",
+                "argname": "Add",
+                "pos": 5
+            },
+            {
+                "argtype": "COUNT",
+                "argname": "Count",
+                "pos": 8
+            },
+            {
+                "argtype": "UNIT",
+                "argname": "Unit",
+                "pos": 6
+            },
+            {
+                "argtype": "PLAYER",
+                "argname": "Owner",
+                "pos": 4
+            },
+            {
+                "argtype": "LOCATION",
+                "argname": "Where",
+                "pos": 0
+            }
+        ]
+    },
+    {
+        "NAME": "PauseTimer",
+        "SUMMARY": "타이머를 멈춥니다.",
+        "TYPE": 54,
+        "FLAG": 4,
+        "argDefines": []
+    },
+    {
+        "NAME": "UnpauseTimer",
+        "SUMMARY": "타이머를 다시 작동시킵니다.",
+        "TYPE": 55,
+        "FLAG": 4,
+        "argDefines": []
+    },
+    {
+        "NAME": "Draw",
+        "SUMMARY": "게임에서 비깁니다.",
+        "TYPE": 56,
+        "FLAG": 4,
+        "argDefines": []
+    },
+    {
+        "NAME": "SetAllianceStatus",
+        "SUMMARY": "[Player]와의 동맹상태를 [Status]로 설정합니다.",
+        "TYPE": 57,
+        "FLAG": 4,
+        "argDefines": [
+            {
+                "argtype": "PLAYER",
+                "argname": "Player",
+                "pos": 4
+            },
+            {
+                "argtype": 11,
+                "argname": "Status",
+                "pos": 6
+            }
+        ]
+    }
+]

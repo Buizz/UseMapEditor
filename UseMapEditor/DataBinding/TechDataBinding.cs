@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using UseMapEditor.Control;
 using UseMapEditor.FileData;
+using static Data.Map.MapData;
 
 namespace UseMapEditor.DataBinding
 {
@@ -56,7 +57,7 @@ namespace UseMapEditor.DataBinding
         {
             get
             {
-                return mapEditor.GetCodeName(MapEditor.Codetype.Tech, ObjectID);
+                return mapEditor.mapdata.GetCodeName(Codetype.Tech, ObjectID);
             }
             set { }
         }

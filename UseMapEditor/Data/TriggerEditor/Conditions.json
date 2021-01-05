@@ -1,0 +1,390 @@
+﻿[
+  {
+    "NAME": "CountdownTimer",
+    "SUMMARY": "카운트 다운 타이머의 시간이 [Time]초 [Comparison]인 경우",
+    "TYPE": 1,
+    "argDefines": [
+      {
+        "argtype": "NUMERICCOMPARISONS",
+        "argname": "Comparison",
+        "pos": 4
+      },
+      {
+        "argtype": "COUNT",
+        "argname": "Time",
+        "pos": 2
+      }
+    ]
+  },
+  {
+    "NAME": "Command",
+    "SUMMARY": "[Player](이)가 [Unit]을 [Number]기 [Comparison]보유한 경우",
+    "TYPE": 2,
+    "argDefines": [
+      {
+        "argtype": "PLAYER",
+        "argname": "Player",
+        "pos": 1
+      },
+      {
+        "argtype": "NUMERICCOMPARISONS",
+        "argname": "Comparison",
+        "pos": 4
+      },
+      {
+        "argtype": "VALUE",
+        "argname": "Number",
+        "pos": 2
+      },
+      {
+        "argtype": "UNIT",
+        "argname": "Unit",
+        "pos": 3
+      }
+    ]
+  },
+  {
+    "NAME": "Bring",
+    "SUMMARY": "[Location]에 [Player]의 [Unit](이)가 [Number][Comparison] 있을 경우",
+    "TYPE": 3,
+    "argDefines": [
+      {
+        "argtype": "PLAYER",
+        "argname": "Player",
+        "pos": 1
+      },
+      {
+        "argtype": "NUMERICCOMPARISONS",
+        "argname": "Comparison",
+        "pos": 4
+      },
+      {
+        "argtype": "VALUE",
+        "argname": "Number",
+        "pos": 2
+      },
+      {
+        "argtype": "UNIT",
+        "argname": "Unit",
+        "pos": 3
+      },
+      {
+        "argtype": "LOCATION",
+        "argname": "Location",
+        "pos": 0
+      }
+    ]
+  },
+  {
+    "NAME": "Accumulate",
+    "SUMMARY": "[Player](이)가 [ResourceType](을)를 [Number][Comparison] 가지고 있을 경우",
+    "TYPE": 4,
+    "argDefines": [
+      {
+        "argtype": "PLAYER",
+        "argname": "Player",
+        "pos": 1
+      },
+      {
+        "argtype": "NUMERICCOMPARISONS",
+        "argname": "Comparison",
+        "pos": 4
+      },
+      {
+        "argtype": "VALUE",
+        "argname": "Number",
+        "pos": 2
+      },
+      {
+        "argtype": "RESOURCETYPES",
+        "argname": "ResourceType",
+        "pos": 6
+      }
+    ]
+  },
+  {
+    "NAME": "Kills",
+    "SUMMARY": "[Player](이)가 [Unit](을)를 [Number][Comparison] 죽였을 경우",
+    "TYPE": 5,
+    "argDefines": [
+      {
+        "argtype": "PLAYER",
+        "argname": "Player",
+        "pos": 1
+      },
+      {
+        "argtype": "NUMERICCOMPARISONS",
+        "argname": "Comparison",
+        "pos": 4
+      },
+      {
+        "argtype": "VALUE",
+        "argname": "Number",
+        "pos": 2
+      },
+      {
+        "argtype": "UNIT",
+        "argname": "Unit",
+        "pos": 3
+      }
+    ]
+  },
+  {
+    "NAME": "CommandMost",
+    "SUMMARY": "[Unit](을)를 가장 많이 보유한 경우",
+    "TYPE": 6,
+    "argDefines": [
+      {
+        "argtype": "UNIT",
+        "argname": "Unit",
+        "pos": 3
+      }
+    ]
+  },
+  {
+    "NAME": "CommandMostAt",
+    "SUMMARY": "[Location]에 [Unit](을)를 가장 많이 보유한 경우",
+    "TYPE": 7,
+    "argDefines": [
+      {
+        "argtype": "UNIT",
+        "argname": "Unit",
+        "pos": 3
+      },
+      {
+        "argtype": "LOCATION",
+        "argname": "Location",
+        "pos": 0
+      }
+    ]
+  },
+  {
+    "NAME": "MostKills",
+    "SUMMARY": "[Unit](을)를 가장 많이 죽인 경우",
+    "TYPE": 8,
+    "argDefines": [
+      {
+        "argtype": "UNIT",
+        "argname": "Unit",
+        "pos": 3
+      }
+    ]
+  },
+  {
+    "NAME": "HighestScore",
+    "SUMMARY": "[ScoreType](이)가 가장 높을 경우",
+    "TYPE": 9,
+    "argDefines": [
+      {
+        "argtype": "SCORETYPES",
+        "argname": "ScoreType",
+        "pos": 6
+      }
+    ]
+  },
+  {
+    "NAME": "MostResources",
+    "SUMMARY": "[ResourceType](을)를 가장 많이 보유한 경우",
+    "TYPE": 10,
+    "argDefines": [
+      {
+        "argtype": "RESOURCETYPES",
+        "argname": "ResourceType",
+        "pos": 6
+      }
+    ]
+  },
+  {
+    "NAME": "Switch",
+    "SUMMARY": "[Switch](이)가 [State]상태인 경우",
+    "TYPE": 11,
+    "argDefines": [
+      {
+        "argtype": "SWITCH",
+        "argname": "Switch",
+        "pos": 6
+      },
+      {
+        "argtype": "CONDITIONSWITCHSTATES",
+        "argname": "State",
+        "pos": 4
+      }
+    ]
+  },
+  {
+    "NAME": "ElapsedTime",
+    "SUMMARY": "게임이 시작된지  [Time]초 [Comparison] 지난경우",
+    "TYPE": 12,
+    "argDefines": [
+      {
+        "argtype": "NUMERICCOMPARISONS",
+        "argname": "Comparison",
+        "pos": 4
+      },
+      {
+        "argtype": "VALUE",
+        "argname": "Time",
+        "pos": 2
+      }
+    ]
+  },
+  {
+    "NAME": "Briefing",
+    "SUMMARY": "브리핑(Unused)",
+    "TYPE": 13,
+    "argDefines": []
+  },
+  {
+    "NAME": "Opponents",
+    "SUMMARY": "[Player]가 해당 게임 내에서 적을 [Number][Comparison] 상대하고 있을 경우",
+    "TYPE": 14,
+    "argDefines": [
+      {
+        "argtype": "PLAYER",
+        "argname": "Player",
+        "pos": 1
+      },
+      {
+        "argtype": "NUMERICCOMPARISONS",
+        "argname": "Comparison",
+        "pos": 4
+      },
+      {
+        "argtype": "VALUE",
+        "argname": "Number",
+        "pos": 2
+      }
+    ]
+  },
+  {
+    "NAME": "Deaths",
+    "SUMMARY": "[Player]의 [Unit](이)가 [Number][Comparison]죽었을 경우",
+    "TYPE": 15,
+    "argDefines": [
+      {
+        "argtype": "PLAYER",
+        "argname": "Player",
+        "pos": 1
+      },
+      {
+        "argtype": "NUMERICCOMPARISONS",
+        "argname": "Comparison",
+        "pos": 4
+      },
+      {
+        "argtype": "VALUE",
+        "argname": "Number",
+        "pos": 2
+      },
+      {
+        "argtype": "UNIT",
+        "argname": "Unit",
+        "pos": 3
+      }
+    ]
+  },
+  {
+    "NAME": "CommandLeast",
+    "SUMMARY": "[Unit](을)를 가장 적게 보유한 경우",
+    "TYPE": 16,
+    "argDefines": [
+      {
+        "argtype": "UNIT",
+        "argname": "Unit",
+        "pos": 3
+      }
+    ]
+  },
+  {
+    "NAME": "CommandLeastAt",
+    "SUMMARY": "[Location]에 [Unit](을)를 가장 적게 보유한 경우",
+    "TYPE": 17,
+    "argDefines": [
+      {
+        "argtype": "UNIT",
+        "argname": "Unit",
+        "pos": 3
+      },
+      {
+        "argtype": "LOCATION",
+        "argname": "Location",
+        "pos": 0
+      }
+    ]
+  },
+  {
+    "NAME": "LeastKills",
+    "SUMMARY": "[Unit](을)를 가장 적게 죽였을 경우",
+    "TYPE": 18,
+    "argDefines": [
+      {
+        "argtype": "UNIT",
+        "argname": "Unit",
+        "pos": 3
+      }
+    ]
+  },
+  {
+    "NAME": "LowestScore",
+    "SUMMARY": "[ScoreType](이)가 가장 낮을 경우",
+    "TYPE": 19,
+    "argDefines": [
+      {
+        "argtype": "SCORETYPES",
+        "argname": "ScoreType",
+        "pos": 6
+      }
+    ]
+  },
+  {
+    "NAME": "LeastResources",
+    "SUMMARY": "보유한 [ResourceType](이)가 가장 적을 경우",
+    "TYPE": 20,
+    "argDefines": [
+      {
+        "argtype": "RESOURCETYPES",
+        "argname": "ResourceType",
+        "pos": 6
+      }
+    ]
+  },
+  {
+    "NAME": "Score",
+    "SUMMARY": "[Player]의 [ScoreType](이)가 [Number] [Comparison]인 경우",
+    "TYPE": 21,
+    "argDefines": [
+      {
+        "argtype": "PLAYER",
+        "argname": "Player",
+        "pos": 1
+      },
+      {
+        "argtype": "SCORETYPES",
+        "argname": "ScoreType",
+        "pos": 6
+      },
+      {
+        "argtype": "NUMERICCOMPARISONS",
+        "argname": "Comparison",
+        "pos": 4
+      },
+      {
+        "argtype": "VALUE",
+        "argname": "Number",
+        "pos": 2
+      }
+    ]
+  },
+  {
+    "NAME": "Always",
+    "SUMMARY": "조건없이 트리거를 실행합니다",
+    "TYPE": 22,
+    "argDefines": []
+  },
+  {
+    "NAME": "Never",
+    "SUMMARY": "트리거를 절대 실행하지 않습니다",
+    "TYPE": 23,
+    "argDefines": []
+  }
+]

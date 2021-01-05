@@ -129,6 +129,13 @@ namespace Data.Map
             }
 
 
+
+
+            TriggerSave();
+
+
+
+
             //에디터로부터 CHK데이터를 가져오는 함수
             for (int i = 0; i < cHKTokens.Count; i++)
             {
@@ -629,9 +636,7 @@ namespace Data.Map
                         for (int a = 0; a < 64; a++)
                         {
                             bw.Write(TRIG[i].actions[a].locid1);
-
-                            bw.Write(TRIG[i].actions[a].STRING.ResultIndex);
-
+                            bw.Write(TRIG[i].actions[a].strid);
                             bw.Write(TRIG[i].actions[a].wavid);
                             bw.Write(TRIG[i].actions[a].time);
                             bw.Write(TRIG[i].actions[a].player1);
@@ -671,9 +676,7 @@ namespace Data.Map
                         for (int a = 0; a < 64; a++)
                         {
                             bw.Write(MBRF[i].actions[a].locid1);
-
-                            bw.Write(TRIG[i].actions[a].STRING.ResultIndex);
-
+                            bw.Write(MBRF[i].actions[a].strid);
                             bw.Write(MBRF[i].actions[a].wavid);
                             bw.Write(MBRF[i].actions[a].time);
                             bw.Write(MBRF[i].actions[a].player1);
@@ -764,9 +767,15 @@ namespace Data.Map
             }
 
 
+
+            TriggerLoad();
+
+
+
+
+
             //soundDatas
             uint hmpq = OpenArchive();
-
             soundDatas.Clear();
             for (int i = 0; i < WAV.Length; i++)
             {
@@ -1188,49 +1197,7 @@ namespace Data.Map
 
                     for (int i = 0; i < cHKToken.size/2400; i++)
                     {
-                        TRIGMBRF trig = new TRIGMBRF();
-
-                        for (int c = 0; c < 16; c++)
-                        {
-                            TRIGMBRF.Condition condition = new TRIGMBRF.Condition();
-
-                            condition.locid = br.ReadUInt32();//u32: Location number for the condition (1 based -- 0 refers to No Location), EUD Bitmask for a Death condition if the MaskFlag is set to "SC"
-                            condition.player = br.ReadUInt32();//u32: Group that the condition applies to
-                            condition.amount = br.ReadUInt32();//u32: Qualified number(how many/resource amount)
-                            condition.unitid = br.ReadUInt16();//u16: Unit ID condition applies to
-                            condition.comparison = br.ReadByte();//u8: Numeric comparison, switch state
-                            condition.condtype = br.ReadByte();//u8: Condition byte
-                            condition.restype = br.ReadByte();//u8: Resource type, score type, Switch number(0-based)
-                            condition.flags = br.ReadByte();//u8: Flags
-                            condition.maskflag = br.ReadUInt16();//u16: MaskFlag: set to "SC" (0x53, 0x43) when using the bitmask for EUDs, 0 otherwise
-
-                            trig.conditions[c] = condition;
-                        }
-                        for (int a = 0; a < 64; a++)
-                        {
-                            TRIGMBRF.Action action = new TRIGMBRF.Action();
-
-                            action.locid1 = br.ReadUInt32();//u32: Location - source location in "Order" and "Move Unit", dest location in "Move Location" (1 based -- 0 refers to No Location), EUD Bitmask for a Death action if the MaskFlag is set to "SC"
-                            action.strid = br.ReadUInt32();//u32: String number for trigger text(0 means no string)
-                            action.wavid = br.ReadUInt32();//u32: WAV string number(0 means no string)
-                            action.time = br.ReadUInt32();//u32: Seconds/milliseconds of time
-                            action.player1 = br.ReadUInt32();//u32: First(or only) Group/Player affected.
-                            action.player2 = br.ReadUInt32();//u32: Second group affected, secondary location (1-based), CUWP #, number, AI script (4-byte string), switch (0-based #)
-                            action.unitid = br.ReadUInt16();//u16: Unit type, score type, resource type, alliance status
-                            action.acttype = br.ReadByte();//u8: Action byte
-                            action.amount = br.ReadByte();//u8: Number of units(0 means All Units), action state, unit order, number modifier
-                            action.flags = br.ReadByte();//u8: Flags
-                            action.padding = br.ReadByte();//u8: Padding
-                            action.maskflag = br.ReadUInt16();//u16 (2 bytes): MaskFlag: set to "SC"(0x53, 0x43) when using the bitmask for EUDs, 0 otherwise
-
-                            trig.actions[a] = action;
-
-                            action.STRING = new StringData(this, (int)action.strid);
-                        }
-
-                        trig.exeflag = br.ReadUInt32();
-                        trig.playerlist = br.ReadBytes(27);
-                        trig.trigindex = br.ReadByte();
+                        RAWTRIGMBRF trig = new RAWTRIGMBRF(br);
 
                         TRIG.Add(trig);
                     }
@@ -1242,49 +1209,7 @@ namespace Data.Map
 
                     for (int i = 0; i < cHKToken.size / 2400; i++)
                     {
-                        TRIGMBRF mbrf = new TRIGMBRF();
-
-                        for (int c = 0; c < 16; c++)
-                        {
-                            TRIGMBRF.Condition condition = new TRIGMBRF.Condition();
-
-                            condition.locid = br.ReadUInt32();//u32: Location number for the condition (1 based -- 0 refers to No Location), EUD Bitmask for a Death condition if the MaskFlag is set to "SC"
-                            condition.player = br.ReadUInt32();//u32: Group that the condition applies to
-                            condition.amount = br.ReadUInt32();//u32: Qualified number(how many/resource amount)
-                            condition.unitid = br.ReadUInt16();//u16: Unit ID condition applies to
-                            condition.comparison = br.ReadByte();//u8: Numeric comparison, switch state
-                            condition.condtype = br.ReadByte();//u8: Condition byte
-                            condition.restype = br.ReadByte();//u8: Resource type, score type, Switch number(0-based)
-                            condition.flags = br.ReadByte();//u8: Flags
-                            condition.maskflag = br.ReadUInt16();//u16: MaskFlag: set to "SC" (0x53, 0x43) when using the bitmask for EUDs, 0 otherwise
-
-                            mbrf.conditions[i] = condition;
-                        }
-                        for (int a = 0; a < 64; a++)
-                        {
-                            TRIGMBRF.Action action = new TRIGMBRF.Action();
-
-                            action.locid1 = br.ReadUInt32();//u32: Location - source location in "Order" and "Move Unit", dest location in "Move Location" (1 based -- 0 refers to No Location), EUD Bitmask for a Death action if the MaskFlag is set to "SC"
-                            action.strid = br.ReadUInt32();//u32: String number for trigger text(0 means no string)
-                            action.wavid = br.ReadUInt32();//u32: WAV string number(0 means no string)
-                            action.time = br.ReadUInt32();//u32: Seconds/milliseconds of time
-                            action.player1 = br.ReadUInt32();//u32: First(or only) Group/Player affected.
-                            action.player2 = br.ReadUInt32();//u32: Second group affected, secondary location (1-based), CUWP #, number, AI script (4-byte string), switch (0-based #)
-                            action.unitid = br.ReadUInt16();//u16: Unit type, score type, resource type, alliance status
-                            action.acttype = br.ReadByte();//u8: Action byte
-                            action.amount = br.ReadByte();//u8: Number of units(0 means All Units), action state, unit order, number modifier
-                            action.flags = br.ReadByte();//u8: Flags
-                            action.padding = br.ReadByte();//u8: Padding
-                            action.maskflag = br.ReadUInt16();//u16 (2 bytes): MaskFlag: set to "SC"(0x53, 0x43) when using the bitmask for EUDs, 0 otherwise
-
-                            mbrf.actions[i] = action;
-
-                            action.STRING = new StringData(this, (int)action.strid);
-                        }
-
-                        mbrf.exeflag = br.ReadUInt32();
-                        mbrf.playerlist = br.ReadBytes(27);
-                        mbrf.trigindex = br.ReadByte();
+                        RAWTRIGMBRF mbrf = new RAWTRIGMBRF(br);
 
                         MBRF.Add(mbrf);
                     }

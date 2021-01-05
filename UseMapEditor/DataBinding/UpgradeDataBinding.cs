@@ -59,7 +59,7 @@ namespace UseMapEditor.DataBinding
         {
             get
             {
-                return mapEditor.GetCodeName(MapEditor.Codetype.Upgrade, ObjectID);
+                return mapEditor.mapdata.GetCodeName(Data.Map.MapData.Codetype.Upgrade, ObjectID);
             }
             set { }
         }

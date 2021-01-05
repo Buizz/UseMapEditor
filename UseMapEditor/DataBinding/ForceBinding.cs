@@ -66,7 +66,7 @@ namespace UseMapEditor.DataBinding
                 }
                 else
                 {
-                    mapEditor.mapdata.FORCEFLAG[ForceID] ^= 0b10;
+                    mapEditor.mapdata.FORCEFLAG[ForceID] &= unchecked((byte)~0b10);
                 }
                 mapEditor.SetDirty();
                 OnPropertyChanged("Allied");
@@ -86,7 +86,7 @@ namespace UseMapEditor.DataBinding
                 }
                 else
                 {
-                    mapEditor.mapdata.FORCEFLAG[ForceID] ^= 0b100;
+                    mapEditor.mapdata.FORCEFLAG[ForceID] &= unchecked((byte)~0b100);
                 }
                 mapEditor.SetDirty();
                 OnPropertyChanged("AlliedVictory");
@@ -106,7 +106,7 @@ namespace UseMapEditor.DataBinding
                 }
                 else
                 {
-                    mapEditor.mapdata.FORCEFLAG[ForceID] ^= 0b1000;
+                    mapEditor.mapdata.FORCEFLAG[ForceID] &= unchecked((byte)~0b1000);
                 }
                 mapEditor.SetDirty();
                 OnPropertyChanged("ShareVision");
@@ -126,7 +126,7 @@ namespace UseMapEditor.DataBinding
                 }
                 else
                 {
-                    mapEditor.mapdata.FORCEFLAG[ForceID] ^= 0b1;
+                    mapEditor.mapdata.FORCEFLAG[ForceID] &= unchecked((byte)~0b1);
                 }
                 mapEditor.SetDirty();
                 OnPropertyChanged("Randomize");

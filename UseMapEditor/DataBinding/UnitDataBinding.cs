@@ -29,7 +29,7 @@ namespace UseMapEditor.DataBinding
         {
             get
             {
-                if (mapEditor.IsCustomUnitName(ObjectID))
+                if (mapEditor.mapdata.IsCustomUnitName(ObjectID))
                 {
                     return 8;
                 }
@@ -45,7 +45,7 @@ namespace UseMapEditor.DataBinding
         {
             get
             {
-                if (mapEditor.IsCustomUnitName(ObjectID))
+                if (mapEditor.mapdata.IsCustomUnitName(ObjectID))
                 {
                     return System.Windows.Visibility.Visible;
                 }
@@ -62,7 +62,7 @@ namespace UseMapEditor.DataBinding
         {
             get
             {
-                return mapEditor.GetUnitName(ObjectID);
+                return mapEditor.mapdata.GetUnitName(ObjectID);
             }
             set{}
         }
@@ -70,7 +70,7 @@ namespace UseMapEditor.DataBinding
         {
             get
             {
-                return mapEditor.GetMapUnitName(ObjectID);
+                return mapEditor.mapdata.GetMapUnitName(ObjectID);
             }
             set{}
         }
@@ -127,7 +127,7 @@ namespace UseMapEditor.DataBinding
         {
             get
             {
-                return mapEditor.GetCodeName(MapEditor.Codetype.Unit, ObjectID);
+                return mapEditor.mapdata.GetCodeName(Data.Map.MapData.Codetype.Unit, ObjectID);
             }
             set
             {
@@ -141,13 +141,13 @@ namespace UseMapEditor.DataBinding
         {
             get
             {
-                return mapEditor.IsCustomUnitName(ObjectID);
+                return mapEditor.mapdata.IsCustomUnitName(ObjectID);
             }
             set
             {
                 if (value)
                 {
-                    mapEditor.mapdata.UNIx.STRING[ObjectID].String = mapEditor.GetMapUnitName(ObjectID);
+                    mapEditor.mapdata.UNIx.STRING[ObjectID].String = mapEditor.mapdata.GetMapUnitName(ObjectID);
                 }
                 else
                 {
@@ -173,7 +173,7 @@ namespace UseMapEditor.DataBinding
                 }
                 else
                 {
-                    return mapEditor.GetMapUnitName(ObjectID);
+                    return mapEditor.mapdata.GetMapUnitName(ObjectID);
                 }
             }
             set

@@ -37,6 +37,12 @@ namespace Data.Map
             TILETYPE = (TileSet.TileType)TileType;
             ENCODING = System.Text.Encoding.UTF8;
 
+
+            BYTESTR = new List<byte[]>();
+            BYTESTRx = new List<byte[]>();
+            LOADSTR = new string[0];
+            LOADSTRx = new string[0];
+
             for (int i = 0; i < 8; i++)
             {
                 CRGB[i] = new Microsoft.Xna.Framework.Color(0, 0, i);

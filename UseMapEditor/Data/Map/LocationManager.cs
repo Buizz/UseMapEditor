@@ -36,5 +36,6 @@ namespace Data.Map
             //Bit 5 - High air
             //Bit 6 - 15 - Unused
         }
+
     }
 }

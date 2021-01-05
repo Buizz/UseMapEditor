@@ -207,72 +207,6 @@ namespace UseMapEditor.Control
 
 
 
-        public enum Codetype
-        {
-            Unit,
-            Upgrade,
-            Tech,
-            Sprite
-        }
-
-        public bool IsCustomUnitName(int index)
-        {
-            string d = mapdata.UNIx.STRING[index].String;
-            return mapdata.UNIx.STRING[index].IsLoaded;
-        }
-        public string GetUnitName(int index)
-        {
-            string d = mapdata.UNIx.STRING[index].String;
-            if (mapdata.UNIx.STRING[index].IsLoaded)
-            {
-                return d;
-            }
-
-            return "???";
-        }
-        public string GetMapUnitName(int index)
-        {
-            string org = Global.WindowTool.GetStat_txt(index);
-            return org;
-        }
-
-
-
-
-        public string GetCodeName(Codetype codetype, int index)
-        {
-            if (!IsLoad)
-            {
-                return "NotLoad";
-            }
-            int label;
-            switch (codetype)
-            {
-                case Codetype.Unit:
-                    string d = mapdata.UNIx.STRING[index].String;
-                    string org = Global.WindowTool.GetStat_txt(index);
-                    if (mapdata.UNIx.STRING[index].IsLoaded)
-                    {
-                        return d +  "\n" + org;
-                    }
-
-                    return org;
-                case Codetype.Upgrade:
-                    label = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.upgrades, "Label", index).Data-1;
-
-
-                    return Global.WindowTool.GetStat_txt(label);
-                case Codetype.Tech:
-                    label = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.techdata, "Label", index).Data-1;
-
-
-                    return Global.WindowTool.GetStat_txt(label);
-                case Codetype.Sprite:
-                    return "Sprite";
-            }
-            return "???";
-        }
-
 
 
 
@@ -364,6 +298,8 @@ namespace UseMapEditor.Control
             TechSettingTabItem.SetMapEditor(this);
             SoundSettingTabItem.SetMapEditor(this);
             StringSettingTabItem.SetMapEditor(this);
+            ClassTriggerEditorTabItem.SetMapEditor(this, true);
+            BriefingEditorTabItem.SetMapEditor(this, false);
             this.DataContext = mapDataBinding;
         }
 

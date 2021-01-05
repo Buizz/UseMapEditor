@@ -130,6 +130,12 @@
                     <TabItem Header="스트링">
                         <mapeditorcontrol:StringSetting x:Name="StringSettingTabItem"/>
                     </TabItem>
+                    <TabItem Header="트리거">
+                        <mapeditorcontrol:TriggerEditor x:Name="ClassTriggerEditorTabItem"/>
+                    </TabItem>
+                    <TabItem Header="브리핑">
+                        <mapeditorcontrol:TriggerEditor x:Name="BriefingEditorTabItem"/>
+                    </TabItem>
                 </dragablz:TabablzControl>
             </DockPanel>
         </Expander>

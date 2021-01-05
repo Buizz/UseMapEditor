@@ -42,28 +42,63 @@ namespace Data.Map
                 UNIx.STRING[i].AddToLisT(stringDatas);
             }
 
+            UPRP = new CUPRP[64];
+            UPUS = new byte[64];
 
-
-            for (int i = 0; i < TRIG.Count; i++)
+            for (int i = 0; i < Triggers.Count; i++)
             {
-                for (int t = 0; t < TRIG[i].actions.Length; t++)
+                for (int t = 0; t < Triggers[i].actions.Count; t++)
                 {
-                    if (TRIG[i].actions[t].HasString())
+                    for (int a = 0; a < Triggers[i].actions[t].args.Count; a++)
                     {
-                        TRIG[i].actions[t].STRING.AddToLisT(stringDatas);
+                        switch (Triggers[i].actions[t].args[a].ARGTYPE)
+                        {
+                            case UseMapEditor.FileData.TriggerManger.ArgType.STRING:
+                            case UseMapEditor.FileData.TriggerManger.ArgType.WAV:
+                                Triggers[i].actions[t].args[a].STRING.AddToLisT(stringDatas);
+                                break;
+                            case UseMapEditor.FileData.TriggerManger.ArgType.UPRP:
+                                Triggers[i].actions[t].args[a].VALUE = SetUPRP(Triggers[i].actions[t].args[a].UPRP);
+                                break;
+                        }
+
+
                     }
                 }
             }
-            for (int i = 0; i < MBRF.Count; i++)
+
+
+            for (int i = 0; i < Brifings.Count; i++)
             {
-                for (int t = 0; t < MBRF[i].actions.Length; t++)
+                for (int t = 0; t < Brifings[i].actions.Count; t++)
                 {
-                    if (MBRF[i].actions[t].HasString())
+                    for (int a = 0; a < Brifings[i].actions[t].args.Count; a++)
                     {
-                        MBRF[i].actions[t].STRING.AddToLisT(stringDatas);
+                        switch (Brifings[i].actions[t].args[a].ARGTYPE)
+                        {
+                            case UseMapEditor.FileData.TriggerManger.ArgType.STRING:
+                            case UseMapEditor.FileData.TriggerManger.ArgType.WAV:
+                                Brifings[i].actions[t].args[a].STRING.AddToLisT(stringDatas);
+                                break;
+                        }
+
+
                     }
                 }
             }
+            //for (int i = 0; i < MBRF.Count; i++)
+            //{
+            //    for (int t = 0; t < MBRF[i].actions.Length; t++)
+            //    {
+            //        if (MBRF[i].actions[t].HasString())
+            //        {
+            //            MBRF[i].actions[t].STRING.AddToLisT(stringDatas);
+            //        }
+            //    }
+            //}
+
+
+
 
 
 
@@ -92,6 +127,7 @@ namespace Data.Map
             {
                 mapData = _mapData;
                 IsLoaded = false;
+                LoadedIndex = -1;
             }
             public StringData(MapData _mapData, string _val)
             {

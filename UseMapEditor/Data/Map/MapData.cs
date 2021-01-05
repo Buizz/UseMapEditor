@@ -70,10 +70,10 @@ namespace Data.Map
             MTXM = null;
             TILE = null;
 
-            BYTESTR = new List<byte[]>();
-            BYTESTRx = new List<byte[]>();
-            LOADSTR = new string[0];
-            LOADSTRx = new string[0];
+            BYTESTR = null;
+            BYTESTRx = null;
+            LOADSTR = null;
+            LOADSTRx = null;
             IOWN = null;
             OWNR = null;
             //LocationDatas.Add(new LocationData());
@@ -124,6 +124,9 @@ namespace Data.Map
             TECx = new CTECx(true);
 
             soundDatas = new List<SoundData>();
+
+            Triggers.Clear();
+            Brifings.Clear();
         }
 
 
@@ -699,7 +702,7 @@ namespace Data.Map
 
 
         public CUPRP[] UPRP;
-        public class CUPRP
+        public struct CUPRP
         {
             public ushort STATUSVALID;//u16: Flag of which special properties can be applied to unit, and are valid.
             //Bit 0 - Cloak bit is valid
@@ -730,6 +733,51 @@ namespace Data.Map
             //Bit 4 - Unit is invincible
             //Bit 5-15 - Unknown/unused
             public uint UNUSED;//u32: Unknown/unused.Padding?
+
+            public bool Equals(CUPRP other)
+            {
+                return Equals(other, this);
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (obj == null || GetType() != obj.GetType())
+                {
+                    return false;
+                }
+
+                var objectToCompareWith = (CUPRP)obj;
+
+                return objectToCompareWith.STATUSVALID == STATUSVALID && objectToCompareWith.POINTVALID == POINTVALID &&
+                       objectToCompareWith.PLAYER == PLAYER && objectToCompareWith.HITPOINT == HITPOINT &&
+                       objectToCompareWith.SHIELDPOINT == SHIELDPOINT && objectToCompareWith.ENERGYPOINT == ENERGYPOINT &&
+                       objectToCompareWith.RESOURCE == RESOURCE && objectToCompareWith.HANGAR == HANGAR &&
+                       objectToCompareWith.STATUSFLAG == STATUSFLAG && objectToCompareWith.UNUSED == UNUSED;
+
+            }
+
+            public static bool operator ==(CUPRP lhs, CUPRP rhs)
+            {
+                // Check for null on left side.
+                if (Object.ReferenceEquals(lhs, null))
+                {
+                    if (Object.ReferenceEquals(rhs, null))
+                    {
+                        // null == null = true.
+                        return true;
+                    }
+
+                    // Only the left side is null.
+                    return false;
+                }
+                // Equals handles case of null on right side.
+                return lhs.Equals(rhs);
+            }
+            public static bool operator !=(CUPRP lhs, CUPRP rhs)
+            {
+                return !(lhs == rhs);
+            }
+
         }
 
         public byte[] UPUS = new byte[64];
@@ -892,97 +940,6 @@ namespace Data.Map
             public ushort[] ENERGY = new ushort[44];//u16[44]: Energy cost to cast technology/special ability.In order of technology id.
         }
 
-        public List<TRIGMBRF> TRIG = new List<TRIGMBRF>();
-        public List<TRIGMBRF> MBRF = new List<TRIGMBRF>();
-        public class TRIGMBRF
-        {
-            //function Condition(locid, player, amount, unitid, comparison, condtype, restype, flags)
-            //return {locid, player, amount, unitid, comparison, condtype, restype, flags}
-            //end
 
-            //function Action(locid1, strid, wavid, time, player1, player2, unitid, acttype, amount, flags)
-            //return {locid1, strid, wavid, time, player1, player2, unitid, acttype, amount}
-            //end
-
-            //2400byte
-            //16 Conditions(20 byte struct)
-            public Condition[] conditions = new Condition[16];
-            public class Condition
-            {
-                //Every trigger has 16 of the following format, even if only one condition is used.See the appendix for information on which items are used for what conditions.
-                public uint locid;//u32: Location number for the condition (1 based -- 0 refers to No Location), EUD Bitmask for a Death condition if the MaskFlag is set to "SC"
-                public uint player;//u32: Group that the condition applies to
-                public uint amount;//u32: Qualified number(how many/resource amount)
-                public ushort unitid;//u16: Unit ID condition applies to
-                public byte comparison;//u8: Numeric comparison, switch state
-                public byte condtype;//u8: Condition byte
-                public byte restype;//u8: Resource type, score type, Switch number(0-based)
-                public byte flags;//u8: Flags
-                                  //Bit 0 - Unknown/unused
-                                  //Bit 1 - Enabled flag.If on, the trigger action/condition is disabled/ignored
-                                  //Bit 2 - Always display flag.
-                                  //Bit 3 - Unit properties is used. (Note: This is used in *.trg files)
-                                  //Bit 4 - Unit type is used.Cleared in "Offset + Mask" EUD conditions.May not be necessary otherwise?
-                                  //Bit 5-7 - Unknown/unused
-                public ushort maskflag;//u16: MaskFlag: set to "SC" (0x53, 0x43) when using the bitmask for EUDs, 0 otherwise
-                public LocationData LOC;
-            }
-
-
-            public Action[] actions = new Action[64];
-            //64 Actions(32 byte struct)
-            public class Action
-            {
-                //Immediately following the 16 conditions, there are 64 actions.There will always be 64 of the following structure, even if some of them are unused.
-                public uint locid1;//u32: Location - source location in "Order" and "Move Unit", dest location in "Move Location" (1 based -- 0 refers to No Location), EUD Bitmask for a Death action if the MaskFlag is set to "SC"
-                public uint strid;//u32: String number for trigger text(0 means no string)
-                public uint wavid;//u32: WAV string number(0 means no string)
-                public uint time;//u32: Seconds/milliseconds of time
-                public uint player1;//u32: First(or only) Group/Player affected.
-                public uint player2;//u32: Second group affected, secondary location (1-based), CUWP #, number, AI script (4-byte string), switch (0-based #)
-                public ushort unitid;//u16: Unit type, score type, resource type, alliance status
-                public byte acttype;//u8: Action byte
-                public byte amount;//u8: Number of units(0 means All Units), action state, unit order, number modifier
-                public byte flags;//u8: Flags
-                                  //Bit 0 - Ignore a wait/transmission once.
-                                  //Bit 1 - Enabled flag. If on, the trigger action/condition is disabled.
-                                  //Bit 2 - Always display flag - when not set: if the user has turned off subtitles (see sound options) the text will not display, when set: text will always display
-                                  //Bit 3 - Unit properties is used.Staredit uses this for *.trg files.
-                                  //Bit 4 - Unit type is used.Cleared in "Offset + Mask" EUD actions.
-                                  //Bit 5-7 - Unknown/unused
-                public byte padding;//u8: Padding
-                public ushort maskflag;//u16 (2 bytes): MaskFlag: set to "SC"(0x53, 0x43) when using the bitmask for EUDs, 0 otherwise
-                public StringData STRING;
-                public LocationData LOC1;
-                public LocationData LOC2;
-                public bool HasString()
-                {
-                    string d = STRING.String;
-
-
-                    return STRING.IsLoaded;
-                }
-            }
-
-
-
-
-            //Player Execution
-            //Following the 16 conditions and 64 actions, every trigger also has this structure
-            public uint exeflag;//u32: execution flags
-            //Bit 0 - All conditions are met, executing actions, cleared on the next trigger loop.
-            //Bit 1 - Ignore the following actions: Defeat, Draw.
-            //Bit 2 - Preserve trigger. (Can replace Preserve Trigger action)
-            //Bit 3 - Ignore execution.
-            //Bit 4 - Ignore all of the following actions for this trigger until the next trigger loop: Wait, PauseGame, Transmission, PlayWAV, DisplayTextMessage, CenterView, MinimapPing, TalkingPortrait, and MuteUnitSpeech.
-            //Bit 5 - This trigger has paused the game, ignoring subsequent calls to Pause Game(Unpause Game clears this flag only in the same trigger), may automatically call unpause at the end of action execution ?
-            //Bit 6 - Wait skipping disabled for this trigger, cleared on next trigger loop.
-            //Bit 7 - 31 - Unknown / unused
-            public byte[] playerlist = new byte[27];//u8[27]: 1 byte for each player in the #List of Players/Group IDs
-            //00 - Trigger is not executed for player
-            //01 - Trigger is executed for player
-            public byte trigindex;//u8: Index of the current action, in StarCraft this is incremented after each action is executed, trigger execution ends when this is 64(Max Actions) or an action is encountered with Action byte as 0
-
-        }
     }
 }

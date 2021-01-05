@@ -1,0 +1,260 @@
+﻿<UserControl x:Class="UseMapEditor.Control.MapEditorControl.TriggerEditor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:UseMapEditor.Control.MapEditorControl"
+             xmlns:junglecontrols="clr-namespace:JungleControls;assembly=JungleControls"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" IsTabStop="True"
+             d:DesignHeight="550" Width="508">
+    <UserControl.Resources>        
+        <Style x:Key="myLBStyle" TargetType="{x:Type ListBoxItem}">
+            <Style.Resources>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
+                             Color="Transparent"/>
+            </Style.Resources>
+        </Style>
+    </UserControl.Resources>
+    <Grid x:Name="MainGrid">
+        <DockPanel>
+            <DockPanel DockPanel.Dock="Top" Margin="8">
+                <TextBlock Text="검색" DockPanel.Dock="Top" Style="{StaticResource MaterialDesignHeadline5TextBlock}"/>
+                <DockPanel DockPanel.Dock="Top">
+                    <ComboBox x:Name="SearchType" Width="80" SelectionChanged="SearchType_SelectionChanged">
+                        <ComboBoxItem Content="주석"/>
+                        <ComboBoxItem Content="조건"/>
+                        <ComboBoxItem Content="액션"/>
+                        <ComboBoxItem Content="조건과 액션"/>
+                    </ComboBox>
+                    <materialDesign:PackIcon Kind="Search" HorizontalAlignment="Center" DockPanel.Dock="Left" VerticalAlignment="Center" Height="20" Width="20" Margin="2" />
+                    <TextBox x:Name="SearchBox" materialDesign:TextFieldAssist.HasClearButton="True" TextChanged="SearchBox_TextChanged">
+                    </TextBox>
+                </DockPanel>
+                <ListBox x:Name="PlayerFliter" SelectionMode="Extended" SelectionChanged="PlayerFliter_SelectionChanged" Width="310" HorizontalAlignment="Left" >
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBoxItem Content="모든플레이어" Tag="17"/>
+                    <ListBoxItem Content="세력 1" Tag="18"/>
+                    <ListBoxItem Content="세력 2" Tag="19"/>
+                    <ListBoxItem Content="세력 3" Tag="20"/>
+                    <ListBoxItem Content="세력 4" Tag="21"/>
+                    <ListBoxItem Content="P1" Tag="0"/>
+                    <ListBoxItem Content="P2" Tag="1"/>
+                    <ListBoxItem Content="P3" Tag="2"/>
+                    <ListBoxItem Content="P4" Tag="3"/>
+                    <ListBoxItem Content="P5" Tag="4"/>
+                    <ListBoxItem Content="P6" Tag="5"/>
+                    <ListBoxItem Content="P7" Tag="6"/>
+                    <ListBoxItem Content="P8" Tag="7"/>
+                    <ListBoxItem Content="모두보기" Tag="-1" Background="{DynamicResource PrimaryHueMidBrush}" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}"/>
+                </ListBox>
+
+            </DockPanel>
+            <Separator DockPanel.Dock="Top"/>
+
+
+            <DockPanel DockPanel.Dock="Top" Background="{DynamicResource MaterialDesignToolBarBackground}">
+                <ToolBarTray IsLocked="True" DockPanel.Dock="Top">
+                    <ToolBar Style="{DynamicResource MaterialDesignToolBar}" >
+                        <Button Click="New_Click" ToolTip="새 트리거">
+                            <materialDesign:PackIcon Kind="NoteAddOutline" />
+                        </Button>
+                        <Separator/>
+                        <Button x:Name="UpBtn" Click="Up_Click" ToolTip="올리기">
+                            <materialDesign:PackIcon Kind="ArrowExpandUp" />
+                        </Button>
+                        <Button x:Name="DownBtn" Click="Down_Click" ToolTip="내리기">
+                            <materialDesign:PackIcon Kind="ArrowExpandDown" />
+                        </Button>
+                        <Separator/>
+                        <Button x:Name="EditBtn" Click="Edit_Click" ToolTip="편집">
+                            <materialDesign:PackIcon Kind="EditOutline" />
+                        </Button>
+                        <Button x:Name="CutBtn" Click="Cut_Click" ToolTip="잘라내기">
+                            <materialDesign:PackIcon Kind="ContentCut" />
+                        </Button>
+                        <Button x:Name="CopyBtn" Click="Copy_Click" ToolTip="복사">
+                            <materialDesign:PackIcon Kind="ContentCopy" />
+                        </Button>
+                        <Button x:Name="PasteBtn" Click="Paste_Click" ToolTip="붙여넣기">
+                            <materialDesign:PackIcon Kind="ContentPaste" />
+                        </Button>
+                        <Separator/>
+                        <Button x:Name="DeleteBtn" Click="Delete_Click" ToolTip="삭제">
+                            <materialDesign:PackIcon Kind="Delete"/>
+                        </Button>
+                    </ToolBar>
+                </ToolBarTray>
+                <ListBox x:Name="MainListBox" SelectionMode="Extended" SelectionChanged="MainListBox_SelectionChanged" MouseDoubleClick="MainListBox_MouseDoubleClick" PreviewKeyDown="MainListBox_PreviewKeyDown">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <junglecontrols:LazyControl>
+                                <Border Width="{Binding ElementName=MainListBox,Path=ActualWidth}" Background="#19C8C8C8" BorderBrush="#7F000000" BorderThickness="1" Margin="-8,-4">
+                                    <StackPanel>
+                                        <DockPanel Visibility="{Binding HaveComment}" Margin="8">
+                                            <TextBlock Text="{Binding CommentString}"/>
+                                        </DockPanel>
+                                        <StackPanel Margin="8" Visibility="{Binding NotHaveComment}">
+                                            <TextBlock Text="조건" Style="{StaticResource MaterialDesignHeadline6TextBlock}"/>
+                                            <TextBlock Text="{Binding ConditionString}" Margin="8,0,0,0"/>
+                                            <TextBlock Text="액션" Style="{StaticResource MaterialDesignHeadline6TextBlock}"/>
+                                            <TextBlock Text="{Binding ActionsString}" Margin="8,0,0,0"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </junglecontrols:LazyControl>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
+        </DockPanel>
+
+
+        <Border Grid.ColumnSpan="5" x:Name="EditWindow" Background="#7F000000" Visibility="Hidden" MouseDown="EditWindow_MouseDown">
+            <materialDesign:Card x:Name="InputDialog" materialDesign:ShadowAssist.ShadowDepth="Depth3" VerticalAlignment="Top" Height="400" Margin="0,145,0,0">
+                <Grid>
+                    <DockPanel x:Name="TrigEditPage" Background="{DynamicResource MaterialDesignPaper}">
+                        <DockPanel DockPanel.Dock="Bottom">
+                            <Button x:Name="TrigSettingBtn" Click="TrigSettingBtn_Click" Content="{materialDesign:PackIcon Kind=Settings, Size=24}" Padding="4"/>
+                            <Button x:Name="TrigConditionBtn" Click="TrigConditionBtn_Click" Content="{materialDesign:PackIcon Kind=AlphabetCBoxOutline, Size=24}" Padding="4"/>
+                            <Button x:Name="TrigActionBtn" Click="TrigActionBtn_Click" Content="{materialDesign:PackIcon Kind=AlphabetABoxOutline, Size=24}" Padding="4"/>
+                            <UniformGrid Columns="2" Rows="1">
+                                <Button Content="확인" Click="OkayBtn_Click" Style="{StaticResource MaterialDesignFlatButton}"/>
+                                <Button Content="취소" Click="CancelBtn_Click" Style="{StaticResource MaterialDesignFlatButton}"/>
+                            </UniformGrid>
+                        </DockPanel>
+
+                        <ToolBarTray x:Name="TriggerToolBar" IsLocked="True" DockPanel.Dock="Top">
+                            <ToolBar Style="{DynamicResource MaterialDesignToolBar}" >
+                                <Button Click="ItemNew_Click" ToolTip="새 아이템">
+                                    <materialDesign:PackIcon Kind="NoteAddOutline" />
+                                </Button>
+                                <Separator/>
+                                <Button x:Name="ItemUpBtn" Click="ItemUp_Click" ToolTip="올리기">
+                                    <materialDesign:PackIcon Kind="ArrowExpandUp" />
+                                </Button>
+                                <Button x:Name="ItemDownBtn" Click="ItemDown_Click" ToolTip="내리기">
+                                    <materialDesign:PackIcon Kind="ArrowExpandDown" />
+                                </Button>
+                                <Separator/>
+                                <Button x:Name="ItemEditBtn" Click="ItemEdit_Click" ToolTip="편집">
+                                    <materialDesign:PackIcon Kind="EditOutline" />
+                                </Button>
+                                <Button x:Name="ItemCutBtn" Click="ItemCut_Click" ToolTip="잘라내기">
+                                    <materialDesign:PackIcon Kind="ContentCut" />
+                                </Button>
+                                <Button x:Name="ItemCopyBtn" Click="ItemCopy_Click" ToolTip="복사">
+                                    <materialDesign:PackIcon Kind="ContentCopy" />
+                                </Button>
+                                <Button x:Name="ItemPasteBtn" Click="ItemPaste_Click" ToolTip="붙여넣기">
+                                    <materialDesign:PackIcon Kind="ContentPaste" />
+                                </Button>
+                                <Separator/>
+                                <Button x:Name="ItemDeleteBtn" Click="ItemDelete_Click" ToolTip="삭제">
+                                    <materialDesign:PackIcon Kind="Delete"/>
+                                </Button>
+                            </ToolBar>
+                        </ToolBarTray>
+
+
+                        <Grid>
+                            <DockPanel x:Name="TrigSetting"  >
+                                <DockPanel Margin="10" DockPanel.Dock="Right">
+                                    <TextBlock Text="플래그" DockPanel.Dock="Top" Style="{StaticResource MaterialDesignHeadline6TextBlock}"/>
+                                    <ListBox x:Name="FlagListbox" Style="{StaticResource MaterialDesignFilterChipListBox}" Margin="20,0,0,0" >
+                                        <ListBox.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel/>
+                                            </ItemsPanelTemplate>
+                                        </ListBox.ItemsPanel>
+                                        <ListBoxItem Content="루프제거" Tag="0" ToolTip="1회 실행 후 루프에서 제거됩니다."/>
+                                        <ListBoxItem Content="패배무시" Tag="1" ToolTip="패배나, 비기지 않습니다."/>
+                                        <ListBoxItem Content="무한반복트리거" Tag="2" ToolTip="트리거를 무한 반복합니다."/>
+                                        <ListBoxItem Content="Flag 4" Tag="3" ToolTip="실행하지 않습니다."/>
+                                        <ListBoxItem Content="Flag 5" Tag="4" ToolTip="몇몇개의 액션을 무시합니다."/>
+                                        <ListBoxItem Content="Flag 6" Tag="5" ToolTip="게임을 멈출 경우 액션이 끝난 후 다시 시작합니다."/>
+                                        <ListBoxItem Content="Flag 7" Tag="6" ToolTip="대기하기가 무시되고 다음 루프에서 제거됩니다."/>
+                                    </ListBox>
+                                </DockPanel>
+
+                                <DockPanel Margin="10">
+                                    <TextBlock Text="플레이어" DockPanel.Dock="Top" Style="{StaticResource MaterialDesignHeadline6TextBlock}"/>
+                                    <ListBox x:Name="PlayerListbox" Style="{StaticResource MaterialDesignFilterChipListBox}" Height="260" Margin="20,0,0,0" VerticalAlignment="Top">
+                                        <ListBox.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel Orientation="Vertical"/>
+                                            </ItemsPanelTemplate>
+                                        </ListBox.ItemsPanel>
+                                        <ListBoxItem Content="플레이어 1" Tag="0"/>
+                                        <ListBoxItem Content="플레이어 2" Tag="1"/>
+                                        <ListBoxItem Content="플레이어 3" Tag="2"/>
+                                        <ListBoxItem Content="플레이어 4" Tag="3"/>
+                                        <ListBoxItem Content="플레이어 5" Tag="4"/>
+                                        <ListBoxItem Content="플레이어 6" Tag="5"/>
+                                        <ListBoxItem Content="플레이어 7" Tag="6"/>
+                                        <ListBoxItem Content="플레이어 8" Tag="7"/>
+                                        <ListBoxItem Content="모든 플레이어" Tag="17"/>
+                                        <ListBoxItem Content="세력 1" Tag="18"/>
+                                        <ListBoxItem Content="세력 2" Tag="19"/>
+                                        <ListBoxItem Content="세력 3" Tag="20"/>
+                                        <ListBoxItem Content="세력 4" Tag="21"/>
+                                    </ListBox>
+                                </DockPanel>
+                            </DockPanel>
+                            <StackPanel x:Name="TrigItems" Visibility="Collapsed">
+                                <ListBox x:Name="TriggerItemListbox" SelectionMode="Extended" SelectionChanged="TriggerItemListbox_SelectionChanged" PreviewKeyDown="TriggerItemListbox_PreviewKeyDown" MouseDoubleClick="TriggerItemListbox_MouseDoubleClick">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding ItemText}"/>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+
+                                </ListBox>
+                            </StackPanel>
+                        </Grid>
+                    </DockPanel>
+                    <Grid x:Name="ItemEditPage" Background="{DynamicResource MaterialDesignPaper}">
+                        <DockPanel>
+                            <Button Click="ActionSelectBtn_Click" DockPanel.Dock="Top" Style="{StaticResource MaterialDesignFlatButton}" HorizontalContentAlignment="Left" Height="38" Padding="4">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="PencilBox" Width="32" Height="32"/>
+                                    <TextBlock x:Name="ActionName" Text="액션이름" FontSize="20"/>
+                                </StackPanel>
+                            </Button>
+                            <Grid >
+                                <DockPanel x:Name="ItemEditPanel" >
+                                    <DockPanel DockPanel.Dock="Bottom">
+                                        <UniformGrid Columns="2" Rows="1">
+                                            <Button Content="확인" Click="TrigEditOkayBtn_Click" Style="{StaticResource MaterialDesignFlatButton}"/>
+                                            <Button Content="취소" Click="TrigEditCancelBtn_Click" Style="{StaticResource MaterialDesignFlatButton}"/>
+                                        </UniformGrid>
+                                    </DockPanel>
+
+                                    <WrapPanel x:Name="TrigArgs" Margin="5">
+
+                                    </WrapPanel>
+                                </DockPanel>
+                                <DockPanel x:Name="ItemTypeSelecter" Visibility="Collapsed" Background="{DynamicResource MaterialDesignPaper}">
+                                    <Button Content="선택" Click="ItemTypeOkayBtn_Click" Style="{StaticResource MaterialDesignFlatButton}" DockPanel.Dock="Bottom"/>
+
+                                    <ListBox x:Name="TrigItemTypeListBox" MouseDoubleClick="TrigItemTypeListBox_MouseDoubleClick" HorizontalAlignment="Left">
+
+                                    </ListBox>
+                                </DockPanel>
+                            </Grid>
+                        </DockPanel>
+                    </Grid>
+                    <materialDesign:Snackbar IsActive="False" x:Name="SnackbarOne" />
+                </Grid>
+            </materialDesign:Card>
+        </Border>
+        <materialDesign:Card x:Name="ValueSelecter" Visibility="Collapsed" Width="250" MaxHeight="350" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <local:ValueSelecter x:Name="ValueSelecterControl"/>
+        </materialDesign:Card>
+    </Grid>
+    
+</UserControl>

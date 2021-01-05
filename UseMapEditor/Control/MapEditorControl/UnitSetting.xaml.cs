@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static Data.Map.MapData;
 using static UseMapEditor.Control.MapEditor;
 
 namespace UseMapEditor.Control.MapEditorControl

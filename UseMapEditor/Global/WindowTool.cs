@@ -16,6 +16,8 @@ namespace UseMapEditor.Global
 {
     public static class WindowTool
     {
+        public static TriggerManger triggerManger = new TriggerManger();
+
 
         public static string[] unitgroup = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + @"\Data\Group\Unit.txt");
         public static string[] upgradegroup = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + @"\Data\Group\Upgrade.txt");

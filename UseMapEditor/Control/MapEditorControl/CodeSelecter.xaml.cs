@@ -17,6 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using UseMapEditor.DataBinding;
+using static Data.Map.MapData;
 using static UseMapEditor.Control.MapEditor;
 
 namespace UseMapEditor.Control.MapEditorControl
@@ -42,6 +43,31 @@ namespace UseMapEditor.Control.MapEditorControl
         }
 
 
+        public void SetIndex(int index)
+        {
+            if(index == -1)
+            {
+                MainListbox.SelectedIndex = -1;
+                return;
+            }
+
+            switch (codetype)
+            {
+                case Codetype.Unit:
+                    MainListbox.SelectedItem = mapEditor.mapDataBinding.unitdataBindings[index];
+                    MainListbox.ScrollIntoView(mapEditor.mapDataBinding.unitdataBindings[index]);
+                    break;
+                case Codetype.Upgrade:
+                    MainListbox.SelectedItem = mapEditor.mapDataBinding.upgradeDataBindings[index];
+                    MainListbox.ScrollIntoView(mapEditor.mapDataBinding.upgradeDataBindings[index]);
+                    break;
+                case Codetype.Tech:
+                    MainListbox.SelectedItem = mapEditor.mapDataBinding.techDataBindings[index];
+                    MainListbox.ScrollIntoView(mapEditor.mapDataBinding.techDataBindings[index]);
+                    break;
+            }
+        }
+
 
         private ViewType viewType;
         public enum ViewType
@@ -51,12 +77,12 @@ namespace UseMapEditor.Control.MapEditorControl
             Tree
         }
 
-
-        public void SetCodeType(Codetype _codetype, MapEditor _mapEditor)
+        private bool IsTriggerCode;
+        public void SetCodeType(Codetype _codetype, MapEditor _mapEditor, bool IsTriggerCode = false)
         {
             mapEditor = _mapEditor;
             codetype = _codetype;
-
+            this.IsTriggerCode = IsTriggerCode;
 
             ListCreate();
         }
@@ -76,6 +102,9 @@ namespace UseMapEditor.Control.MapEditorControl
                     {
                         CreateTreeviewItem(Global.WindowTool.unitgroup[i], mapEditor.mapDataBinding.unitdataBindings[i], i);
                     }
+
+                    string[] addstring = { "없음", "유닛과 건물", "유닛", "건물", "생산건물" };
+
                     break;
                 case Codetype.Upgrade:
                     MainListbox.ItemsSource = mapEditor.mapDataBinding.upgradeDataBindings;
@@ -147,7 +176,6 @@ namespace UseMapEditor.Control.MapEditorControl
                 treeViews.Add(treeViewItem);
             }
         }
-
 
         private Grid GetDockPanel()
         {

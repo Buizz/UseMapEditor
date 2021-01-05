@@ -1,0 +1,153 @@
+﻿[
+  {
+    "NAME": "Wait",
+    "SUMMARY": "[Time]만큼 기다립니다.",
+    "TYPE": 1,
+    "FLAG": 0,
+    "argDefines": [
+      {
+        "argtype": "VALUE",
+        "argname": "Time",
+        "pos": 3
+      }
+    ]
+  },
+  {
+    "NAME": "PlayWAV",
+    "SUMMARY": "[Wave]을 [WavTime]동안 재생합니다.",
+    "TYPE": 2,
+    "FLAG": 0,
+    "argDefines": [
+      {
+        "argtype": "WAV",
+        "argname": "Wave",
+        "pos": 2
+      },
+      {
+        "argtype": "VALUE",
+        "argname": "WavTime",
+        "pos": 3
+      }
+    ]
+  },
+  {
+    "NAME": "TextMessage",
+    "SUMMARY": "[Text]를 [Time]동안 출력합니다.",
+    "TYPE": 3,
+    "FLAG": 0,
+    "argDefines": [
+      {
+        "argtype": "STRING",
+        "argname": "Text",
+        "pos": 1
+      },
+      {
+        "argtype": "VALUE",
+        "argname": "Time",
+        "pos": 3
+      }
+    ]
+  },
+  {
+    "NAME": "MissionObjectives",
+    "SUMMARY": "미션 오브젝트 내용을 [Text]로 설정합니다.",
+    "TYPE": 4,
+    "FLAG": 0,
+    "argDefines": [
+      {
+        "argtype": "STRING",
+        "argname": "Text",
+        "pos": 1
+      }
+    ]
+  },
+  {
+    "NAME": "ShowPortrait",
+    "SUMMARY": "[Unit]의 화상을 [Slot]에 보여줍니다.",
+    "TYPE": 5,
+    "FLAG": 16,
+    "argDefines": [
+      {
+        "argtype": "UNIT",
+        "argname": "Unit",
+        "pos": 6
+      },
+      {
+        "argtype": "SLOT",
+        "argname": "Slot",
+        "pos": 4
+      }
+    ]
+  },
+  {
+    "NAME": "HidePortrait",
+    "SUMMARY": "[Slot]의 화상을 숨깁니다.",
+    "TYPE": 6,
+    "FLAG": 4,
+    "argDefines": [
+      {
+        "argtype": "SLOT",
+        "argname": "Slot",
+        "pos": 4
+      }
+    ]
+  },
+  {
+    "NAME": "DisplaySpeakingPortrait",
+    "SUMMARY": "[Slot]의 화상이 [Time]동안 말합니다.",
+    "TYPE": 7,
+    "FLAG": 0,
+    "argDefines": [
+      {
+        "argtype": "SLOT",
+        "argname": "Slot",
+        "pos": 4
+      },
+      {
+        "argtype": "VALUE",
+        "argname": "Time",
+        "pos": 3
+      }
+    ]
+  },
+  {
+    "NAME": "Transmission",
+    "SUMMARY": "[Slot]에 유닛이 [Wave]을 [WavTime]동안 말합니다. 트랜스 미션 시간을 [Time] 만큼 [TimeModifier]합니다. [Text]를 보여줍니다.",
+    "TYPE": 8,
+    "FLAG": 0,
+    "argDefines": [
+      {
+        "argtype": "STRING",
+        "argname": "Text",
+        "pos": 1
+      },
+      {
+        "argtype": "SLOT",
+        "argname": "Slot",
+        "pos": 4
+      },
+      {
+        "argtype": "VALUE",
+        "argname": "Time",
+        "pos": 5
+      },
+      {
+        "argtype": "NUMBERMODIFIERS",
+        "argname": "Modifier",
+        "pos": 8
+      },
+      {
+        "argtype": "WAV",
+        "argname": "Wave",
+        "pos": 2
+      },
+      {
+        "argtype": "VALUE",
+        "argname": "WavTime",
+        "pos": 3
+      }
+    ]
+  }
+
+
+]
