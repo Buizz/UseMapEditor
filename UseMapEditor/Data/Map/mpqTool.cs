@@ -110,7 +110,6 @@ namespace Data.Map
         public List<string> mpqfileList = new List<string>();
         private void ReadFileList()
         {
-
             byte[] buffer = ReadMPQFile(@"(listfile)");
             if (buffer.Length == 0)
             {

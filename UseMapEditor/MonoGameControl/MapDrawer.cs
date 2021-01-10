@@ -253,6 +253,7 @@ namespace UseMapEditor.MonoGameControl
                 LastScroll = mouseState.ScrollWheelValue;
             }
 
+            MouseEvent(mouseState);
             KeyboardEvent(keyboardState);
             MiniMapClick(mouseState);
 
@@ -362,13 +363,23 @@ namespace UseMapEditor.MonoGameControl
 
 
             RenderTile(IsDrawGrp);
-            RenderDoodad(IsDrawGrp);
+            if (mapeditor.view_Doodad)
+            {
+                RenderDoodad(IsDrawGrp);
+            }
             GridDraw();
 
             if (IsDrawGrp)
             {
-                RenderUnit(IsDrawGrp);
-                RenderSprite(IsDrawGrp);
+                if (mapeditor.view_Unit)
+                {
+                    RenderUnit(IsDrawGrp);
+                }
+
+                if (mapeditor.view_Sprite)
+                {
+                    RenderSprite(IsDrawGrp);
+                }
 
 
                 //모아진 유닛들을 그린다
@@ -393,7 +404,10 @@ namespace UseMapEditor.MonoGameControl
                     DrawImage(mapeditor.opt_drawType, ImageList[i], scale, grpscale);
                 }
             }
-            RenderLocation();
+            if (mapeditor.PalleteLayer == Control.MapEditor.Layer.Location | mapeditor.view_Location)
+            {
+                RenderLocation();
+            }
 
 
             DrawPallet(IsDrawGrp);

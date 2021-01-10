@@ -43,7 +43,8 @@ namespace Data.Map
 
             if (!File.Exists(_filepath))
             {
-                StromLib.SFileCreateArchive(_filepath, 0, 0, ref hmpq);
+                StromLib.SFileCreateArchive(_filepath, 0, 24, ref hmpq);
+                StromLib.SFileAddListFile(hmpq, StromLib.LISTFILE_NAME);
             }
             else
             {

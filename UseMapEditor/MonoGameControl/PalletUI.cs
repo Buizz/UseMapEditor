@@ -226,7 +226,16 @@ namespace UseMapEditor.MonoGameControl
 
             MiniMin += new Vector2(StartX, StartY);
 
-            DrawRect(_spriteBatch, MiniMin, MiniMin + Size, Color.White);
+
+
+            Vector2 MapMax = MiniMin + Size;
+
+            MapMax.X = Math.Min(MapMax.X, screenwidth - CloseTimer);
+
+
+
+
+            DrawRect(_spriteBatch, MiniMin, MapMax, Color.White);
             _spriteBatch.End();
         }
 

@@ -188,11 +188,8 @@ namespace UseMapEditor
                     return false;
                 }
             }
-            if(mapeditor == null)
-            {
-                mapeditor = new MapEditor();
-                mapeditor.mainWindow = this;
-            }
+            mapeditor = new MapEditor();
+            mapeditor.mainWindow = this;
 
             bool result = mapeditor.LoadMap(mapname);
             if (result)
@@ -257,6 +254,16 @@ namespace UseMapEditor
                 mapEditorGrid.Children.Clear();
                 startpage.Visibility = Visibility.Visible;
                 startpage.LastOpenFIleRefresh();
+                if(mapeditor.ClassTriggerEditorTabItem.trigEditPlus != null)
+                {
+                    if (!mapeditor.ClassTriggerEditorTabItem.trigEditPlus.IsClosed)
+                    {
+                        mapeditor.ClassTriggerEditorTabItem.trigEditPlus.Close();
+                        mapeditor.EnableWindow();
+                    }
+                }
+
+
             }
             SetWindowName();
             return result;
@@ -339,6 +346,37 @@ namespace UseMapEditor
 
             this.Left = (W - this.Width) / 2;
             this.Top = (H - this.Height) / 2;
+        }
+
+        private void MetroWindow_Activated(object sender, EventArgs e)
+        {
+            if(mapeditor != null)
+            {
+                if (mapeditor.ClassTriggerEditorTabItem.trigEditPlus != null)
+                {
+
+                    if (!mapeditor.ClassTriggerEditorTabItem.trigEditPlus.IsClosed)
+                    {
+                        Window window = mapeditor.ClassTriggerEditorTabItem.trigEditPlus;
+
+                        if (!window.IsVisible)
+                        {
+                            window.Show();
+                        }
+
+                        if (window.WindowState == WindowState.Minimized)
+                        {
+                            window.WindowState = WindowState.Normal;
+                        }
+
+                        window.Activate();
+                        window.Topmost = true;  // important
+                        window.Topmost = false; // important
+                        window.Focus();         // important
+
+                    }
+                }
+            }
         }
     }
 }

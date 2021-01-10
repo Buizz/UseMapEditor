@@ -436,7 +436,10 @@ namespace UseMapEditor.Control.MapEditorControl
                 if (soundData == null)
                 {
                     byte[] buffer = data.ReadFile(soundname);
-
+                    if(buffer.Length == 0)
+                    {
+                        return;
+                    }
 
                     if (System.IO.Path.GetExtension(soundname).ToLower() == ".wav")
                     {

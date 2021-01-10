@@ -203,6 +203,12 @@ namespace UseMapEditor.Control.MapEditorControl
                         StringTextBox.Visibility = Visibility.Visible;
                         StringText.Text = arg.STRING.String;
                         break;
+                    case TriggerManger.ArgType.OFFSET:
+                        ValueInput.Visibility = Visibility.Visible;
+                        AllCheckBox.Visibility = Visibility.Collapsed;
+                        ValueText.IsEnabled = true;
+                        ValueText.Text = "0x" + arg.VALUE.ToString("X");
+                        break;
                     case TriggerManger.ArgType.VALUE:
                         ValueInput.Visibility = Visibility.Visible;
                         AllCheckBox.Visibility = Visibility.Collapsed;
@@ -353,6 +359,20 @@ namespace UseMapEditor.Control.MapEditorControl
                     CurrentArg.VALUE = v;
                     CurrentArg.IsInit = false;
                     SelectEvent.Invoke(sender, e);
+                }
+                else
+                {
+                    try
+                    {
+                        v = Convert.ToUInt32(ValueText.Text, 16);
+
+                        CurrentArg.VALUE = v;
+                        CurrentArg.IsInit = false;
+                        SelectEvent.Invoke(sender, e);
+                    }
+                    catch (Exception)
+                    {
+                    }
                 }
             }
         }

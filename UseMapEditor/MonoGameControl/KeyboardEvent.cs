@@ -19,6 +19,8 @@ namespace UseMapEditor.MonoGameControl
         private List<Keys> DownKeys;
 
 
+        private bool key_LeftShiftDown;
+        private bool key_QDown;
         public void KeyboardEvent(KeyboardState keyboardState)
         {
             int index = 0;
@@ -36,7 +38,19 @@ namespace UseMapEditor.MonoGameControl
                 index++;
             }
 
-          
+
+            key_LeftShiftDown = keyboardState.IsKeyDown(Keys.LeftShift);
+            key_QDown = keyboardState.IsKeyDown(Keys.Q);
+
+
+            if (EnterKey(keyboardState, Keys.Delete))
+            {
+                if (mapeditor.PalleteLayer == Control.MapEditor.Layer.Location)
+                {
+                    LocationDelete();
+                }
+            }
+
 
             if (EnterKey(keyboardState, Keys.F5))
             {

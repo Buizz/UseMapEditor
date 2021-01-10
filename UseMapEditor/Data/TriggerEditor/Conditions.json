@@ -258,7 +258,7 @@
   },
   {
     "NAME": "Deaths",
-    "SUMMARY": "[Player]의 [Unit](이)가 [Number][Comparison]죽었을 경우",
+    "SUMMARY": "[Player]의 [Unit](이)가 [Number][Comparison]죽었을 경우, 마스크 [MaskUse], [Mask]",
     "TYPE": 15,
     "argDefines": [
       {
@@ -280,6 +280,16 @@
         "argtype": "UNIT",
         "argname": "Unit",
         "pos": 3
+      },
+      {
+        "argtype": "OFFSET",
+        "argname": "Mask",
+        "pos": 0
+      },
+      {
+        "argtype": "MASKUSE",
+        "argname": "MaskUse",
+        "pos": 8
       }
     ]
   },
@@ -386,5 +396,37 @@
     "SUMMARY": "트리거를 절대 실행하지 않습니다",
     "TYPE": 23,
     "argDefines": []
+  },
+  {
+    "NAME": "Memory",
+    "SUMMARY": "[Offset]의 값이 [Number][Comparison]일 경우, 마스크 [MaskUse], [Mask]",
+    "TYPE": 24,
+    "argDefines": [
+      {
+        "argtype": "OFFSET",
+        "argname": "Offset",
+        "pos": 1
+      },
+      {
+        "argtype": "NUMERICCOMPARISONS",
+        "argname": "Comparison",
+        "pos": 4
+      },
+      {
+        "argtype": "VALUE",
+        "argname": "Number",
+        "pos": 2
+      },
+      {
+        "argtype": "OFFSET",
+        "argname": "Mask",
+        "pos": 0
+      },
+      {
+        "argtype": "MASKUSE",
+        "argname": "MaskUse",
+        "pos": 8
+      }
+    ]
   }
 ]

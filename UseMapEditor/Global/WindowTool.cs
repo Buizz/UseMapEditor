@@ -11,12 +11,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using UseMapEditor.Control;
 using UseMapEditor.FileData;
+using UseMapEditor.Lua;
 
 namespace UseMapEditor.Global
 {
     public static class WindowTool
     {
         public static TriggerManger triggerManger = new TriggerManger();
+        public static LuaManager lua = new LuaManager();
 
 
         public static string[] unitgroup = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + @"\Data\Group\Unit.txt");
@@ -75,6 +77,12 @@ namespace UseMapEditor.Global
         }
 
 
+
+
+
+
+
+
         public static Random random = new Random();
 
 
@@ -105,6 +113,23 @@ namespace UseMapEditor.Global
             return stat_txt.Strings[index].val1;
         }
 
+        public static string GetEngStat_txt(int index)
+        {
+            if (index == -1)
+            {
+                return "None";
+            }
+
+            string[] s = stat_txt.Strings[index].val2.Split('|');
+
+            string rstr = stat_txt.Strings[index].val1;
+            if(s[1] != "*")
+            {
+                rstr += " (" + s[1] + ")";
+            }
+
+            return rstr;
+        }
 
 
 

@@ -37,7 +37,8 @@ namespace UseMapEditor.FileData
             Shadow,
             Hallaction,
             PureSprite,
-            UnitSprite
+            UnitSprite,
+            Doodad
         }
 
 
@@ -89,14 +90,17 @@ namespace UseMapEditor.FileData
 
             }
         }
-        public int XOffset;
-        public int YOffset;
+        public sbyte XOffset;
+        public sbyte YOffset;
 
 
         public int Frame;
         public int turnFrame;
         public bool Turnable;
 
+
+
+        private bool ForceLeft = false;
         private bool _isleft;
         public bool IsLeft
         {
@@ -108,7 +112,15 @@ namespace UseMapEditor.FileData
                 }
                 else
                 {
-                    return false;
+                    if (!ForceLeft)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return ForceLeft;
+                    }
+
                 }
             }
             set
@@ -116,6 +128,9 @@ namespace UseMapEditor.FileData
                 _isleft = value;
             }
         }
+
+
+
 
         public int startAngle;
         public int StartAnim;
@@ -131,8 +146,8 @@ namespace UseMapEditor.FileData
             Parent = _Parent;
             imageID = imagenum;
             color = _color;
-            XOffset = x;
-            YOffset = y;
+            XOffset = (sbyte)x;
+            YOffset = (sbyte)y;
             Level = level;
             drawType = _drawType;
             StartAnim = _StartAnim;
@@ -240,12 +255,10 @@ namespace UseMapEditor.FileData
             int t2;
             Random random = Global.WindowTool.random;
 
-            if(imageID == 698)
+            if(584 <= imageID & imageID <= 588)
             {
 
             }
-
-
 
 
             switch (opcode)
@@ -260,17 +273,17 @@ namespace UseMapEditor.FileData
                     break;
                 case 0x02:
                     //sethorpos         0x02 - u8<x> - sets the current horizontal offset of the current image overlay.
-                    XOffset = (int)values[0];
+                    XOffset = (sbyte)values[0];
                     break;
                 case 0x03:
                     //setvertpos        0x03 - u8<y> - sets the vertical position of an image overlay.
-                    YOffset = (int)values[0];
+                    YOffset = (sbyte)values[0];
                     break;
 
                 case 0x04:
                     //setpos            0x04 - u8<x> u8<y> - sets the current horizontal and vertical position of the current image overlay.
-                    XOffset = (int)values[0];
-                    YOffset = (int)values[1];
+                    XOffset = (sbyte)values[0];
+                    YOffset = (sbyte)values[1];
                     break;
                 case 0x05:
                     //wait              0x05 - u8<#ticks> - pauses script execution for a specific number of ticks.
@@ -288,25 +301,24 @@ namespace UseMapEditor.FileData
                     break;
                 case 0x08:
                     //imgol             0x08 - u16<image#> u8<x> u8<y> - displays an active image overlay at an animation level higher than the current image overlay at a specified offset position.
-
                     if (imageID == 271 & values[0] == 273)
                     {
-                        Parent.Add(new CImage(sortvalue, Parent, (int)values[0], Direction, color, _StartAnim: StartAnim, x: (int)values[1], y: (int)values[2], level: Level + 2));
+                        Parent.Add(new CImage(sortvalue, Parent, (int)values[0], Direction, color, _drawType: drawType, _StartAnim: StartAnim, x: (int)values[1], y: (int)values[2], level: Level + 2));
                     }
                     else
                     {
-                        Parent.Add(new CImage(sortvalue, Parent, (int)values[0], Direction, color, x: (int)values[1], y: (int)values[2], level: Level + 2));
+                        Parent.Add(new CImage(sortvalue, Parent, (int)values[0], Direction, color, _drawType: drawType, x: (int)values[1], y: (int)values[2], level: Level + 2));
                     }
                     break;
                 case 0x09:
                     //imgul             0x09 - u16<image#> u8<x> u8<y> - displays an active image overlay at an animation level lower than the current image overlay at a specified offset position.
 
-                    Parent.Add(new CImage(sortvalue, Parent, (int)values[0], Direction, color, x: (int)values[1], y: (int)values[2], level: Level - 2, _parentImage: this, flag: opcode));
+                    Parent.Add(new CImage(sortvalue, Parent, (int)values[0], Direction, color, _drawType: drawType, x: (int)values[1], y: (int)values[2], level: Level - 2, _parentImage: this, flag: opcode));
 
                     break;
                 case 0x0a:
                     //imgolorig         0x0a - u16<image#> - displays an active image overlay at an animation level higher than the current image overlay at the relative origin offset position.
-                    Parent.Add(new CImage(sortvalue, Parent, (int)values[0], Direction, color, x: XOffset, y: YOffset, level: Level + 2));
+                    Parent.Add(new CImage(sortvalue, Parent, (int)values[0], Direction, color, _drawType: drawType, x: XOffset, y: YOffset, level: Level + 2));
 
                     break;
                 case 0x0b:
@@ -359,7 +371,7 @@ namespace UseMapEditor.FileData
                     break;
                 case 0x17:
                     //setflipstate      0x17 - <flipstate> - sets flip state of the current image overlay.
-                    
+                    ForceLeft = (values[0] == 1);
                     break;
                 case 0x18:
                     //playsnd           0x18 - <sound#> - plays a sound.

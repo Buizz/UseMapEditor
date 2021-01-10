@@ -125,7 +125,10 @@ namespace Data.Map
                 cTHG2.Y = cDD2.Y;
                 cTHG2.ID = pallete.dddOverlayID;
 
-                DDDTHG2.Add(cTHG2);
+                if (((cTHG2.FLAG & (0b1 << 12)) != 0) | ((cTHG2.FLAG & (0b1 << 13)) != 0))
+                {
+                    DDDTHG2.Add(cTHG2);
+                }
             }
 
 
@@ -371,7 +374,7 @@ namespace Data.Map
                         uint[] strptr = new uint[stringDatas.Count];
                         for (int i = 0; i < stringDatas.Count; i++)
                         {
-                            byte[] bytes = ENCODING.GetBytes(stringDatas[i].String);
+                            byte[] bytes = ENCODING.GetBytes(stringDatas[i].CodeString);
                             strptr[i] = (uint)((uint)tbw.BaseStream.Position + strptrlen);
                             tbw.Write(bytes);
                             tbw.Write((byte)0);
@@ -444,8 +447,8 @@ namespace Data.Map
 
                     for (int i = 0; i < 255; i++)
                     {
-                        LocationData locationData = LocationDatas.Find(x => x.INDEX == (i + 1));
-
+                        LocationData locationData = LocationDatas.SingleOrDefault(x => x.INDEX == (i + 1));
+                        
                         if (locationData == null)
                         {
                             bw.Write(new byte[20]);
@@ -748,7 +751,10 @@ namespace Data.Map
 
             for (int i = 0; i < BYTESTRx.Count; i++)
             {
-                LOADSTRx[i] = ENCODING.GetString(BYTESTRx[i]);
+                //여기서 작업해준다.
+                string s = ENCODING.GetString(BYTESTRx[i]);
+                
+                LOADSTRx[i] = UseMapEditor.Tools.StringTool.ReadRawString(s);
             }
 
             for (int i = 0; i < DD2.Count; i++)
@@ -1007,10 +1013,10 @@ namespace Data.Map
                     break;
                 case TOKENTYPE.MRGN:
                     LocationDatas.Clear();
-                    LocationDatas.Add(new LocationData());
+                    LocationDatas.Add(new LocationData(mapEditor));
                     for (int i = 0; i < 255; i++)
                     {
-                        LocationData locationData = new LocationData();
+                        LocationData locationData = new LocationData(mapEditor);
 
                         locationData.INDEX = i + 1;
 

@@ -19,7 +19,10 @@
     <Grid x:Name="MainGrid">
         <DockPanel>
             <DockPanel DockPanel.Dock="Top" Margin="8">
-                <TextBlock Text="검색" DockPanel.Dock="Top" Style="{StaticResource MaterialDesignHeadline5TextBlock}"/>
+                <DockPanel DockPanel.Dock="Top" >
+                    <Button x:Name="TrigEditPlusBtn" Content="TrigEditPlus에서 열기" DockPanel.Dock="Right" Click="OpenTrigEditPlus_Click"/>
+                    <TextBlock Text="검색" Style="{StaticResource MaterialDesignHeadline5TextBlock}"/>
+                </DockPanel>
                 <DockPanel DockPanel.Dock="Top">
                     <ComboBox x:Name="SearchType" Width="80" SelectionChanged="SearchType_SelectionChanged">
                         <ComboBoxItem Content="주석"/>

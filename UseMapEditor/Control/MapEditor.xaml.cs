@@ -3,6 +3,7 @@ using Dragablz;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -21,6 +22,7 @@ using UseMapEditor.DataBinding;
 using UseMapEditor.Dialog;
 using UseMapEditor.FileData;
 using UseMapEditor.MonoGameControl;
+using static Data.Map.MapData;
 
 namespace UseMapEditor.Control
 {
@@ -37,12 +39,46 @@ namespace UseMapEditor.Control
 
 
 
+        public Layer PalleteLayer;
+        public enum Layer
+        {
+            Tile,
+            Doodad,
+            Unit,
+            Sprite,
+            Location,
+            FogOfWar
+        }
+
+        public bool view_Unit;
+        public bool view_Unit_StartLoc;
+        public bool view_Unit_Maprevealer;
+
+
+        public bool view_Doodad;
+        public bool view_DoodadColor;
+        public Microsoft.Xna.Framework.Color DoodadOverlay;
+
+
+        public bool view_Sprite;
+        public bool view_SpriteColor;
+        public Microsoft.Xna.Framework.Color SpriteOverlay;
+
+
+        public bool view_Tile;
+        public Microsoft.Xna.Framework.Color TileBack;
+
+
+        public bool view_Location;
+
+
+        public List<LocationData> SelectLocation = new List<LocationData>();
+
+
 
 
         private int _opt_xpos = 0;
         private int _opt_ypos = 0;
-
-
 
 
         public int opt_xpos
@@ -210,11 +246,9 @@ namespace UseMapEditor.Control
 
 
 
-        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        public void MouseCursorChange(Cursor cursors)
         {
-
-            //mapDataBinding.TileSet = ViewOptionListBox.SelectedItems.Count;
-            //Global.WindowTool.ChangeView(this, true);
+            MapViewer.Cursor = cursors;
         }
 
 
@@ -234,6 +268,19 @@ namespace UseMapEditor.Control
 
 
 
+
+        internal void DisableWindow()
+        {
+            DisEnablePanel.Visibility = Visibility.Visible;
+            MainPanel.IsEnabled = false;
+        }
+
+        internal void EnableWindow()
+        {
+            mainWindow.Activate();
+            DisEnablePanel.Visibility = Visibility.Collapsed;
+            MainPanel.IsEnabled = true;
+        }
 
 
 
@@ -261,14 +308,22 @@ namespace UseMapEditor.Control
 
 
 
-
+        private UIBinding uIBinding;
         public MapEditor()
         {
             InitializeComponent();
 
-            mapdata = new MapData();
+            mapdata = new MapData(this);
+
+
             minimapcolor = new Microsoft.Xna.Framework.Color[256 * 256];
             miniampUnit = new Microsoft.Xna.Framework.Color[256 * 256];
+
+
+
+            TileBack = new Microsoft.Xna.Framework.Color(196, 196, 196, 255);
+            DoodadOverlay = new Microsoft.Xna.Framework.Color(255, 0, 0, 255);
+            SpriteOverlay = new Microsoft.Xna.Framework.Color(0, 255, 0, 255);
 
 
             if (Global.Setting.Vals[Global.Setting.Settings.Program_GRPLoad] == "false")
@@ -300,6 +355,19 @@ namespace UseMapEditor.Control
             StringSettingTabItem.SetMapEditor(this);
             ClassTriggerEditorTabItem.SetMapEditor(this, true);
             BriefingEditorTabItem.SetMapEditor(this, false);
+
+            LocationList.ItemsSource = mapdata.LocationDatas;
+            LocationList.Items.SortDescriptions.Add(new SortDescription("INDEX", ListSortDirection.Ascending));
+            refreshLocBox();
+            uIBinding = new UIBinding(this);
+            uIBinding.view_Tile = true;
+            uIBinding.view_Unit = true;
+            uIBinding.view_Unit_StartLoc = true;
+            uIBinding.view_Unit_Maprevealer = true;
+            uIBinding.view_Doodad = true;
+            uIBinding.view_Sprite = true;
+            Toolbar.DataContext = uIBinding;
+
             this.DataContext = mapDataBinding;
         }
 
@@ -310,6 +378,36 @@ namespace UseMapEditor.Control
             opt_scale = 10;
             ScaleTB.Text = opt_scale.ToString();
         }
+
+
+        private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            int visblecount = 0;
+
+            foreach (ContentControl item in PopupGrid.Children)
+            {
+                if(item.Visibility == Visibility.Visible)
+                {
+                    visblecount += 1;
+                    System.Windows.Point p = e.GetPosition(item);
+                    if ((p.X < 0) | (p.Y < 0) | (p.X > item.ActualWidth) | (p.Y > item.ActualHeight))
+                    {
+                        item.Visibility = Visibility.Collapsed;
+                        visblecount -= 1;
+                        if (!MapViewer.IsEnabled)
+                        {
+                            MapViewer.IsEnabled = true;
+                        }
+                    }
+                }
+            }
+
+            if(visblecount == 0)
+            {
+                PopupGrid.Visibility = Visibility.Collapsed;
+            }
+        }
+
 
         public bool NewMap(int Width, int Height, int TileType, int startTile)
         {
@@ -337,8 +435,6 @@ namespace UseMapEditor.Control
             IsLoad = false;
             return false;
         }
-
-
 
         public bool LoadMap(string _filepath)
         {
@@ -442,7 +538,7 @@ namespace UseMapEditor.Control
                 }
             }
 
-
+            LocationList.ItemsSource = null;
             Global.WindowTool.ChangeView(this,true);
             IsLoad = false;
             return true;
@@ -633,10 +729,10 @@ namespace UseMapEditor.Control
             }
         }
 
-
-
         private void TabChange(int index)
         {
+            PalleteLayer = (Layer)index;
+
             TilePallet.Visibility = Visibility.Collapsed;
             DoodadPallet.Visibility = Visibility.Collapsed;
             UnitPallet.Visibility = Visibility.Collapsed;
@@ -710,34 +806,5 @@ namespace UseMapEditor.Control
                 }
             }
         }
-
-
-
-
-        //private void MainGrid_MouseEnter(object sender, MouseEventArgs e)
-        //{
-        //    if(TestGlobal.pcontrol == null)
-        //    {
-        //        TestGlobal.pcontrol = MainGrid;
-        //        MainGrid.Children.Add(TestGlobal.DrawCtrl);
-        //    }
-        //    else
-        //    {
-        //        SaveControlImage(TestGlobal.DrawCtrl, "test.png");
-        //        TestGlobal.pcontrol.Children.Clear();
-        //        TestGlobal.pcontrol = MainGrid;
-        //        MainGrid.Children.Add(TestGlobal.DrawCtrl);
-        //    }
-        //}
-
-        //private void MainGrid_MouseLeave(object sender, MouseEventArgs e)
-        //{
-        //    if (TestGlobal.pcontrol == MainGrid)
-        //    {
-        //        TestGlobal.pcontrol.Children.Clear();
-        //    }
-        //}
-
-
     }
 }

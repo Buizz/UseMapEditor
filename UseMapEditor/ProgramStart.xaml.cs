@@ -208,8 +208,16 @@ namespace UseMapEditor.Dialog
             this.WindowState = WindowState.Normal;
             LoadComplete = true;
             MainWindow main = new MainWindow();
+
+
             main.Show();
-            main.Focus();
+
+            main.Activate();
+            main.Topmost = true;  // important
+            main.Topmost = false; // important
+            main.Focus();         // important
+
+
             Visibility = Visibility.Collapsed;
         }
 

@@ -17,6 +17,7 @@
         Closed="MetroWindow_Closed"
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Activated="MetroWindow_Activated"
         Title="UseMapEditor" Height="500" Width="800" MinHeight="500" MinWidth="500" WindowStartupLocation="CenterOwner">
     
     

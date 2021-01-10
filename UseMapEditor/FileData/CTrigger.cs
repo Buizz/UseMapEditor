@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
+using UseMapEditor.Tools;
 using static Data.Map.MapData;
 
 namespace UseMapEditor.FileData
@@ -83,6 +84,93 @@ namespace UseMapEditor.FileData
         public byte[] playerlist = new byte[27];//u8[27]: 1 byte for each player in the #List of Players/Group IDs
                                                 //00 - Trigger is not executed for player
                                                 //01 - Trigger is executed for player
+
+
+
+
+        public void GetTEPText(StringBuilder sb)
+        {
+            var argdic = Global.WindowTool.triggerManger.ArgDic;
+
+
+            sb.AppendLine("Trigger {");
+            sb.Append("	players = {");
+            int t = 0;
+            for (int i = 0; i < 27; i++)
+            {
+                if(playerlist[i] == 1)
+                {
+                    if(t != 0)
+                    {
+                        sb.Append(", ");
+                    }
+                    sb.Append(argdic[TriggerManger.ArgType.PLAYER][(uint)i]);
+                    t++;
+                }
+            }
+
+
+            sb.AppendLine("},");
+            sb.AppendLine("	conditions = {");
+            for (int i = 0; i < conditions.Count; i++)
+            {
+                sb.Append("		");
+                conditions[i].CodeText(sb);
+                sb.AppendLine(";");
+            }
+
+            sb.AppendLine("	},");
+            sb.AppendLine("	actions = {");
+            for (int i = 0; i < actions.Count; i++)
+            {
+                sb.Append("		");
+                actions[i].CodeText(sb);
+                sb.AppendLine(";");
+            }
+
+
+            sb.AppendLine("	},");
+
+            if(exeflag > 0)
+            {
+                sb.Append("	flag = {");
+                //actexec, preserved, disabled
+                //0,2,3
+                t = 0;
+                for (int i = 0; i < 7; i++)
+                {
+                    if ((exeflag & (0b1 << i)) > 0)
+                    {
+                        if (t != 0)
+                        {
+                            sb.Append(", ");
+                        }
+                        switch (i)
+                        {
+                            case 0:
+                                sb.Append("actexec");
+                                break;
+                            case 2:
+                                sb.Append("preserved");
+                                break;
+                            case 3:
+                                sb.Append("disabled");
+                                break;
+                            default:
+                                sb.Append("flag" + i);
+                                break;
+                        }
+                        t++;
+                    }
+                }
+                sb.AppendLine("},");
+            }
+
+
+            sb.AppendLine("}");
+
+
+        }
 
 
         public string CommentString
@@ -279,7 +367,19 @@ namespace UseMapEditor.FileData
                         arg.STRING = new StringData(mapData, (int)value);
                         break;
                     case TriggerManger.ArgType.LOCATION:
-                        arg.LOCATION = mapData.LocationDatas.Find((x) => x.INDEX == (int)value);
+                        arg.LOCATION = mapData.LocationDatas.SingleOrDefault((x) => x.INDEX == (int)value);
+                        if(arg.LOCATION == null)
+                        {
+                            LocationData locationData = new LocationData(mapData.mapEditor);
+
+                            locationData.INDEX = (int)value;
+                            locationData.STRING.String = "자동생성 로케이션 " + value;
+
+
+
+                            mapData.LocationDatas.Add(locationData);
+                            arg.LOCATION = locationData;
+                        }
                         break;
                     case TriggerManger.ArgType.UPRP:
                         arg.UPRP = mapData.UPRP[value - 1];
@@ -290,6 +390,16 @@ namespace UseMapEditor.FileData
                 }
                 args.Add(arg);
             }
+
+            if(name == "SetDeaths")
+            {
+                MemoryFunc.ApplyMemoryFunc(this);
+            }
+            else if (name == "Deaths")
+            {
+                MemoryFunc.ApplyMemoryFunc(this);
+            }
+
         }
 
 
@@ -322,7 +432,7 @@ namespace UseMapEditor.FileData
 
                 for (int i = 0; i < args.Count; i++)
                 {
-                    sm = sm.Replace("[" + triggerDefine.argDefines[i].argname + "]",  "[" + args[i].GetValue + "]");
+                    sm = sm.Replace("[" + triggerDefine.argDefines[i].argname + "]", "[" + args[i].GetValue + "]");
                 }
 
 
@@ -341,6 +451,46 @@ namespace UseMapEditor.FileData
                 //sb.Append(")");
 
                 return sm;
+            }
+        }
+        public void CodeText(StringBuilder sb)
+        {
+            if (name == "SetDeaths")
+            {
+                sb.Append(MemoryFunc.GetTEPDeathText(this));
+                return;
+
+            }
+            else if (name == "Deaths")
+            {
+                sb.Append(MemoryFunc.GetTEPDeathText(this));
+                return;
+            }
+            else if (name == "SetMemory")
+            {
+                sb.Append(MemoryFunc.GetTEPMemoryText(this));
+                return;
+
+            }
+            else if (name == "Memory")
+            {
+                sb.Append(MemoryFunc.GetTEPMemoryText(this));
+                return;
+            }
+
+            {
+                string str = name + "(";
+
+                for (int i = 0; i < args.Count; i++)
+                {
+                    if (i != 0)
+                    {
+                        str += ", ";
+                    }
+                    str += args[i].GetCode;
+                }
+                str += ")";
+                sb.Append(str);
             }
         }
 
@@ -420,6 +570,137 @@ namespace UseMapEditor.FileData
             }
         }
 
+
+        public string GetCode
+        {
+            get
+            {
+                if (IsInit)
+                {
+                    return argDefine.argname;
+                }
+
+                switch (ARGTYPE)
+                {
+                    case TriggerManger.ArgType.SWITCH:
+                        string d = mapData.SWNM[VALUE].String;
+                        if (mapData.SWNM[VALUE].IsLoaded)
+                        {
+                            return "\"" +d + "\"";
+                        }
+                        else
+                        {
+                            return "\"Switch " + (VALUE + 1) + "\"";
+                        }
+
+                    case TriggerManger.ArgType.WAV:
+                    case TriggerManger.ArgType.STRING:
+                        return "\"" + STRING.String + "\"";
+                    case TriggerManger.ArgType.LOCATION:
+                        return "\"" + LOCATION.STRING.String + "\"";
+                    case TriggerManger.ArgType.OFFSET:
+                        return "0x" + VALUE.ToString("X");
+                    case TriggerManger.ArgType.UPRP:
+                        StringBuilder sb = new StringBuilder();
+
+                        sb.AppendLine("{");
+
+                        ushort sfalg = UPRP.STATUSFLAG;
+                        ushort svalid = UPRP.STATUSVALID;
+                        {
+                            string[] headname = { "clocked", "burrowed", "intransit", "hallucinated", "invincible" };
+
+                            for (int bit = 0; bit < 5; bit++)
+                            {
+                                if ((svalid & (0b1 << bit)) > 0)
+                                {
+                                    if ((sfalg & (0b1 << bit)) > 0)
+                                    {
+                                        sb.AppendLine("			" + headname[bit] + " = " + "true" + ",");
+                                    }
+                                    else
+                                    {
+                                        sb.AppendLine("			" + headname[bit] + " = " + "false" + ",");
+                                    }
+                                }
+                            }
+                        }
+
+
+                        ushort pvalid = UPRP.POINTVALID;
+                        {
+                            if ((pvalid & (0b1 << 1)) > 0)
+                            {
+                                sb.AppendLine("			hitpoint = " + UPRP.HITPOINT + ",");
+                            }
+                            if ((pvalid & (0b1 << 2)) > 0)
+                            {
+                                sb.AppendLine("			shield = " + UPRP.SHIELDPOINT + ",");
+                            }
+                            if ((pvalid & (0b1 << 3)) > 0)
+                            {
+                                sb.AppendLine("			energy = " + UPRP.ENERGYPOINT + ",");
+                            }
+                            if ((pvalid & (0b1 << 4)) > 0)
+                            {
+                                sb.AppendLine("			resource = " + UPRP.RESOURCE + ",");
+                            }
+                            if ((pvalid & (0b1 << 5)) > 0)
+                            {
+                                sb.AppendLine("			hanger = " + UPRP.HANGAR + ",");
+                            }
+                        }
+
+                        sb.Append("		}");
+
+
+                        return sb.ToString();
+                    case TriggerManger.ArgType.COUNT:
+                        if (VALUE == 0)
+                        {
+                            return "All";
+                        }
+                        break;
+                    case TriggerManger.ArgType.ALWAYSDISPLAY:
+                        return VALUE.ToString();
+                }
+
+                TriggerManger tm = Global.WindowTool.triggerManger;
+
+
+
+
+
+                string rval = tm.ArgParse(mapData, ARGTYPE, (uint)VALUE, false, true);
+                if (ARGTYPE == TriggerManger.ArgType.UNIT)
+                {
+                    rval = Tools.StringTool.RemoveCtrlChar(rval);
+
+                    rval = "\"" + rval + "\"";
+                }
+                if (ARGTYPE == TriggerManger.ArgType.AISCRIPT)
+                {
+                    rval = "\"" + rval + "\"";
+                }
+
+                if (rval == "")
+                {
+                    //해석 실패
+                    return VALUE.ToString();
+                }
+                else
+                {
+                    return rval;
+                }
+            }
+            set
+            {
+
+            }
+        }
+
+
+
         //값을 수정하고 가져오는 함수가 필요
         public string GetValue
         {
@@ -448,6 +729,8 @@ namespace UseMapEditor.FileData
                         return STRING.String;
                     case TriggerManger.ArgType.LOCATION:
                         return LOCATION.STRING.String;
+                    case TriggerManger.ArgType.OFFSET:
+                        return "0x" + VALUE.ToString("X");
                     case TriggerManger.ArgType.UPRP:
                         return "상태설정";
                     case TriggerManger.ArgType.COUNT:

@@ -61,12 +61,19 @@ namespace UseMapEditor.MonoGameControl
 
         private void DrawImage(Control.MapEditor.DrawType drawType, CImage cImage, float scale, float grpscale)
         {
+            if (!mapeditor.view_Unit_StartLoc & cImage.imageID == 588)
+            {
+                return;
+            }
+            if (!mapeditor.view_Unit_Maprevealer & cImage.imageID == 582)
+            {
+                return;
+            }
+
+
+
+
             Vector2 pos = cImage.screen;
-
-
-
-
-
 
 
             GRP gRP = GetImageTexture(drawType, cImage.imageID);
@@ -144,7 +151,7 @@ namespace UseMapEditor.MonoGameControl
 
             _spriteBatch.Begin(SpriteSortMode.FrontToBack, blendState: BlendState.NonPremultiplied, samplerState: SamplerState.PointClamp);
 
-            Color color;
+            Color color = Color.White; ;
 
             switch (cImage.drawType)
             {
@@ -163,13 +170,26 @@ namespace UseMapEditor.MonoGameControl
                     _spriteBatch.End();
                     return;
                 case CImage.DrawType.UnitSprite:
-                    color = new Color(255, 0, 0, 255);
+                    color = Color.White;
+                    if (mapeditor.view_SpriteColor)
+                    {
+                        color = mapeditor.SpriteOverlay;
+                    }
+                    //color = new Color(255, 0, 0, 255);
                     break;
                 case CImage.DrawType.PureSprite:
-                    color = new Color(0, 255, 0, 255);
+                    if (mapeditor.view_SpriteColor)
+                    {
+                        color = mapeditor.SpriteOverlay;
+                    }
+                    //color = new Color(0, 255, 0, 255);
                     break;
-                default:
-                    color = Color.White;
+                case CImage.DrawType.Doodad:
+                    if (mapeditor.view_DoodadColor)
+                    {
+                        color = mapeditor.DoodadOverlay;
+                    }
+                    //color = new Color(0, 255, 0, 255);
                     break;
             }
 

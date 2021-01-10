@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UseMapEditor;
+using UseMapEditor.Control;
 using UseMapEditor.FileData;
 using static UseMapEditor.FileData.TileSet;
 
@@ -32,6 +33,13 @@ namespace Data.Map
             {
                 return filepath.Split('\\').Last();
             }
+        }
+
+
+        public MapEditor mapEditor;
+        public MapData(MapEditor mapEditor)
+        {
+            this.mapEditor = mapEditor;
         }
 
 
@@ -91,7 +99,7 @@ namespace Data.Map
 
             DDDTHG2.Clear();
             LocationDatas.Clear();
-            LocationDatas.Add(new LocationData());
+            LocationDatas.Add(new LocationData(mapEditor));
 
             UPRP = new CUPRP[64];
             for (int i = 0; i < 64; i++)
@@ -384,7 +392,7 @@ namespace Data.Map
                     //0x1000 = Sprites.dat Reference
                     int ImageID = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.sprites, "Image File", pallete.dddOverlayID).Data;
 
-                    CImage p = new CImage(alpha, Images, ImageID, 0, 0, _drawType: CImage.DrawType.Normal, level: 8);
+                    CImage p = new CImage(alpha, Images, ImageID, 0, 0, _drawType: CImage.DrawType.Doodad, level: 8);
                     Images.Add(p);
                 }
                 if ((pallete.dddFlags & 0x2000) > 0)
@@ -394,7 +402,7 @@ namespace Data.Map
                     int Sprite = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.flingy, "Sprite", Graphics).Data;
                     int ImageID = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.sprites, "Image File", Sprite).Data;
 
-                    CImage p = new CImage(alpha, Images, ImageID, 0, 0, _drawType: CImage.DrawType.Normal, level: 8);
+                    CImage p = new CImage(alpha, Images, ImageID, 0, 0, _drawType: CImage.DrawType.Doodad, level: 8);
                     Images.Add(p);
                 }
             }

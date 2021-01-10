@@ -1,0 +1,22 @@
+﻿<Window x:Class="UseMapEditor.Windows.TrigEditPlus"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:UseMapEditor.Windows" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Closing="Window_Closing"
+        Title="TrigEditPlus" Height="450" Width="800">
+    <DockPanel>
+        <ToolBarTray IsLocked="True" DockPanel.Dock="Top">
+            <ToolBar Style="{DynamicResource MaterialDesignToolBar}" ClipToBounds="False">
+                <Button ToolTip="Save" Click="Button_Click">
+                    <materialDesign:PackIcon Kind="ContentSave" />
+                </Button>
+            </ToolBar>
+        </ToolBarTray>
+        <TextBox x:Name="CodeEditor" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+    </DockPanel>
+</Window>

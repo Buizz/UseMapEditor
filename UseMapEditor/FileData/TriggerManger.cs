@@ -56,7 +56,7 @@ namespace UseMapEditor.FileData
             return null;
         }
 
-        public string ArgParse(MapData mapData, ArgType argType , uint value, bool IsTran = false)
+        public string ArgParse(MapData mapData, ArgType argType, uint value, bool IsTran = false, bool IsEditor = false)
         {
             if (ArgDic.ContainsKey(argType))
             {
@@ -83,7 +83,7 @@ namespace UseMapEditor.FileData
                 }
                 else
                 {
-                    return "???";
+                    return value.ToString();
                 }
             }
             else
@@ -97,7 +97,14 @@ namespace UseMapEditor.FileData
                         }
                         else
                         {
-                            return mapData.GetMapUnitName((int)value);
+                            if (IsEditor)
+                            {
+                                return mapData.GetEditorUnitName((int)value);
+                            }
+                            else
+                            {
+                                return mapData.GetMapUnitName((int)value, IsTran);
+                            }
                         }
                     case ArgType.WAV:
 
@@ -147,7 +154,9 @@ namespace UseMapEditor.FileData
             ALWAYSDISPLAY,
             SWITCH,
             AISCRIPT,
-            SLOT
+            SLOT,
+            OFFSET,
+            MASKUSE
         }
 
         public Dictionary<ArgType, Dictionary<uint, string>> ArgDic;

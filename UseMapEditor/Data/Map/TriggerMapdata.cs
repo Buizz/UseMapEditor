@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UseMapEditor.FileData;
+using UseMapEditor.Tools;
 
 namespace Data.Map
 {
@@ -84,14 +85,41 @@ namespace Data.Map
                     if (cTrigger.conditions.Count > c)
                     {
                         TrigItem trigItem = cTrigger.conditions[c];
-                        for (int i = 0; i < trigItem.args.Count; i++)
-                        {
-                            int pos = trigItem.args[i].argDefine.pos;
 
-                            condition.values[pos] = trigItem.args[i].GetCHKValue;
+                        if(trigItem.type == 24)
+                        {
+                            long offset = trigItem.args[0].VALUE;
+                            long player = (offset - 0x58A364) / 4;
+                            long unitid = 0;
+                            long modifier = trigItem.args[1].VALUE;
+                            long value = trigItem.args[2].VALUE;
+
+                            long mask = trigItem.args[3].VALUE;
+                            long maskuse = trigItem.args[4].VALUE;
+
+                            condition.values[1] = player;
+                            condition.values[3] = unitid;
+                            condition.values[2] = value;
+                            condition.values[4] = modifier;
+                            condition.values[0] = mask;
+                            condition.values[8] = maskuse;
+                            condition.valueSet();
+                            condition.condtype = (byte)15;
                         }
-                        condition.valueSet();
-                        condition.condtype = (byte)trigItem.type;
+                        else
+                        {
+                            for (int i = 0; i < trigItem.args.Count; i++)
+                            {
+                                int pos = trigItem.args[i].argDefine.pos;
+
+                                condition.values[pos] = trigItem.args[i].GetCHKValue;
+                            }
+                            condition.valueSet();
+                            condition.condtype = (byte)trigItem.type;
+                        }
+
+
+
                     }
 
                     conditions[c] = condition;
@@ -102,14 +130,38 @@ namespace Data.Map
                     if (cTrigger.actions.Count > a)
                     {
                         TrigItem trigItem = cTrigger.actions[a];
-                        for (int i = 0; i < trigItem.args.Count; i++)
-                        {
-                            int pos = trigItem.args[i].argDefine.pos;
 
-                            action.values[pos] = trigItem.args[i].GetCHKValue;
+                        if (trigItem.type == 57)
+                        {
+                            long offset = trigItem.args[0].VALUE;
+                            long player = (offset - 0x58A364) / 4;
+                            long unitid = 0;
+                            long modifier = trigItem.args[1].VALUE;
+                            long value = trigItem.args[2].VALUE;
+
+                            long mask = trigItem.args[3].VALUE;
+                            long maskuse = trigItem.args[4].VALUE;
+
+                            action.values[4] = player;
+                            action.values[6] = unitid;
+                            action.values[5] = value;
+                            action.values[8] = modifier;
+                            action.values[0] = mask;
+                            action.values[10] = maskuse;
+                            action.valueSet();
+                            action.acttype = (byte)45;
                         }
-                        action.valueSet();
-                        action.acttype = (byte)trigItem.type;
+                        else
+                        {
+                            for (int i = 0; i < trigItem.args.Count; i++)
+                            {
+                                int pos = trigItem.args[i].argDefine.pos;
+
+                                action.values[pos] = trigItem.args[i].GetCHKValue;
+                            }
+                            action.valueSet();
+                            action.acttype = (byte)trigItem.type;
+                        }
                     }
 
                     actions[a] = action;
@@ -136,6 +188,11 @@ namespace Data.Map
                     condition.restype = br.ReadByte();//u8: Resource type, score type, Switch number(0-based)
                     condition.flags = br.ReadByte();//u8: Flags
                     condition.maskflag = br.ReadUInt16();//u16: MaskFlag: set to "SC" (0x53, 0x43) when using the bitmask for EUDs, 0 otherwise
+
+                    if(condition.condtype > 23)
+                    {
+                        condition.condtype = 0;
+                    }
 
                     condition.values[0] = condition.locid;
                     condition.values[1] = condition.player;
@@ -165,6 +222,12 @@ namespace Data.Map
                     action.flags = br.ReadByte();//u8: Flags
                     action.padding = br.ReadByte();//u8: Padding
                     action.maskflag = br.ReadUInt16();//u16 (2 bytes): MaskFlag: set to "SC"(0x53, 0x43) when using the bitmask for EUDs, 0 otherwise
+
+                    if (action.acttype > 57)
+                    {
+                        action.acttype = 0;
+                    }
+
 
                     action.values[0] = action.locid1;
                     action.values[1] = action.strid;

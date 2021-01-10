@@ -108,10 +108,13 @@ namespace UseMapEditor.MonoGameControl
 
 
             _spriteBatch.Begin();
-            _spriteBatch.Draw(gridtexture, new Rectangle((int)MapMin.X, (int)MapMin.Y, (int)MapSize.X, (int)MapSize.Y), null, Color.Black,0, new Vector2(), SpriteEffects.None,0);
+            _spriteBatch.Draw(gridtexture, new Rectangle((int)MapMin.X, (int)MapMin.Y, (int)MapSize.X, (int)MapSize.Y), null, mapeditor.TileBack, 0, new Vector2(), SpriteEffects.None,0);
             _spriteBatch.End();
 
-
+            if (!mapeditor.view_Tile)
+            {
+                return;
+            }
 
 
             int startxti = (int)(mapeditor.opt_xpos / 32d);
@@ -250,20 +253,24 @@ namespace UseMapEditor.MonoGameControl
                             {
                                 continue;
                             }
-
+                            Color color = Color.White;
+                            if (mapeditor.view_DoodadColor)
+                            {
+                                color = mapeditor.DoodadOverlay;
+                            }
                             switch (mapeditor.opt_drawType)
                             {
                                 case Control.MapEditor.DrawType.SD:
                                     {
                                         Texture2D texture2D = tileSet.GetTile(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, group, index);
-                                        _spriteBatch.Draw(texture2D, screen + new Vector2(x,y) * mag, null, Color.White, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent, SpriteEffects.None, 0);
+                                        _spriteBatch.Draw(texture2D, screen + new Vector2(x,y) * mag, null, color, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent, SpriteEffects.None, 0);
                                     }
                                     break;
                                 case Control.MapEditor.DrawType.HD:
                                 case Control.MapEditor.DrawType.CB:
                                     {
                                         Texture2D texture2D = tileSet.GetTile(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, group, index);
-                                        _spriteBatch.Draw(texture2D, screen + new Vector2(x, y) * mag, null, Color.White, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent / 2, SpriteEffects.None, 0);
+                                        _spriteBatch.Draw(texture2D, screen + new Vector2(x, y) * mag, null, color, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent / 2, SpriteEffects.None, 0);
                                     }
                                     break;
                             }

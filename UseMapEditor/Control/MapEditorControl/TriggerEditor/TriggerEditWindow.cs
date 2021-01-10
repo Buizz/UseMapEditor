@@ -182,7 +182,6 @@ namespace UseMapEditor.Control.MapEditorControl
                 return;
             }
 
-            FlagListbox.SelectedIndex = -1;
             uint flagv = 0;
             foreach (ListBoxItem item in FlagListbox.SelectedItems)
             {
@@ -190,6 +189,7 @@ namespace UseMapEditor.Control.MapEditorControl
 
                 flagv += (uint)(0b1 << tagv);
             }
+            OpenedTrigger.exeflag = flagv;
 
 
 
@@ -210,7 +210,6 @@ namespace UseMapEditor.Control.MapEditorControl
 
 
 
-            OpenedTrigger.exeflag = flagv;
             if (IsOpenNewTrigger)
             {
                 //새 트리거
@@ -374,16 +373,86 @@ namespace UseMapEditor.Control.MapEditorControl
 
         private void ItemCut()
         {
-
+            ItemCopy();
+            ItemDelete();
         }
 
         private void ItemCopy()
         {
+            StringBuilder sb = new StringBuilder();
 
+            List<TrigItem> trigitems = new List<TrigItem>();
+            trigitems.AddRange(TriggerItemListbox.SelectedItems.Cast< TrigItem>().ToList());
+            trigitems.Sort((x, y) => TriggerItemListbox.Items.IndexOf(x).CompareTo(TriggerItemListbox.Items.IndexOf(y)));
+
+            foreach (TrigItem item in trigitems)
+            {
+                item.CodeText(sb);
+                sb.AppendLine(";");
+            }
+            Clipboard.SetText(sb.ToString());
         }
 
         private void ItemPaste()
         {
+            
+
+            string pastetext = Clipboard.GetText();
+
+            if(LastPage == 1)
+            {
+                pastetext = "Trigger {conditions = {" + pastetext  + "},actions = {},}";
+            }
+            else
+            {
+                pastetext = "Trigger {conditions = {},actions = {" + pastetext + "},}";
+            }
+
+            
+
+            List<CTrigger> ctrig = teplua.exec(pastetext, mapEditor);
+            if (ctrig != null)
+            {
+
+                int sindex = TriggerItemListbox.SelectedIndex;
+
+                int i = 1;
+
+
+                if (LastPage == 1)
+                {
+                    foreach (var item in ctrig[0].conditions)
+                    {
+                        if (sindex == -1)
+                        {
+                            Copyedconditions.Add(item);
+                        }
+                        else
+                        {
+                            Copyedconditions.Insert(sindex + i++, item);
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var item in ctrig[0].actions)
+                    {
+                        if (sindex == -1)
+                        {
+                            Copyedactions.Add(item);
+                        }
+                        else
+                        {
+                            Copyedactions.Insert(sindex + i++, item);
+                        }
+                    }
+                }
+
+
+
+                mapEditor.SetDirty();
+            }
+
 
         }
 

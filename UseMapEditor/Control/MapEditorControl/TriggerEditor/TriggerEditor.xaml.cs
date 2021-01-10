@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using UseMapEditor.FileData;
+using UseMapEditor.Windows;
 
 namespace UseMapEditor.Control.MapEditorControl
 {
@@ -36,16 +37,19 @@ namespace UseMapEditor.Control.MapEditorControl
 
             if (IsTrigger)
             {
+                TrigEditPlusBtn.Visibility = Visibility.Visible;
                 MainListBox.ItemsSource = mapEditor.mapdata.Triggers;
                 TrigConditionBtn.Visibility = Visibility.Visible;
             }
             else
             {
+                TrigEditPlusBtn.Visibility = Visibility.Collapsed;
                 MainListBox.ItemsSource = mapEditor.mapdata.Brifings;
                 TrigConditionBtn.Visibility = Visibility.Collapsed;
             }
-            
-            
+            TrigEditWindowOpen = false;
+            EditWindow.Visibility = Visibility.Hidden;
+
             SearchType.SelectedIndex = 0;
             ToolBoxRefresh();
         }
@@ -257,16 +261,61 @@ namespace UseMapEditor.Control.MapEditorControl
         }
         private void CutFunc()
         {
-
+            CopyFunc();
+            DeleteFunc();
         }
         private void CopyFunc()
         {
+            StringBuilder sb = new StringBuilder();
 
+
+            List<CTrigger> ctrigs = new List<CTrigger>();
+            ctrigs.AddRange(MainListBox.SelectedItems.Cast<CTrigger>().ToList());
+
+            ctrigs.Sort((x, y) => mapEditor.mapdata.Triggers.IndexOf(x).CompareTo(mapEditor.mapdata.Triggers.IndexOf(y)));
+
+            foreach (CTrigger item in ctrigs)
+            {
+                item.GetTEPText(sb);
+            }
+
+            Clipboard.SetText(sb.ToString());
         }
+
+
+        private Lua.TrigEditPlus.Main teplua = Global.WindowTool.lua.tepMain;
         private void PasteFunc()
         {
+            string pastetext = Clipboard.GetText();
+            List<CTrigger> ctrig = teplua.exec(pastetext, mapEditor);
+            if(ctrig != null)
+            {
+                int sindex = MainListBox.SelectedIndex;
 
+                int i = 1;
+                foreach (var item in ctrig)
+                {
+                    if(sindex == -1)
+                    {
+                        mapEditor.mapdata.Triggers.Add(item);
+                    }
+                    else
+                    {
+                        mapEditor.mapdata.Triggers.Insert(sindex + i++, item);
+                    }
+                }
+                mapEditor.SetDirty();
+            }
         }
+
+
+
+
+
+
+
+
+
         private void DeleteFunc()
         {
             List<CTrigger> cTriggers = new List<CTrigger>();
@@ -530,6 +579,12 @@ namespace UseMapEditor.Control.MapEditorControl
 
         }
 
-
+        public TrigEditPlus trigEditPlus;
+        private void OpenTrigEditPlus_Click(object sender, RoutedEventArgs e)
+        {
+            mapEditor.DisableWindow();
+            trigEditPlus = new TrigEditPlus(mapEditor);
+            trigEditPlus.Show();
+        }
     }
 }

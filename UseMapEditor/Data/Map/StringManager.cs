@@ -178,6 +178,11 @@ namespace Data.Map
                 {
                     if (!IsLoaded)
                     {
+                        if(mapData.LOADSTRx == null)
+                        {
+                            return "NotLoad";
+                        }
+
                         if(LoadedIndex == -1 | LoadedIndex >= mapData.LOADSTRx.Length)
                         {
                             return "???";
@@ -191,6 +196,25 @@ namespace Data.Map
                 {
                     IsLoaded = true;
                     val = value;
+                }
+            }
+
+
+
+            public string CodeString
+            {
+                get
+                {
+                    if (!IsLoaded)
+                    {
+                        if (LoadedIndex == -1 | LoadedIndex >= mapData.LOADSTRx.Length)
+                        {
+                            return "???";
+                        }
+                        val = mapData.LOADSTRx[LoadedIndex];
+                        IsLoaded = true;
+                    }
+                    return UseMapEditor.Tools.StringTool.WriteRawString(val);
                 }
             }
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -76,17 +77,13 @@ namespace UseMapEditor.Control.MapEditorControl
                 }
 
                 ListBoxItem listBoxItem = new ListBoxItem();
-                listBoxItem.Tag = item;
-                TextBlock textBlock = new TextBlock();
-                textBlock.Width = 500;
-                textBlock.Text = item.NAME + "\n" + item.SUMMARY;
-                textBlock.TextWrapping = TextWrapping.Wrap;
-                listBoxItem.Content = textBlock;
+
+                listBoxItem.Tag = item;                
+                listBoxItem.Content = item.NAME + "\n" + item.SUMMARY;
 
                 TrigItemTypeListBox.Items.Add(listBoxItem);
             }
-
-
+            TrigItemTypeListBox.Items.SortDescriptions.Add(new SortDescription("Content", ListSortDirection.Ascending));
 
 
 
