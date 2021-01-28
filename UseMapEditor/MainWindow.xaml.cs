@@ -188,8 +188,7 @@ namespace UseMapEditor
                     return false;
                 }
             }
-            mapeditor = new MapEditor();
-            mapeditor.mainWindow = this;
+            mapeditor = new MapEditor(this);
 
             bool result = mapeditor.LoadMap(mapname);
             if (result)
@@ -288,7 +287,7 @@ namespace UseMapEditor
 
 
 
-
+        private BackgroundWorker bw;
         public MainWindow()
         {
             InitializeComponent();
@@ -298,15 +297,52 @@ namespace UseMapEditor
             SetWindowName();
 
 
-
-            if (Global.WindowTool.OpenedFilePath != null)
-            {
-                OpenMapCommand(Global.WindowTool.OpenedFilePath);
-                Global.WindowTool.OpenedFilePath = null;
-            }
+            CompositionTarget.Rendering += new EventHandler(CompositionTarget_Rendering);
         }
 
+        private void Bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            OpenMapCommand(Global.WindowTool.OpenedFilePath);
+            Global.WindowTool.OpenedFilePath = null;
+            this.Visibility = Visibility.Visible;
+        }
 
+        private void Bw_DoWork(object sender, DoWorkEventArgs e)
+        {
+            System.Threading.Thread.Sleep(100);
+        }
+
+        void CompositionTarget_Rendering(object sender, EventArgs e)
+        {
+            if(mapeditor == null)
+            {
+                return;
+            }
+
+
+            
+
+            //if ((Keyboard.GetKeyStates(Key.LeftCtrl) & KeyStates.Down) > 0)
+            //{
+            //    return;
+            //}
+            //if ((Keyboard.GetKeyStates(Key.W) & KeyStates.Down) > 0)
+            //{
+            //    mapeditor.ScrollUp();
+            //}
+            //if ((Keyboard.GetKeyStates(Key.S) & KeyStates.Down) > 0)
+            //{
+            //    mapeditor.ScrollDown();
+            //}
+            //if ((Keyboard.GetKeyStates(Key.A) & KeyStates.Down) > 0)
+            //{
+            //    mapeditor.ScrollLeft();
+            //}
+            //if ((Keyboard.GetKeyStates(Key.D) & KeyStates.Down) > 0)
+            //{
+            //    mapeditor.ScrollRight();
+            //}
+        }
 
 
 
@@ -340,12 +376,27 @@ namespace UseMapEditor
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            this.WindowState = WindowState.Normal;
             int W = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea.Width; //모니터 스크린 가로크기
             int H = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea.Height; //모니터 스크린 세로크기
 
             this.Left = (W - this.Width) / 2;
             this.Top = (H - this.Height) / 2;
+
+
+            if (Global.WindowTool.OpenedFilePath != null)
+            {
+                this.Visibility = Visibility.Collapsed;
+                bw = new BackgroundWorker();
+
+                bw.DoWork += Bw_DoWork;
+                bw.RunWorkerCompleted += Bw_RunWorkerCompleted;
+
+                bw.RunWorkerAsync();
+            }
+            else
+            {
+                this.WindowState = WindowState.Normal;
+            }
         }
 
         private void MetroWindow_Activated(object sender, EventArgs e)

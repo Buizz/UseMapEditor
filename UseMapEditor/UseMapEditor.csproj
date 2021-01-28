@@ -99,6 +99,9 @@
     <Reference Include="Dragablz, Version=0.0.3.223, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Dragablz.0.0.3.223\lib\net45\Dragablz.dll</HintPath>
     </Reference>
+    <Reference Include="HotKeyManagement.WPF.4">
+      <HintPath>D:\User\Desktop\Dlls\WPF 4.0\HotKeyManagement.WPF.4.dll</HintPath>
+    </Reference>
     <Reference Include="JungleControls, Version=1.8.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\JungleControls.1.8.0.0\lib\net45\JungleControls.dll</HintPath>
     </Reference>
@@ -198,6 +201,7 @@
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\net45\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
     </Reference>
@@ -233,13 +237,19 @@
     <Compile Include="Control\ColorPicker.xaml.cs">
       <DependentUpon>ColorPicker.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Control\ColorSelectButton.xaml.cs">
+      <DependentUpon>ColorSelectButton.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Control\LastOpenFileControl.xaml.cs">
       <DependentUpon>LastOpenFileControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Control\MapCreate.xaml.cs">
       <DependentUpon>MapCreate.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Control\MapEditorBrush\DoodadBrush.cs" />
     <Compile Include="Control\MapEditorBrush\LocationBrush.cs" />
+    <Compile Include="Control\MapEditorBrush\SpriteBrush.cs" />
+    <Compile Include="Control\MapEditorBrush\UnitBrush.cs" />
     <Compile Include="Control\MapEditorControl\CodeSelecter.xaml.cs">
       <DependentUpon>CodeSelecter.xaml</DependentUpon>
     </Compile>
@@ -288,11 +298,13 @@
       <DependentUpon>StartPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="DataBinding\PlayerBinding.cs" />
+    <Compile Include="DataBinding\SpriteDataBinding.cs" />
     <Compile Include="DataBinding\TechDataBinding.cs" />
     <Compile Include="DataBinding\UIBinding.cs" />
     <Compile Include="DataBinding\UnitDataBinding.cs" />
     <Compile Include="DataBinding\UpgradeDataBinding.cs" />
     <Compile Include="Data\Map\CodeManager.cs" />
+    <Compile Include="Data\Map\UnitPlaceManager.cs" />
     <Compile Include="Data\Map\UPRP.cs" />
     <Compile Include="FileData\CTrigger.cs" />
     <Compile Include="Data\Map\Load.cs" />
@@ -319,15 +331,27 @@
     <Compile Include="Lua\LuaManager.cs" />
     <Compile Include="Lua\TrigEditPlus\Main.cs" />
     <Compile Include="MonoGameControl\Dxt1.cs" />
+    <Compile Include="MonoGameControl\FogOfWarDraw.cs" />
     <Compile Include="MonoGameControl\ImageDraw.cs" />
     <Compile Include="MonoGameControl\KeyboardEvent.cs" />
     <Compile Include="MonoGameControl\LocationDraw.cs" />
     <Compile Include="MonoGameControl\MouseEvent.cs" />
+    <Compile Include="MonoGameControl\DrawPalleteCursor.cs" />
     <Compile Include="MonoGameControl\PalletUI.cs" />
+    <Compile Include="MonoGameControl\SpritePallete.cs" />
     <Compile Include="MonoGameControl\TileDraw.cs" />
     <Compile Include="MonoGameControl\UnitDraw.cs" />
+    <Compile Include="MonoGameControl\UnitPallete.cs" />
+    <Compile Include="Task\Events\LocationEvent.cs" />
+    <Compile Include="Task\Events\MaskEvent.cs" />
+    <Compile Include="Task\Events\SpriteEvent.cs" />
+    <Compile Include="Task\Events\UnitEvent.cs" />
+    <Compile Include="Tools\KalmanFilter.cs" />
     <Compile Include="Tools\MemoryFunc.cs" />
+    <Compile Include="Tools\ShortCutManager.cs" />
     <Compile Include="Tools\StringTool.cs" />
+    <Compile Include="Task\TaskManager.cs" />
+    <Compile Include="Task\TaskEvent.cs" />
     <Compile Include="Tools\VectorTool.cs" />
     <Compile Include="Windows\Preprocessing.xaml.cs">
       <DependentUpon>Preprocessing.xaml</DependentUpon>
@@ -345,6 +369,10 @@
       <DependentUpon>TrigEditPlus.xaml</DependentUpon>
     </Compile>
     <Page Include="Control\ColorPicker.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Control\ColorSelectButton.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -633,6 +661,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="LICENSE" />
+    <None Include="Lua\TrigEditPlus\briefing.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Lua\TrigEditPlus\tool.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Lua\TrigEditPlus\constparser.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -800,6 +834,11 @@
   <ItemGroup>
     <Resource Include="Resources\icon_maprevealer.png" />
     <Resource Include="Resources\icon_startlocation.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\Images.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\MaterialDesignThemes.3.2.0\build\MaterialDesignThemes.targets" Condition="Exists('..\packages\MaterialDesignThemes.3.2.0\build\MaterialDesignThemes.targets')" />

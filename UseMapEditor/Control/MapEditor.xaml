@@ -11,23 +11,25 @@
              GotFocus="UserControl_GotFocus"
              SizeChanged="UserControl_SizeChanged"
              MouseEnter="UserControl_MouseEnter"
+             PreviewMouseUp="UserControl_PreviewMouseUp"
+             PreviewMouseDown="UserControl_PreviewMouseDown"
              Loaded="UserControl_Loaded"
-             d:DesignHeight="400" d:DesignWidth="600">
+             PreviewMouseMove="UserControl_PreviewMouseMove"
+             d:DesignHeight="800" d:DesignWidth="620">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
     </UserControl.Resources>
     <Grid>
         <DockPanel x:Name="MainPanel">
             <ToolBarTray x:Name="Toolbar" DockPanel.Dock="Top" IsLocked="True">
-
                 <ToolBar Style="{DynamicResource MaterialDesignToolBar}" ClipToBounds="False">
-                    <Button ToolTip="새 맵" Click="NewBtn_Click">
+                    <Button ToolTip="새 맵(Ctrl N)" Click="NewBtn_Click">
                         <materialDesign:PackIcon Kind="FileDocument" />
                     </Button>
-                    <Button ToolTip="열기" Click="OpenBtn_Click">
+                    <Button ToolTip="열기(Ctrl O)" Click="OpenBtn_Click">
                         <materialDesign:PackIcon Kind="FolderOpen" />
                     </Button>
-                    <Button ToolTip="저장" Click="SaveBtn_Click">
+                    <Button ToolTip="저장(Ctrl S)" Click="SaveBtn_Click">
                         <materialDesign:PackIcon Kind="ContentSave" />
                     </Button>
                     <Button ToolTip="다른 이름으로 저장" Click="SaveAsBtn_Click">
@@ -36,13 +38,17 @@
                     <Button ToolTip="닫기" Click="CloseBtn_Click">
                         <materialDesign:PackIcon Kind="Close" />
                     </Button>
-                </ToolBar>
-                <ToolBar Style="{DynamicResource MaterialDesignToolBar}" ClipToBounds="False">
-                    <Label Content="보기" VerticalAlignment="Top" Margin="-8,0,0,0"/>
-
-                    <materialDesign:PopupBox StaysOpen="True" Style="{StaticResource MaterialDesignToolPopupBox}" Padding="4" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+                    <Separator/>
+                    <Button x:Name="UndoBtn" ToolTip="실행 취소(Ctrl Z)" Click="UndoBtn_Click" IsEnabled="False">
+                        <materialDesign:PackIcon Kind="Undo" />
+                    </Button>
+                    <Button x:Name="RedoBtn" ToolTip="다시 실행(Ctrl U)" Click="RedoBtn_Click" IsEnabled="False">
+                        <materialDesign:PackIcon Kind="Redo" />
+                    </Button>
+                    <Separator/>
+                    <materialDesign:PopupBox StaysOpen="True" Style="{StaticResource MaterialDesignToolPopupBox}" Padding="4" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Center">
                         <materialDesign:PopupBox.ToggleContent>
-                            <materialDesign:PackIcon Kind="Visibility" Margin="15"/>
+                            <materialDesign:PackIcon Kind="Visibility" Margin="14"/>
                         </materialDesign:PopupBox.ToggleContent>
                         <StackPanel>
                             <StackPanel Orientation="Horizontal">
@@ -88,8 +94,8 @@
                         </StackPanel>
                     </materialDesign:PopupBox>
 
-                    <Button ToolTip="그래픽 타입" Click="grpTypeClick" Padding="4" Width="54" Height="54">
-                        <Image x:Name="grpImg"/>
+                    <Button ToolTip="그래픽 타입" Click="grpTypeClick" Width="54" Height="54" >
+                        <Image x:Name="grpImg" Width="40" Height="40" Margin="-8"/>
                     </Button>
 
                     <Label Content="배율:" VerticalAlignment="Center"/>
@@ -106,32 +112,63 @@
                         <ComboBoxItem Content="128px" Tag="128"/>
                         <ComboBoxItem Content="256px" Tag="256"/>
                     </ComboBox>
-                </ToolBar>
+                    <Separator/>
 
-                <ToolBar Style="{DynamicResource MaterialDesignToolBar}" ClipToBounds="False">
-                    <Label Content="레이어" VerticalAlignment="Top" Margin="-8,0,0,0"/>
-                    <Button Click="TileButton_Click">
-                        <materialDesign:PackIcon Kind="Mountain"/>
-                    </Button>
-                    <Button Click="DoodadButton_Click">
-                        <materialDesign:PackIcon Kind="Sprout" />
-                    </Button>
-                    <Button Click="UnitButton_Click">
-                        <materialDesign:PackIcon Kind="HumanHandsdown" />
-                    </Button>
-                    <Button Click="SpriteButton_Click">
-                        <materialDesign:PackIcon Kind="PineTree" />
-                    </Button>
-                    <Button Click="LocationButton_Click">
-                        <materialDesign:PackIcon Kind="AlphabetLBox" />
-                    </Button>
-                    <Button Click="FogButton_Click">
-                        <materialDesign:PackIcon Kind="Soundcloud" />
-                    </Button>
-                </ToolBar>
+                    <Label Content="레이어:" VerticalAlignment="Center"/>
+                    <ComboBox x:Name="LayerCB" SelectionChanged="LayerCB_SelectionChanged" Width="40">
+                        <ComboBoxItem>
+                            <materialDesign:PackIcon Kind="Mountain"/>
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <materialDesign:PackIcon Kind="Sprout"/>
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <materialDesign:PackIcon Kind="HumanHandsdown"/>
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <materialDesign:PackIcon Kind="PineTree"/>
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <materialDesign:PackIcon Kind="AlphabetLBox"/>
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <materialDesign:PackIcon Kind="Soundcloud"/>
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <materialDesign:PackIcon Kind="ShapeRectanglePlus"/>
+                        </ComboBoxItem>
+                    </ComboBox>
 
-                <ToolBar Style="{DynamicResource MaterialDesignToolBar}" ClipToBounds="False">
-                    <Label Content="EUD" VerticalAlignment="Top" Margin="-8,0,0,0"/>
+
+                    <materialDesign:PopupBox x:Name="CutpasteSelect" Visibility="Collapsed" StaysOpen="True" Style="{StaticResource MaterialDesignToolPopupBox}" Padding="4" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Center">
+                        <materialDesign:PopupBox.ToggleContent>
+                            <materialDesign:PackIcon Kind="CheckboxMultipleMarkedOutline" />
+                        </materialDesign:PopupBox.ToggleContent>
+                        <UniformGrid Columns="3">
+                            <ToggleButton Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" IsChecked="{Binding Path=view_Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <materialDesign:PackIcon Kind="Mountain" Height="21" Width="21" />
+                            </ToggleButton>
+                            <ToggleButton Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" IsChecked="{Binding Path=view_Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <materialDesign:PackIcon Kind="Sprout" Height="21" Width="21" />
+                            </ToggleButton>
+                            <ToggleButton Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" IsChecked="{Binding Path=view_Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <materialDesign:PackIcon Kind="HumanHandsdown" Height="21" Width="21" />
+                            </ToggleButton>
+                            <ToggleButton Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" IsChecked="{Binding Path=view_Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <materialDesign:PackIcon Kind="PineTree" Height="21" Width="21" />
+                            </ToggleButton>
+                            <ToggleButton Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" IsChecked="{Binding Path=view_Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <materialDesign:PackIcon Kind="AlphabetLBox" Height="21" Width="21" />
+                            </ToggleButton>
+                            <ToggleButton Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" IsChecked="{Binding Path=view_Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <materialDesign:PackIcon Kind="Soundcloud" Height="21" Width="21" />
+                            </ToggleButton>
+                        </UniformGrid>
+                    </materialDesign:PopupBox>
+                    
+                    
+                    
+                    <Separator/>
                     <ToggleButton />
                     <Button>
                         <materialDesign:PackIcon Kind="Play" />
@@ -211,37 +248,303 @@
 
                     </Grid>
                 </Grid>
-                <Grid x:Name="PopupGrid" PreviewMouseDown="Grid_MouseDown" Background="#33000000" Visibility="Collapsed">
-                    <materialDesign:Card x:Name="MulitLocSelecter" Width="100" MaxHeight="240" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed">
-                        <ListBox x:Name="LocList" MouseUp="LocList_MouseUp">
-                            <ListBoxItem Content="이름 1"/>
-                            <ListBoxItem Content="이름 2"/>
-                        </ListBox>
-                    </materialDesign:Card>
-                    <materialDesign:Card x:Name="LocEditPanel" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed">
-                        <StackPanel Margin="8" Width="240">
-                            <StackPanel DockPanel.Dock="Left" >
-                                <TextBox Text="{Binding Path=NAME}" Margin="4"/>
-                                <UniformGrid Rows="1" Columns="4">
-                                    <TextBox Text="{Binding Path=X, UpdateSourceTrigger=LostFocus}" Margin="4"/>
-                                    <TextBox Text="{Binding Path=Y, UpdateSourceTrigger=LostFocus}" Margin="4"/>
-                                    <TextBox Text="{Binding Path=WIDTH, UpdateSourceTrigger=LostFocus}" Margin="4"/>
-                                    <TextBox Text="{Binding Path=HEIGHT, UpdateSourceTrigger=LostFocus}" Margin="4"/>
-                                </UniformGrid>
-                            </StackPanel>
+                <Grid x:Name="PopupGrid" PreviewMouseDown="Grid_MouseDown" Background="#33000000" Visibility="Collapsed" IsVisibleChanged="PopupGrid_IsVisibleChanged">
+                    <Grid x:Name="PopupInnerGrid" HorizontalAlignment="Left" VerticalAlignment="Top">
+                        <materialDesign:Card x:Name="MulitLocSelecter" Width="100" MaxHeight="240" Visibility="Collapsed">
+                            <ListBox x:Name="LocList" MouseUp="LocList_MouseUp">
+                                <ListBoxItem Content="이름 1"/>
+                                <ListBoxItem Content="이름 2"/>
+                            </ListBox>
+                        </materialDesign:Card>
+                        <materialDesign:Card x:Name="LocEditPanel" Visibility="Collapsed">
+                            <DockPanel>
+                                <ListBox x:Name="LocEditList" DockPanel.Dock="Left" MaxHeight="240" SelectionChanged="LocEditList_SelectionChanged" PreviewMouseUp="LocEditList_PreviewMouseUp">
 
-                            <UniformGrid Columns="3" Rows="2">
-                                <CheckBox Content="낮은 지상" IsChecked="{Binding Path=LowGround}"/>
-                                <CheckBox Content="보통 지상" IsChecked="{Binding Path=MediGround}"/>
-                                <CheckBox Content="높은 지상" IsChecked="{Binding Path=HighGround}"/>
-                                <CheckBox Content="낮은 공중" IsChecked="{Binding Path=LowAir}"/>
-                                <CheckBox Content="보통 공중" IsChecked="{Binding Path=MediAir}"/>
-                                <CheckBox Content="높은 공중" IsChecked="{Binding Path=HighAir}"/>
-                            </UniformGrid>
-                        </StackPanel>
-                    </materialDesign:Card>
+                                </ListBox>
+                                <StackPanel Margin="8" Width="240">
+                                    <StackPanel DockPanel.Dock="Left" >
+                                        <TextBox Text="{Binding Path=NAME, UpdateSourceTrigger=PropertyChanged}" Margin="4"/>
+                                        <UniformGrid Rows="1" Columns="4">
+                                            <TextBox Text="{Binding Path=X, UpdateSourceTrigger=PropertyChanged}" Margin="4"/>
+                                            <TextBox Text="{Binding Path=Y, UpdateSourceTrigger=PropertyChanged}" Margin="4"/>
+                                            <TextBox Text="{Binding Path=WIDTH, UpdateSourceTrigger=PropertyChanged}" Margin="4"/>
+                                            <TextBox Text="{Binding Path=HEIGHT, UpdateSourceTrigger=PropertyChanged}" Margin="4"/>
+                                        </UniformGrid>
+                                    </StackPanel>
+
+                                    <UniformGrid Columns="3" Rows="2">
+                                        <CheckBox Content="낮은 지상" IsChecked="{Binding Path=LowGround}"/>
+                                        <CheckBox Content="보통 지상" IsChecked="{Binding Path=MediGround}"/>
+                                        <CheckBox Content="높은 지상" IsChecked="{Binding Path=HighGround}"/>
+                                        <CheckBox Content="낮은 공중" IsChecked="{Binding Path=LowAir}"/>
+                                        <CheckBox Content="보통 공중" IsChecked="{Binding Path=MediAir}"/>
+                                        <CheckBox Content="높은 공중" IsChecked="{Binding Path=HighAir}"/>
+                                    </UniformGrid>
+                                </StackPanel>
+                            </DockPanel>
+                        </materialDesign:Card>
+                        <materialDesign:Card x:Name="SpriteContextMenu" Visibility="Collapsed">
+
+                            <Menu>
+                                <Menu.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel/>
+                                    </ItemsPanelTemplate>
+                                </Menu.ItemsPanel>
+                                <MenuItem Header="편집(Enter)" x:Name="SpriteEditMenuItem" Click="spriteEdit_Click" InputGestureText="Enter">
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon Kind="Edit" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="선택해제" x:Name="SpriteDeselectMenuItem" Click="spriteDeselect_Click">
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon Kind="BorderNoneVariant"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <Separator/>
+                                <MenuItem Header="잘라내기" x:Name="SpriteCutMenuItem" Click="spriteCut_Click" InputGestureText="Ctrl+X">
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon Kind="ContentCut" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="복사" x:Name="SpriteCopyMenuItem" Click="spriteCopy_Click" InputGestureText="Ctrl+C">
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon Kind="ContentCopy"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="붙여넣기" Click="spritePaste_Click" InputGestureText="Ctrl+V">
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon Kind="ContentPaste"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="삭제" x:Name="SpriteDeleteMenuItem" Click="spriteDelete_Click" InputGestureText="Delete">
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon Kind="Delete"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </Menu>
+                        </materialDesign:Card>
+                        <materialDesign:Card x:Name="SpriteEditPanel" Visibility="Collapsed">
+                            <DockPanel>
+                                <ListBox x:Name="SpriteEditList" DockPanel.Dock="Left" MaxHeight="240" SelectionChanged="SpriteEditList_SelectionChanged">
+
+                                </ListBox>
+                                <StackPanel Margin="8" Width="240">
+                                    <StackPanel>
+                                        <TextBlock x:Name="SpriteName" Margin="4"/>
+                                        <UniformGrid Rows="1" Columns="2">
+                                            <UniformGrid Rows="1" Columns="2">
+                                                <TextBox Text="{Binding Path=X}" Margin="4"/>
+                                                <TextBox Text="{Binding Path=Y}" Margin="4"/>
+                                            </UniformGrid>
+                                            <ComboBox SelectedIndex="{Binding PLAYER}" MaxDropDownHeight="140">
+                                                <ComboBoxItem Content="플레이어 1"/>
+                                                <ComboBoxItem Content="플레이어 2"/>
+                                                <ComboBoxItem Content="플레이어 3"/>
+                                                <ComboBoxItem Content="플레이어 4"/>
+                                                <ComboBoxItem Content="플레이어 5"/>
+                                                <ComboBoxItem Content="플레이어 6"/>
+                                                <ComboBoxItem Content="플레이어 7"/>
+                                                <ComboBoxItem Content="플레이어 8"/>
+                                                <ComboBoxItem Content="플레이어 9"/>
+                                                <ComboBoxItem Content="플레이어 10"/>
+                                                <ComboBoxItem Content="플레이어 11"/>
+                                                <ComboBoxItem Content="플레이어 12"/>
+                                            </ComboBox>
+                                        </UniformGrid>
+                                    </StackPanel>
+
+
+                                    <UniformGrid Columns="2">
+                                        <CheckBox Content="Bit 0" IsChecked="{Binding bit0}"/>
+                                        <CheckBox Content="Bit 1" IsChecked="{Binding bit1}"/>
+                                        <CheckBox Content="Bit 2" IsChecked="{Binding bit2}"/>
+                                        <CheckBox Content="Bit 3" IsChecked="{Binding bit3}"/>
+                                        <CheckBox Content="Bit 4" IsChecked="{Binding bit4}"/>
+                                        <CheckBox Content="Bit 5" IsChecked="{Binding bit5}"/>
+                                        <CheckBox Content="Bit 6" IsChecked="{Binding bit6}"/>
+                                        <CheckBox Content="Bit 7" IsChecked="{Binding bit7}"/>
+                                        <CheckBox Content="Bit 8" IsChecked="{Binding bit8}"/>
+                                        <CheckBox Content="Bit 9" IsChecked="{Binding bit9}"/>
+                                        <CheckBox Content="Bit 10" IsChecked="{Binding bit10}"/>
+                                        <CheckBox Content="Bit 11" IsChecked="{Binding bit11}"/>
+                                        <CheckBox Content="스프라이트" IsChecked="{Binding bit12}" IsEnabled="False"/>
+                                        <CheckBox Content="유닛스프라이트" IsChecked="{Binding bit13}" IsEnabled="False"/>
+                                        <CheckBox Content="Bit 14" IsChecked="{Binding bit14}"/>
+                                        <CheckBox Content="Bit 15" IsChecked="{Binding bit15}"/>
+                                    </UniformGrid>
+                                </StackPanel>
+                            </DockPanel>
+                        </materialDesign:Card>
+                        <materialDesign:Card x:Name="UnitContextMenu" Visibility="Collapsed">
+
+                            <Menu>
+                                <Menu.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel/>
+                                    </ItemsPanelTemplate>
+                                </Menu.ItemsPanel>
+                                <MenuItem Header="편집(Enter)" x:Name="UnitEditMenuItem" Click="unitEdit_Click" InputGestureText="Enter">
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon Kind="Edit" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="선택해제" x:Name="UnitDeselectMenuItem" Click="unitDeselect_Click">
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon Kind="BorderNoneVariant"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <Separator/>
+                                <MenuItem Header="잘라내기" x:Name="UnitCutMenuItem" Click="unitCut_Click" InputGestureText="Ctrl+X">
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon Kind="ContentCut" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="복사" x:Name="UnitCopyMenuItem" Click="unitCopy_Click" InputGestureText="Ctrl+C">
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon Kind="ContentCopy"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="붙여넣기" Click="unitPaste_Click" InputGestureText="Ctrl+V">
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon Kind="ContentPaste"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="삭제" x:Name="UnitDeleteMenuItem" Click="unitDelete_Click" InputGestureText="Delete">
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon Kind="Delete"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </Menu>
+                        </materialDesign:Card>
+                        <materialDesign:Card x:Name="UnitEditPanel" Visibility="Collapsed">
+                            <DockPanel>
+                                <ListBox x:Name="UnitEditList" DockPanel.Dock="Left" MaxHeight="240" SelectionChanged="UnitEditList_SelectionChanged">
+
+                                </ListBox>
+                                <StackPanel Margin="8" Width="300">
+                                    <StackPanel>
+                                        <TextBlock x:Name="UnitName" Margin="4"/>
+                                        <UniformGrid Rows="1" Columns="4">
+
+                                            <TextBox Text="{Binding Path=X}" Margin="4" materialDesign:TextFieldAssist.SuffixText="X"/>
+                                            <TextBox Text="{Binding Path=Y}" Margin="4" materialDesign:TextFieldAssist.SuffixText="Y"/>
+                                            <TextBox Text="{Binding Path=unitID}" Margin="4" materialDesign:TextFieldAssist.SuffixText="UnitID"/>
+                                            <ComboBox SelectedIndex="{Binding player}" MaxDropDownHeight="140">
+                                                <ComboBoxItem Content="플레이어 1"/>
+                                                <ComboBoxItem Content="플레이어 2"/>
+                                                <ComboBoxItem Content="플레이어 3"/>
+                                                <ComboBoxItem Content="플레이어 4"/>
+                                                <ComboBoxItem Content="플레이어 5"/>
+                                                <ComboBoxItem Content="플레이어 6"/>
+                                                <ComboBoxItem Content="플레이어 7"/>
+                                                <ComboBoxItem Content="플레이어 8"/>
+                                                <ComboBoxItem Content="플레이어 9"/>
+                                                <ComboBoxItem Content="플레이어 10"/>
+                                                <ComboBoxItem Content="플레이어 11"/>
+                                                <ComboBoxItem Content="플레이어 12"/>
+                                            </ComboBox>
+                                        </UniformGrid>
+                                    </StackPanel>
+
+
+                                    <UniformGrid Columns="2">
+                                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                                            <ToggleButton x:Name="HPDefault" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}"
+                                                      IsChecked="{Binding hpvalid}">
+                                                <materialDesign:PackIcon Kind="Add" Height="21" Width="21"/>
+                                            </ToggleButton>
+                                            <StackPanel IsEnabled="{Binding ElementName=HPDefault, Path=IsChecked}" Orientation="Horizontal">
+                                                <TextBlock Text="체력" VerticalAlignment="Center" Width="40" HorizontalAlignment="Center" FlowDirection="RightToLeft"/>
+                                                <TextBox Width="40" VerticalAlignment="Center" Text="{Binding hitPoints}" />
+                                                <TextBlock Text="%" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                                            <ToggleButton x:Name="ShildDefault" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" 
+                                                      IsChecked="{Binding shvalid}">
+                                                <materialDesign:PackIcon Kind="Add" Height="21" Width="21"/>
+                                            </ToggleButton>
+                                            <StackPanel IsEnabled="{Binding ElementName=ShildDefault, Path=IsChecked}" Orientation="Horizontal">
+                                                <TextBlock Text="쉴드" VerticalAlignment="Center" Width="40" HorizontalAlignment="Center" FlowDirection="RightToLeft"/>
+                                                <TextBox Width="40" VerticalAlignment="Center" Text="{Binding shieldPoints}" />
+                                                <TextBlock Text="%" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                                            <ToggleButton x:Name="EnergyDefault" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" 
+                                                      IsChecked="{Binding envalid}">
+                                                <materialDesign:PackIcon Kind="Add" Height="21" Width="21"/>
+                                            </ToggleButton>
+                                            <StackPanel IsEnabled="{Binding ElementName=EnergyDefault, Path=IsChecked}" Orientation="Horizontal">
+                                                <TextBlock Text="에너지" VerticalAlignment="Center" Width="40" HorizontalAlignment="Center" FlowDirection="RightToLeft"/>
+                                                <TextBox Width="40" VerticalAlignment="Center" Text="{Binding energyPoints}" />
+                                                <TextBlock Text="%" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <DockPanel DockPanel.Dock="Top" >
+                                            <ToggleButton x:Name="ResourceDefault" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" 
+                                                      IsChecked="{Binding resvalid}">
+                                                <materialDesign:PackIcon Kind="Add" Height="21" Width="21"/>
+                                            </ToggleButton>
+                                            <StackPanel IsEnabled="{Binding ElementName=ResourceDefault, Path=IsChecked}" Orientation="Horizontal">
+                                                <TextBlock Text="자원" DockPanel.Dock="Left" VerticalAlignment="Center" Width="40" HorizontalAlignment="Center" FlowDirection="RightToLeft"/>
+                                                <TextBox VerticalAlignment="Center" Width="60" HorizontalAlignment="Left" Text="{Binding resoruceAmount}" />
+                                            </StackPanel>
+                                        </DockPanel>
+                                        <DockPanel DockPanel.Dock="Top" >
+                                            <ToggleButton x:Name="HangerDefault" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" 
+                                                      IsChecked="{Binding hangarvalid}">
+                                                <materialDesign:PackIcon Kind="Add" Height="21" Width="21"/>
+                                            </ToggleButton>
+                                            <StackPanel IsEnabled="{Binding ElementName=HangerDefault, Path=IsChecked}" Orientation="Horizontal">
+                                                <TextBlock Text="격납수" DockPanel.Dock="Left" VerticalAlignment="Center" Width="40" HorizontalAlignment="Center" FlowDirection="RightToLeft"/>
+                                                <TextBox VerticalAlignment="Center" Width="60" HorizontalAlignment="Left" Text="{Binding hangar}" />
+                                            </StackPanel>
+                                        </DockPanel>
+                                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                                            <ToggleButton x:Name="Clackefault" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" 
+                                                      IsChecked="{Binding cloakvalid}">
+                                                <materialDesign:PackIcon Kind="Add" Height="21" Width="21"/>
+                                            </ToggleButton>
+                                            <CheckBox IsChecked="{Binding cloakstate}" IsEnabled="{Binding ElementName=Clackefault, Path=IsChecked}" Content="클로킹" DockPanel.Dock="Top" />
+                                        </StackPanel>
+                                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                                            <ToggleButton x:Name="BurrowDefault" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" 
+                                                      IsChecked="{Binding burrowvalid}">
+                                                <materialDesign:PackIcon Kind="Add" Height="21" Width="21"/>
+                                            </ToggleButton>
+                                            <CheckBox IsChecked="{Binding burrowstate}" IsEnabled="{Binding ElementName=BurrowDefault, Path=IsChecked}" Content="버러우" DockPanel.Dock="Top" />
+                                        </StackPanel>
+                                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                                            <ToggleButton x:Name="LiftDefault" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" 
+                                                      IsChecked="{Binding tranvalid}">
+                                                <materialDesign:PackIcon Kind="Add" Height="21" Width="21"/>
+                                            </ToggleButton>
+                                            <CheckBox IsChecked="{Binding buildstate}" IsEnabled="{Binding ElementName=LiftDefault, Path=IsChecked}" Content="건물뛰움" DockPanel.Dock="Top" />
+                                        </StackPanel>
+                                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                                            <ToggleButton x:Name="HallDefault" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" 
+                                                      IsChecked="{Binding hallvalid}">
+                                                <materialDesign:PackIcon Kind="Add" Height="21" Width="21"/>
+                                            </ToggleButton>
+                                            <CheckBox IsChecked="{Binding hallstate}" IsEnabled="{Binding ElementName=HallDefault, Path=IsChecked}" Content="환상" DockPanel.Dock="Top" />
+                                        </StackPanel>
+                                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                                            <ToggleButton x:Name="InviDefault" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" 
+                                                      IsChecked="{Binding invinvalid}">
+                                                <materialDesign:PackIcon Kind="Add" Height="21" Width="21"/>
+                                            </ToggleButton>
+                                            <CheckBox IsChecked="{Binding invincstate}" IsEnabled="{Binding ElementName=InviDefault, Path=IsChecked}" Content="무적" DockPanel.Dock="Top" />
+                                        </StackPanel>
+                                    </UniformGrid>
+                                </StackPanel>
+                            </DockPanel>
+                        </materialDesign:Card>
+                    </Grid>
+                    
                 </Grid>
-                
+
                 <Expander x:Name="ToolBarExpander" Grid.ColumnSpan="2" DockPanel.Dock="Right" ExpandDirection="Left" Background="Transparent" HorizontalAlignment="Right">
                     <Expander.Header >
                         <TextBlock Text="팔레트" RenderTransformOrigin=".5,.5" >
@@ -270,36 +573,229 @@
                             <Button ToolTip="전장의 안개" x:Name="FogPalleteBtn" Padding="4" Style="{StaticResource MaterialDesignOutlinedButton}" Height="Auto" Click="FogButton_Click">
                                 <materialDesign:PackIcon Kind="Soundcloud" Width="32" Height="32" />
                             </Button>
+                            <Button ToolTip="편집" x:Name="CutPasteBtn" Padding="4" Style="{StaticResource MaterialDesignOutlinedButton}" Height="Auto" Click="CutPasteButton_Click">
+                                <materialDesign:PackIcon Kind="ShapeRectanglePlus" Width="32" Height="32" />
+                            </Button>
                         </StackPanel>
                         <Grid>
                             <DockPanel x:Name="TilePallet" Visibility="Collapsed">
-                                <Grid DockPanel.Dock="Top" Height="32">
-                                    <UniformGrid Columns="2">
-                                        <TextBox Margin="2"/>
-                                        <TextBox Margin="2"/>
-                                    </UniformGrid>
-                                </Grid>
+                                <ToolBarTray IsLocked="True" DockPanel.Dock="Top">
+                                    <ToolBar Style="{DynamicResource MaterialDesignToolBar}" >
+                                        <TextBlock Text="펜 크기:" VerticalAlignment="Center"/>
+                                        <TextBox Width="30" Text="{Binding BRUSHX, UpdateSourceTrigger=PropertyChanged}"/>
+                                        <TextBox Width="30" Text="{Binding BRUSHY, UpdateSourceTrigger=PropertyChanged}"/>
+                                        <ListBox SelectedIndex="0">
+                                            <ListBox.ToolTip>
+                                                <StackPanel>
+                                                    <TextBlock Text="MaterialDesignToolToggleFlatListBox" />
+                                                    <TextBlock Text="Exclusive selection" />
+                                                    <TextBlock Text="ListBoxAssist.IsToggle allows more natural toggle behaviour" />
+                                                </StackPanel>
+                                            </ListBox.ToolTip>
+                                            <ListBoxItem>
+                                                <materialDesign:PackIcon Kind="Pencil" />
+                                            </ListBoxItem>
+                                            <ListBoxItem>
+                                                <materialDesign:PackIcon Kind="VectorSquare" />
+                                            </ListBoxItem>
+                                        </ListBox>
+                                    </ToolBar>
+                                </ToolBarTray>
                                 <Separator DockPanel.Dock="Top"/>
-                                <Grid DockPanel.Dock="Top" Width="256" Height="64">
+                                <Grid DockPanel.Dock="Top" Width="512" Height="32" HorizontalAlignment="Left">
 
                                 </Grid>
                                 <Separator DockPanel.Dock="Top"/>
-                                <Grid>
+                                <Grid DockPanel.Dock="Top" Width="512" Height="64" HorizontalAlignment="Left">
 
+                                </Grid>
+                                <Separator DockPanel.Dock="Top" Width="512" HorizontalAlignment="Left"/>
+                                <Grid x:Name="TileDrawPanel">
+                                    <ScrollBar x:Name="TileScroll" HorizontalAlignment="Right" Maximum="600" LargeChange="100" SmallChange="10" ViewportSize="4" 
+        Background="{DynamicResource MaterialDesignPaper}"/>
                                 </Grid>
                             </DockPanel>
                             <DockPanel x:Name="DoodadPallet" Visibility="Collapsed" Background="{DynamicResource MaterialDesignPaper}">
 
                             </DockPanel>
-                            <DockPanel x:Name="UnitPallet" Visibility="Collapsed" Background="{DynamicResource MaterialDesignPaper}">
-
-                            </DockPanel>
-                            <DockPanel x:Name="SpritePallet" Visibility="Collapsed" Background="{DynamicResource MaterialDesignPaper}">
-
-                            </DockPanel>
-                            <DockPanel x:Name="LocationPallet" Visibility="Visible" Background="{DynamicResource MaterialDesignPaper}">
+                            <DockPanel x:Name="UnitPallet" Visibility="Visible" Background="{DynamicResource MaterialDesignPaper}">
                                 <ToolBarTray IsLocked="True" DockPanel.Dock="Top">
                                     <ToolBar Style="{DynamicResource MaterialDesignToolBar}" >
+                                        <RadioButton IsChecked="{Binding UNIT_BRUSHMODE, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                     GroupName="UNITEDIT" Style="{StaticResource MaterialDesignToolRadioButton}">
+                                            <materialDesign:PackIcon Kind="Pencil" />
+                                        </RadioButton>
+                                        <RadioButton IsChecked="{Binding UNIT_SELECTMODE, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                     GroupName="UNITEDIT" Style="{StaticResource MaterialDesignToolRadioButton}">
+                                            <materialDesign:PackIcon Kind="HandRight" />
+                                        </RadioButton>
+
+                                        <Separator/>
+                                        <ListBox x:Name="UnitToolListBox" SelectionMode="Extended">
+                                            <ListBox.ToolTip>
+                                                <StackPanel>
+                                                    <TextBlock Text="그리드에 맞춥니다." />
+                                                    <TextBlock Text="건물을 그리드에 맞춥니다." />
+                                                    <TextBlock Text="유닛을 쌓고, 어디든지 배치 할 수 있습니다." />
+                                                    <TextBlock Text="복사 시에 지형에 맞춰 복사합니다." />
+                                                </StackPanel>
+                                            </ListBox.ToolTip>
+                                            <ListBoxItem IsSelected="{Binding UNIT_GRIDFIX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <materialDesign:PackIcon Kind="Grid" />
+                                            </ListBoxItem>
+                                            <ListBoxItem IsSelected="{Binding UNIT_BUILDINGFIX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <materialDesign:PackIcon Kind="HomeCity" />
+                                            </ListBoxItem>
+                                            <ListBoxItem IsSelected="{Binding UNIT_ALLOWSTACK, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <materialDesign:PackIcon Kind="Buffer" />
+                                            </ListBoxItem>
+                                            <ListBoxItem IsSelected="{Binding UNIT_COPYTILEPOS, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <materialDesign:PackIcon Kind="ImageFilterCenterFocus" />
+                                            </ListBoxItem>
+                                        </ListBox>
+
+                                        <ComboBox SelectedIndex="{Binding UNITPLAYER}">
+                                            <ComboBoxItem Content="플레이어 1"/>
+                                            <ComboBoxItem Content="플레이어 2"/>
+                                            <ComboBoxItem Content="플레이어 3"/>
+                                            <ComboBoxItem Content="플레이어 4"/>
+                                            <ComboBoxItem Content="플레이어 5"/>
+                                            <ComboBoxItem Content="플레이어 6"/>
+                                            <ComboBoxItem Content="플레이어 7"/>
+                                            <ComboBoxItem Content="플레이어 8"/>
+                                            <ComboBoxItem Content="플레이어 9"/>
+                                            <ComboBoxItem Content="플레이어 10"/>
+                                            <ComboBoxItem Content="플레이어 11"/>
+                                            <ComboBoxItem Content="플레이어 12"/>
+                                            <ComboBoxItem Content="복사 정보에 맞춤"/>
+                                        </ComboBox>
+                                    </ToolBar>
+                                </ToolBarTray>
+
+                                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                                    <RadioButton x:Name="_unitbrush" Style="{StaticResource MaterialDesignTabRadioButton}"
+                                    Margin="4" IsChecked="True" Content="브러시" />
+                                    <RadioButton x:Name="_unitindex" Style="{StaticResource MaterialDesignTabRadioButton}"
+                                    Margin="4" IsChecked="False" Content="배치" Checked="_unitindex_Checked"/>
+                                </StackPanel>
+                                <Grid>
+                                    <mapeditorcontrol:CodeSelecter Visibility="{Binding ElementName=_unitbrush, Path=IsChecked, Converter={StaticResource BoolToVis}}" x:Name="UnitPallete" PreviewMouseDown="UnitPallete_MouseDown"/>
+                                    <Border Visibility="{Binding ElementName=_unitindex, Path=IsChecked, Converter={StaticResource BoolToVis}}">
+                                        <DockPanel Background="{DynamicResource MaterialDesignPaper}">
+                                            <ToolBarTray IsLocked="True" DockPanel.Dock="Top">
+                                                <ToolBar Style="{DynamicResource MaterialDesignToolBar}" >
+                                                    <Button x:Name="UnitUpBtn" Click="UnitUp_Click" ToolTip="올리기">
+                                                        <materialDesign:PackIcon Kind="ArrowExpandUp" />
+                                                    </Button>
+                                                    <Button x:Name="UnitDownBtn" Click="UnitDown_Click" ToolTip="내리기">
+                                                        <materialDesign:PackIcon Kind="ArrowExpandDown" />
+                                                    </Button>
+                                                </ToolBar>
+                                            </ToolBarTray>
+                                            <Grid DockPanel.Dock="Top" Height="24">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="48"/>
+                                                    <ColumnDefinition Width="48"/>
+                                                    <ColumnDefinition Width="48"/>
+                                                    <ColumnDefinition Width="48"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Text="선택" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="X" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="Y" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="이름" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                            </Grid>
+                                            <Separator DockPanel.Dock="Top"/>
+                                            <ListBox x:Name="UnitPlaceList" SelectionMode="Extended" HorizontalContentAlignment="Stretch">
+                                                <ListBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <junglecontrols:LazyControl>
+                                                            <DockPanel>
+                                                                <Grid DockPanel.Dock="Top">
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="48"/>
+                                                                        <ColumnDefinition Width="48"/>
+                                                                        <ColumnDefinition Width="48"/>
+                                                                        <ColumnDefinition Width="48"/>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <TextBlock Text="{Binding INDEX}" Grid.Column="0"/>
+                                                                    <Border Background="{Binding BackGround}" Grid.Column="1" Width="28" Height="16"/>
+                                                                    <TextBlock Text="{Binding X}" Grid.Column="2"/>
+                                                                    <TextBlock Text="{Binding Y}" Grid.Column="3"/>
+                                                                    <TextBlock Text="{Binding NAME, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="4"/>
+                                                                </Grid>
+                                                            </DockPanel>
+                                                        </junglecontrols:LazyControl>
+                                                    </DataTemplate>
+                                                </ListBox.ItemTemplate>
+                                            </ListBox>
+                                        </DockPanel>
+                                    </Border>
+                                </Grid>
+                            </DockPanel>
+                            <DockPanel x:Name="SpritePallet" Visibility="Collapsed" Background="{DynamicResource MaterialDesignPaper}">
+                                <ToolBarTray IsLocked="True" DockPanel.Dock="Top">
+                                    <ToolBar Style="{DynamicResource MaterialDesignToolBar}" >
+                                        <RadioButton IsChecked="{Binding SPRITE_BRUSHMODE, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                     GroupName="SPRITEEDIT" Style="{StaticResource MaterialDesignToolRadioButton}">
+                                            <materialDesign:PackIcon Kind="Pencil" />
+                                        </RadioButton>
+                                        <RadioButton IsChecked="{Binding SPRITE_SELECTMODE, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                     GroupName="SPRITEEDIT" Style="{StaticResource MaterialDesignToolRadioButton}">
+                                            <materialDesign:PackIcon Kind="HandRight" />
+                                        </RadioButton>
+
+                                        <Separator/>
+
+                                        <ListBox x:Name="SpriteToolListBox" SelectionMode="Extended">
+                                            <ListBox.ToolTip>
+                                                <StackPanel>
+                                                    <TextBlock Text="그리드에 맞춥니다." />
+                                                    <TextBlock Text="복사 시에 지형에 맞춰 복사합니다." />
+                                                </StackPanel>
+                                            </ListBox.ToolTip>
+                                            <ListBoxItem IsSelected="{Binding SPRITE_GRIDFIX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <materialDesign:PackIcon Kind="Grid" />
+                                            </ListBoxItem>
+                                            <ListBoxItem IsSelected="{Binding SPRITE_COPYTILEPOS, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <materialDesign:PackIcon Kind="ImageFilterCenterFocus" />
+                                            </ListBoxItem>
+                                        </ListBox>
+
+                                        <ComboBox SelectedIndex="{Binding SPRITEPLAYER}">
+                                            <ComboBoxItem Content="플레이어 1"/>
+                                            <ComboBoxItem Content="플레이어 2"/>
+                                            <ComboBoxItem Content="플레이어 3"/>
+                                            <ComboBoxItem Content="플레이어 4"/>
+                                            <ComboBoxItem Content="플레이어 5"/>
+                                            <ComboBoxItem Content="플레이어 6"/>
+                                            <ComboBoxItem Content="플레이어 7"/>
+                                            <ComboBoxItem Content="플레이어 8"/>
+                                            <ComboBoxItem Content="플레이어 9"/>
+                                            <ComboBoxItem Content="플레이어 10"/>
+                                            <ComboBoxItem Content="플레이어 11"/>
+                                            <ComboBoxItem Content="플레이어 12"/>
+                                        </ComboBox>
+                                    </ToolBar>
+                                </ToolBarTray>
+                                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                                    <RadioButton Style="{StaticResource MaterialDesignTabRadioButton}"
+                                    Margin="4" IsChecked="{Binding SPRITE_SPRITEBRUSH}" Content="스프라이트" />
+                                    <RadioButton Style="{StaticResource MaterialDesignTabRadioButton}"
+                                    Margin="4" IsChecked="{Binding SPRITE_UNITBRUSH}" Content="유닛" />
+                                </StackPanel>
+                                <Grid>
+                                    <mapeditorcontrol:CodeSelecter Visibility="{Binding SPRITE_SPRITEBRUSH, Converter={StaticResource BoolToVis}}" x:Name="SpritePallete" PreviewMouseDown="SpritePallete_MouseDown"/>
+                                    <mapeditorcontrol:CodeSelecter Visibility="{Binding SPRITE_UNITBRUSH, Converter={StaticResource BoolToVis}}" x:Name="SpritePallete_Unit" PreviewMouseDown="SpritePallete_MouseDown"/>
+                                </Grid>
+                            </DockPanel>
+                            <DockPanel x:Name="LocationPallet" Visibility="Collapsed" Background="{DynamicResource MaterialDesignPaper}">
+                                <ToolBarTray IsLocked="True" DockPanel.Dock="Top">
+                                    <ToolBar Style="{DynamicResource MaterialDesignToolBar}" >
+                                        <Button x:Name="LocEditBtn" Click="LocEditBtn_Click" ToolTip="편집">
+                                            <materialDesign:PackIcon Kind="Pencil" />
+                                        </Button>
                                         <Button x:Name="UpBtn" Click="LocUp_Click" ToolTip="올리기">
                                             <materialDesign:PackIcon Kind="ArrowExpandUp" />
                                         </Button>
@@ -324,17 +820,16 @@
                                         <ColumnDefinition Width="32"/>
                                         <ColumnDefinition Width="32"/>
                                         <ColumnDefinition Width="32"/>
-                                        <ColumnDefinition Width="32"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Text="X" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="Y" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="넓이" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="높이" Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="이름" Grid.Column="6" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="X" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="Y" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="넓이" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="높이" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="이름" Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                 </Grid>
                                 <Separator DockPanel.Dock="Top"/>
-                                <ListBox x:Name="LocationList" SelectionChanged="LocationList_SelectionChanged">
+                                <ListBox x:Name="LocationList" SelectionChanged="LocationList_SelectionChanged" MouseDoubleClick="LocationList_MouseDoubleClick">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
                                             <junglecontrols:LazyControl>
@@ -346,50 +841,54 @@
                                                             <ColumnDefinition Width="32"/>
                                                             <ColumnDefinition Width="32"/>
                                                             <ColumnDefinition Width="32"/>
-                                                            <ColumnDefinition Width="32"/>
                                                             <ColumnDefinition Width="*"/>
                                                         </Grid.ColumnDefinitions>
-                                                        <ToggleButton x:Name="EditPanelView" Grid.Column="0" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" Width="24" Height="24" Margin="0,-8">
-                                                            <materialDesign:PackIcon Kind="Add" Height="16" Width="16" />
-                                                        </ToggleButton>
-                                                        <TextBlock Text="{Binding INDEX}" Grid.Column="1"/>
-                                                        <TextBlock Text="{Binding X}" Grid.Column="2"/>
-                                                        <TextBlock Text="{Binding Y}" Grid.Column="3"/>
-                                                        <TextBlock Text="{Binding WIDTH}" Grid.Column="4"/>
-                                                        <TextBlock Text="{Binding HEIGHT}" Grid.Column="5"/>
-                                                        <TextBlock Text="{Binding NAME, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="6"/>
+                                                        <TextBlock Text="{Binding INDEX}" Grid.Column="0"/>
+                                                        <TextBlock Text="{Binding X}" Grid.Column="1"/>
+                                                        <TextBlock Text="{Binding Y}" Grid.Column="2"/>
+                                                        <TextBlock Text="{Binding WIDTH}" Grid.Column="3"/>
+                                                        <TextBlock Text="{Binding HEIGHT}" Grid.Column="4"/>
+                                                        <TextBlock Text="{Binding NAME, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="5"/>
                                                     </Grid>
-                                                    <DockPanel Visibility="{Binding ElementName=EditPanelView, Path=IsChecked, Converter={StaticResource BoolToVis}}" Margin="8" Width="496">
-                                                        <TextBlock Text="데이터 수정" DockPanel.Dock="Top"/>
-                                                        <DockPanel DockPanel.Dock="Top">
-                                                            <StackPanel DockPanel.Dock="Left" Width="200">
-                                                                <TextBox Text="{Binding Path=NAME}" Margin="4"/>
-                                                                <UniformGrid Rows="1" Columns="4">
-                                                                    <TextBox Text="{Binding Path=X, UpdateSourceTrigger=LostFocus}" Margin="4"/>
-                                                                    <TextBox Text="{Binding Path=Y, UpdateSourceTrigger=LostFocus}" Margin="4"/>
-                                                                    <TextBox Text="{Binding Path=WIDTH, UpdateSourceTrigger=LostFocus}" Margin="4"/>
-                                                                    <TextBox Text="{Binding Path=HEIGHT, UpdateSourceTrigger=LostFocus}" Margin="4"/>
-                                                                </UniformGrid>
-                                                            </StackPanel>
-
-                                                            <UniformGrid Columns="3" Rows="2">
-                                                                <CheckBox Content="낮은 지상" IsChecked="{Binding Path=LowGround}"/>
-                                                                <CheckBox Content="보통 지상" IsChecked="{Binding Path=MediGround}"/>
-                                                                <CheckBox Content="높은 지상" IsChecked="{Binding Path=HighGround}"/>
-                                                                <CheckBox Content="낮은 공중" IsChecked="{Binding Path=LowAir}"/>
-                                                                <CheckBox Content="보통 공중" IsChecked="{Binding Path=MediAir}"/>
-                                                                <CheckBox Content="높은 공중" IsChecked="{Binding Path=HighAir}"/>
-                                                            </UniformGrid>
-                                                        </DockPanel>
-                                                    </DockPanel>
                                                 </DockPanel>
                                             </junglecontrols:LazyControl>
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
-                                    
                                 </ListBox>
                             </DockPanel>
                             <DockPanel x:Name="FogofWarPallet" Visibility="Collapsed" Background="{DynamicResource MaterialDesignPaper}">
+                                <StackPanel>
+                                    <ToolBarTray IsLocked="True" DockPanel.Dock="Top">
+                                        <ToolBar Style="{DynamicResource MaterialDesignToolBar}" >
+                                            <ComboBox SelectedIndex="{Binding OPTFOGOFWARPLAYER}">
+                                                <ComboBoxItem Content="플레이어 1"/>
+                                                <ComboBoxItem Content="플레이어 2"/>
+                                                <ComboBoxItem Content="플레이어 3"/>
+                                                <ComboBoxItem Content="플레이어 4"/>
+                                                <ComboBoxItem Content="플레이어 5"/>
+                                                <ComboBoxItem Content="플레이어 6"/>
+                                                <ComboBoxItem Content="플레이어 7"/>
+                                                <ComboBoxItem Content="플레이어 8"/>
+                                                <ComboBoxItem Content="세력 1"/>
+                                                <ComboBoxItem Content="세력 2"/>
+                                                <ComboBoxItem Content="세력 3"/>
+                                                <ComboBoxItem Content="세력 4"/>
+                                                <ComboBoxItem Content="모든 플레이어"/>
+                                            </ComboBox>
+                                            <Button ToolTip="원" Click="FogUseCircle">
+                                                <materialDesign:PackIcon Kind="Circle"/>
+                                            </Button>
+                                            <Button ToolTip="사각형" Click="FogUseRect">
+                                                <materialDesign:PackIcon Kind="Square"/>
+                                            </Button>
+                                            <TextBlock Text="펜 크기:" VerticalAlignment="Center"/>
+                                            <TextBox Width="30" Text="{Binding BRUSHX, UpdateSourceTrigger=PropertyChanged}"/>
+                                            <TextBox Width="30" Text="{Binding BRUSHY, UpdateSourceTrigger=PropertyChanged}"/>
+                                        </ToolBar>
+                                    </ToolBarTray>
+                                </StackPanel>
+                            </DockPanel>
+                            <DockPanel x:Name="CutPastePallet" Visibility="Collapsed" Background="{DynamicResource MaterialDesignPaper}">
 
                             </DockPanel>
                         </Grid>

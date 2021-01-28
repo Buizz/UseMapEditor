@@ -12,7 +12,7 @@
             <Grid x:Name="itemGrid" Margin="-12,-8,0,-8" MinHeight="32">
                 <DockPanel Margin="12,8">
                     <Border DockPanel.Dock="Left" Height="{Binding ElementName=itemGrid, Path=ActualHeight}" Width="32" Margin="-6,-8,0,-8" Background="Black">
-                        <Image Source="{Binding ImageIcon}"/>
+                        <Image Source="{Binding ImageIcon}" Width="32" Height="32" Stretch="Uniform"/>
                     </Border>
                     <StackPanel Margin="8,0,0,0">
                         <TextBlock Foreground="{DynamicResource PrimaryHueMidBrush}" Text="{Binding MainName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" FontSize="{Binding MainNameSize, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>

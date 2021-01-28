@@ -273,8 +273,8 @@ namespace Data.Map
                     for (int i = 0; i < UNIT.Count; i++)
                     {
                         bw.Write(UNIT[i].unitclass);
-                        bw.Write(UNIT[i].x);
-                        bw.Write(UNIT[i].y);
+                        bw.Write(UNIT[i].X);
+                        bw.Write(UNIT[i].Y);
                         bw.Write(UNIT[i].unitID);
                         bw.Write(UNIT[i].linkFlag);
                         bw.Write(UNIT[i].validstatusFlag);
@@ -846,6 +846,12 @@ namespace Data.Map
                     COLR = br.ReadBytes(8);
                     for (int i = 0; i < 8; i++)
                     {
+                        if (COLR[i] >= ColorName.Count())
+                        {
+                            COLR[i] = 0;
+                        }
+
+
                         CRGB[i] = new Microsoft.Xna.Framework.Color(0, 0, COLR[i]);
                     }
 
@@ -864,7 +870,9 @@ namespace Data.Map
                     UNIT.Clear();
                     for (int i = 0; i < cHKToken.size / 36; i++)
                     {
-                        UNIT.Add(new CUNIT(br));
+                        CUNIT cUNIT = new CUNIT(br);
+                        cUNIT.SetMapEditor(mapEditor);
+                        UNIT.Add(cUNIT);
                     }
 
                     break;

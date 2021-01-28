@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using UseMapEditor.Control;
+using UseMapEditor.FileData;
 
 namespace UseMapEditor.Windows
 {
@@ -22,12 +23,14 @@ namespace UseMapEditor.Windows
     public partial class TrigEditPlus : Window
     {
         MapEditor mapEditor;
+
+        bool IsTrigger;
         public TrigEditPlus(MapEditor mapEditor)
         {
             InitializeComponent();
 
             this.mapEditor = mapEditor;
-
+            this.IsTrigger = true;
             Title = mapEditor.mapdata.FilePath;
 
             StringBuilder stringBuilder = new StringBuilder();
@@ -50,8 +53,15 @@ namespace UseMapEditor.Windows
         private Lua.TrigEditPlus.Main teplua = Global.WindowTool.lua.tepMain;
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            List<CTrigger> cTriggers = teplua.exec(CodeEditor.Text, mapEditor, IsTrigger);
+            if(cTriggers == null)
+            {
+                return;
+            }
+
+
             mapEditor.mapdata.Triggers.Clear();
-            foreach (var item in teplua.exec(CodeEditor.Text, mapEditor))
+            foreach (var item in cTriggers)
             {
                 mapEditor.mapdata.Triggers.Add(item);
             }

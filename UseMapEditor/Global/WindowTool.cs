@@ -26,6 +26,7 @@ namespace UseMapEditor.Global
         public static string[] techgroup = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + @"\Data\Group\Tech.txt");
         public static string[] spritegroup = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + @"\Data\Group\Sprite.txt");
 
+        public static string[] imagename = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + @"\Data\Images.txt");
 
         public static string[] soundlist = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + @"\Data\SoundList.txt");
 

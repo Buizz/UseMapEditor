@@ -33,7 +33,7 @@ namespace UseMapEditor.Control.MapEditorControl
 
         private Codetype codetype;
 
-
+        public int SelectIndex = -1;
 
 
 
@@ -64,6 +64,10 @@ namespace UseMapEditor.Control.MapEditorControl
                 case Codetype.Tech:
                     MainListbox.SelectedItem = mapEditor.mapDataBinding.techDataBindings[index];
                     MainListbox.ScrollIntoView(mapEditor.mapDataBinding.techDataBindings[index]);
+                    break;
+                case Codetype.Sprite:
+                    MainListbox.SelectedItem = mapEditor.mapDataBinding.spriteDataBindings[index];
+                    MainListbox.ScrollIntoView(mapEditor.mapDataBinding.spriteDataBindings[index]);
                     break;
             }
         }
@@ -119,6 +123,14 @@ namespace UseMapEditor.Control.MapEditorControl
                     {
                         CreateTreeviewItem(Global.WindowTool.techgroup[i], mapEditor.mapDataBinding.techDataBindings[i], i);
                     }
+                    break;
+                case Codetype.Sprite:
+                    MainListbox.ItemsSource = mapEditor.mapDataBinding.spriteDataBindings;
+                    for (int i = 0; i < 517; i++)
+                    {
+                        CreateTreeviewItem(Global.WindowTool.spritegroup[i], mapEditor.mapDataBinding.spriteDataBindings[i], i);
+                    }
+
                     break;
             }
 
@@ -220,6 +232,8 @@ namespace UseMapEditor.Control.MapEditorControl
                     Binding binding = new Binding();
                     binding.Path = new PropertyPath("ImageIcon");
                     image.SetBinding(Image.SourceProperty, binding);
+                    image.Width = 32;
+                    image.Height = 32;
                 }
                 border.Child = image;
 
@@ -413,6 +427,15 @@ namespace UseMapEditor.Control.MapEditorControl
                                 }
                             }
                             break;
+                        case Codetype.Sprite:
+                            {
+                                SpriteDataBinding binding = (SpriteDataBinding)list.DataContext;
+                                if (binding != null)
+                                {
+                                    str = binding.AlphaName;
+                                }
+                            }
+                            break;
                     }
 
 
@@ -445,8 +468,37 @@ namespace UseMapEditor.Control.MapEditorControl
             {
                 MainListbox.Items.Filter = delegate (object obj)
                 {
-                    UnitDataBinding unitdata = (UnitDataBinding)obj;
-                    string str = unitdata.AlphaName;
+                    string str = "";
+                    switch (codetype)
+                    {
+                        case Codetype.Unit:
+                            {
+                                UnitDataBinding unitdata = (UnitDataBinding)obj;
+                                str = unitdata.AlphaName;
+                            }
+                            break;
+                        case Codetype.Upgrade:
+                            {
+                                UpgradeDataBinding unitdata = (UpgradeDataBinding)obj;
+                                str = unitdata.AlphaName;
+                            }
+                            break;
+                        case Codetype.Tech:
+                            {
+                                TechDataBinding unitdata = (TechDataBinding)obj;
+                                str = unitdata.AlphaName;
+                            }
+                            break;
+                        case Codetype.Sprite:
+                            {
+                                SpriteDataBinding unitdata = (SpriteDataBinding)obj;
+                                str = unitdata.AlphaName;
+                            }
+                            break;
+                    }
+
+      
+
                     if (String.IsNullOrEmpty(str)) return false;
                     int index = str.IndexOf(searchText, 0);
 
@@ -515,9 +567,20 @@ namespace UseMapEditor.Control.MapEditorControl
                             }
                         }
                         break;
+                    case Codetype.Sprite:
+                        {
+                            SpriteDataBinding list = (SpriteDataBinding)MainListbox.SelectedItem;
+                            if (list != null)
+                            {
+                                objid = list.ObjectID;
+                            }
+                        }
+                        break;
                 }
-
-
+                if (objid != -1)
+                {
+                    SelectIndex = objid;
+                }
                 SelectionChanged.Invoke(objid, e);
             }
         }
@@ -563,10 +626,22 @@ namespace UseMapEditor.Control.MapEditorControl
                                     }
                                 }
                                 break;
+                            case Codetype.Sprite:
+                                {
+                                    SpriteDataBinding binding = (SpriteDataBinding)list.DataContext;
+                                    if (binding != null)
+                                    {
+                                        objid = binding.ObjectID;
+                                    }
+                                }
+                                break;
                         }
                     }
                 }
-
+                if(objid != -1)
+                {
+                    SelectIndex = objid;
+                }
                 SelectionChanged.Invoke(objid, e);
             }
         }

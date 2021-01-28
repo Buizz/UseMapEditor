@@ -113,6 +113,12 @@ namespace UseMapEditor.Control.MapEditorControl
                 if (CopyedSelectTrigitem == null)
                 {
                     CopyedSelectTrigitem = new TrigItem(mapEditor.mapdata);
+
+                    if (!IsTrigger)
+                    {
+                        CopyedSelectTrigitem.IsTrigger = false;
+                        CopyedSelectTrigitem.IsAction = true;
+                    }
                 }
 
 

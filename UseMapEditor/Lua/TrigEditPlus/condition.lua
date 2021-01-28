@@ -1,5 +1,5 @@
 function Condition(Type, ...)
-    return {Type, ...}
+    return {type = "Condition", Type, ...}
 end
 
 
@@ -115,13 +115,13 @@ end
 
 
 function Memory(Memory, Comparison, Number)
-    Comparison = ParseModifier(Comparison)
+    Comparison = ParseComparison(Comparison)
     return Condition(24, Memory, Comparison, Number, 0, 0)
 end
 
 
 function MemoryX(Player, Comparison, Number, Mask)
-    Comparison = ParseModifier(Comparison)
+    Comparison = ParseComparison(Comparison)
     return Condition(24, Memory, Comparison, Number, Mask, 17235)
 end
 

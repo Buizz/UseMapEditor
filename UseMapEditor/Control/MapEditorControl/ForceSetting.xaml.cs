@@ -44,6 +44,13 @@ namespace UseMapEditor.Control.MapEditorControl
             HintAssist.SetHint(MainTB, "세력 " + (forceID + 1));
         }
 
+        public void Refresh()
+        {
+            forceBinding.PropertyChangeAll();
+        }
+
+
+
         private void ListBox_MouseEnter(object sender, MouseEventArgs e)
         {
             mapEditor.ForceSelectID = forceID;

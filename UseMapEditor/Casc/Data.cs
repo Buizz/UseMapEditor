@@ -94,9 +94,10 @@ namespace UseMapEditor.Casc
             return Bytes;
         }
 
-        public void OpenCascStorage()
+        public bool OpenCascStorage()
         {
             CascLib.CascOpenStorage(datapath, 0x200, ref hStorage);
+            return (hStorage.ToInt64() != 0);
         }
         byte[] Buffer = new byte[1025];
         public byte[] ReadFileCascStorage(string filename)

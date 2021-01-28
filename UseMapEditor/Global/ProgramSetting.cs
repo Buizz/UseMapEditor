@@ -78,6 +78,12 @@ namespace UseMapEditor.Global
                     case Settings.language_StatLan:
                         rv = "stat_txt_kor_kor";
                         break;
+                    case Settings.Program_GridColor:
+                        rv = "4278190080";
+                        break;
+                    case Settings.Program_GridSize:
+                        rv = "32";
+                        break;
                 }
             }
 
@@ -103,6 +109,8 @@ namespace UseMapEditor.Global
             Program_StarCraftPath,
             Program_GRPLoad,
             Program_IsDark,
+            Program_GridColor,
+            Program_GridSize,
             Render_MaxFrame,
             Render_UseVFR,
             language_StatLan

@@ -31,7 +31,7 @@ namespace UseMapEditor.Control.MapEditorControl
             if (cTrigger == null)
             {
                 IsOpenNewTrigger = true;
-                cTrigger = new CTrigger(mapEditor.mapdata);
+                cTrigger = new CTrigger(mapEditor.mapdata, IsTrigger);
             }
             else
             {
@@ -216,13 +216,13 @@ namespace UseMapEditor.Control.MapEditorControl
                 if(MainListBox.SelectedIndex == -1)
                 {
                     //선택 안했을 경우 맨 아래에 넣기
-                    mapEditor.mapdata.Triggers.Add(OpenedTrigger);
+                    triggerlist.Add(OpenedTrigger);
                     MainListBox.ScrollIntoView(OpenedTrigger);
                 }
                 else
                 {
                     //아닐 경우 인서트
-                    mapEditor.mapdata.Triggers.Insert(MainListBox.SelectedIndex, OpenedTrigger);
+                    triggerlist.Insert(MainListBox.SelectedIndex, OpenedTrigger);
                     MainListBox.ScrollIntoView(OpenedTrigger);
                 }
             }
@@ -410,7 +410,7 @@ namespace UseMapEditor.Control.MapEditorControl
 
             
 
-            List<CTrigger> ctrig = teplua.exec(pastetext, mapEditor);
+            List<CTrigger> ctrig = teplua.exec(pastetext, mapEditor, IsTrigger);
             if (ctrig != null)
             {
 
@@ -493,7 +493,7 @@ namespace UseMapEditor.Control.MapEditorControl
                 ItemEditBtn.IsEnabled = false;
                 ItemCutBtn.IsEnabled = false;
                 ItemCopyBtn.IsEnabled = false;
-                ItemPasteBtn.IsEnabled = false;
+                ItemPasteBtn.IsEnabled = true;
                 ItemDeleteBtn.IsEnabled = false;
             }
             else
@@ -503,9 +503,7 @@ namespace UseMapEditor.Control.MapEditorControl
                 ItemEditBtn.IsEnabled = true;
                 ItemCutBtn.IsEnabled = true;
                 ItemCopyBtn.IsEnabled = true;
-
                 ItemPasteBtn.IsEnabled = true;
-
                 ItemDeleteBtn.IsEnabled = true;
             }
         }

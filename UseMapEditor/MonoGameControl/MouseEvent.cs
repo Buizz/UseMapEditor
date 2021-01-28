@@ -29,8 +29,39 @@ namespace UseMapEditor.MonoGameControl
         private bool mouse_RightDown;
         private bool mouse_IsDrag;
 
+        private bool mouse_IsLeftDrag;
+
         public void MouseEvent(MouseState mouseState)
         {
+            if (!mouse_IsDrag)
+            {
+                MiniMapClick(mouseState);
+                if (IsMiniMapDrag)
+                {
+                    return;
+                }
+            }
+
+            if(mouse_IsDrag | mouseState.MiddleButton == ButtonState.Pressed)
+            {
+                if (MouseOuter.X < 16)
+                {
+                    mapeditor.ScrollLeft();
+                }
+                if (MouseOuter.X > screenwidth - 16)
+                {
+                    mapeditor.ScrollRight();
+                }
+                if (MouseOuter.Y < 16)
+                {
+                    mapeditor.ScrollUp();
+                }
+                if (MouseOuter.Y > screenheight - 16)
+                {
+                    mapeditor.ScrollDown();
+                }
+            }
+
 
             if (mouseState.RightButton == ButtonState.Pressed)
             {
@@ -38,14 +69,34 @@ namespace UseMapEditor.MonoGameControl
                 {
                     RightClickStart();
                 }
+
+                Vector2 differ = mouse_DragMapStart - mapeditor.PosScreenToMap(MousePos);
+                if ((Math.Abs(differ.X) > 0) | (Math.Abs(differ.Y) > 0))
+                {
+                    if (!mouse_IsDrag)
+                    {
+                        mouse_IsLeftDrag = false;
+                        DragStart();
+                    }
+                }
             }
-            else if (mouseState.RightButton == ButtonState.Released)
+            if (mouseState.RightButton == ButtonState.Released | !mapeditor.IsRightMouseDown)
             {
                 if (mouse_RightDown)
                 {
-                    RightClickEnd();
-                    mouse_RightDown = false;
+                    mouse_DragScreenStart = new Vector2();
+                    if (mouse_IsDrag & !mouse_IsLeftDrag)
+                    {
+                        DragEnd();
+                        mouse_IsDrag = false;
+                    }
+                    else
+                    {
+                        RightClickEnd();
+                    }
                 }
+
+                mouse_RightDown = false;
             }
 
 
@@ -62,19 +113,21 @@ namespace UseMapEditor.MonoGameControl
                 {
                     if (!mouse_IsDrag)
                     {
+                        mouse_IsLeftDrag = true;
                         DragStart();
                     }
                 }
 
             }
-            else if (mouseState.LeftButton == ButtonState.Released)
+            if (mouseState.LeftButton == ButtonState.Released | !mapeditor.IsLeftMouseDown)
             {
                 if (mouse_LeftDown)
                 {
                     mouse_DragScreenStart = new Vector2();
-                    if (mouse_IsDrag)
+                    if (mouse_IsDrag & mouse_IsLeftDrag)
                     {
                         DragEnd();
+                        mouse_IsDrag = false;
                     }
                     else
                     {
@@ -82,7 +135,6 @@ namespace UseMapEditor.MonoGameControl
                     }
                 }
 
-                mouse_IsDrag = false;
                 mouse_LeftDown = false;
             }
         }
@@ -90,13 +142,23 @@ namespace UseMapEditor.MonoGameControl
         public void RightClickStart()
         {
             mouse_RightDown = true;
+            mouse_DragScreenStart = MousePos;
+            mouse_DragMapStart = mapeditor.PosScreenToMap(mouse_DragScreenStart);
         }
 
         public void RightClickEnd()
         {
-            if (mapeditor.PalleteLayer == Control.MapEditor.Layer.Location)
+            switch (mapeditor.PalleteLayer)
             {
-                LocationRightMouseClick();
+                case Control.MapEditor.Layer.Location:
+                    LocationRightMouseClick();
+                    break;
+                case Control.MapEditor.Layer.Unit:
+                    UnitRightMouseClick();
+                    break;
+                case Control.MapEditor.Layer.Sprite:
+                    SpriteRightMouseClick();
+                    break;
             }
         }
 
@@ -106,13 +168,32 @@ namespace UseMapEditor.MonoGameControl
             mouse_LeftDown = true;
             mouse_DragScreenStart = MousePos;
             mouse_DragMapStart = mapeditor.PosScreenToMap(mouse_DragScreenStart);
+
+            switch (mapeditor.PalleteLayer)
+            {
+                case Control.MapEditor.Layer.Unit:
+                    UnitTaskStart();
+                    break;
+                case Control.MapEditor.Layer.Sprite:
+                    SpriteTaskStart();
+                    break;
+            }
+            
         }
 
         public void LeftClickEnd()
         {
-            if (mapeditor.PalleteLayer == Control.MapEditor.Layer.Location)
+            switch (mapeditor.PalleteLayer)
             {
-                LocationLeftMouseClick();
+                case Control.MapEditor.Layer.Location:
+                    LocationLeftMouseClick();
+                    break;
+                case Control.MapEditor.Layer.Unit:
+                    UnitClickEnd();
+                    break;
+                case Control.MapEditor.Layer.Sprite:
+                    SpriteClickEnd();
+                    break;
             }
         }
         public void DragStart()
@@ -131,11 +212,19 @@ namespace UseMapEditor.MonoGameControl
         {
             mouse_DragScreenEnd = MousePos;
             mouse_DragMapEnd = mapeditor.PosScreenToMap(mouse_DragScreenEnd);
-            if (mapeditor.PalleteLayer == Control.MapEditor.Layer.Location)
+            switch (mapeditor.PalleteLayer)
             {
-                LocationDragEnd();
-                //LocationSelect();
+                case Control.MapEditor.Layer.Location:
+                    LocationDragEnd();
+                    break;
+                case Control.MapEditor.Layer.Unit:
+                    UnitDragEnd();
+                    break;
+                case Control.MapEditor.Layer.Sprite:
+                    SpriteDragEnd();
+                    break;
             }
+
         }
 
     }

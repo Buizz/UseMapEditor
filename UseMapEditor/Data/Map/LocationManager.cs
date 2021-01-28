@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UseMapEditor.Control;
+using UseMapEditor.Task;
 
 namespace Data.Map
 {
@@ -21,8 +22,18 @@ namespace Data.Map
 
             public void PropertyChangeAll()
             {
-                OnPropertyChanged("ForceName");
+                OnPropertyChanged("X");
+                OnPropertyChanged("Y");
+                OnPropertyChanged("WIDTH");
+                OnPropertyChanged("HEIGHT");
+                OnPropertyChanged("NAME");
 
+                OnPropertyChanged("LowGround");
+                OnPropertyChanged("MediGround");
+                OnPropertyChanged("HighGround");
+                OnPropertyChanged("LowAir");
+                OnPropertyChanged("MediAir");
+                OnPropertyChanged("HighAir");
             }
             public event PropertyChangedEventHandler PropertyChanged;
 
@@ -47,6 +58,7 @@ namespace Data.Map
                 }
                 set
                 {
+                    mapEditor.taskManager.TaskAdd(new LocationEvent(mapEditor, this, "INDEX", value, index));
                     index = value;
                     mapEditor.SetDirty();
                     OnPropertyChanged("INDEX");
@@ -66,6 +78,7 @@ namespace Data.Map
                 }
                 set
                 {
+                    uint oldvalue = X;
                     if(L < R)
                     {
                         int w = (int)(R - L);
@@ -78,6 +91,9 @@ namespace Data.Map
                         R = value;
                         L = (uint)(R + w);
                     }
+
+
+                    mapEditor.taskManager.TaskAdd(new LocationEvent(mapEditor, this, "X", X, oldvalue));
                     mapEditor.SetDirty();
                     OnPropertyChanged("X");
                 }
@@ -91,6 +107,7 @@ namespace Data.Map
                 }
                 set
                 {
+                    uint oldvalue = Y;
                     if (T < B)
                     {
                         int w = (int)(B - T);
@@ -104,6 +121,7 @@ namespace Data.Map
                         T = (uint)(B + w);
                     }
 
+                    mapEditor.taskManager.TaskAdd(new LocationEvent(mapEditor, this, "Y", Y, oldvalue));
                     mapEditor.SetDirty();
                     OnPropertyChanged("Y");
                 }
@@ -116,6 +134,7 @@ namespace Data.Map
                 }
                 set
                 {
+                    int oldvalue = WIDTH;
                     int x = (int)X;
 
                     if (value > 0)
@@ -132,8 +151,8 @@ namespace Data.Map
                     }
 
 
+                    mapEditor.taskManager.TaskAdd(new LocationEvent(mapEditor, this, "WIDTH", WIDTH, oldvalue));
                     mapEditor.SetDirty();
-                    OnPropertyChanged("X");
                     OnPropertyChanged("WIDTH");
                 }
             }
@@ -145,6 +164,7 @@ namespace Data.Map
                 }
                 set
                 {
+                    int oldvalue = HEIGHT;
                     int y = (int)Y;
 
                     if (value > 0)
@@ -161,8 +181,8 @@ namespace Data.Map
                     }
 
 
+                    mapEditor.taskManager.TaskAdd(new LocationEvent(mapEditor, this, "HEIGHT", HEIGHT, oldvalue));
                     mapEditor.SetDirty();
-                    OnPropertyChanged("Y");
                     OnPropertyChanged("HEIGHT");
                 }
             }
@@ -181,6 +201,7 @@ namespace Data.Map
                 }
                 set
                 {
+                    mapEditor.taskManager.TaskAdd(new LocationEvent(mapEditor, this, "NAME", value, STRING.String));
                     STRING.String = value;
                     mapEditor.SetDirty();
                     OnPropertyChanged("NAME");
@@ -188,7 +209,27 @@ namespace Data.Map
             }
 
 
-            public ushort FLAG { get; set; }
+            private ushort _flag;
+            public ushort FLAG
+            {
+                get
+                {
+                    return _flag;
+                }
+                set
+                {
+                    mapEditor.taskManager.TaskAdd(new LocationEvent(mapEditor, this, "FLAG", value, _flag));
+                    _flag = value;
+                    mapEditor.SetDirty();
+                    OnPropertyChanged("LowGround");
+                    OnPropertyChanged("MediGround");
+                    OnPropertyChanged("HighGround");
+
+                    OnPropertyChanged("LowAir");
+                    OnPropertyChanged("MediAir");
+                    OnPropertyChanged("HighAir");
+                }
+            }
 
 
             public bool LowGround
@@ -207,8 +248,6 @@ namespace Data.Map
                     {
                         FLAG = (ushort)(FLAG & ~(0b1 << 0));
                     }
-                    mapEditor.SetDirty();
-                    OnPropertyChanged("LowGround");
                 }
             }
 
@@ -228,8 +267,6 @@ namespace Data.Map
                     {
                         FLAG = (ushort)(FLAG & ~(0b1 << 1));
                     }
-                    mapEditor.SetDirty();
-                    OnPropertyChanged("MediGround");
                 }
             }
 
@@ -249,8 +286,6 @@ namespace Data.Map
                     {
                         FLAG = (ushort)(FLAG & ~(0b1 << 2));
                     }
-                    mapEditor.SetDirty();
-                    OnPropertyChanged("HighGround");
                 }
             }
 
@@ -274,8 +309,6 @@ namespace Data.Map
                     {
                         FLAG = (ushort)(FLAG & ~(0b1 << 3));
                     }
-                    mapEditor.SetDirty();
-                    OnPropertyChanged("LowAir");
                 }
             }
 
@@ -295,8 +328,6 @@ namespace Data.Map
                     {
                         FLAG = (ushort)(FLAG & ~(0b1 << 4));
                     }
-                    mapEditor.SetDirty();
-                    OnPropertyChanged("MediAir");
                 }
             }
 
@@ -316,8 +347,6 @@ namespace Data.Map
                     {
                         FLAG = (ushort)(FLAG & ~(0b1 << 5));
                     }
-                    mapEditor.SetDirty();
-                    OnPropertyChanged("HighAir");
                 }
             }
 

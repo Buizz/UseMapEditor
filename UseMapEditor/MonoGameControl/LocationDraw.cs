@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using UseMapEditor.Task;
 using UseMapEditor.Tools;
 using static Data.Map.MapData;
 
@@ -266,11 +267,15 @@ namespace UseMapEditor.MonoGameControl
 
         private void LocationDelete()
         {
+            mapeditor.taskManager.TaskStart();
             for (int i = 0; i < mapeditor.SelectLocation.Count; i++)
             {
+                mapeditor.taskManager.TaskAdd(new LocationEvent(mapeditor ,mapeditor.SelectLocation[i], false));
                 mapeditor.mapdata.LocationDatas.Remove(mapeditor.SelectLocation[i]);
             }
+            mapeditor.taskManager.TaskEnd();
             mapeditor.SelectLocation.Clear();
+
         }
 
 
@@ -283,17 +288,36 @@ namespace UseMapEditor.MonoGameControl
 
         private void LocationRightMouseClick()
         {
-            //여기서 단일 선택됨.
-            if (hoverLoc.Count == 1)
+            if(mapeditor.SelectLocation.Count == 0)
             {
-                mapeditor.SelectLocation.Clear();
-                mapeditor.SelectLocation.Add(hoverLoc[0]);
-                if (mapeditor.SelectLocation.Count == 1 && hoverLoc[0] == mapeditor.SelectLocation[0])
+                //여기서 단일 선택됨.
+                if (hoverLoc.Count == 1)
                 {
-                    mapeditor.OpenLocEdit();
+                    mapeditor.SelectLocation.Clear();
+                    mapeditor.SelectLocation.Add(hoverLoc[0]);
+                    if (mapeditor.SelectLocation.Count == 1 && hoverLoc[0] == mapeditor.SelectLocation[0])
+                    {
+                        mapeditor.OpenLocEdit();
+                    }
                 }
-
             }
+            else if(mapeditor.SelectLocation.Count == 1)
+            {
+                if (hoverLoc.Count == 1)
+                {
+                    mapeditor.SelectLocation.Clear();
+                    mapeditor.SelectLocation.Add(hoverLoc[0]);
+                    if (mapeditor.SelectLocation.Count == 1 && hoverLoc[0] == mapeditor.SelectLocation[0])
+                    {
+                        mapeditor.OpenLocEdit();
+                    }
+                }
+            }
+            else
+            {
+                mapeditor.OpenLocEdit();
+            }
+
         }
         private void LocationLeftMouseClick()
         {
@@ -366,6 +390,8 @@ namespace UseMapEditor.MonoGameControl
             if (locmovemode)
             {
                 //드래그 성공
+
+                mapeditor.taskManager.TaskStart();
                 for (int i = 0; i < mapeditor.SelectLocation.Count; i++)
                 {
                     int oX, oY, oW, oH;
@@ -381,6 +407,7 @@ namespace UseMapEditor.MonoGameControl
                     locationData.WIDTH = oW;
                     locationData.HEIGHT = oH;
                 }
+                mapeditor.taskManager.TaskEnd();
             }
 
 
@@ -611,6 +638,9 @@ namespace UseMapEditor.MonoGameControl
 
 
                 mapeditor.mapdata.LocationDatas.Add(locationData);
+                mapeditor.taskManager.TaskStart();
+                mapeditor.taskManager.TaskAdd(new LocationEvent(mapeditor ,locationData, true));
+                mapeditor.taskManager.TaskEnd();
                 return;
             }
         }

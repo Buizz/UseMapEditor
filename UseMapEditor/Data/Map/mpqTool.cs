@@ -63,6 +63,8 @@ namespace Data.Map
         }
 
 
+
+
         private uint OpenArchive()
         {
             uint hmpq = 0;
@@ -107,26 +109,25 @@ namespace Data.Map
 
 
 
-        public List<string> mpqfileList = new List<string>();
-        private void ReadFileList()
-        {
-            byte[] buffer = ReadMPQFile(@"(listfile)");
-            if (buffer.Length == 0)
-            {
-                throw new Exception("listfile을 열지 못했습니다.");
-            }
+        //private void ReadFileList()
+        //{
+        //    byte[] buffer = ReadMPQFile(@"(listfile)");
+        //    if (buffer.Length == 0)
+        //    {
+        //        throw new Exception("listfile을 열지 못했습니다.");
+        //    }
 
-            string str = Encoding.GetEncoding(949).GetString(buffer);
-
+        //    string str = Encoding.GetEncoding(949).GetString(buffer);
 
 
 
 
-            mpqfileList.Clear();
-            str = str.Replace("\r", "");
-            mpqfileList = str.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList();
 
-            mpqfileList.Remove(@"staredit\scenario.chk");
-        }
+        //    mpqfileList.Clear();
+        //    str = str.Replace("\r", "");
+        //    mpqfileList = str.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+
+        //    mpqfileList.Remove(@"staredit\scenario.chk");
+        //}
     }
 }

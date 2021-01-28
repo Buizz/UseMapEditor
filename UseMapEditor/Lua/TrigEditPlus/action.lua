@@ -1,5 +1,5 @@
 function Action(Type, ...)
-    return {Type, ...}
+    return {type = "Action", Type, ...}
 end
 
 

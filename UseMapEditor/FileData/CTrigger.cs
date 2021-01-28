@@ -17,10 +17,11 @@ namespace UseMapEditor.FileData
     {
         MapData mapData;
 
+        bool IsTrigger;
         public CTrigger(MapData _mapData, RAWTRIGMBRF rawdata, bool IsTrigger)
         {
             mapData = _mapData;
-
+            this.IsTrigger = IsTrigger;
             exeflag = rawdata.exeflag;
             playerlist = (byte[])rawdata.playerlist.Clone();
 
@@ -40,15 +41,16 @@ namespace UseMapEditor.FileData
             }
         }
 
-        public CTrigger(MapData _mapData)
+        public CTrigger(MapData _mapData, bool IsTrigger)
         {
             mapData = _mapData;
+            this.IsTrigger = IsTrigger;
         }
 
 
         public CTrigger Clone()
         {
-            CTrigger cTrigger = new CTrigger(mapData);
+            CTrigger cTrigger = new CTrigger(mapData, IsTrigger);
             cTrigger.exeflag = exeflag;
             cTrigger.playerlist = (byte[])playerlist.Clone();
 
@@ -111,15 +113,23 @@ namespace UseMapEditor.FileData
 
 
             sb.AppendLine("},");
-            sb.AppendLine("	conditions = {");
-            for (int i = 0; i < conditions.Count; i++)
+
+
+            if (IsTrigger)
             {
-                sb.Append("		");
-                conditions[i].CodeText(sb);
-                sb.AppendLine(";");
+                sb.AppendLine("	conditions = {");
+                for (int i = 0; i < conditions.Count; i++)
+                {
+                    sb.Append("		");
+                    conditions[i].CodeText(sb);
+                    sb.AppendLine(";");
+                }
+                sb.AppendLine("	},");
             }
 
-            sb.AppendLine("	},");
+
+
+
             sb.AppendLine("	actions = {");
             for (int i = 0; i < actions.Count; i++)
             {
@@ -290,7 +300,9 @@ namespace UseMapEditor.FileData
 
         public List<Arg> args = new List<Arg>();
         public bool IsAction;
+        public bool IsTrigger;
         public string name;
+        public bool IsEnable { get; set; }
         public TriggerManger.TriggerDefine triggerDefine;
 
         public int type;
@@ -300,6 +312,8 @@ namespace UseMapEditor.FileData
         {
             TrigItem item = new TrigItem(mapData);
             item.IsAction = IsAction;
+            item.IsTrigger = IsTrigger;
+            item.IsEnable = IsEnable;
             item.name = name;
             item.triggerDefine = triggerDefine;
             item.type = type;
@@ -318,6 +332,7 @@ namespace UseMapEditor.FileData
         public TrigItem(MapData _mapData)
         {
             mapData = _mapData;
+            IsEnable = true;
         }
 
 
@@ -328,15 +343,19 @@ namespace UseMapEditor.FileData
 
             type = rawdata.condtype;
 
+            IsEnable = (rawdata.flags & (0b1 << 1)) == 0;
             Init(rawdata.values, UseMapEditor.Global.WindowTool.triggerManger.Conditions[type]);
         }
 
         public TrigItem(MapData _mapData, RAWTRIGMBRF.RawAction rawdata, bool IsTrigger)
         {
             IsAction = true;
+            this.IsTrigger = IsTrigger;
             mapData = _mapData;
 
             type = rawdata.acttype;
+
+            IsEnable = (rawdata.flags & (0b1 << 1)) == 0;
             if (IsTrigger)
             {
                 Init(rawdata.values, UseMapEditor.Global.WindowTool.triggerManger.Actions[type]);
@@ -422,6 +441,7 @@ namespace UseMapEditor.FileData
 
 
 
+
         //TODO:데이터로 다시 반환해야됨.
         public string ItemText
         {
@@ -429,6 +449,10 @@ namespace UseMapEditor.FileData
             {
                 string sm = triggerDefine.SUMMARY;
 
+                if (!IsEnable)
+                {
+                    sm = "(사용안함)" + sm;
+                }
 
                 for (int i = 0; i < args.Count; i++)
                 {
@@ -455,42 +479,73 @@ namespace UseMapEditor.FileData
         }
         public void CodeText(StringBuilder sb)
         {
+            if (!IsEnable)
+            {
+                sb.Append("Disabled(");
+            }
+
+            if (!IsTrigger & IsAction)
+            {
+                sb.Append("Briefing");
+            }
+
             if (name == "SetDeaths")
             {
                 sb.Append(MemoryFunc.GetTEPDeathText(this));
+                if (!IsEnable)
+                {
+                    sb.Append(")");
+                }
                 return;
 
             }
             else if (name == "Deaths")
             {
                 sb.Append(MemoryFunc.GetTEPDeathText(this));
+                if (!IsEnable)
+                {
+                    sb.Append(")");
+                }
                 return;
             }
             else if (name == "SetMemory")
             {
                 sb.Append(MemoryFunc.GetTEPMemoryText(this));
+                if (!IsEnable)
+                {
+                    sb.Append(")");
+                }
                 return;
 
             }
             else if (name == "Memory")
             {
                 sb.Append(MemoryFunc.GetTEPMemoryText(this));
+                if (!IsEnable)
+                {
+                    sb.Append(")");
+                }
                 return;
             }
 
             {
-                string str = name + "(";
+                sb.Append(name + "(");
 
                 for (int i = 0; i < args.Count; i++)
                 {
                     if (i != 0)
                     {
-                        str += ", ";
+                        sb.Append(", ");
                     }
-                    str += args[i].GetCode;
+                    sb.Append(args[i].GetCode);
                 }
-                str += ")";
-                sb.Append(str);
+
+                if (!IsEnable)
+                {
+                    sb.Append(")");
+                }
+
+                sb.Append(")");
             }
         }
 
@@ -562,7 +617,21 @@ namespace UseMapEditor.FileData
                     case TriggerManger.ArgType.STRING:
                         return (uint)STRING.ResultIndex;
                     case TriggerManger.ArgType.LOCATION:
-                        return (uint)LOCATION.INDEX;
+                        if(mapData.LocationDatas.IndexOf(LOCATION) != -1)
+                        {
+                            return (uint)LOCATION.INDEX;
+                        }
+                        else
+                        {
+                            LocationData location = mapData.LocationDatas.SingleOrDefault((x) => x.NAME == LOCATION.NAME);
+                            if(location != null)
+                            {
+                                LOCATION = location;
+                                return (uint)LOCATION.INDEX;
+                            }
+                        }
+
+                        return 0;
                 }
 
 
@@ -582,6 +651,8 @@ namespace UseMapEditor.FileData
 
                 switch (ARGTYPE)
                 {
+                    case TriggerManger.ArgType.SLOT:
+                        return VALUE.ToString();
                     case TriggerManger.ArgType.SWITCH:
                         string d = mapData.SWNM[VALUE].String;
                         if (mapData.SWNM[VALUE].IsLoaded)

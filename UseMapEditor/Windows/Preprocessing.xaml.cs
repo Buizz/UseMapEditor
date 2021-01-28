@@ -16,6 +16,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using UseMapEditor.Dialog;
 using UseMapEditor.FileData;
 
 namespace UseMapEditor.Windows
@@ -32,7 +33,11 @@ namespace UseMapEditor.Windows
         {
             InitializeComponent();
 
+            LoadStart();
+        }
 
+        private void LoadStart()
+        {
             worker = new BackgroundWorker();
 
             worker.DoWork += Worker_DoWork;
@@ -43,6 +48,8 @@ namespace UseMapEditor.Windows
 
             worker.RunWorkerAsync();
         }
+
+
 
         private void Worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
@@ -59,7 +66,15 @@ namespace UseMapEditor.Windows
             }
             else
             {
-                MessageBox.Show(e.Error.ToString());
+                MsgDialog msgDialog = new MsgDialog("다음과 같은 오류로 그래픽을 불러오지 못했습니다.\n다시 시도하겠습니까?\n" + e.Error.Message, MessageBoxButton.OKCancel, MessageBoxImage.Error);
+                msgDialog.ShowDialog();
+
+                if(msgDialog.msgresult == MessageBoxResult.OK)
+                {
+                    LoadStart();
+                    return;
+                }
+
             }
 
             Close();
@@ -252,7 +267,10 @@ namespace UseMapEditor.Windows
             Casc.Data data = new Casc.Data();
 
 
-            data.OpenCascStorage();
+            if (!data.OpenCascStorage())
+            {
+                throw new Exception("스타크래프트가 실행중입니다.\n스타크래프트를 종료하고 다시 시도하세요.");
+            }
 
 
 

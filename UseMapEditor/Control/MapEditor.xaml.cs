@@ -18,10 +18,13 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using UseMapEditor.DataBinding;
 using UseMapEditor.Dialog;
 using UseMapEditor.FileData;
 using UseMapEditor.MonoGameControl;
+using UseMapEditor.Task;
+using UseMapEditor.Tools;
 using static Data.Map.MapData;
 
 namespace UseMapEditor.Control
@@ -32,6 +35,11 @@ namespace UseMapEditor.Control
     public partial class MapEditor : UserControl
     {
         public MapDataBinding mapDataBinding;
+        public TaskManager taskManager;
+        public ShortCutManager shortCutManager;
+        public MainWindow mainWindow;
+
+
 
         public int ForceSelectID = -1;
         public int ForceStartID = -1;
@@ -47,7 +55,9 @@ namespace UseMapEditor.Control
             Unit,
             Sprite,
             Location,
-            FogOfWar
+            FogOfWar,
+            CustomPallete,
+            CopyPaste
         }
 
         public bool view_Unit;
@@ -75,6 +85,21 @@ namespace UseMapEditor.Control
         public List<LocationData> SelectLocation = new List<LocationData>();
 
 
+        public byte brush_x = 1;
+        public byte brush_y = 1;
+
+        public bool brush_fogofwarcircle;
+
+        public int brush_tilescroll
+        {
+            get
+            {
+                return (int)TileScroll.Value;
+            }
+        }
+
+
+        public int opt_FogofWarplayer;
 
 
         private int _opt_xpos = 0;
@@ -89,7 +114,6 @@ namespace UseMapEditor.Control
             }
             set
             {
-
                 _opt_xpos = value;
                 int MapLeft = -(int)(MapViewer.ActualWidth / opt_scalepercent / 2);
                 int MapRight = mapdata.WIDTH * 32 + MapLeft;
@@ -142,6 +166,25 @@ namespace UseMapEditor.Control
                 }
             }
         }
+
+        int scrollspeed = 10;
+        public void ScrollUp()
+        {
+            opt_ypos -= (int)Math.Ceiling(scrollspeed / opt_scalepercent);
+        }
+        public void ScrollDown()
+        {
+            opt_ypos += (int)Math.Ceiling(scrollspeed / opt_scalepercent);
+        }
+        public void ScrollLeft()
+        {
+            opt_xpos -= (int)Math.Ceiling(scrollspeed / opt_scalepercent);
+        }
+        public void ScrollRight()
+        {
+            opt_xpos += (int)Math.Ceiling(scrollspeed / opt_scalepercent);
+        }
+
 
 
 
@@ -233,7 +276,27 @@ namespace UseMapEditor.Control
         }
 
 
-        public int opt_grid = 0;
+        public int opt_grid
+        {
+            get
+            {
+                string d = Global.Setting.Vals[Global.Setting.Settings.Program_GridSize];
+                int gsize;
+
+                if(int.TryParse(d, out gsize))
+                {
+                    return gsize;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+            set
+            {
+                Global.Setting.Vals[Global.Setting.Settings.Program_GridSize] = value.ToString();
+            }
+        }
         public bool opt_tile = true;
         public bool opt_unit = true;
         public bool opt_sprite = true;
@@ -285,7 +348,6 @@ namespace UseMapEditor.Control
 
 
 
-        public MainWindow mainWindow;
 
 
 
@@ -303,25 +365,36 @@ namespace UseMapEditor.Control
         }
         public void MinimapUnitRefresh()
         {
+            for (int y = 0; y < 256; y++)
+            {
+                for (int x = 0; x < 256; x++)
+                {
+                    miniampUnit[x + y * 256] = new Microsoft.Xna.Framework.Color();
+                }
+            }
             IsMinimapUnitRefresh = false;
         }
 
 
 
+
         private UIBinding uIBinding;
-        public MapEditor()
+        public MapEditor(MainWindow mainWindow)
         {
             InitializeComponent();
 
-            mapdata = new MapData(this);
+            this.mainWindow = mainWindow;
 
+            mapdata = new MapData(this);
+            taskManager = new TaskManager(this);
+            shortCutManager = new ShortCutManager(this);
 
             minimapcolor = new Microsoft.Xna.Framework.Color[256 * 256];
             miniampUnit = new Microsoft.Xna.Framework.Color[256 * 256];
 
 
 
-            TileBack = new Microsoft.Xna.Framework.Color(196, 196, 196, 255);
+            TileBack = Microsoft.Xna.Framework.Color.Black;
             DoodadOverlay = new Microsoft.Xna.Framework.Color(255, 0, 0, 255);
             SpriteOverlay = new Microsoft.Xna.Framework.Color(0, 255, 0, 255);
 
@@ -332,11 +405,12 @@ namespace UseMapEditor.Control
                 DoodadPalleteBtn.IsEnabled = false;
                 UnitPalleteBtn.IsEnabled = false;
                 SpritePalleteBtn.IsEnabled = false;
-                TabChange(4);
+
+                TabChange(Layer.Location);
             }
             else
             {
-                TabChange(0);
+                TabChange(Layer.Tile);
             }
         }
 
@@ -358,6 +432,12 @@ namespace UseMapEditor.Control
 
             LocationList.ItemsSource = mapdata.LocationDatas;
             LocationList.Items.SortDescriptions.Add(new SortDescription("INDEX", ListSortDirection.Ascending));
+
+            UnitPlaceList.ItemsSource = IndexedUnitList;
+            UnitPlaceList.Items.SortDescriptions.Add(new SortDescription("INDEX", ListSortDirection.Ascending));
+            
+
+
             refreshLocBox();
             uIBinding = new UIBinding(this);
             uIBinding.view_Tile = true;
@@ -369,24 +449,79 @@ namespace UseMapEditor.Control
             Toolbar.DataContext = uIBinding;
 
             this.DataContext = mapDataBinding;
+
+            UnitPallete.SetCodeType(Codetype.Unit, this);
+            SpritePallete.SetCodeType(Codetype.Sprite, this);
+            SpritePallete_Unit.SetCodeType(Codetype.Unit, this);
+
+            UnitPallete.SelectionChanged += UnitPallete_SelectionChanged;
+            SpritePallete.SelectionChanged += SpritePallete_SelectionChanged;
+            SpritePallete_Unit.SelectionChanged += SpritePallete_SelectionChanged;
+
+            UnitPallete.SelectIndex = 0;
+            SpritePallete.SelectIndex = 0;
+            SpritePallete_Unit.SelectIndex = 0;
         }
+
+
 
 
         private void optionReset()
         {
             IsMinimapLoad = false;
+
             opt_scale = 10;
             ScaleTB.Text = opt_scale.ToString();
+            foreach (ComboBoxItem item in GridCB.Items)
+            {
+                if ((string)item.Tag == opt_grid.ToString())
+                {
+                    item.IsSelected = true;
+                    break;
+                }
+            }
         }
 
+        private void PopupGrid_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            //PopupReLocatied();
+        }
+        private void PopupReLocatied()
+        {
+            PopupInnerGrid.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+            PopupInnerGrid.Arrange(new Rect(0, 0, PopupInnerGrid.DesiredSize.Width, PopupInnerGrid.DesiredSize.Height));
 
-        private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
+
+
+
+            //PopupInnerGrid
+            double x = PopupInnerGrid.Margin.Left + PopupInnerGrid.ActualWidth;
+            double y = PopupInnerGrid.Margin.Top + PopupInnerGrid.ActualHeight;
+
+            double nx = PopupInnerGrid.Margin.Left;
+            double ny = PopupInnerGrid.Margin.Top;
+
+            if (x > (MapViewer.ActualWidth - ToolBarExpander.ActualWidth))
+            {
+                nx -= PopupInnerGrid.ActualWidth;
+            }
+
+            if (y > MapViewer.ActualHeight)
+            {
+                ny -= PopupInnerGrid.ActualHeight;
+            }
+
+            PopupInnerGrid.Margin = new Thickness(nx,ny,0,0);
+
+        }
+
+        private void PopupVisbleManage(MouseButtonEventArgs e)
         {
             int visblecount = 0;
 
-            foreach (ContentControl item in PopupGrid.Children)
+            foreach (ContentControl item in PopupInnerGrid.Children)
             {
-                if(item.Visibility == Visibility.Visible)
+                if (item.Visibility == Visibility.Visible)
                 {
                     visblecount += 1;
                     System.Windows.Point p = e.GetPosition(item);
@@ -394,18 +529,55 @@ namespace UseMapEditor.Control
                     {
                         item.Visibility = Visibility.Collapsed;
                         visblecount -= 1;
-                        if (!MapViewer.IsEnabled)
-                        {
-                            MapViewer.IsEnabled = true;
-                        }
                     }
                 }
             }
-
-            if(visblecount == 0)
+            if (visblecount == 0 & PopupGrid.Visibility == Visibility.Visible)
             {
+                SetDirty();
+
                 PopupGrid.Visibility = Visibility.Collapsed;
+                if (!MapViewer.IsEnabled)
+                {
+                    MapViewer.IsEnabled = true;
+                }
+                taskManager.TaskEnd();
             }
+        }
+
+        private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            PopupVisbleManage(e);
+        }
+
+
+        public bool IsRightMouseDown;
+        public bool IsLeftMouseDown;
+        private void UserControl_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            PopupVisbleManage(e);
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                IsLeftMouseDown = true;
+            }
+            if (e.RightButton == MouseButtonState.Pressed)
+            {
+                IsRightMouseDown = true;
+            }
+        }
+        private void UserControl_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Released)
+            {
+                IsLeftMouseDown = false;
+            }
+            if (e.RightButton == MouseButtonState.Released)
+            {
+                IsRightMouseDown = false;
+            }
+
+            //MapViewer.IsEnabled = true;
+            //Global.WindowTool.MapViewer.Focus();
         }
 
 
@@ -539,6 +711,7 @@ namespace UseMapEditor.Control
             }
 
             LocationList.ItemsSource = null;
+            UnitPlaceList.ItemsSource = null;
             Global.WindowTool.ChangeView(this,true);
             IsLoad = false;
             return true;
@@ -606,6 +779,21 @@ namespace UseMapEditor.Control
         }
 
 
+
+        public void GridSizeUp()
+        {
+            if(GridCB.SelectedIndex < GridCB.Items.Count - 1)
+            {
+                GridCB.SelectedIndex += 1;
+            }
+        }
+        public void GridSizeDown()
+        {
+            if (GridCB.SelectedIndex > 0)
+            {
+                GridCB.SelectedIndex -= 1;
+            }
+        }
         private void GridCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             int v = 0;
@@ -707,7 +895,6 @@ namespace UseMapEditor.Control
 
         private void Grid_MouseMove(object sender, MouseEventArgs e)
         {
-
             if (IsToolBarOpen())
             {
                 if (e.GetPosition(MapViewer).X < (MapViewer.ActualWidth - 256))
@@ -729,68 +916,103 @@ namespace UseMapEditor.Control
             }
         }
 
-        private void TabChange(int index)
-        {
-            PalleteLayer = (Layer)index;
 
+        public Vector2 GetOuterMouse()
+        {
+            return OuterMouse;
+        }
+
+
+        bool IsLayerChange;
+        public void TabChange(Layer PalleteLayer)
+        {
+            IsLayerChange = true;
+            this.PalleteLayer = PalleteLayer;
             TilePallet.Visibility = Visibility.Collapsed;
             DoodadPallet.Visibility = Visibility.Collapsed;
             UnitPallet.Visibility = Visibility.Collapsed;
             SpritePallet.Visibility = Visibility.Collapsed;
             LocationPallet.Visibility = Visibility.Collapsed;
             FogofWarPallet.Visibility = Visibility.Collapsed;
+            CutPastePallet.Visibility = Visibility.Collapsed;
 
-            switch (index)
+            switch (PalleteLayer)
             {
-                case 0:
+                case Layer.Tile:
                     TilePallet.Visibility = Visibility.Visible;
                     break;
-                case 1:
+                case Layer.Doodad:
                     DoodadPallet.Visibility = Visibility.Visible;
                     break;
-                case 2:
+                case Layer.Unit:
                     UnitPallet.Visibility = Visibility.Visible;
                     break;
-                case 3:
+                case Layer.Sprite:
                     SpritePallet.Visibility = Visibility.Visible;
                     break;
-                case 4:
+                case Layer.Location:
                     LocationPallet.Visibility = Visibility.Visible;
                     break;
-                case 5:
+                case Layer.FogOfWar:
                     FogofWarPallet.Visibility = Visibility.Visible;
                     break;
+                case Layer.CopyPaste:
+                    CutPastePallet.Visibility = Visibility.Collapsed;
+                    break;
             }
+            LayerCB.SelectedIndex = (int)PalleteLayer;
+
+            IsLayerChange = false;
         }
 
+        private void LayerCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!IsLayerChange)
+            {
+                if (LayerCB.SelectedIndex != -1)
+                {
+                    TabChange((Layer)LayerCB.SelectedIndex);
+                }
+            }
+        }
         private void TileButton_Click(object sender, RoutedEventArgs e)
         {
-            TabChange(0);
+            TabChange(Layer.Tile);
         }
 
         private void DoodadButton_Click(object sender, RoutedEventArgs e)
         {
-            TabChange(1);
+            TabChange(Layer.Doodad);
         }
 
         private void UnitButton_Click(object sender, RoutedEventArgs e)
         {
-            TabChange(2);
+            TabChange(Layer.Unit);
         }
 
         private void SpriteButton_Click(object sender, RoutedEventArgs e)
         {
-            TabChange(3);
+            TabChange(Layer.Sprite);
         }
 
         private void LocationButton_Click(object sender, RoutedEventArgs e)
         {
-            TabChange(4);
+            TabChange(Layer.Location);
         }
 
         private void FogButton_Click(object sender, RoutedEventArgs e)
         {
-            TabChange(5);
+            TabChange(Layer.FogOfWar);
+        }
+
+        private void CutPasteButton_Click(object sender, RoutedEventArgs e)
+        {
+            TabChange(Layer.CopyPaste);
+        }
+
+        private void CustompalletButton_Click(object sender, RoutedEventArgs e)
+        {
+            TabChange(Layer.CustomPallete);
         }
 
         private int lasttabindex;
@@ -800,11 +1022,110 @@ namespace UseMapEditor.Control
             if(lasttabindex != sindex)
             {
                 lasttabindex = sindex;
-                if(sindex == 7)
+                if (sindex == 2)
+                {
+                    ForceSettingTabItem.MainListRefresh();
+                }
+                if (sindex == 7)
                 {
                     StringSettingTabItem.MainListRefresh();
                 }
             }
         }
+
+        private void UndoBtn_Click(object sender, RoutedEventArgs e)
+        {
+            taskManager.Undo();
+        }
+
+        private void RedoBtn_Click(object sender, RoutedEventArgs e)
+        {
+            taskManager.Redo();
+        }
+
+
+
+        private void FogUseCircle(object sender, RoutedEventArgs e)
+        {
+            brush_fogofwarcircle = true;
+        }
+
+        private void FogUseRect(object sender, RoutedEventArgs e)
+        {
+            brush_fogofwarcircle = false;
+        }
+
+
+
+
+        public void PasteCommand()
+        {
+            switch (PalleteLayer)
+            {
+                case Layer.Unit:
+                    unit_PasteStart();
+                    break;
+                case Layer.Sprite:
+                    sprite_PasteStart();
+                    break;
+            }
+        }
+        public void CopyCommand()
+        {
+            switch (PalleteLayer)
+            {
+                case Layer.Unit:
+                    unit_Copy();
+                    break;
+                case Layer.Sprite:
+                    sprite_Copy();
+                    break;
+            }
+        }
+        public void CutCommand()
+        {
+            switch (PalleteLayer)
+            {
+                case Layer.Unit:
+                    unit_Cut();
+                    break;
+                case Layer.Sprite:
+                    sprite_Cut();
+                    break;
+            }
+        }
+        public void DeleteCommand()
+        {
+            switch (PalleteLayer)
+            {
+                case Layer.Unit:
+                    unit_Delete();
+                    break;
+                case Layer.Sprite:
+                    sprite_Delete();
+                    break;
+            }
+        }
+        public void EditCommand()
+        {
+            switch (PalleteLayer)
+            {
+                case Layer.Unit:
+                    unit_Edit();
+                    break;
+                case Layer.Sprite:
+                    sprite_Edit();
+                    break;
+            }
+        }
+
+        private Vector2 OuterMouse = new Vector2();
+        private void UserControl_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            OuterMouse.X = (float)e.GetPosition(MapViewer).X;
+            OuterMouse.Y = (float)e.GetPosition(MapViewer).Y;
+        }
+
+
     }
 }

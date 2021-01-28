@@ -75,7 +75,7 @@
                         </Button>
                         <Separator/>
                         <Button x:Name="EditBtn" Click="Edit_Click" ToolTip="편집">
-                            <materialDesign:PackIcon Kind="EditOutline" />
+                            <materialDesign:PackIcon Kind="TableEdit" />
                         </Button>
                         <Button x:Name="CutBtn" Click="Cut_Click" ToolTip="잘라내기">
                             <materialDesign:PackIcon Kind="ContentCut" />
@@ -145,7 +145,7 @@
                                 </Button>
                                 <Separator/>
                                 <Button x:Name="ItemEditBtn" Click="ItemEdit_Click" ToolTip="편집">
-                                    <materialDesign:PackIcon Kind="EditOutline" />
+                                    <materialDesign:PackIcon Kind="TableEdit" />
                                 </Button>
                                 <Button x:Name="ItemCutBtn" Click="ItemCut_Click" ToolTip="잘라내기">
                                     <materialDesign:PackIcon Kind="ContentCut" />
@@ -212,7 +212,11 @@
                                 <ListBox x:Name="TriggerItemListbox" SelectionMode="Extended" SelectionChanged="TriggerItemListbox_SelectionChanged" PreviewKeyDown="TriggerItemListbox_PreviewKeyDown" MouseDoubleClick="TriggerItemListbox_MouseDoubleClick">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding ItemText}"/>
+                                            <StackPanel Orientation="Horizontal">
+                                                <CheckBox IsChecked="{Binding IsEnable}"/>
+
+                                                <TextBlock Text="{Binding ItemText}"/>
+                                            </StackPanel>
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
 

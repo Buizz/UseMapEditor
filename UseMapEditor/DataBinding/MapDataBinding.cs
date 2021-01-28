@@ -24,6 +24,8 @@ namespace UseMapEditor.DataBinding
                 upgradeDataBindings.Add(new UpgradeDataBinding(mapEditor, i));
             for (int i = 0; i < 44; i++)
                 techDataBindings.Add(new TechDataBinding(mapEditor, i));
+            for (int i = 0; i < 517; i++)
+                spriteDataBindings.Add(new SpriteDataBinding(mapEditor, i));
         }
 
 
@@ -36,6 +38,7 @@ namespace UseMapEditor.DataBinding
         public List<UpgradeDataBinding> upgradeDataBindings = new List<UpgradeDataBinding>();
         public List<TechDataBinding> techDataBindings = new List<TechDataBinding>();
 
+        public List<SpriteDataBinding> spriteDataBindings = new List<SpriteDataBinding>();
 
 
         public void PropertyChangeAll()
@@ -69,6 +72,242 @@ namespace UseMapEditor.DataBinding
         }
 
 
+        public int OPTFOGOFWARPLAYER
+        {
+            get
+            {
+                return mapEditor.opt_FogofWarplayer;
+            }
+            set
+            {
+                mapEditor.opt_FogofWarplayer = value;
+            }
+        }
+
+
+        public int SPRITEPLAYER
+        {
+            get
+            {
+                return mapEditor.sprite_player;
+            }
+            set
+            {
+                mapEditor.sprite_player = value;
+            }
+        }
+
+
+
+        public bool SPRITE_BRUSHMODE
+        {
+            get
+            {
+                return mapEditor.sprite_BrushMode;
+            }
+            set
+            {
+                mapEditor.sprite_BrushMode = value;
+                OnPropertyChanged("SPRITE_BRUSHMODE");
+            }
+        }
+        public bool SPRITE_UNITBRUSH
+        {
+            get
+            {
+                return mapEditor.sprite_UnitBrush;
+            }
+            set
+            {
+                mapEditor.sprite_UnitBrush = value;
+                OnPropertyChanged("SPRITE_UNITBRUSH");
+            }
+        }
+        public bool SPRITE_SPRITEBRUSH
+        {
+            get
+            {
+                return mapEditor.sprite_SpritBrush;
+            }
+            set
+            {
+                mapEditor.sprite_SpritBrush = value;
+                OnPropertyChanged("SPRITE_SPRITEBRUSH");
+            }
+        }
+
+        public bool SPRITE_SELECTMODE
+        {
+            get
+            {
+                return mapEditor.sprite_SelectMode;
+            }
+            set
+            {
+                mapEditor.sprite_SelectMode = value;
+                OnPropertyChanged("SPRITE_SELECTMODE");
+            }
+        }
+
+
+        public bool SPRITE_GRIDFIX
+        {
+            get
+            {
+                return mapEditor.SpritePalleteGridFix;
+            }
+            set
+            {
+                mapEditor.SpritePalleteGridFix = value;
+                OnPropertyChanged("SPRITE_GRIDFIX");
+            }
+        }
+        public bool SPRITE_COPYTILEPOS
+        {
+            get
+            {
+                return mapEditor.SpritePalleteCopyTileFix;
+            }
+            set
+            {
+                mapEditor.SpritePalleteCopyTileFix = value;
+                OnPropertyChanged("SPRITE_COPYTILEPOS");
+            }
+        }
+
+
+
+
+        public int UNITPLAYER
+        {
+            get
+            {
+                return mapEditor.unit_player;
+            }
+            set
+            {
+                mapEditor.unit_player = value;
+            }
+        }
+
+
+        public bool UNIT_BRUSHMODE
+        {
+            get
+            {
+                return mapEditor.unit_BrushMode;
+            }
+            set
+            {
+                mapEditor.unit_BrushMode = value;
+                OnPropertyChanged("UNIT_BRUSHMODE");
+            }
+        }
+
+        public bool UNIT_SELECTMODE
+        {
+            get
+            {
+                return mapEditor.unit_SelectMode;
+            }
+            set
+            {
+                mapEditor.unit_SelectMode = value;
+                OnPropertyChanged("UNIT_SELECTMODE");
+            }
+        }
+
+
+
+        public bool UNIT_GRIDFIX
+        {
+            get
+            {
+                return mapEditor.UnitPalleteGridFix;
+            }
+            set
+            {
+                mapEditor.UnitPalleteGridFix = value;
+                OnPropertyChanged("UNIT_GRIDFIX");
+            }
+        }
+        public bool UNIT_BUILDINGFIX
+        {
+            get
+            {
+                return mapEditor.UnitPalleteBuildingFix;
+            }
+            set
+            {
+                mapEditor.UnitPalleteBuildingFix = value;
+                OnPropertyChanged("UNIT_BUILDINGFIX");
+            }
+        }
+
+        public bool UNIT_ALLOWSTACK
+        {
+            get
+            {
+                return mapEditor.UnitPalleteStackAllow;
+            }
+            set
+            {
+                mapEditor.UnitPalleteStackAllow = value;
+                OnPropertyChanged("UNIT_ALLOWSTACK");
+            }
+        }
+        public bool UNIT_COPYTILEPOS
+        {
+            get
+            {
+                return mapEditor.UnitPalleteCopyTileFix;
+            }
+            set
+            {
+                mapEditor.UnitPalleteCopyTileFix = value;
+                OnPropertyChanged("UNIT_COPYTILEPOS");
+            }
+        }
+
+
+
+
+        public byte BRUSHX
+        {
+            get
+            {
+                return mapEditor.brush_x;
+            }
+            set
+            {
+                if(value == 0)
+                {
+                    mapEditor.brush_x = 1;
+                }
+                else
+                {
+                    mapEditor.brush_x = value;
+                }
+            }
+        }
+        public byte BRUSHY
+        {
+            get
+            {
+                return mapEditor.brush_y;
+            }
+            set
+            {
+                if (value == 0)
+                {
+                    mapEditor.brush_y = 1;
+                }
+                else
+                {
+                    mapEditor.brush_y = value;
+                }
+            }
+        }
 
 
         public ushort WIDTH
@@ -106,6 +345,12 @@ namespace UseMapEditor.DataBinding
             set
             {
                 mapEditor.mapdata.TILETYPE = (FileData.TileSet.TileType)value;
+                for (int i = 0; i < mapEditor.mapdata.DD2.Count; i++)
+                {
+                    mapEditor.mapdata.DD2[i].ImageReset();
+                }
+
+
                 mapEditor.IsMinimapLoad = false;
 
                 mapEditor.SetDirty();
@@ -129,10 +374,21 @@ namespace UseMapEditor.DataBinding
 
         public string Description
         {
-            get {return mapEditor.mapdata.SCEARIODES.String;}
+            get
+            {
+                string desc = mapEditor.mapdata.SCEARIODES.String;
+                desc = desc.Replace("\\r", "");
+                desc = desc.Replace("\\n", "\n");
+
+                return desc;
+            }
             set
             {
-                mapEditor.mapdata.SCEARIODES.String = value;
+                string desc = value;
+                desc = desc.Replace("\n", "\\n");
+
+
+                mapEditor.mapdata.SCEARIODES.String = desc;
 
                 mapEditor.SetDirty();
                 OnPropertyChanged("Description");

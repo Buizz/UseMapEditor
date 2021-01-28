@@ -100,10 +100,23 @@ namespace UseMapEditor.FileData
 
         public struct vf4
         {
-            ushort[] tiles;
+            public ushort[] flags;
+            public bool IsWall;
+            public bool IsGround;
+
+            //16 Words - MiniTile Flags:
+            //0x0001 - Walkable
+            //0x0002 - Mid
+            //0x0004 - High(Mid and High unchecked = Low)
+            //0x0008 - Blocks View
+            //0x0010 - Ramp - Appears on the middle minitiles of most ramps/stairs.
+            //Rest unknown/unused.;
         }
 
+
+
         public Dictionary<TileType, cv5[]> cv5data;
+        public Dictionary<TileType, vf4[]> vf4data;
         public Dictionary<TileType, Dictionary<ushort, DoodadPallet>> DoodadPallets;
 
 
@@ -151,7 +164,10 @@ namespace UseMapEditor.FileData
         public TileSet()
         {
             cv5data = new Dictionary<TileType, cv5[]>();
+            vf4data = new Dictionary<TileType, vf4[]>();
             DoodadPallets = new Dictionary<TileType, Dictionary<ushort, DoodadPallet>>();
+
+
 
             foreach (TileType tileType in Enum.GetValues(typeof(TileType)))
             {
@@ -190,7 +206,6 @@ namespace UseMapEditor.FileData
                         {
                             _cv5.tiles[p] = br.ReadUInt16();
                         }
-                        _cv5data[i] = _cv5;
 
 
 
@@ -226,6 +241,7 @@ namespace UseMapEditor.FileData
 
 
 
+                        _cv5data[i] = _cv5;
                     }
 
                     cv5data.Add(tileType, _cv5data);
@@ -242,7 +258,42 @@ namespace UseMapEditor.FileData
                     }
 
                     BinaryReader br = new BinaryReader(new MemoryStream(File.ReadAllBytes(fname)));
+                    int vf4count = (int)br.BaseStream.Length / 32;
+                    vf4[] _vf4data = new vf4[vf4count];
 
+                    for (int i = 0; i < vf4count; i++)
+                    {
+                        int walkflag = 0;
+                        vf4 _vf4 = new vf4();
+                        _vf4.flags = new ushort[16];
+
+                        for (int x = 0; x < 16; x++)
+                        {
+                            ushort flag = br.ReadUInt16();
+
+                            _vf4.flags[x] = flag;
+                            if((flag & 0b1) > 0)
+                            {
+                                walkflag += 1;
+                            }
+                        }
+                        if (walkflag == 16)
+                        {
+                            //전체가 뚫린것
+                            _vf4.IsGround = true;
+                        }
+                        if (walkflag == 0)
+                        {
+                            //전체가 막힌것
+                            _vf4.IsWall = true;
+                        }
+
+                        _vf4data[i] = _vf4;
+                    }
+
+
+
+                    vf4data.Add(tileType, _vf4data);
                     br.Close();
                 }
             }
@@ -251,6 +302,38 @@ namespace UseMapEditor.FileData
 
 
 
+
+        public vf4 GetVf4(Control.MapEditor.DrawType drawType, TileType tileType, ushort megatileindex)
+        {
+            return vf4data[tileType][megatileindex];
+        }
+        public ushort GetMegaTileIndex(Control.MapEditor.DrawType drawType, TileType tileType, ushort MTXM)
+        {
+            int group = (MTXM >> 4);
+            int index = (MTXM & 0xf);
+
+            var t = cv5data[tileType];
+            if (t.Length <= group)
+            {
+                return 0;
+            }
+            if (t[group].Index >= 256)
+            {
+                return 0;
+            }
+
+            return t[group].tiles[index];
+        }
+        public Texture2D GetMegaTileGrp(Control.MapEditor.DrawType drawType, TileType tileType, ushort megatileindex)
+        {
+            return GetTileDic(drawType)[tileType][megatileindex];
+        }
+        public cv5 GetCV5(Control.MapEditor.DrawType drawType, TileType tileType, ushort MTXM)
+        {
+            int group = (MTXM >> 4);
+            int index = (MTXM & 0xf);
+            return cv5data[tileType][group];
+        }
 
 
 
@@ -261,12 +344,34 @@ namespace UseMapEditor.FileData
             int group = (MTXM >> 4);
             int index = (MTXM & 0xf);
 
-            return GetTileDic(drawType)[tileType][cv5data[tileType][group].tiles[index]];
+            var t = cv5data[tileType];
+            if (t.Length <= group)
+            {
+                return null;
+            }
+            if (t[group].Index >= 256)
+            {
+                return null;
+            }
+
+
+            return GetTileDic(drawType)[tileType][t[group].tiles[index]];
         }
 
         public Texture2D GetTile(Control.MapEditor.DrawType drawType, TileType tileType, ushort group, ushort index)
         {
-            return GetTileDic(drawType)[tileType][cv5data[tileType][group].tiles[index]];
+            var t = cv5data[tileType];
+            if(t.Length <= group)
+            {
+                return null;
+            }
+            if (t[group].Index >= 256)
+            {
+                return null;
+            }
+
+
+            return GetTileDic(drawType)[tileType][t[group].tiles[index]];
         }
 
         public bool IsBlack(TileType tileType, ushort group, ushort index)

@@ -171,7 +171,6 @@ namespace Data.Map
            
 
             //음원파일을 추출한다.
-
             using (BinaryReader br = new BinaryReader(new MemoryStream(buffer)))
             {
                 if (!ApplychkAll(br))
@@ -179,12 +178,6 @@ namespace Data.Map
                     return false;
                 }
             }
-
-
-
-
-            ReadFileList();
-
 
             return true;
         }

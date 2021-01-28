@@ -82,11 +82,14 @@ namespace Data.Map
                 for (int c = 0; c < 16; c++)
                 {
                     RawCondition condition = new RawCondition();
+
+
                     if (cTrigger.conditions.Count > c)
                     {
                         TrigItem trigItem = cTrigger.conditions[c];
 
-                        if(trigItem.type == 24)
+
+                        if (trigItem.type == 24)
                         {
                             long offset = trigItem.args[0].VALUE;
                             long player = (offset - 0x58A364) / 4;
@@ -119,7 +122,11 @@ namespace Data.Map
                         }
 
 
-
+                        condition.flags = (byte)trigItem.triggerDefine.FLAG;
+                        if (!trigItem.IsEnable)
+                        {
+                            condition.flags += 2;
+                        }
                     }
 
                     conditions[c] = condition;
@@ -127,11 +134,15 @@ namespace Data.Map
                 for (int a = 0; a < 64; a++)
                 {
                     RawAction action = new RawAction();
+
+
+
                     if (cTrigger.actions.Count > a)
                     {
                         TrigItem trigItem = cTrigger.actions[a];
 
-                        if (trigItem.type == 57)
+
+                        if (trigItem.type == 58)
                         {
                             long offset = trigItem.args[0].VALUE;
                             long player = (offset - 0x58A364) / 4;
@@ -161,6 +172,12 @@ namespace Data.Map
                             }
                             action.valueSet();
                             action.acttype = (byte)trigItem.type;
+                        }
+
+                        action.flags = (byte)trigItem.triggerDefine.FLAG;
+                        if (!trigItem.IsEnable)
+                        {
+                            action.flags += 2;
                         }
                     }
 

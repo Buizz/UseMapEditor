@@ -56,8 +56,7 @@ namespace UseMapEditor.Control
 
 
 
-            MapEditor mapeditor = new MapEditor();
-            mapeditor.mainWindow = mainWindow;
+            MapEditor mapeditor = new MapEditor(mainWindow);
 
             mapeditor.NewMap(Width, Height, TileType, startTile);
             mapeditor.InitControl();

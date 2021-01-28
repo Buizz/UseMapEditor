@@ -49,6 +49,31 @@ namespace Data.Map
             else
             {
                 StromLib.SFileOpenArchive(_filepath, 0, 0, ref hmpq);
+
+
+                //여기서 리스트파일을 읽는다.
+
+
+                List<string> mpqfileList = new List<string>();
+
+
+                byte[] buffer = ReadMPQFileC(hmpq, @"(listfile)");
+                if (buffer.Length == 0)
+                {
+                    throw new Exception("listfile을 열지 못했습니다.");
+                }
+                string str = Encoding.GetEncoding(949).GetString(buffer);
+                mpqfileList.Clear();
+                str = str.Replace("\r", "");
+                mpqfileList = str.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+
+
+
+
+                for (int i = 0; i < mpqfileList.Count; i++)
+                {
+                    RemoveMPQFile(hmpq, mpqfileList[i]);
+                }
             }
 
 
@@ -63,19 +88,6 @@ namespace Data.Map
                 AddMPQFile(hmpq, SaveFilename, chkFilename);
             }
 
-
-            for (int i = 0; i < mpqfileList.Count; i++)
-            {
-                SoundData soundData = soundDatas.Find((x) => x.path == mpqfileList[i]);
-                if(soundData == null)
-                {
-                    RemoveMPQFile(hmpq, mpqfileList[i]);
-                }
-            }
-
-
-            mpqfileList.Clear();
-
             for (int i = 0; i < soundDatas.Count; i++)
             {
                 string chkFilename = soundDatas[i].path;
@@ -84,13 +96,7 @@ namespace Data.Map
                 bw.Write(soundDatas[i].bytes);
                 bw.Close();
                 bool rbool = AddMPQFile(hmpq, SaveFilename, chkFilename);
-
-                mpqfileList.Add(soundDatas[i].path);
             }
-
-
-
-
 
 
 

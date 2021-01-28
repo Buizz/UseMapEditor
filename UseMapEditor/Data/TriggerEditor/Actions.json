@@ -1156,8 +1156,8 @@
   {
     "NAME": "SetMemory",
     "SUMMARY": "[Offset]을 [Number]로 [Modifier]합니다. 마스크 [MaskUse], [Mask]",
-    "TYPE": 57,
-    "FLAG": 20,
+    "TYPE": 58,
+    "FLAG": 4,
     "argDefines": [
       {
         "argtype": "OFFSET",

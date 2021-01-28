@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -386,6 +387,7 @@ namespace Data.Map
 
             public void ImageReset()
             {
+                Images.Clear();
                 DoodadPallet pallete = UseMapEditor.Global.WindowTool.MapViewer.tileSet.DoodadPallets[mapData.TILETYPE][ID];
                 if ((pallete.dddFlags & 0x1000) > 0)
                 {
@@ -435,11 +437,29 @@ namespace Data.Map
             public int alpha;
 
 
-            public ushort ID;//u16: Unit/Sprite number of the sprite
-            public ushort X;//u16: X coordinate of the doodad unit
-            public ushort Y;//u16: Y coordinate of the doodad unit
-            public byte PLAYER;//u8: Player number that owns the doodad
-            public byte UNUSED;//u8: Unused
+            public string NAME(MapEditor mapEditor)
+            {
+                if ((FLAG & (1 << 12)) > 0)
+                {
+                    //Pure
+                    return mapEditor.mapdata.GetCodeName(Codetype.Sprite, ID);
+                }
+
+                if ((FLAG & (1 << 13)) > 0)
+                {
+                    //Unit
+                    return mapEditor.mapdata.GetCodeName(Codetype.Unit, ID);
+                }
+                return "NONE";
+            }
+
+
+
+            public ushort ID { get; set; }//u16: Unit/Sprite number of the sprite
+            public ushort X { get; set; }//u16: X coordinate of the doodad unit
+            public ushort Y { get; set; }//u16: Y coordinate of the doodad unit
+            public byte PLAYER { get; set; }//u8: Player number that owns the doodad
+            public byte UNUSED { get; set; }//u8: Unused
             public ushort FLAG;//u16: Flags
                                //Bit 0-11 - Unused
                                //Bit 12 - Pure Sprite
@@ -447,14 +467,306 @@ namespace Data.Map
                                //Bit 14 - Flipped
                                //Bit 15 - Disabled(Only valid if Draw as sprite is unchecked, disables the unit)
 
+            public bool bit0
+            {
+                get
+                {
+                    return ((FLAG & (0b1 << 0)) > 0);
+                }
+                set
+                {
+                    if (value)
+                    {
+                        FLAG |= (ushort)(0b1 << 0);
+                    }
+                    else
+                    {
+                        FLAG &= unchecked((ushort)~(0b1 << 0));
+                    }
+                }
+            }
+            public bool bit1
+            {
+                get
+                {
+                    return ((FLAG & (0b1 << 1)) > 0);
+                }
+                set
+                {
+                    if (value)
+                    {
+                        FLAG |= (ushort)(0b1 << 1);
+                    }
+                    else
+                    {
+                        FLAG &= unchecked((ushort)~(0b1 << 1));
+                    }
+                }
+            }
+            public bool bit2
+            {
+                get
+                {
+                    return ((FLAG & (0b1 << 2)) > 0);
+                }
+                set
+                {
+                    if (value)
+                    {
+                        FLAG |= (ushort)(0b1 << 2);
+                    }
+                    else
+                    {
+                        FLAG &= unchecked((ushort)~(0b1 << 2));
+                    }
+                }
+            }
+            public bool bit3
+            {
+                get
+                {
+                    return ((FLAG & (0b1 << 3)) > 0);
+                }
+                set
+                {
+                    if (value)
+                    {
+                        FLAG |= (ushort)(0b1 << 3);
+                    }
+                    else
+                    {
+                        FLAG &= unchecked((ushort)~(0b1 << 3));
+                    }
+                }
+            }
+            public bool bit4
+            {
+                get
+                {
+                    return ((FLAG & (0b1 << 4)) > 0);
+                }
+                set
+                {
+                    if (value)
+                    {
+                        FLAG |= (ushort)(0b1 << 4);
+                    }
+                    else
+                    {
+                        FLAG &= unchecked((ushort)~(0b1 << 4));
+                    }
+                }
+            }
+            public bool bit5
+            {
+                get
+                {
+                    return ((FLAG & (0b1 << 5)) > 0);
+                }
+                set
+                {
+                    if (value)
+                    {
+                        FLAG |= (ushort)(0b1 << 5);
+                    }
+                    else
+                    {
+                        FLAG &= unchecked((ushort)~(0b1 << 5));
+                    }
+                }
+            }
+            public bool bit6
+            {
+                get
+                {
+                    return ((FLAG & (0b1 << 6)) > 0);
+                }
+                set
+                {
+                    if (value)
+                    {
+                        FLAG |= (ushort)(0b1 << 6);
+                    }
+                    else
+                    {
+                        FLAG &= unchecked((ushort)~(0b1 << 6));
+                    }
+                }
+            }
+            public bool bit7
+            {
+                get
+                {
+                    return ((FLAG & (0b1 << 7)) > 0);
+                }
+                set
+                {
+                    if (value)
+                    {
+                        FLAG |= (ushort)(0b1 << 7);
+                    }
+                    else
+                    {
+                        FLAG &= unchecked((ushort)~(0b1 << 7));
+                    }
+                }
+            }
+            public bool bit8
+            {
+                get
+                {
+                    return ((FLAG & (0b1 << 8)) > 0);
+                }
+                set
+                {
+                    if (value)
+                    {
+                        FLAG |= (ushort)(0b1 << 8);
+                    }
+                    else
+                    {
+                        FLAG &= unchecked((ushort)~(0b1 << 8));
+                    }
+                }
+            }
+            public bool bit9
+            {
+                get
+                {
+                    return ((FLAG & (0b1 << 9)) > 0);
+                }
+                set
+                {
+                    if (value)
+                    {
+                        FLAG |= (ushort)(0b1 << 9);
+                    }
+                    else
+                    {
+                        FLAG &= unchecked((ushort)~(0b1 << 9));
+                    }
+                }
+            }
+            public bool bit10
+            {
+                get
+                {
+                    return ((FLAG & (0b1 << 10)) > 0);
+                }
+                set
+                {
+                    if (value)
+                    {
+                        FLAG |= (ushort)(0b1 << 10);
+                    }
+                    else
+                    {
+                        FLAG &= unchecked((ushort)~(0b1 << 10));
+                    }
+                }
+            }
+            public bool bit11
+            {
+                get
+                {
+                    return ((FLAG & (0b1 << 11)) > 0);
+                }
+                set
+                {
+                    if (value)
+                    {
+                        FLAG |= (ushort)(0b1 << 11);
+                    }
+                    else
+                    {
+                        FLAG &= unchecked((ushort)~(0b1 << 11));
+                    }
+                }
+            }
+            public bool bit12
+            {
+                get
+                {
+                    return ((FLAG & (0b1 << 12)) > 0);
+                }
+                set
+                {
+                    if (value)
+                    {
+                        FLAG |= (ushort)(0b1 << 12);
+                    }
+                    else
+                    {
+                        FLAG &= unchecked((ushort)~(0b1 << 12));
+                    }
+                }
+            }
+            public bool bit13
+            {
+                get
+                {
+                    return ((FLAG & (0b1 << 13)) > 0);
+                }
+                set
+                {
+                    if (value)
+                    {
+                        FLAG |= (ushort)(0b1 << 13);
+                    }
+                    else
+                    {
+                        FLAG &= unchecked((ushort)~(0b1 << 13));
+                    }
+                }
+            }
+            public bool bit14
+            {
+                get
+                {
+                    return ((FLAG & (0b1 << 14)) > 0);
+                }
+                set
+                {
+                    if (value)
+                    {
+                        FLAG |= (ushort)(0b1 << 14);
+                    }
+                    else
+                    {
+                        FLAG &= unchecked((ushort)~(0b1 << 14));
+                    }
+                }
+            }
+            public bool bit15
+            {
+                get
+                {
+                    return ((FLAG & (0b1 << 15)) > 0);
+                }
+                set
+                {
+                    if (value)
+                    {
+                        FLAG |= (ushort)(0b1 << 15);
+                    }
+                    else
+                    {
+                        FLAG &= unchecked((ushort)~(0b1 << 15));
+                    }
+                }
+            }
+
+
+
+
             public CTHG2()
             {
-                alpha = UseMapEditor.Global.WindowTool.random.Next();
+                alpha = UseMapEditor.Global.WindowTool.random.Next(0, 65535);
             }
 
             public CTHG2(BinaryReader br)
             {
-                alpha = UseMapEditor.Global.WindowTool.random.Next();
+                alpha = UseMapEditor.Global.WindowTool.random.Next(0, 65535);
 
                 ID = br.ReadUInt16();
                 X = br.ReadUInt16();
@@ -463,7 +775,6 @@ namespace Data.Map
                 UNUSED = br.ReadByte();
                 FLAG = br.ReadUInt16();
 
-                Images = new List<CImage>();
 
                 ImageReset();
             }
@@ -528,8 +839,8 @@ namespace Data.Map
                 }
             }
 
-
-            public List<CImage> Images;
+            [JsonIgnore]
+            public List<CImage> Images = new List<CImage>();
         }
 
         public byte[] MASK;
@@ -537,166 +848,7 @@ namespace Data.Map
 
 
 
-
-
-
-        public List<CUNIT> UNIT = new List<CUNIT>();
-        public class CUNIT
-        {
-            public CUNIT(BinaryReader br)
-            {
-                unitclass = br.ReadUInt32();
-                x = br.ReadUInt16();
-                y = br.ReadUInt16();
-                unitID = br.ReadUInt16();
-                linkFlag = br.ReadUInt16();
-                validstatusFlag = br.ReadUInt16();
-                validunitFlag = br.ReadUInt16();
-                player = br.ReadByte();
-                hitPoints = br.ReadByte();
-                shieldPoints = br.ReadByte();
-                energyPoints = br.ReadByte();
-                resoruceAmount = br.ReadUInt32();
-                hangar = br.ReadUInt16();
-                stateFlag = br.ReadUInt16();
-                unused = br.ReadUInt32();
-                linkedUnit = br.ReadUInt32();
-
-                Images = new List<CImage>();
-
-
-
-                ImageReset();
-            }
-            public void ImageReset()
-            {
-                Images.Clear();
-
-
-                int Graphics = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "Graphics", unitID).Data;
-                int Level = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "Elevation Level", unitID).Data;
-                int Sprite = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.flingy, "Sprite", Graphics).Data;
-                int ImageID = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.sprites, "Image File", Sprite).Data;
-
-
-                BoxWidth = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "StarEdit Placement Box Width", unitID).Data;
-                BoxHeight = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "StarEdit Placement Box Height", unitID).Data;
-
-
-                int Dir = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "Unit Direction", unitID).Data;
-
-                if (Dir == 32)
-                {
-                    Dir = -1;
-                }
-
-                CImage.DrawType drawType = CImage.DrawType.Normal;
-
-                int startanim = 0;
-                if ((stateFlag & 0b1) > 0)
-                {
-                    //Unit is cloaked
-                    drawType = CImage.DrawType.Clock;
-                }
-                if ((stateFlag & 0b10) > 0)
-                {
-                    //Unit is burrowed
-                    startanim = 25;
-                }
-                if ((stateFlag & 0b100) > 0)
-                {
-                    //Building is in transit
-                    startanim = 18;
-                }
-                if ((stateFlag & 0b1000) > 0)
-                {
-                    //Unit is hallucinated
-                    drawType = CImage.DrawType.Hallaction;
-                }
-
-
-                int StatusFlag = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "Special Ability Flags", unitID).Data;
-                if((StatusFlag & 0b10) > 0)
-                {
-                    if ((linkFlag & 0b1000000000) > 0)
-                    {
-                        //Bit 10 - Addon Link
-                        startanim = 17;
-                    }
-                    else
-                    {
-                        startanim = 18;
-                    }
-                }
-
-
-
-                CImage p = new CImage((int)unitclass, Images, ImageID, Dir, player, _drawType: drawType, level: Level, _StartAnim: startanim);
-                Images.Add(p);
-                int Subunit = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "Subunit 1", unitID).Data;
-                if(Subunit != 228)
-                {
-                    Graphics = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "Graphics", Subunit).Data;
-                    Level = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "Elevation Level", Subunit).Data;
-                    Sprite = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.flingy, "Sprite", Graphics).Data;
-                    ImageID = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.sprites, "Image File", Sprite).Data;
-
-                    if(ImageID == 254)
-                    {
-                        Dir += 16;
-                    }
-                    Images.Add(new CImage((int)unitclass, Images, ImageID, Dir, player, _parentImage: p, _drawType: drawType, level: Level + 1, _StartAnim: startanim));
-                }
-            }
-
-
-
-            public int BoxWidth;
-            public int BoxHeight;
-
-
-            public uint unitclass;//u32: The unit's class instance (sort of a "serial number")
-            public ushort x;//U16: X coordinate of unit
-            public ushort y;//U16: Y coordinate of unit
-            public ushort unitID;//u16: Unit ID
-            public ushort linkFlag;//u16: Type of relation to another building (i.e. add-on, nydus link)
-                                   //Bit 9 - Nydus Link
-                                   //Bit 10 - Addon Link
-            public ushort validstatusFlag;//u16: Flags of special properties which can be applied to the unit and are valid:
-                                          //Bit 0 - Cloak is valid
-                                          //Bit 1 - Burrow is valid
-                                          //Bit 2 - In transit is valid
-                                          //Bit 3 - Hallucinated is valid
-                                          //Bit 4 - Invincible is valid
-                                          //Bit 5-15 - Unused
-            public ushort validunitFlag;//u16: Out of the elements of the unit data, the properties which can be changed by the map maker:
-                                        //Bit 0 - Owner player is valid (the unit is not a critter, start location, etc.; not a neutral unit)
-                                        //Bit 1 - HP is valid
-                                        //Bit 2 - Shields is valid
-                                        //Bit 3 - Energy is valid (unit is a wraith, etc.)
-                                        //Bit 4 - Resource amount is valid (unit is a mineral patch, vespene geyser, etc.)
-                                        //Bit 5 - Amount in hangar is valid (unit is a reaver, carrier, etc.)
-                                        //Bit 6-15 - Unused
-            public byte player;//u8: Player number of owner (0-based)
-            public byte hitPoints;//u8: Hit points % (1-100)
-            public byte shieldPoints;//u8: Shield points % (1-100)
-            public byte energyPoints;//u8: Energy points % (1-100)
-            public uint resoruceAmount;//u32: Resource amount
-            public ushort hangar;//u16: Number of units in hangar
-            public ushort stateFlag;//u16: Unit state flags
-                                    //Bit 0 - Unit is cloaked
-                                    //Bit 1 - Unit is burrowed
-                                    //Bit 2 - Building is in transit
-                                    //Bit 3 - Unit is hallucinated
-                                    //Bit 4 - Unit is invincible
-                                    //Bit 5-15 - Unused
-            public uint unused;//u32: Unused
-            public uint linkedUnit;//u32: Class instance of the unit to which this unit is related to (i.e. via an add-on, nydus link, etc.). It is "0" if the unit is not linked to any other unit.
-
-
-            public List<CImage> Images;
-
-        }
+        
 
 
 

@@ -87,23 +87,36 @@ namespace UseMapEditor.Windows
 
             WaveFormat waveFormat = null;
 
-            if (System.IO.Path.GetExtension(soundData.path).ToLower() == ".wav")
+            long Samplerate = 0;
+            long Bitrate = 0;
+
+            try
             {
-                WaveFileReader waveFileReader = new WaveFileReader(new MemoryStream(soundData.bytes));
-                waveFormat = waveFileReader.WaveFormat;
+                if (System.IO.Path.GetExtension(soundData.path).ToLower() == ".wav")
+                {
+                    WaveFileReader waveFileReader = new WaveFileReader(new MemoryStream(soundData.bytes));
+                    waveFormat = waveFileReader.WaveFormat;
 
 
-                soundList.Len = waveFileReader.TotalTime.ToString();
+                    soundList.Len = waveFileReader.TotalTime.ToString();
+                }
+                else if (System.IO.Path.GetExtension(soundData.path).ToLower() == ".ogg")
+                {
+                    NAudio.Vorbis.VorbisWaveReader vorbisWaveReader = new NAudio.Vorbis.VorbisWaveReader(new MemoryStream(soundData.bytes));
+                    waveFormat = vorbisWaveReader.WaveFormat;
+                    soundList.Len = vorbisWaveReader.TotalTime.ToString();
+                }
+                Samplerate = waveFormat.SampleRate;
+                Bitrate = Samplerate * waveFormat.BitsPerSample * waveFormat.Channels;
             }
-            else if (System.IO.Path.GetExtension(soundData.path).ToLower() == ".ogg")
+            catch (Exception)
             {
-                NAudio.Vorbis.VorbisWaveReader vorbisWaveReader = new NAudio.Vorbis.VorbisWaveReader(new MemoryStream(soundData.bytes));
-                waveFormat = vorbisWaveReader.WaveFormat;
-                soundList.Len = vorbisWaveReader.TotalTime.ToString();
-            }
 
-            long Samplerate = waveFormat.SampleRate;
-            long Bitrate = Samplerate * waveFormat.BitsPerSample * waveFormat.Channels;
+            }
+ 
+
+
+
 
             soundList.Samplerate = Samplerate + "Hz";
             soundList.Bitrate = Bitrate / 1000 + "kb";
@@ -235,19 +248,28 @@ namespace UseMapEditor.Windows
             string filename = soundList.FileName;
             byte[] buffer = soundList.soundData.bytes;
 
+            try
+            {
+                if (System.IO.Path.GetExtension(filename).ToLower() == ".wav")
+                {
+                    WaveFileReader waveFileReader = new WaveFileReader(new MemoryStream(buffer));
+                    waveOut.Init(waveFileReader);
+                    waveOut.Play();
+                }
+                else if (System.IO.Path.GetExtension(filename).ToLower() == ".ogg")
+                {
+                    NAudio.Vorbis.VorbisWaveReader vorbisWaveReader = new NAudio.Vorbis.VorbisWaveReader(new MemoryStream(buffer));
+                    waveOut.Init(vorbisWaveReader);
+                    waveOut.Play();
+                }
+            }
+            catch (Exception)
+            {
+                System.Media.SystemSounds.Hand.Play();
+            }
 
-            if (System.IO.Path.GetExtension(filename).ToLower() == ".wav")
-            {
-                WaveFileReader waveFileReader = new WaveFileReader(new MemoryStream(buffer));
-                waveOut.Init(waveFileReader);
-                waveOut.Play();
-            }
-            else if (System.IO.Path.GetExtension(filename).ToLower() == ".ogg")
-            {
-                NAudio.Vorbis.VorbisWaveReader vorbisWaveReader = new NAudio.Vorbis.VorbisWaveReader(new MemoryStream(buffer));
-                waveOut.Init(vorbisWaveReader);
-                waveOut.Play();
-            }
+
+
         }
 
         private void Stopbtn_Click(object sender, RoutedEventArgs e)

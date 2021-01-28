@@ -14,9 +14,11 @@ namespace UseMapEditor.Lua.TrigEditPlus
 {
     public class Main
     {
-
         public LuaInterface.Lua Lua;
         public MapData mapData;
+
+
+        private bool IsTrigger;
 
         public Main()
         {
@@ -25,10 +27,15 @@ namespace UseMapEditor.Lua.TrigEditPlus
             Lua.DoFile(AppDomain.CurrentDomain.BaseDirectory + "Lua\\TrigEditPlus\\constparser.lua");
             Lua.DoFile(AppDomain.CurrentDomain.BaseDirectory + "Lua\\TrigEditPlus\\condition.lua");
             Lua.DoFile(AppDomain.CurrentDomain.BaseDirectory + "Lua\\TrigEditPlus\\action.lua");
+            Lua.DoFile(AppDomain.CurrentDomain.BaseDirectory + "Lua\\TrigEditPlus\\briefing.lua");
+            Lua.DoFile(AppDomain.CurrentDomain.BaseDirectory + "Lua\\TrigEditPlus\\tool.lua");
+
+
             Lua.RegisterFunction("msgbox", this, this.GetType().GetMethod("MsgBox"));
+
+
+
             Lua.RegisterFunction("Trigger", this, this.GetType().GetMethod("Triggerinterpreter"));
-
-
             Lua.RegisterFunction("ParseString", this, this.GetType().GetMethod("ParseString"));
             Lua.RegisterFunction("ParseLocation", this, this.GetType().GetMethod("ParseLocation"));
             Lua.RegisterFunction("ParseUPRP", this, this.GetType().GetMethod("ParseUPRP"));
@@ -198,7 +205,7 @@ namespace UseMapEditor.Lua.TrigEditPlus
 
         public void Triggerinterpreter(LuaInterface.LuaTable t)
         {
-            CTrigger cTrigger = new CTrigger(mapData);
+            CTrigger cTrigger = new CTrigger(mapData, IsTrigger);
 
             if (t["players"] != null)
             {
@@ -233,11 +240,22 @@ namespace UseMapEditor.Lua.TrigEditPlus
                 {
                     LuaInterface.LuaTable con = (LuaInterface.LuaTable)conds[i];
 
-                    TrigItem trigItem = GetTrigItem(con, false);
+                    bool tEnable = true;
+                    if(con["Disable"] != null)
+                    {
+                        con = (LuaInterface.LuaTable)con["item"];
+                        tEnable = false;
+                    }
+
+                    TrigItem trigItem = GetTrigItem(con);
                     if(trigItem == null)
                     {
                         continue;
                     }
+
+
+                    trigItem.IsEnable = tEnable;
+
                     cTrigger.conditions.Add(trigItem);
                 }
             }
@@ -248,11 +266,21 @@ namespace UseMapEditor.Lua.TrigEditPlus
                 {
                     LuaInterface.LuaTable act = (LuaInterface.LuaTable)acts[i];
 
-                    TrigItem trigItem = GetTrigItem(act, true);
+                    bool tEnable = true;
+                    if (act["Disable"] != null)
+                    {
+                        act = (LuaInterface.LuaTable)act["item"];
+                        tEnable = false;
+                    }
+
+                    TrigItem trigItem = GetTrigItem(act);
                     if (trigItem == null)
                     {
                         continue;
                     }
+
+                    trigItem.IsEnable = tEnable;
+
                     cTrigger.actions.Add(trigItem);
                 }
             }
@@ -260,31 +288,43 @@ namespace UseMapEditor.Lua.TrigEditPlus
             Triggers.Add(cTrigger);
         }
 
-        public TrigItem GetTrigItem(LuaInterface.LuaTable t, bool IsAction)
+        public TrigItem GetTrigItem(LuaInterface.LuaTable t)
         {
+            bool IsAction = true;
+
+
             int type = (int)(double)t[1];
 
             List<object> args = new List<object>();
-            for (int c = 2; c <= t.Values.Count; c++)
+            for (int c = 2; c <= t.Values.Count - 1; c++)
             {
                 args.Add(t[c]);
             }
 
             TrigItem trigItem = new TrigItem(mapData);
 
-            TriggerDefine td;
-            if (IsAction)
+            TriggerDefine td = null;
+
+            switch ((string)t["type"])
             {
-                td = Global.WindowTool.triggerManger.Actions[type];
+                case "Briefing":
+                    td = Global.WindowTool.triggerManger.BrifngActions[type];
+                    break;
+                case "Condition":
+                    IsAction = false;
+                    td = Global.WindowTool.triggerManger.Conditions[type];
+                    break;
+                case "Action":
+                    td = Global.WindowTool.triggerManger.Actions[type];
+                    break;
             }
-            else
-            {
-                td = Global.WindowTool.triggerManger.Conditions[type];
-            }
+
+
 
 
             trigItem.triggerDefine = td;
             trigItem.IsAction = IsAction;
+            trigItem.IsTrigger = IsTrigger;
             trigItem.name = td.NAME;
             trigItem.type = td.TYPE;
 
@@ -354,8 +394,10 @@ namespace UseMapEditor.Lua.TrigEditPlus
 
 
         List<CTrigger> Triggers = new List<CTrigger>();
-        public List<CTrigger> exec(string str, MapEditor mapEditor)
+        public List<CTrigger> exec(string str, MapEditor mapEditor, bool IsTrigger)
         {
+            this.IsTrigger = IsTrigger;
+
             str = str.Replace("\\", "\\\\");
             mapData = mapEditor.mapdata;
             ParseToolInit();

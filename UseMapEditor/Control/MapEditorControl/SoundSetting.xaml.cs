@@ -433,42 +433,51 @@ namespace UseMapEditor.Control.MapEditorControl
 
 
                 SoundData soundData = mapEditor.mapdata.soundDatas.Find((x) => x.path == soundname);
-                if (soundData == null)
-                {
-                    byte[] buffer = data.ReadFile(soundname);
-                    if(buffer.Length == 0)
-                    {
-                        return;
-                    }
 
-                    if (System.IO.Path.GetExtension(soundname).ToLower() == ".wav")
-                    {
-                        WaveFileReader waveFileReader = new WaveFileReader(new MemoryStream(buffer));
-                        waveOut.Init(waveFileReader);
-                        waveOut.Play();
-                    }
-                    else if (System.IO.Path.GetExtension(soundname).ToLower() == ".ogg")
-                    {
-                        NAudio.Vorbis.VorbisWaveReader vorbisWaveReader = new NAudio.Vorbis.VorbisWaveReader(new MemoryStream(buffer));
-                        waveOut.Init(vorbisWaveReader);
-                        waveOut.Play();
-                    }
-                }
-                else
+                try
                 {
-                    if (System.IO.Path.GetExtension(soundname).ToLower() == ".wav")
+                    if (soundData == null)
                     {
-                        WaveFileReader waveFileReader = new WaveFileReader(new MemoryStream(soundData.bytes));
-                        waveOut.Init(waveFileReader);
-                        waveOut.Play();
+                        byte[] buffer = data.ReadFile(soundname);
+                        if (buffer.Length == 0)
+                        {
+                            return;
+                        }
+
+                        if (System.IO.Path.GetExtension(soundname).ToLower() == ".wav")
+                        {
+                            WaveFileReader waveFileReader = new WaveFileReader(new MemoryStream(buffer));
+                            waveOut.Init(waveFileReader);
+                            waveOut.Play();
+                        }
+                        else if (System.IO.Path.GetExtension(soundname).ToLower() == ".ogg")
+                        {
+                            NAudio.Vorbis.VorbisWaveReader vorbisWaveReader = new NAudio.Vorbis.VorbisWaveReader(new MemoryStream(buffer));
+                            waveOut.Init(vorbisWaveReader);
+                            waveOut.Play();
+                        }
                     }
-                    else if (System.IO.Path.GetExtension(soundname).ToLower() == ".ogg")
+                    else
                     {
-                        NAudio.Vorbis.VorbisWaveReader vorbisWaveReader = new NAudio.Vorbis.VorbisWaveReader(new MemoryStream(soundData.bytes));
-                        waveOut.Init(vorbisWaveReader);
-                        waveOut.Play();
+                        if (System.IO.Path.GetExtension(soundname).ToLower() == ".wav")
+                        {
+                            WaveFileReader waveFileReader = new WaveFileReader(new MemoryStream(soundData.bytes));
+                            waveOut.Init(waveFileReader);
+                            waveOut.Play();
+                        }
+                        else if (System.IO.Path.GetExtension(soundname).ToLower() == ".ogg")
+                        {
+                            NAudio.Vorbis.VorbisWaveReader vorbisWaveReader = new NAudio.Vorbis.VorbisWaveReader(new MemoryStream(soundData.bytes));
+                            waveOut.Init(vorbisWaveReader);
+                            waveOut.Play();
+                        }
                     }
                 }
+                catch (Exception)
+                {
+                    System.Media.SystemSounds.Hand.Play();
+                }
+
             }
 
         }

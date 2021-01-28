@@ -5,12 +5,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UseMapEditor.Windows"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
+        materialDesign:ShadowAssist.CacheMode="{x:Null}"
         Background="{DynamicResource PrimaryHueMidBrush}"
         TextElement.Foreground="{DynamicResource PrimaryHueMidForegroundBrush}"
         Title="그래픽 데이터 추출 하는 중..." Height="100" Width="500" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" WindowStyle="ToolWindow">
     <DockPanel>
-        <ProgressBar x:Name="progres" DockPanel.Dock="Bottom"/>
-        <TextBlock Text="CascData 읽는 중..." FontSize="24" VerticalAlignment="Center" Margin="10,0"/>
+        <ProgressBar x:Name="progres" DockPanel.Dock="Bottom" />
+        <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center" Orientation="Horizontal">
+            <ProgressBar Foreground="{DynamicResource PrimaryHueDarkBrush}" Style="{StaticResource MaterialDesignCircularProgressBar}" Width="40" Height="40" Margin="10,0,0,0" IsIndeterminate="True" />
+            <TextBlock Text="CascData 읽는 중..." FontSize="24" VerticalAlignment="Center" Margin="10,0"/>
+        </StackPanel>
     </DockPanel>
 </controls:MetroWindow>

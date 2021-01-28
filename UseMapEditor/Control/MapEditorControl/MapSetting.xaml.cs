@@ -107,8 +107,10 @@ namespace UseMapEditor.Control.MapEditorControl
 
 
             ushort[] TILE = (ushort[])mapEditor.mapdata.TILE.Clone();
+            byte[] MASK = (byte[])mapEditor.mapdata.MASK.Clone();
 
             ushort[] NEWTILE = new ushort[ChangeWidth * ChangeHeight];
+            byte[] NEWMAKS = new byte[ChangeWidth * ChangeHeight];
 
 
             for (int y = 0; y < Height; y++)
@@ -116,6 +118,7 @@ namespace UseMapEditor.Control.MapEditorControl
                 for (int x = 0; x < Width; x++)
                 {
                     ushort tilevalue = TILE[x + y * Width];
+                    byte maskvalue = MASK[x + y * Width];
 
                     int nx = x + xdiffer;
                     int ny = y + ydiffer;
@@ -125,11 +128,13 @@ namespace UseMapEditor.Control.MapEditorControl
                         if (0 <= ny & ny < ChangeHeight)
                         {
                             NEWTILE[nx + ny * ChangeWidth] = tilevalue;
+                            NEWMAKS[nx + ny * ChangeWidth] = maskvalue;
                         }
                     }
                 }
             }
 
+            mapEditor.mapdata.MASK = NEWMAKS;
             mapEditor.mapdata.TILE = NEWTILE;
             mapEditor.mapdata.WIDTH = (ushort)ChangeWidth;
             mapEditor.mapdata.HEIGHT = (ushort)ChangeHeight;
@@ -162,8 +167,8 @@ namespace UseMapEditor.Control.MapEditorControl
 
             for (int i = 0; i < mapEditor.mapdata.UNIT.Count; i++)
             {
-                mapEditor.mapdata.UNIT[i].x += (ushort)(xdiffer * 32);
-                mapEditor.mapdata.UNIT[i].y += (ushort)(ydiffer * 32);
+                mapEditor.mapdata.UNIT[i].X += (ushort)(xdiffer * 32);
+                mapEditor.mapdata.UNIT[i].Y += (ushort)(ydiffer * 32);
             }
 
             for (int i = 0; i < mapEditor.mapdata.DD2.Count; i++)
@@ -190,6 +195,8 @@ namespace UseMapEditor.Control.MapEditorControl
 
 
             SizeChangePopupBox.IsPopupOpen = false;
+            mapEditor.taskManager.TaskReset();
+            mapEditor.SetDirty();
         }
 
 

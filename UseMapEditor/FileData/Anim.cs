@@ -278,7 +278,11 @@ namespace UseMapEditor.FileData
                                              cropRect,
                                              GraphicsUnit.Pixel);
                         }
-                        tsavepath += "\\" + entryindex + ".png";
+
+                        int grp = (ushort)Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.images, "GRP File", entryindex).Data;
+
+
+                        tsavepath += "\\" + grp + ".png";
 
 
                         target.Save(tsavepath, System.Drawing.Imaging.ImageFormat.Png);

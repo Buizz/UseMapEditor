@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -78,6 +79,15 @@ namespace UseMapEditor.Windows
             UseVFRCB.IsChecked = (Global.Setting.Vals[Global.Setting.Settings.Render_UseVFR] == "true");
 
 
+            string gridcolorstr = Global.Setting.Vals[Global.Setting.Settings.Program_GridColor];
+
+            uint gridcolorcode;
+            if (uint.TryParse(gridcolorstr ,out gridcolorcode))
+            {
+                GridColorButton.SetColor(new Microsoft.Xna.Framework.Color(gridcolorcode));
+            }
+
+            GridColorButton.ColorSelectEvent += GridColorButton_ColorSelectEvent;
 
             //Global.WindowTool.LoadGrp();
 
@@ -86,6 +96,15 @@ namespace UseMapEditor.Windows
             //main.Show();
             //Close();
         }
+
+        private void GridColorButton_ColorSelectEvent(object sender, EventArgs e)
+        {
+            Microsoft.Xna.Framework.Color color = (Microsoft.Xna.Framework.Color)sender;
+
+            Global.Setting.Vals[Global.Setting.Settings.Program_GridColor] = color.PackedValue.ToString();
+            Global.WindowTool.MapViewer.GridColor = color;
+        }
+
 
 
         private void DarkToggleBtn_Checked(object sender, RoutedEventArgs e)

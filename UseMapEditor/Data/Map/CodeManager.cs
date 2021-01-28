@@ -347,7 +347,7 @@ namespace Data.Map
 
                     return org;
                 case Codetype.Upgrade:
-                    label = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(UseMapEditor.FileData.DatFile.DatFiles.upgrades, "Label", index).Data - 1;
+                    label = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.upgrades, "Label", index).Data - 1;
 
 
                     return UseMapEditor.Global.WindowTool.GetStat_txt(label);
@@ -357,7 +357,9 @@ namespace Data.Map
 
                     return UseMapEditor.Global.WindowTool.GetStat_txt(label);
                 case Codetype.Sprite:
-                    return "Sprite";
+                    label = (ushort)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.sprites, "Image File", index).Data;
+
+                    return UseMapEditor.Global.WindowTool.imagename[label];
             }
             return "???";
         }

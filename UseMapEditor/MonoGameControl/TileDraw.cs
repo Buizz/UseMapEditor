@@ -80,11 +80,11 @@ namespace UseMapEditor.MonoGameControl
             _spriteBatch.Begin();
             for (float xi = StartPoint.X; xi < EndPoint.X; xi += mag)
             {
-                DrawLine(_spriteBatch, new Vector2(xi, StartPoint.Y), new Vector2(xi, EndPoint.Y), new Color(0xAAF361A6));
+                DrawLine(_spriteBatch, new Vector2(xi, StartPoint.Y), new Vector2(xi, EndPoint.Y), GridColor, 1);
             }
             for (float yi = StartPoint.Y; yi < EndPoint.Y; yi += mag)
             {
-                DrawLine(_spriteBatch, new Vector2(StartPoint.X, yi), new Vector2(EndPoint.X, yi), new Color(0xAAF361A6));
+                DrawLine(_spriteBatch, new Vector2(StartPoint.X, yi), new Vector2(EndPoint.X, yi), GridColor, 1);
             }
 
             _spriteBatch.End();
@@ -92,7 +92,155 @@ namespace UseMapEditor.MonoGameControl
         }
 
 
-      
+        private void RenderTileOverlay(bool IsDrawGrp)
+        {
+            bool WalkableOverlay = false;
+            bool BulidingOverlay = false;
+
+            if (mapeditor.PalleteLayer == Control.MapEditor.Layer.Unit)
+            {
+                if (mapeditor.mapDataBinding.UNIT_BRUSHMODE)
+                {
+                    if (mapeditor.unit_PasteMode)
+                    {
+
+                    }
+                    else
+                    {
+                        int unitid = (ushort)mapeditor.UnitPallete.SelectIndex;
+                        byte gflag = (byte)Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "Staredit Group Flags", unitid).Data;
+
+                        if ((gflag & 0x10) > 0)
+                        {
+                            //건물
+                            BulidingOverlay = true;
+                        }
+                        else
+                        {
+                            WalkableOverlay = true;
+                        }
+                    }
+                }
+            }
+
+
+
+            float width = (float)this.ActualWidth;
+            float height = (float)this.ActualHeight;
+
+
+
+
+            Vector2 MapMin = mapeditor.PosMapToScreen(new Vector2(0, 0));
+            Vector2 MapMax = mapeditor.PosMapToScreen(new Vector2(mapeditor.mapdata.WIDTH, mapeditor.mapdata.HEIGHT) * 32);
+            Vector2 MapSize = MapMax - MapMin;
+
+
+            if (!mapeditor.view_Tile)
+            {
+                return;
+            }
+
+
+            int startxti = (int)(mapeditor.opt_xpos / 32d);
+            int startyti = (int)(mapeditor.opt_ypos / 32d);
+
+            float mag = (float)(32 * mapeditor.opt_scalepercent);
+
+
+
+
+            float startx = (float)-((mapeditor.opt_xpos % 32) * mapeditor.opt_scalepercent);
+            float starty = (float)-((mapeditor.opt_ypos % 32) * mapeditor.opt_scalepercent);
+
+
+
+            int tileindex = 0;
+
+            int cxti = startxti;
+            int cyti = startyti;
+
+
+            _spriteBatch.Begin(blendState: BlendState.NonPremultiplied, samplerState: SamplerState.PointClamp);
+            for (float yi = starty; yi < height; yi += mag)
+            {
+                cxti = startxti;
+                for (float xi = startx; xi < width; xi += mag)
+                {
+                    if (cxti < 0 || cyti < 0)
+                    {
+                        cxti++;
+                        continue;
+                    }
+                    if (cxti >= mapeditor.mapdata.WIDTH || cyti >= mapeditor.mapdata.HEIGHT)
+                    {
+                        cxti++;
+                        continue;
+                    }
+
+
+                    tileindex = cxti + cyti * mapeditor.mapdata.WIDTH;
+                    ushort MTXM = mapeditor.mapdata.TILE[tileindex];
+                    if (IsDrawGrp)
+                    {
+                        ushort megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, MTXM);
+
+                        if (WalkableOverlay)
+                        {
+                            vf4 vf4 = tileSet.GetVf4(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, megaindex);
+                            if (!vf4.IsGround)
+                            {
+                                if (vf4.IsWall)
+                                {
+                                    _spriteBatch.Draw(gridtexture, new Vector2(xi, yi), null, new Color(255, 128, 0, 64), 0, Vector2.Zero, (float)mapeditor.opt_scalepercent * 32, SpriteEffects.None, 0);
+                                }
+                                else
+                                {
+                                    for (int ym = 0; ym < 4; ym++)
+                                    {
+                                        for (int xm = 0; xm < 4; xm++)
+                                        {
+                                            int index = xm + ym * 4;
+
+                                            if ((vf4.flags[index] & 0b1) == 0)
+                                            {
+                                                float xmp = (float)(xi + xm * 8 * mapeditor.opt_scalepercent);
+                                                float ymp = (float)(yi + ym * 8 * mapeditor.opt_scalepercent);
+
+                                                _spriteBatch.Draw(gridtexture, new Vector2(xmp, ymp), null, new Color(255, 128, 0, 64), 0, Vector2.Zero, (float)mapeditor.opt_scalepercent * 8, SpriteEffects.None, 0);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if (BulidingOverlay)
+                        {
+                            cv5 cv5 = tileSet.GetCV5(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, MTXM);
+                            //_spriteBatch.DrawString(_font, cv5.Flags.ToString("X"), new Vector2(xi, yi), Color.Red);
+                            if (((cv5.Flags & 0x0040) > 0) | ((cv5.Flags & 0x0080) > 0))
+                            {
+                                //빌딩 건설불가능
+                                _spriteBatch.Draw(gridtexture, new Vector2(xi, yi), null, new Color(255, 0, 0, 64), 0, Vector2.Zero, (float)mapeditor.opt_scalepercent * 32, SpriteEffects.None, 0);
+
+                            }
+                        }
+
+
+
+                    }
+                    else
+                    {
+                        _spriteBatch.DrawString(_font, MTXM.ToString(), new Vector2(xi, yi), Color.Red);
+                    }
+                    cxti++;
+                }
+                cyti++;
+            }
+            _spriteBatch.End();
+        }
+
+
 
         private void RenderTile(bool IsDrawGrp)
         {
@@ -136,7 +284,7 @@ namespace UseMapEditor.MonoGameControl
             int cyti = startyti;
 
 
-            _spriteBatch.Begin( samplerState: SamplerState.PointClamp);
+            _spriteBatch.Begin(blendState: BlendState.NonPremultiplied, samplerState: SamplerState.PointClamp);
             for (float yi = starty; yi < height; yi += mag)
             {
                 cxti = startxti;
@@ -158,18 +306,18 @@ namespace UseMapEditor.MonoGameControl
                     ushort MTXM = mapeditor.mapdata.TILE[tileindex];
                     if (IsDrawGrp)
                     {
-
+                        ushort megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, MTXM);
+                        Texture2D texture2D = tileSet.GetMegaTileGrp(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, megaindex);
+                        //Texture2D texture2D = tileSet.GetTile(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, MTXM);
                         switch (mapeditor.opt_drawType)
                         {
                             case Control.MapEditor.DrawType.SD:
                                 {
-                                    Texture2D texture2D = tileSet.GetTile(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, MTXM);
                                     _spriteBatch.Draw(texture2D, new Vector2(xi, yi), null, Color.White, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent, SpriteEffects.None, 0);
                                 }
                                 break;
                             case Control.MapEditor.DrawType.HD: case Control.MapEditor.DrawType.CB:
                                 {
-                                    Texture2D texture2D = tileSet.GetTile(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, MTXM);
                                     _spriteBatch.Draw(texture2D, new Vector2(xi, yi), null, Color.White, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent / 2, SpriteEffects.None, 0);
                                 }
                                 break;
@@ -202,9 +350,22 @@ namespace UseMapEditor.MonoGameControl
             _spriteBatch.End();
         }
 
+
+
+
+
         private void DrawDooDad(CDD2 cDD2)
         {
-            DoodadPallet pallete = tileSet.DoodadPallets[mapeditor.mapdata.TILETYPE][cDD2.ID];
+            var t = tileSet.DoodadPallets[mapeditor.mapdata.TILETYPE];
+            if (t.Count <= cDD2.ID)
+            {
+                return;
+            }
+
+            DoodadPallet pallete = t[cDD2.ID];
+
+
+
 
             int _x = cDD2.X / 32 * 32 - (pallete.dddWidth / 2) * 32;
             int _y = cDD2.Y / 32 * 32 - (pallete.dddHeight / 2) * 32;

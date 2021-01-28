@@ -31,6 +31,15 @@ namespace UseMapEditor.Control.MapEditorControl
                 MainGrid.Children.Add(new ForceSetting(mapEditor, i));
             }
         }
+        public void MainListRefresh()
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                ((ForceSetting)MainGrid.Children[i]).Refresh();
+            }
+        }
+
+
 
         public ForceSettingPanel()
         {

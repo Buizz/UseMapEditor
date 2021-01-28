@@ -27,6 +27,8 @@ namespace UseMapEditor.Control.MapEditorControl
         public MapEditor mapEditor;
 
         private TriggerManger tm = Global.WindowTool.triggerManger;
+        ObservableCollection<CTrigger> triggerlist;
+
         private bool IsTrigger;
         public void SetMapEditor(MapEditor mapEditor, bool IsTrigger)
         {
@@ -35,18 +37,23 @@ namespace UseMapEditor.Control.MapEditorControl
             this.IsTrigger = IsTrigger;
             ValueSelecterControl.SetMapEditor(mapEditor);
 
+
             if (IsTrigger)
             {
                 TrigEditPlusBtn.Visibility = Visibility.Visible;
-                MainListBox.ItemsSource = mapEditor.mapdata.Triggers;
+                triggerlist = mapEditor.mapdata.Triggers;
                 TrigConditionBtn.Visibility = Visibility.Visible;
             }
             else
             {
                 TrigEditPlusBtn.Visibility = Visibility.Collapsed;
-                MainListBox.ItemsSource = mapEditor.mapdata.Brifings;
+                triggerlist = mapEditor.mapdata.Brifings;
                 TrigConditionBtn.Visibility = Visibility.Collapsed;
             }
+
+            MainListBox.ItemsSource = triggerlist;
+
+
             TrigEditWindowOpen = false;
             EditWindow.Visibility = Visibility.Hidden;
 
@@ -157,17 +164,17 @@ namespace UseMapEditor.Control.MapEditorControl
 
         private void UpItem(CTrigger cTrigger)
         {
-            int LastIndex = mapEditor.mapdata.Triggers.IndexOf(cTrigger);
+            int LastIndex = triggerlist.IndexOf(cTrigger);
 
-            mapEditor.mapdata.Triggers.RemoveAt(LastIndex);
-            mapEditor.mapdata.Triggers.Insert(LastIndex - 1, cTrigger);
+            triggerlist.RemoveAt(LastIndex);
+            triggerlist.Insert(LastIndex - 1, cTrigger);
         }
         private void DownItem(CTrigger cTrigger)
         {
-            int LastIndex = mapEditor.mapdata.Triggers.IndexOf(cTrigger);
+            int LastIndex = triggerlist.IndexOf(cTrigger);
 
-            mapEditor.mapdata.Triggers.RemoveAt(LastIndex);
-            mapEditor.mapdata.Triggers.Insert(LastIndex + 1, cTrigger);
+            triggerlist.RemoveAt(LastIndex);
+            triggerlist.Insert(LastIndex + 1, cTrigger);
         }
 
 
@@ -190,8 +197,8 @@ namespace UseMapEditor.Control.MapEditorControl
 
             cTriggers.Sort((x, y) =>
             {
-                int xpos = mapEditor.mapdata.Triggers.IndexOf(x);
-                int ypos = mapEditor.mapdata.Triggers.IndexOf(y);
+                int xpos = triggerlist.IndexOf(x);
+                int ypos = triggerlist.IndexOf(y);
 
                 return xpos.CompareTo(ypos);
             });
@@ -213,6 +220,7 @@ namespace UseMapEditor.Control.MapEditorControl
                 MainListBox.SelectedItems.Add(item);
             }
             MainListBox.ScrollIntoView(cTriggers.First());
+            mapEditor.SetDirty();
         }
         private void DownFunc()
         {
@@ -229,8 +237,8 @@ namespace UseMapEditor.Control.MapEditorControl
 
             cTriggers.Sort((x, y) =>
             {
-                int xpos = mapEditor.mapdata.Triggers.IndexOf(x);
-                int ypos = mapEditor.mapdata.Triggers.IndexOf(y);
+                int xpos = triggerlist.IndexOf(x);
+                int ypos = triggerlist.IndexOf(y);
 
                 return ypos.CompareTo(xpos);
             });
@@ -251,6 +259,7 @@ namespace UseMapEditor.Control.MapEditorControl
                 MainListBox.SelectedItems.Add(item);
             }
             MainListBox.ScrollIntoView(cTriggers.Last());
+            mapEditor.SetDirty();
         }
         private void EditFunc()
         {
@@ -272,7 +281,7 @@ namespace UseMapEditor.Control.MapEditorControl
             List<CTrigger> ctrigs = new List<CTrigger>();
             ctrigs.AddRange(MainListBox.SelectedItems.Cast<CTrigger>().ToList());
 
-            ctrigs.Sort((x, y) => mapEditor.mapdata.Triggers.IndexOf(x).CompareTo(mapEditor.mapdata.Triggers.IndexOf(y)));
+            ctrigs.Sort((x, y) => triggerlist.IndexOf(x).CompareTo(triggerlist.IndexOf(y)));
 
             foreach (CTrigger item in ctrigs)
             {
@@ -287,7 +296,7 @@ namespace UseMapEditor.Control.MapEditorControl
         private void PasteFunc()
         {
             string pastetext = Clipboard.GetText();
-            List<CTrigger> ctrig = teplua.exec(pastetext, mapEditor);
+            List<CTrigger> ctrig = teplua.exec(pastetext, mapEditor, IsTrigger);
             if(ctrig != null)
             {
                 int sindex = MainListBox.SelectedIndex;
@@ -297,11 +306,11 @@ namespace UseMapEditor.Control.MapEditorControl
                 {
                     if(sindex == -1)
                     {
-                        mapEditor.mapdata.Triggers.Add(item);
+                        triggerlist.Add(item);
                     }
                     else
                     {
-                        mapEditor.mapdata.Triggers.Insert(sindex + i++, item);
+                        triggerlist.Insert(sindex + i++, item);
                     }
                 }
                 mapEditor.SetDirty();
@@ -325,8 +334,9 @@ namespace UseMapEditor.Control.MapEditorControl
             }
             foreach (CTrigger item in cTriggers)
             {
-                mapEditor.mapdata.Triggers.Remove(item);
+                triggerlist.Remove(item);
             }
+            mapEditor.SetDirty();
         }
 
 
@@ -347,7 +357,7 @@ namespace UseMapEditor.Control.MapEditorControl
                 EditBtn.IsEnabled = false;
                 CutBtn.IsEnabled = false;
                 CopyBtn.IsEnabled = false;
-                PasteBtn.IsEnabled = false;
+                PasteBtn.IsEnabled = true;
                 DeleteBtn.IsEnabled = false;
             }
             else
@@ -357,9 +367,7 @@ namespace UseMapEditor.Control.MapEditorControl
                 EditBtn.IsEnabled = true;
                 CutBtn.IsEnabled = true;
                 CopyBtn.IsEnabled = true;
-
                 PasteBtn.IsEnabled = true;
-
                 DeleteBtn.IsEnabled = true;
             }
         }

@@ -5,8 +5,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UseMapEditor.Dialog"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        mc:Ignorable="d"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" xmlns:control="clr-namespace:UseMapEditor.Control"
+                      mc:Ignorable="d"
+        materialDesign:ShadowAssist.CacheMode="{x:Null}"
         Closing="MetroWindow_Closing"
         Loaded="Window_Loaded"
         Title="프로그램 세팅" Height="400" Width="600" WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow">
@@ -26,10 +27,14 @@
 
             <StackPanel x:Name="RenderSetting">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="최대 프레임"/>
+                    <TextBlock Text="최대 프레임" VerticalAlignment="Center"/>
                     <TextBox x:Name="MaxFrameTB" Width="40"/>
                 </StackPanel>
                 <CheckBox x:Name="UseVFRCB" Content="프레임 최적화 사용" ToolTip="최대 프레임을 임의로 조절하여 렉을 최소화합니다."/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="그리드 색상 : " VerticalAlignment="Center"/>
+                <control:ColorSelectButton x:Name="GridColorButton"/>
             </StackPanel>
         </StackPanel>
         <Separator/>

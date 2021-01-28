@@ -12,14 +12,13 @@ using System.Windows;
 using UseMapEditor.FileData;
 using WpfTest.Components;
 using static Data.Map.MapData;
+using Point = System.Windows.Point;
 
 namespace UseMapEditor.MonoGameControl
 {
     public partial class MapDrawer : WpfGame
     {
-
-        int CloseTimer = 0;
-
+        int ToolBaStreachValue = 0;
 
         private void DrawPallet(bool IsDrawGrp)
         {
@@ -27,11 +26,10 @@ namespace UseMapEditor.MonoGameControl
 
 
 
-            CloseTimer = (int)(mapeditor.GetToolBarWidth());
             if (mapeditor.IsToolBarOpen())
             {
                 //열려 있을 경우
-                if(CloseTimer >= 512)
+                if(ToolBaStreachValue >= 512)
                 {
                     //열림 상태
                     IsOpen = true;
@@ -42,8 +40,8 @@ namespace UseMapEditor.MonoGameControl
 
 
 
-            CloseTimer = Math.Min(512, CloseTimer);
-            CloseTimer = Math.Max(0, CloseTimer);
+            ToolBaStreachValue = Math.Min(512, ToolBaStreachValue);
+            ToolBaStreachValue = Math.Max(0, ToolBaStreachValue);
 
 
             Color Back;
@@ -58,7 +56,7 @@ namespace UseMapEditor.MonoGameControl
             }
 
             _spriteBatch.Begin();
-            _spriteBatch.Draw(gridtexture, new Rectangle((int)(screenwidth - CloseTimer), 0, CloseTimer, (int)screenheight), Back);
+            _spriteBatch.Draw(gridtexture, new Rectangle((int)(screenwidth), 0, ToolBaStreachValue, (int)screenheight), Back);
             _spriteBatch.End();
 
 
@@ -87,7 +85,7 @@ namespace UseMapEditor.MonoGameControl
             {
                 if (0 < MousePos.Y & MousePos.Y < 128)
                 {
-                    if ((screenwidth - CloseTimer - 128) < MousePos.X)
+                    if ((screenwidth - 128) < MousePos.X)
                     {
                         IsMiniMapDrag = true;
                     }
@@ -102,7 +100,7 @@ namespace UseMapEditor.MonoGameControl
 
             if (IsMiniMapDrag)
             {
-                int ClickX = (int)(MousePos.X - (screenwidth - CloseTimer - 128));
+                int ClickX = (int)(MousePos.X - (screenwidth - 128));
                 int ClickY = (int)MousePos.Y;
 
 
@@ -167,7 +165,7 @@ namespace UseMapEditor.MonoGameControl
 
             //drawMinimap
             _spriteBatch.Begin();
-            int StartX = (int)(screenwidth - CloseTimer) - 128;
+            int StartX = (int)(screenwidth) - 128;
             int StartY = 0;
             int MapW = mapeditor.mapdata.WIDTH;
             int MapH = mapeditor.mapdata.HEIGHT;
@@ -190,7 +188,7 @@ namespace UseMapEditor.MonoGameControl
 
         private void DrawMiniMapRect()
         {
-            int StartX = (int)(screenwidth - CloseTimer) - 128;
+            int StartX = (int)(screenwidth) - 128;
             int StartY = 0;
             int MapW = mapeditor.mapdata.WIDTH;
             int MapH = mapeditor.mapdata.HEIGHT;
@@ -230,7 +228,7 @@ namespace UseMapEditor.MonoGameControl
 
             Vector2 MapMax = MiniMin + Size;
 
-            MapMax.X = Math.Min(MapMax.X, screenwidth - CloseTimer);
+            MapMax.X = Math.Min(MapMax.X, screenwidth);
 
 
 
@@ -245,7 +243,7 @@ namespace UseMapEditor.MonoGameControl
             ushort MTXM = mapeditor.mapdata.TILE[tileindex];
 
             mapeditor.minimapcolor[x + y * 256] = tileSet.GetTileColor(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, MTXM);
-            mapeditor.miniampUnit[x + y * 256] = Color.Transparent;
+            //mapeditor.miniampUnit[x + y * 256] = Color.Transparent;
         }
         public void miniUnitUpdate(CUNIT cUNIT)
         {
@@ -256,8 +254,8 @@ namespace UseMapEditor.MonoGameControl
             {
                 for (int y = -h / 2; y < h / 2; y++)
                 {
-                    int mx = ((cUNIT.x + x) / 32);
-                    int my = ((cUNIT.y + y) / 32);
+                    int mx = ((cUNIT.X + x) / 32);
+                    int my = ((cUNIT.Y + y) / 32);
 
 
                     mx = Math.Max(0, mx);
@@ -288,7 +286,6 @@ namespace UseMapEditor.MonoGameControl
         }
         private void CreateMiniMapUnit()
         {
-
             for (int i = 0; i < mapeditor.mapdata.UNIT.Count; i++)
             {
                 miniUnitUpdate(mapeditor.mapdata.UNIT[i]);
@@ -304,28 +301,46 @@ namespace UseMapEditor.MonoGameControl
         {
             if(mapeditor.TilePallet.Visibility == Visibility.Visible)
             {
-                int startX = ((int)(screenwidth - CloseTimer));
-                int startY = 128;
+                double maxvalue = tileSet.cv5data[mapeditor.mapdata.TILETYPE].Length * 32;
+                if(maxvalue != mapeditor.TileScroll.Maximum)
+                {
+                    mapeditor.TileScroll.Maximum = maxvalue;
+                }
+
+
+                Point relativePoint = mapeditor.TileDrawPanel.TransformToAncestor(mapeditor.ToolBarExpander).Transform(new Point(0, 0));
+
+
+                int startX = ((int)(screenwidth));
+                int startY = (int)relativePoint.Y - mapeditor.brush_tilescroll % 32;
+
+                int tiley = mapeditor.brush_tilescroll / 32;
+
 
                 _spriteBatch.Begin();
                 for (int y = 0; y < 30; y++)
                 {
                     for (int x = 0; x < 16; x++)
                     {
-
                         switch (mapeditor.opt_drawType)
                         {
                             case Control.MapEditor.DrawType.SD:
                                 {
-                                    Texture2D texture2D = tileSet.GetTile(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, (ushort)y, (ushort)x);
-                                    _spriteBatch.Draw(texture2D, new Vector2(startX + x * 32, startY + y * 32), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+                                    Texture2D texture2D = tileSet.GetTile(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, (ushort)(y + tiley), (ushort)x);
+                                    if(texture2D != null)
+                                    {
+                                        _spriteBatch.Draw(texture2D, new Vector2(startX + x * 32, startY + y * 32), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+                                    }
                                 }
                                 break;
                             case Control.MapEditor.DrawType.HD:
                             case Control.MapEditor.DrawType.CB:
                                 {
-                                    Texture2D texture2D = tileSet.GetTile(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, (ushort)y, (ushort)x);
-                                    _spriteBatch.Draw(texture2D, new Vector2(startX + x * 32, startY + y * 32), null, Color.White, 0, Vector2.Zero, 0.5f, SpriteEffects.None, 0);
+                                    Texture2D texture2D = tileSet.GetTile(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, (ushort)(y + tiley), (ushort)x);
+                                    if (texture2D != null)
+                                    {
+                                        _spriteBatch.Draw(texture2D, new Vector2(startX + x * 32, startY + y * 32), null, Color.White, 0, Vector2.Zero, 0.5f, SpriteEffects.None, 0);
+                                    }
                                 }
                                 break;
                         }

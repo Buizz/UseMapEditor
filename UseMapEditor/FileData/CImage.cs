@@ -41,6 +41,19 @@ namespace UseMapEditor.FileData
             Doodad
         }
 
+        public bool IsSelect;
+        public bool IsHover;
+
+
+        public bool IsUnitRect;
+        public int Left;
+        public int Up;
+        public int Right;
+        public int Down;
+
+
+
+
 
         public int Direction
         {
@@ -254,11 +267,6 @@ namespace UseMapEditor.FileData
             int t;
             int t2;
             Random random = Global.WindowTool.random;
-
-            if(584 <= imageID & imageID <= 588)
-            {
-
-            }
 
 
             switch (opcode)
@@ -613,13 +621,13 @@ namespace UseMapEditor.FileData
                     case 307:
                     case 923:
                     case 934:
-                        iscriptOffset = Global.WindowTool.iscript.iscriptEntries[iscriptID].AnimHeader[16];
+                        iscriptOffset = getiscriptOffset(iscriptID, 16);
                         Isint = 1;
                         break;
                     case 271:
                         if (iscriptOffset == 31162)
                         {
-                            iscriptOffset = Global.WindowTool.iscript.iscriptEntries[iscriptID].AnimHeader[16];
+                            iscriptOffset = getiscriptOffset(iscriptID, 16);
                             Isint = 1;
                         }
                             
@@ -633,7 +641,7 @@ namespace UseMapEditor.FileData
                     case 271:
                         if(iscriptOffset == 31162)
                         {
-                            iscriptOffset = Global.WindowTool.iscript.iscriptEntries[iscriptID].AnimHeader[StartAnim];
+                            iscriptOffset = getiscriptOffset(iscriptID, StartAnim);
                             Isint = 2;
                         }
                         //iscriptOffset = Global.WindowTool.iscript.iscriptEntries[iscriptID].AnimHeader[StartAnim];
@@ -647,14 +655,26 @@ namespace UseMapEditor.FileData
                 {
                     if (StartAnim != 0)
                     {
-                        iscriptOffset = Global.WindowTool.iscript.iscriptEntries[iscriptID].AnimHeader[StartAnim];
+                        iscriptOffset = getiscriptOffset(iscriptID, StartAnim);
                         Isint = 1;
                     }
                 }
                     
             }
+        }
 
 
+        private int getiscriptOffset(int iscriptID, int StartAnim)
+        {
+            ushort[] header = Global.WindowTool.iscript.iscriptEntries[iscriptID].AnimHeader;
+            if (header.Length > StartAnim)
+            {
+                return header[StartAnim];
+            }
+            else
+            {
+                return header[0];
+            }
 
         }
     }

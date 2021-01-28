@@ -59,6 +59,65 @@ namespace UseMapEditor.MonoGameControl
 
 
 
+        private void DrawImageListPreview(List<CImage> templist, Vector2 center)
+        {
+            float scale = 1;
+            float grpscale = 1;
+            switch (mapeditor.opt_drawType)
+            {
+                case Control.MapEditor.DrawType.SD:
+                    //scale = (float)mapeditor.opt_scalepercent;
+                    grpscale = 1;
+
+                    break;
+                case Control.MapEditor.DrawType.HD:
+                case Control.MapEditor.DrawType.CB:
+                    //scale = (float)mapeditor.opt_scalepercent;
+                    grpscale = 2;
+                    break;
+            }
+
+            _spriteBatch.Begin(blendState: BlendState.NonPremultiplied);
+            _spriteBatch.Draw(gridtexture, new Rectangle((int)(center.X - 128), (int)(center.Y - 128), (int)256, (int)256), null, new Color(0, 0, 0, 128), 0, new Vector2(), SpriteEffects.None, 0);
+            _spriteBatch.End();
+
+
+            templist.Sort((x1, x2) => x1.drawsort.CompareTo(x2.drawsort));
+            for (int i = 0; i < templist.Count; i++)
+            {
+                templist[i].screen = center;
+
+                DrawImage(mapeditor.opt_drawType, templist[i], scale, grpscale);
+            }
+        }
+
+
+        private void DrawImageList(List<CImage> templist)
+        {
+            float scale = 1;
+            float grpscale = 1;
+            switch (mapeditor.opt_drawType)
+            {
+                case Control.MapEditor.DrawType.SD:
+                    scale = (float)mapeditor.opt_scalepercent;
+                    grpscale = 1;
+
+                    break;
+                case Control.MapEditor.DrawType.HD:
+                case Control.MapEditor.DrawType.CB:
+                    scale = (float)mapeditor.opt_scalepercent;
+                    grpscale = 2;
+                    break;
+            }
+
+            templist.Sort((x1, x2) => x1.drawsort.CompareTo(x2.drawsort));
+            for (int i = 0; i < templist.Count; i++)
+            {
+                DrawImage(mapeditor.opt_drawType, templist[i], scale, grpscale);
+            }
+        }
+
+
         private void DrawImage(Control.MapEditor.DrawType drawType, CImage cImage, float scale, float grpscale)
         {
             if (!mapeditor.view_Unit_StartLoc & cImage.imageID == 588)
@@ -75,8 +134,24 @@ namespace UseMapEditor.MonoGameControl
 
             Vector2 pos = cImage.screen;
 
+            GRP gRP = null;
+            bool setgrp = false;
+            if (cImage.imageID == 588)
+            {
+                //스타트로케이션
+                if(drawType == Control.MapEditor.DrawType.CB)
+                {
+                    gRP = GetImageTexture(Control.MapEditor.DrawType.HD, cImage.imageID);
+                    setgrp = true;
+                }
+            }
 
-            GRP gRP = GetImageTexture(drawType, cImage.imageID);
+            if (!setgrp)
+            {
+                gRP = GetImageTexture(drawType, cImage.imageID);
+            }
+
+
             if(gRP.frameCount == 0)
             {
                 return;
@@ -113,6 +188,22 @@ namespace UseMapEditor.MonoGameControl
                         y = -16;
                     }
                     break;
+                case 588:
+                    //스타트로케이션
+                    if (drawType != Control.MapEditor.DrawType.SD)
+                    {
+                        x = -61;
+                        y = -32;
+                    }
+                    break;
+                case 582:
+                    //맵리빌러
+                    if (drawType == Control.MapEditor.DrawType.HD)
+                    {
+                        x = -16;
+                        y = -16;
+                    }
+                    break;
             }
 
 
@@ -121,6 +212,9 @@ namespace UseMapEditor.MonoGameControl
             Vector2 grpsize = new Vector2(gRP.grpwidth, gRP.grpheight) / grpscale / grpscale;
             Vector2 imgpospos = new Vector2(cImage.XOffset, cImage.YOffset);
             Vector2 framesize = new Vector2(fd.fwidth, fd.fheight) / grpscale;
+
+
+
 
 
             Vector2 LastPos = new Vector2();
@@ -149,15 +243,16 @@ namespace UseMapEditor.MonoGameControl
 
 
 
-            _spriteBatch.Begin(SpriteSortMode.FrontToBack, blendState: BlendState.NonPremultiplied, samplerState: SamplerState.PointClamp);
 
-            Color color = Color.White; ;
+            Color color = Color.White;
 
+            bool drawcmp = false;
+            bool nonecolor = false;
             switch (cImage.drawType)
             {
                 case CImage.DrawType.Shadow:
                     color = new Color(0, 0, 0, 128);
-                    //_spriteBatch.Draw(gRP.MainGRP, p, new Rectangle(fd.x, fd.y, fd.fwidth, fd.fheight), new Color(0, 0, 0, 128), 0, Vector2.Zero, scale / grpscale, SpriteEffects.None, 1 - cImage.Level / 30f);
+                    _spriteBatch.Begin(SpriteSortMode.FrontToBack, blendState: BlendState.NonPremultiplied, samplerState: SamplerState.PointClamp);
                     _spriteBatch.Draw(gRP.MainGRP, p, new Rectangle(fd.x, fd.y, fd.fwidth, fd.fheight), color, 0, Vector2.Zero, scale / grpscale, spriteEffects, 1 - cImage.Level / 30f);
                     _spriteBatch.End();
                     return;
@@ -166,9 +261,8 @@ namespace UseMapEditor.MonoGameControl
                     break;
                 case CImage.DrawType.Hallaction:
                     color = new Color(64, 64, 255, 255);
-                    _spriteBatch.Draw(gRP.MainGRP, p, new Rectangle(fd.x, fd.y, fd.fwidth, fd.fheight), color, 0, Vector2.Zero, scale / grpscale, spriteEffects, 1 - cImage.Level / 30f);
-                    _spriteBatch.End();
-                    return;
+                    nonecolor = true;
+                    break;
                 case CImage.DrawType.UnitSprite:
                     color = Color.White;
                     if (mapeditor.view_SpriteColor)
@@ -192,30 +286,87 @@ namespace UseMapEditor.MonoGameControl
                     //color = new Color(0, 255, 0, 255);
                     break;
             }
+            if (!drawcmp)
+            {
+                _spriteBatch.Begin(SpriteSortMode.FrontToBack, blendState: BlendState.NonPremultiplied, samplerState: SamplerState.PointClamp);
+                _spriteBatch.Draw(gRP.MainGRP, p, new Rectangle(fd.x, fd.y, fd.fwidth, fd.fheight), color, 0, Vector2.Zero, scale / grpscale, spriteEffects, 1 - cImage.Level / 30f);
+            }
 
-
-
-
-
-            _spriteBatch.Draw(gRP.MainGRP, p, new Rectangle(fd.x, fd.y, fd.fwidth, fd.fheight), color, 0, Vector2.Zero, scale / grpscale, spriteEffects, 1 - cImage.Level / 30f);
 
             _spriteBatch.End();
-
-            if (cImage.color >= 0)
+            if (!nonecolor)
             {
-                if (gRP.Color != null)
+                if (cImage.color >= 0)
                 {
-                    //BlendState blendState = GraphicsDevice.BlendState;
-                    //GraphicsDevice.BlendState = ColorBlend;
+                    if (gRP.Color != null)
+                    {
+                        Color unitColor = mapeditor.mapdata.UnitColor(cImage.color);
 
-                    _colorBatch.Begin(SpriteSortMode.FrontToBack, ColorBlend, samplerState: SamplerState.PointClamp);
-                    _colorBatch.Draw(gRP.Color, p, new Rectangle(fd.x, fd.y, fd.fwidth, fd.fheight), mapeditor.mapdata.UnitColor(cImage.color), 0, Vector2.Zero, scale / grpscale, spriteEffects, 1- cImage.Level / 30f);
+                        if (cImage.drawType == CImage.DrawType.Clock)
+                        {
+                            unitColor.A = 64;
+                        }
 
-                    //GraphicsDevice.BlendState = blendState;
+                        //BlendState blendState = GraphicsDevice.BlendState;
+                        //GraphicsDevice.BlendState = ColorBlend;
 
-                    _colorBatch.End();
+                        _colorBatch.Begin(SpriteSortMode.FrontToBack, ColorBlend, samplerState: SamplerState.PointClamp);
+                        _colorBatch.Draw(gRP.Color, p, new Rectangle(fd.x, fd.y, fd.fwidth, fd.fheight), unitColor, 0, Vector2.Zero, scale / grpscale, spriteEffects, 1 - cImage.Level / 30f);
+
+                        //GraphicsDevice.BlendState = blendState;
+
+                        _colorBatch.End();
+                    }
                 }
             }
+
+
+
+
+
+
+            _spriteBatch.Begin(blendState: BlendState.NonPremultiplied);
+
+            if(cImage.IsHover | cImage.IsSelect)
+            {
+                Vector2 rectpos;
+                Vector2 rectsize;
+                if (cImage.IsUnitRect)
+                {
+                    rectpos = pos - new Vector2(cImage.Left, cImage.Up) * scale;
+                    rectsize = new Vector2(cImage.Left + cImage.Right, cImage.Up + cImage.Down) * scale;
+                }
+                else
+                {
+                    rectpos = p;
+                    rectsize = new Vector2(fd.fwidth, fd.fheight);
+
+                    if(rectsize.LengthSquared() < 8)
+                    {
+                        rectpos -= new Vector2(4 * scale);
+                        rectsize += new Vector2(8);
+                    }
+
+
+                    rectsize *= scale / grpscale;
+                }
+
+
+                if (cImage.IsHover)
+                {
+                    _spriteBatch.Draw(gridtexture, new Rectangle((int)rectpos.X, (int)rectpos.Y, (int)rectsize.X, (int)rectsize.Y), null, new Color(128, 128, 255, 48), 0, new Vector2(), SpriteEffects.None, 1);
+                    DrawRect(_spriteBatch, rectpos, rectpos + rectsize, Color.Red);
+                }
+                else if (cImage.IsSelect)
+                {
+                    _spriteBatch.Draw(gridtexture, new Rectangle((int)rectpos.X, (int)rectpos.Y, (int)rectsize.X, (int)rectsize.Y), null, new Color(128, 255, 128, 48), 0, new Vector2(), SpriteEffects.None, 1);
+                    DrawRect(_spriteBatch, rectpos, rectpos + rectsize, Color.Red);
+                }
+            }
+            _spriteBatch.End();
+
+
+
         }
 
 

@@ -6,9 +6,11 @@ using MonoGame.Framework.WpfInterop.Input;
 using SpriteFontPlus;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Windows;
 using UseMapEditor.FileData;
+using UseMapEditor.Tools;
 using WpfTest.Components;
 
 namespace UseMapEditor.MonoGameControl
@@ -21,6 +23,8 @@ namespace UseMapEditor.MonoGameControl
             mapeditor = _mapeditor;
         }
 
+        public Color GridColor;
+
 
         private IGraphicsDeviceService _graphicsDeviceManager;
         private WpfKeyboard _keyboard;
@@ -32,6 +36,7 @@ namespace UseMapEditor.MonoGameControl
         private SpriteFont _locationfont;
 
         BlendState ColorBlend;
+        BlendState HallucinateBlend;
 
         private Vector2[] SDGRPSIZE;
         protected override void Initialize()
@@ -51,6 +56,26 @@ namespace UseMapEditor.MonoGameControl
 
             // must be called after the WpfGraphicsDeviceService instance was created
             base.Initialize();
+
+
+            string gridcolorstr = Global.Setting.Vals[Global.Setting.Settings.Program_GridColor];
+            uint gridcolorcode;
+            if (uint.TryParse(gridcolorstr ,out gridcolorcode))
+            {
+                GridColor = new Color(gridcolorcode);
+            }
+            else
+            {
+                GridColor = Color.Black;
+            }
+
+            int.TryParse(Global.Setting.Vals[Global.Setting.Settings.Render_MaxFrame], out MaxFrame);
+            updateTick = 1f / MaxFrame * 10000000;
+
+
+
+
+
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _colorBatch = new SpriteBatch(GraphicsDevice);
 
@@ -59,7 +84,19 @@ namespace UseMapEditor.MonoGameControl
             ColorBlend.ColorSourceBlend = Blend.DestinationColor;
             ColorBlend.ColorDestinationBlend = Blend.InverseSourceAlpha;
 
+
+
+            HallucinateBlend = new BlendState();
+
+            HallucinateBlend.ColorBlendFunction = BlendFunction.Add;
+
+            HallucinateBlend.ColorSourceBlend = Blend.DestinationColor;
+            HallucinateBlend.ColorDestinationBlend = Blend.InverseSourceAlpha;
+
+
+
             DownKeys = new List<Microsoft.Xna.Framework.Input.Keys>();
+            UpKeys = new List<Microsoft.Xna.Framework.Input.Keys>();
 
             BinaryReader br = new BinaryReader(new FileStream(AppDomain.CurrentDomain.BaseDirectory + "\\Data\\SDGRPSIZE", FileMode.Open));
 
@@ -204,7 +241,10 @@ namespace UseMapEditor.MonoGameControl
         }
 
 
+        public Vector2 MouseOuter = new Vector2();
         public Vector2 MousePos;
+        public Vector2 MouseMapPos;
+        public Vector2 MouseTilePos;
         private int LastScroll;
         protected override void Update(GameTime time)
         {
@@ -218,27 +258,11 @@ namespace UseMapEditor.MonoGameControl
             }
 
 
-            MousePos = mouseState.Position.ToVector2();
-
-
-            int step = 10;
-            if (keyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.W))
-            {
-                mapeditor.opt_ypos -= (int)Math.Ceiling(step / mapeditor.opt_scalepercent);
-            }
-            if (keyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.S))
-            {
-                mapeditor.opt_ypos += (int)Math.Ceiling(step / mapeditor.opt_scalepercent);
-            }
-            if (keyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.A))
-            {
-                mapeditor.opt_xpos -= (int)Math.Ceiling(step / mapeditor.opt_scalepercent);
-            }
-            if (keyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.D))
-            {
-                mapeditor.opt_xpos += (int)Math.Ceiling(step / mapeditor.opt_scalepercent);
-            }
-
+            MouseOuter = mapeditor.GetOuterMouse();
+            //MousePos = mouseState.Position.ToVector2();
+            MousePos = MouseOuter;
+            MouseMapPos = mapeditor.PosScreenToMap(MousePos);
+            MouseTilePos = new Vector2((float)(Math.Floor(MouseMapPos.X / 32)), (float)(Math.Floor(MouseMapPos.Y / 32)));
 
             if (mouseState.ScrollWheelValue != LastScroll)
             {
@@ -253,12 +277,35 @@ namespace UseMapEditor.MonoGameControl
                 LastScroll = mouseState.ScrollWheelValue;
             }
 
+            //screenwidth = (float)this.ActualWidth - ToolBaStreachValue;
+            //screenheight = (float)this.ActualHeight;
+
+
+
             MouseEvent(mouseState);
             KeyboardEvent(keyboardState);
-            MiniMapClick(mouseState);
 
-            screenwidth = (float)this.ActualWidth;
-            screenheight = (float)this.ActualHeight;
+
+
+
+            //=========================팔레트 처리는 여기서==================================
+            switch (mapeditor.PalleteLayer)
+            {
+                case Control.MapEditor.Layer.Unit:
+                    UnitPalleteDraw();
+                    break;
+                case Control.MapEditor.Layer.Sprite:
+                    SpritePalleteDraw();
+                    break;
+                case Control.MapEditor.Layer.FogOfWar:
+                    FogofWarPalleteDraw();
+                    break;
+            }
+            //===============================================================================
+
+
+
+
             Vector2 MapMin = mapeditor.PosMapToScreen(new Vector2(0, 0));
             Vector2 MapMax = mapeditor.PosMapToScreen(new Vector2(mapeditor.mapdata.WIDTH, mapeditor.mapdata.HEIGHT) * 32);
             Vector2 MapSize = MapMax - MapMin;
@@ -272,7 +319,7 @@ namespace UseMapEditor.MonoGameControl
 
             if (mapeditor.IsToolBarOpen())
             {
-                if (MousePos.X > (screenwidth - CloseTimer))
+                if (MousePos.X > screenwidth)
                 {
                     this.IsEnabled = false;
                 }
@@ -289,6 +336,7 @@ namespace UseMapEditor.MonoGameControl
         private int _frames;
         private int _liveFrames;
         private TimeSpan _timeElapsed;
+        private TimeSpan _LastDrawTime;
 
 
 
@@ -296,11 +344,17 @@ namespace UseMapEditor.MonoGameControl
         float screenheight;
 
 
-        float drawtimer;
+        double drawtimer;
 
 
+        //float VarFrame = 60;
 
-        float VarFrame = 0;
+        int MaxFrame = 60;
+        double updateTick;
+        double drawTick = 0;
+
+        int droptimer = 0;
+        KalmanFilter framefilter = new KalmanFilter(1, 1, 0.125, 1, 0.1, 0);
         protected override void Draw(GameTime time)
         {
             if (mapeditor == null)
@@ -312,47 +366,106 @@ namespace UseMapEditor.MonoGameControl
                 return;
             }
 
-
-            int MaxFrame = 60;
             int.TryParse(Global.Setting.Vals[Global.Setting.Settings.Render_MaxFrame], out MaxFrame);
 
 
 
-            float updateTime;
+            double minTick = 1f / MaxFrame * 10000000;
             //프레임이 원하는 만큼 나오지 않을 경우
             if (Global.Setting.Vals[Global.Setting.Settings.Render_UseVFR] == "true")
             {
-                float framediffer = MaxFrame - _frames;
-                if(framediffer > 5)
+                TimeSpan gab = time.TotalGameTime - _LastDrawTime;
+                _LastDrawTime = time.TotalGameTime;
+
+                drawTick = framefilter.Output(gab.Ticks);
+
+                ////_frames == 현재 프레임
+                //if(MaxFrame > _frames + 4)
+                //{
+                //    //프레임 드랍 발생
+
+                //    if (VarFrame > _frames + 4)
+                //    {
+                //        //가변 프레임에서도 드랍발생
+                //        VarFrame = _frames - 5;
+                //    }
+                //    else
+                //    {
+                //        //가변 프레임에서는 멀쩡
+                //        if(VarFrame < 4)
+                //        {
+                //            VarFrame = 4;
+                //        }
+                //        VarFrame += 1;
+                //    }
+
+
+                //    updateTime = 1f / VarFrame;
+                //}
+                //else
+                //{
+                //    //발생안함.
+                //    updateTime = 1f / MaxFrame;
+                //}
+
+
+                if(updateTick < (drawTick * 2))
                 {
-                    VarFrame = (float)(100 * mapeditor.opt_scalepercent);
+                    //프레임 드랍
+                    if(drawTick <= 167000)
+                    {
+                        if (droptimer > 400)
+                        {
+                            updateTick *= 0.995;//;
+                        }
+                        else
+                        {
+                            droptimer += 1;
+                        }
+
+                    }
+                    else
+                    {
+                        droptimer = 0;
+                        updateTick = drawTick * 2;//10 ms추가;
+                    }
                 }
                 else
                 {
-                    VarFrame = MaxFrame;
+                    //프레임 정상화
+                    if(drawTick * 3 < updateTick)
+                    {
+                        updateTick = drawTick * 3;
+                    }
+                    updateTick *= 0.995;//;
                 }
 
+                if (updateTick < minTick)
+                {
+                    updateTick = minTick;
+                }
 
-
-                updateTime = 1f / VarFrame;
+                //updateTick = drawTick + 100000;//1f / MaxFrame;
             }
             else
             {
-                updateTime = 1f / MaxFrame;
+                updateTick = minTick;
             }
 
 
-            drawtimer += (float)time.ElapsedGameTime.TotalSeconds;
-            if (drawtimer >= updateTime)
+            drawtimer += (float)time.ElapsedGameTime.Ticks;
+            if (drawtimer >= updateTick)
             {
-                drawtimer -= updateTime;
+                drawtimer -= updateTick;
             }
             else
             {
                 return;
             }
-            screenwidth = (float)this.ActualWidth;
+            ToolBaStreachValue = (int)(mapeditor.GetToolBarWidth());
+            screenwidth = (float)this.ActualWidth - ToolBaStreachValue;
             screenheight = (float)this.ActualHeight;
+
 
 
 
@@ -360,7 +473,6 @@ namespace UseMapEditor.MonoGameControl
             GraphicsDevice.Clear(Color.DimGray);
 
             ImageList.Clear();
-
 
             RenderTile(IsDrawGrp);
             if (mapeditor.view_Doodad)
@@ -382,38 +494,30 @@ namespace UseMapEditor.MonoGameControl
                 }
 
 
-                //모아진 유닛들을 그린다
-                ImageList.Sort((x1, x2) => x1.drawsort.CompareTo(x2.drawsort));
-                float scale = 1;
-                float grpscale = 1;
-                switch (mapeditor.opt_drawType)
-                {
-                    case Control.MapEditor.DrawType.SD:
-                        scale = (float)mapeditor.opt_scalepercent;
-                        grpscale = 1;
+                DrawImageList(ImageList);
 
-                        break;
-                    case Control.MapEditor.DrawType.HD:
-                    case Control.MapEditor.DrawType.CB:
-                        scale = (float)mapeditor.opt_scalepercent;
-                        grpscale = 2;
-                        break;
-                }
-                for (int i = 0; i < ImageList.Count; i++)
-                {
-                    DrawImage(mapeditor.opt_drawType, ImageList[i], scale, grpscale);
-                }
+
+
+
+                DrawPalleteCursor();
             }
+
+            RenderTileOverlay(IsDrawGrp);
             if (mapeditor.PalleteLayer == Control.MapEditor.Layer.Location | mapeditor.view_Location)
             {
                 RenderLocation();
             }
-
+            if (mapeditor.PalleteLayer == Control.MapEditor.Layer.FogOfWar)
+            {
+                RenderFogofWar();
+            }
+            DrawConnect();
 
             DrawPallet(IsDrawGrp);
 
 
 
+            _liveFrames++;
             SystemDraw();
 
             base.Draw(time);
@@ -421,12 +525,11 @@ namespace UseMapEditor.MonoGameControl
 
         private void SystemDraw()
         {
-            _liveFrames++;
             _spriteBatch.Begin();
             //_spriteBatch.DrawString(_font, mapeditor.mapdata.FilePath, new Vector2(5), Color.White);
             //string status = "화면 좌표(" + mapeditor.opt_xpos.ToString() + "," + mapeditor.opt_ypos.ToString() + ")" + " 마우스좌표(" + MousePos.X.ToString() + "," + MousePos.Y.ToString() + ")" +
             //    "T(" + mapeditor.PosScreenToMap(MousePos).ToString() + ")";
-            string status = "FPS:" + _frames + "\n";
+            string status = "FPS:" + _frames + " 드로우타임 : " + Math.Floor(drawTick / 10000)  + " 업데이트타임 : " + Math.Floor(updateTick / 10000) + "\n";
 
             status += mapeditor.mapdata.FilePath + "\n";
             status += mapeditor.mapdata.TILETYPE.ToString() + ":";
@@ -435,6 +538,7 @@ namespace UseMapEditor.MonoGameControl
 
             Vector2 MapMouse = mapeditor.PosScreenToMap(MousePos);
             status += "(" + (int)MapMouse.X + "," + (int)MapMouse.X + ")" + "(" + (int)(MapMouse.X / 32) + "," + (int)(MapMouse.Y / 32) + ")";
+
 
 
 
