@@ -69,7 +69,6 @@ namespace UseMapEditor.Dialog
                     //일반으로 열기
                     rv = (uint) rd.Next(30000, 40000);
                 }
-
                 PostMessage((IntPtr)HWND_BROADCAST, message, (uint)handle, rv);
                 Close();
                 return;

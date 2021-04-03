@@ -13,6 +13,7 @@ using UseMapEditor.FileData;
 using UseMapEditor.Task.Events;
 using WpfTest.Components;
 using static Data.Map.MapData;
+using static UseMapEditor.FileData.TileSet;
 using Point = System.Windows.Point;
 
 namespace UseMapEditor.MonoGameControl
@@ -24,6 +25,7 @@ namespace UseMapEditor.MonoGameControl
 
         private List<CImage> SpritePalleteCursor;
         private CUNIT UnitPalleteCursor;
+        private CDD2 DoodadPalleteCursor;
 
 
         private void DrawPalleteCursor()
@@ -55,7 +57,14 @@ namespace UseMapEditor.MonoGameControl
                     }
                     break;
                 case Control.MapEditor.Layer.Doodad:
-
+                    if (mapeditor.mapDataBinding.DOODAD_SELECTMODE)
+                    {
+                        if (mouse_IsDrag)
+                        {
+                            IsDrawSelectRect = true;
+                        }
+                        IsRetrun = true;
+                    }
                     break;
             }
             if (IsDrawSelectRect)
@@ -153,7 +162,7 @@ namespace UseMapEditor.MonoGameControl
                                 double _d = udown * mapeditor.opt_scalepercent;
 
                                 _spriteBatch.Begin();
-                                if (CollsionCheck(mappos, cUNIT.unitID, IsBuilding, true))
+                                if (UnitCollsionCheck(mappos, cUNIT.unitID, IsBuilding, true))
                                 {
                                     //유닛 배치 가능
                                     DrawRect(_spriteBatch, new Vector2(mousepos.X - (float)_l, mousepos.Y - (float)_u), new Vector2(mousepos.X + (float)_r, mousepos.Y + (float)_d), Color.Lime, 1);
@@ -271,7 +280,7 @@ namespace UseMapEditor.MonoGameControl
                             double _d = udown * mapeditor.opt_scalepercent;
 
                             _spriteBatch.Begin();
-                            if (CollsionCheck(mappos, unitid, IsBuilding, true))
+                            if (UnitCollsionCheck(mappos, unitid, IsBuilding, true))
                             {
                                 //유닛 배치 가능
                                 DrawRect(_spriteBatch, new Vector2(mousepos.X - (float)_l, mousepos.Y - (float)_u), new Vector2(mousepos.X + (float)_r, mousepos.Y + (float)_d), Color.Lime, 1);
@@ -424,6 +433,135 @@ namespace UseMapEditor.MonoGameControl
                                 //밖으로 나갔을 경우 미리보기 그리기
                                 DrawImageListPreview(templist, new Vector2(screenwidth - 128, 256));
                             }
+                        }
+                    }
+                    break;
+
+                case Control.MapEditor.Layer.Doodad:
+                    {
+                        if (mapeditor.doodad_PasteMode)
+                        {
+
+                            for (int i = 0; i < mapeditor.CopyedDoodad.Count; i++)
+                            {
+                                Vector2 mappos = MouseMapPos;
+
+
+                                mappos.X = (float)(Math.Round(mappos.X / 32) * 32);
+                                mappos.Y = (float)(Math.Round(mappos.Y / 32) * 32);
+
+
+                                int doodadid = mapeditor.CopyedDoodad[i].ID;
+                                var t = tileSet.DoodadPallets[mapeditor.mapdata.TILETYPE];
+
+
+                                CDD2 cDD2 = mapeditor.CopyedDoodad[i];
+                                if (cDD2.Images.Count == 0)
+                                {
+                                    cDD2.ImageReset();
+                                }
+
+
+                                Vector2 DoodadPos = mappos + new Vector2(cDD2.X, cDD2.Y);
+
+
+                                //if (pallete.dddHeight % 2 == 1)
+                                //{
+                                //    mappos.Y -= 16;
+                                //}
+
+                                mappos = Tools.VectorTool.Max(mappos, new Vector2(0));
+                                mappos = Tools.VectorTool.Min(mappos, new Vector2(mapeditor.mapdata.WIDTH * 32, mapeditor.mapdata.HEIGHT * 32));
+
+                                mappos.X = (float)Math.Floor(mappos.X);
+                                mappos.Y = (float)Math.Floor(mappos.Y);
+
+
+                                mappos.X += (float)cDD2.X;
+                                mappos.Y += (float)cDD2.Y;
+
+
+                                cDD2.PalleteX = (ushort)mappos.X;
+                                cDD2.PalleteY = (ushort)mappos.Y;
+
+                                
+
+                                //Vector2 mousepos = mapeditor.PosMapToScreen(mappos);
+
+                                _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+                                DrawDooDad(cDD2, templist, IsPallete: true);
+                                //_spriteBatch.DrawString(_font, doodadid.ToString(), mousepos, Color.Red);
+                                _spriteBatch.End();
+                                DrawImageList(templist);
+                            }
+                        }
+                        else
+                        {
+                            int doodadid = mapeditor.doodad_index;
+                            var t = tileSet.DoodadPallets[mapeditor.mapdata.TILETYPE];
+
+                            if (!t.ContainsKey((ushort)doodadid))
+                            {
+                                return;
+                            }
+
+                            DoodadPallet pallete = t[(ushort)doodadid];
+
+
+                            int playerid = 12;
+                            if (doodadid == -1)
+                            {
+                                return;
+                            }
+                            if (DoodadPalleteCursor == null)
+                            {
+                                DoodadPalleteCursor = new CDD2(mapeditor.mapdata);
+                                DoodadPalleteCursor.ID = (ushort)doodadid;
+                                DoodadPalleteCursor.PLAYER = (byte)playerid;
+                            }
+
+                            if (DoodadPalleteCursor.ID != doodadid)
+                            {
+                                DoodadPalleteCursor.ID = (ushort)doodadid;
+                                DoodadPalleteCursor.ImageReset();
+                            }
+
+
+
+
+                            if (DoodadPalleteCursor.Images.Count == 0)
+                            {
+                                DoodadPalleteCursor.ImageReset();
+                            }
+
+                            Vector2 mappos = MouseMapPos;
+
+
+                            mappos.X = (float)(Math.Round(mappos.X / 32) * 32);
+                            mappos.Y = (float)(Math.Round(mappos.Y / 32) * 32);
+                            if(pallete.dddHeight % 2 == 1)
+                            {
+                                mappos.Y -= 16;
+                            }
+
+
+
+                            mappos = Tools.VectorTool.Max(mappos, new Vector2(0));
+                            mappos = Tools.VectorTool.Min(mappos, new Vector2(mapeditor.mapdata.WIDTH * 32, mapeditor.mapdata.HEIGHT * 32));
+
+                            mappos.X = (float)Math.Floor(mappos.X);
+                            mappos.Y = (float)Math.Floor(mappos.Y);
+
+                            DoodadPalleteCursor.PalleteX = (ushort)mappos.X;
+                            DoodadPalleteCursor.PalleteY = (ushort)mappos.Y;
+
+                            //Vector2 mousepos = mapeditor.PosMapToScreen(mappos);
+
+                            _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+                            DrawDooDad(DoodadPalleteCursor, templist, IsPallete: true);
+                            //_spriteBatch.DrawString(_font, doodadid.ToString(), mousepos, Color.Red);
+                            _spriteBatch.End();
+                            DrawImageList(templist);
                         }
                     }
                     break;

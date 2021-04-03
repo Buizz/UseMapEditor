@@ -371,6 +371,7 @@ namespace Data.Map
         public List<CDD2> DD2 = new List<CDD2>();
         public class CDD2
         {
+            [JsonIgnore]
             public int alpha;
 
             public ushort ID;//u16: Number of the doodad.Size of the doodad is dependent on this. Doodads are different for each tileset.
@@ -381,8 +382,15 @@ namespace Data.Map
                              //00 - Doodad is enabled (trap can attack, door is closed, etc)
                              //01 - Doodad is disabled
 
+            [JsonIgnore]
+            public MapData mapData;
 
-            MapData mapData;
+
+            [JsonIgnore]
+            public ushort PalleteX;
+            [JsonIgnore]
+            public ushort PalleteY;
+
 
 
             public void ImageReset()
@@ -424,10 +432,27 @@ namespace Data.Map
 
                 ImageReset();
             }
+            public CDD2(MapData _mapData)
+            {
+                alpha = UseMapEditor.Global.WindowTool.random.Next();
+                mapData = _mapData;
 
 
 
-            public List<CImage> Images;
+
+                Images = new List<CImage>();
+
+                ImageReset();
+            }
+            
+            public CDD2()
+            {
+                alpha = UseMapEditor.Global.WindowTool.random.Next();
+            }
+
+
+            [JsonIgnore]
+            public List<CImage> Images = new List<CImage>();
         }
 
         public List<CTHG2> DDDTHG2 = new List<CTHG2>();

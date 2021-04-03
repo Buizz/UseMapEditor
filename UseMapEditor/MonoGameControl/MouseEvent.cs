@@ -153,6 +153,9 @@ namespace UseMapEditor.MonoGameControl
                 case Control.MapEditor.Layer.Location:
                     LocationRightMouseClick();
                     break;
+                case Control.MapEditor.Layer.Doodad:
+                    DoodadRightMouseClick();
+                    break;
                 case Control.MapEditor.Layer.Unit:
                     UnitRightMouseClick();
                     break;
@@ -171,6 +174,9 @@ namespace UseMapEditor.MonoGameControl
 
             switch (mapeditor.PalleteLayer)
             {
+                case Control.MapEditor.Layer.Doodad:
+                    DoodadTaskStart();
+                    break;
                 case Control.MapEditor.Layer.Unit:
                     UnitTaskStart();
                     break;
@@ -187,6 +193,9 @@ namespace UseMapEditor.MonoGameControl
             {
                 case Control.MapEditor.Layer.Location:
                     LocationLeftMouseClick();
+                    break;
+                case Control.MapEditor.Layer.Doodad:
+                    DoodadClickEnd();
                     break;
                 case Control.MapEditor.Layer.Unit:
                     UnitClickEnd();
@@ -216,6 +225,9 @@ namespace UseMapEditor.MonoGameControl
             {
                 case Control.MapEditor.Layer.Location:
                     LocationDragEnd();
+                    break;
+                case Control.MapEditor.Layer.Doodad:
+                    DoodadDragEnd();
                     break;
                 case Control.MapEditor.Layer.Unit:
                     UnitDragEnd();

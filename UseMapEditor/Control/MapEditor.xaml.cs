@@ -461,8 +461,20 @@ namespace UseMapEditor.Control
             UnitPallete.SelectIndex = 0;
             SpritePallete.SelectIndex = 0;
             SpritePallete_Unit.SelectIndex = 0;
+            TileSetUIRefresh();
         }
 
+
+        public void TileSetUIRefresh()
+        {
+            List<TileSet.DoodadPalletGroup> t = Global.WindowTool.MapViewer.tileSet.DoodadGroups[mapdata.TILETYPE];
+
+            DoodadTypes.Items.Clear();
+            for (int i = 0; i < t.Count; i++)
+            {
+                DoodadTypes.Items.Add(t[i].groupname);
+            }
+        }
 
 
 
@@ -575,6 +587,7 @@ namespace UseMapEditor.Control
             {
                 IsRightMouseDown = false;
             }
+            DoodadListBoxMouseDown = false;
 
             //MapViewer.IsEnabled = true;
             //Global.WindowTool.MapViewer.Focus();
@@ -924,9 +937,28 @@ namespace UseMapEditor.Control
 
 
         bool IsLayerChange;
-        public void TabChange(Layer PalleteLayer)
+        public void TabChange(Layer PalleteLayer, bool Isonoff = true)
         {
             IsLayerChange = true;
+
+            if (Isonoff)
+            {
+                if (ToolBarExpander.IsExpanded)
+                {
+                    //열려있을 경우
+                    if (this.PalleteLayer == PalleteLayer)
+                    {
+                        ToolBarExpander.IsExpanded = false;
+                    }
+                }
+                else
+                {
+                    //닫혀있을 경우
+                    ToolBarExpander.IsExpanded = true;
+                }
+            }
+
+
             this.PalleteLayer = PalleteLayer;
             TilePallet.Visibility = Visibility.Collapsed;
             DoodadPallet.Visibility = Visibility.Collapsed;
@@ -962,6 +994,7 @@ namespace UseMapEditor.Control
             }
             LayerCB.SelectedIndex = (int)PalleteLayer;
 
+
             IsLayerChange = false;
         }
 
@@ -971,49 +1004,46 @@ namespace UseMapEditor.Control
             {
                 if (LayerCB.SelectedIndex != -1)
                 {
-                    TabChange((Layer)LayerCB.SelectedIndex);
+                    TabChange((Layer)LayerCB.SelectedIndex, false);
                 }
             }
         }
         private void TileButton_Click(object sender, RoutedEventArgs e)
         {
-            TabChange(Layer.Tile);
+            TabChange(Layer.Tile, false);
         }
 
         private void DoodadButton_Click(object sender, RoutedEventArgs e)
         {
-            TabChange(Layer.Doodad);
+            TabChange(Layer.Doodad, false);
         }
 
         private void UnitButton_Click(object sender, RoutedEventArgs e)
         {
-            TabChange(Layer.Unit);
+            TabChange(Layer.Unit, false);
         }
 
         private void SpriteButton_Click(object sender, RoutedEventArgs e)
         {
-            TabChange(Layer.Sprite);
+            TabChange(Layer.Sprite, false);
         }
 
         private void LocationButton_Click(object sender, RoutedEventArgs e)
         {
-            TabChange(Layer.Location);
+            TabChange(Layer.Location, false);
         }
 
         private void FogButton_Click(object sender, RoutedEventArgs e)
         {
-            TabChange(Layer.FogOfWar);
+            TabChange(Layer.FogOfWar, false);
         }
 
         private void CutPasteButton_Click(object sender, RoutedEventArgs e)
         {
-            TabChange(Layer.CopyPaste);
+            TabChange(Layer.CopyPaste, false);
         }
 
-        private void CustompalletButton_Click(object sender, RoutedEventArgs e)
-        {
-            TabChange(Layer.CustomPallete);
-        }
+
 
         private int lasttabindex;
         private void TabablzControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1068,6 +1098,9 @@ namespace UseMapEditor.Control
                 case Layer.Sprite:
                     sprite_PasteStart();
                     break;
+                case Layer.Doodad:
+                    doodad_PasteStart();
+                    break;
             }
         }
         public void CopyCommand()
@@ -1079,6 +1112,9 @@ namespace UseMapEditor.Control
                     break;
                 case Layer.Sprite:
                     sprite_Copy();
+                    break;
+                case Layer.Doodad:
+                    doodad_Copy();
                     break;
             }
         }
@@ -1092,6 +1128,9 @@ namespace UseMapEditor.Control
                 case Layer.Sprite:
                     sprite_Cut();
                     break;
+                case Layer.Doodad:
+                    doodad_Cut();
+                    break;
             }
         }
         public void DeleteCommand()
@@ -1103,6 +1142,9 @@ namespace UseMapEditor.Control
                     break;
                 case Layer.Sprite:
                     sprite_Delete();
+                    break;
+                case Layer.Doodad:
+                    doodad_Delete();
                     break;
             }
         }

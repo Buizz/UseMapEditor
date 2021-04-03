@@ -291,6 +291,9 @@ namespace UseMapEditor.MonoGameControl
             //=========================팔레트 처리는 여기서==================================
             switch (mapeditor.PalleteLayer)
             {
+                case Control.MapEditor.Layer.Doodad:
+                    DoodadPalleteDraw();
+                    break;
                 case Control.MapEditor.Layer.Unit:
                     UnitPalleteDraw();
                     break;

@@ -541,8 +541,43 @@
                                 </StackPanel>
                             </DockPanel>
                         </materialDesign:Card>
+                        <materialDesign:Card x:Name="DoodadContextMenu" Visibility="Collapsed">
+
+                            <Menu>
+                                <Menu.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel/>
+                                    </ItemsPanelTemplate>
+                                </Menu.ItemsPanel>
+                                <MenuItem Header="선택해제" x:Name="DoodadDeselectMenuItem" Click="doodadDeselect_Click">
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon Kind="BorderNoneVariant"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <Separator/>
+                                <MenuItem Header="잘라내기" x:Name="DoodadCutMenuItem" Click="doodadCut_Click" InputGestureText="Ctrl+X">
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon Kind="ContentCut" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="복사" x:Name="DoodadCopyMenuItem" Click="doodadCopy_Click" InputGestureText="Ctrl+C">
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon Kind="ContentCopy"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="붙여넣기" Click="doodadPaste_Click" InputGestureText="Ctrl+V">
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon Kind="ContentPaste"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="삭제" x:Name="DoodadDeleteMenuItem" Click="doodadDelete_Click" InputGestureText="Delete">
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon Kind="Delete"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </Menu>
+                        </materialDesign:Card>
                     </Grid>
-                    
                 </Grid>
 
                 <Expander x:Name="ToolBarExpander" Grid.ColumnSpan="2" DockPanel.Dock="Right" ExpandDirection="Left" Background="Transparent" HorizontalAlignment="Right">
@@ -554,7 +589,7 @@
                         </TextBlock>
                     </Expander.Header>
                     <DockPanel Width="512">
-                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Background="{DynamicResource MaterialDesignPaper}">
                             <Button ToolTip="지형" x:Name="TilePalleteBtn" Padding="4" Style="{StaticResource MaterialDesignOutlinedButton}" Height="Auto" Click="TileButton_Click">
                                 <materialDesign:PackIcon Kind="Mountain" Width="32" Height="32" />
                             </Button>
@@ -615,8 +650,44 @@
         Background="{DynamicResource MaterialDesignPaper}"/>
                                 </Grid>
                             </DockPanel>
-                            <DockPanel x:Name="DoodadPallet" Visibility="Collapsed" Background="{DynamicResource MaterialDesignPaper}">
+                            <DockPanel x:Name="DoodadPallet" Visibility="Collapsed">
+                                <ToolBarTray IsLocked="True" DockPanel.Dock="Top">
+                                    <ToolBar Style="{DynamicResource MaterialDesignToolBar}" >
+                                        <RadioButton IsChecked="{Binding DOODAD_BRUSHMODE, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                     GroupName="DOODADEDIT" Style="{StaticResource MaterialDesignToolRadioButton}">
+                                            <materialDesign:PackIcon Kind="Pencil" />
+                                        </RadioButton>
+                                        <RadioButton IsChecked="{Binding DOODAD_SELECTMODE, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                     GroupName="DOODADEDIT" Style="{StaticResource MaterialDesignToolRadioButton}">
+                                            <materialDesign:PackIcon Kind="HandRight" />
+                                        </RadioButton>
 
+                                        <Separator/>
+                                        <ListBox x:Name="DoodadToolListBox" SelectionMode="Extended">
+                                            <ListBox.ToolTip>
+                                                <StackPanel>
+                                                    <TextBlock Text="두데드를 쌓고, 어디든지 배치 할 수 있습니다." />
+                                                    <TextBlock Text="지형과 스프라이트에 직접 배치합니다." />
+                                                </StackPanel>
+                                            </ListBox.ToolTip>
+                                            <ListBoxItem IsSelected="{Binding DOODAD_STACKALLOW, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <materialDesign:PackIcon Kind="Buffer" />
+                                            </ListBoxItem>
+                                            <ListBoxItem IsSelected="{Binding DOODAD_TOTILE, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <materialDesign:PackIcon Kind="AxisArrow" />
+                                            </ListBoxItem>
+                                            <ListBoxItem IsSelected="{Binding DOODAD_SIZEUP, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <materialDesign:PackIcon Kind="MagnifyPlus" />
+                                            </ListBoxItem>
+                                        </ListBox>
+                                    </ToolBar>
+                                </ToolBarTray>
+                                <ListBox DockPanel.Dock="Left" Width="128" x:Name="DoodadTypes" SelectionChanged="DoodadTypes_SelectionChanged">
+                                    <ListBoxItem Content="하이"/>
+                                </ListBox>
+                                <Grid x:Name="DoodadListBox" PreviewMouseWheel="DoodadListBox_PreviewMouseWheel" PreviewMouseDown="DoodadListBox_PreviewMouseDown" PreviewMouseUp="DoodadListBox_PreviewMouseUp" PreviewMouseMove="DoodadListBox_PreviewMouseMove" Background="#02000000">
+                                    
+                                </Grid>
                             </DockPanel>
                             <DockPanel x:Name="UnitPallet" Visibility="Visible" Background="{DynamicResource MaterialDesignPaper}">
                                 <ToolBarTray IsLocked="True" DockPanel.Dock="Top">
@@ -706,7 +777,7 @@
                                                 <TextBlock Text="이름" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                             </Grid>
                                             <Separator DockPanel.Dock="Top"/>
-                                            <ListBox x:Name="UnitPlaceList" SelectionMode="Extended" HorizontalContentAlignment="Stretch">
+                                            <ListBox x:Name="UnitPlaceList" SelectionMode="Extended" HorizontalContentAlignment="Stretch" SelectionChanged="UnitPlaceList_SelectionChanged">
                                                 <ListBox.ItemTemplate>
                                                     <DataTemplate>
                                                         <junglecontrols:LazyControl>

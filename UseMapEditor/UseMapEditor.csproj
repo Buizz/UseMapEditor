@@ -100,7 +100,7 @@
       <HintPath>..\packages\Dragablz.0.0.3.223\lib\net45\Dragablz.dll</HintPath>
     </Reference>
     <Reference Include="HotKeyManagement.WPF.4">
-      <HintPath>D:\User\Desktop\Dlls\WPF 4.0\HotKeyManagement.WPF.4.dll</HintPath>
+      <HintPath>.\HotKeyManagement.WPF.4.dll</HintPath>
     </Reference>
     <Reference Include="JungleControls, Version=1.8.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\JungleControls.1.8.0.0\lib\net45\JungleControls.dll</HintPath>
@@ -330,6 +330,7 @@
     <Compile Include="FileData\TriggerManger.cs" />
     <Compile Include="Lua\LuaManager.cs" />
     <Compile Include="Lua\TrigEditPlus\Main.cs" />
+    <Compile Include="MonoGameControl\DoodadPallete.cs" />
     <Compile Include="MonoGameControl\Dxt1.cs" />
     <Compile Include="MonoGameControl\FogOfWarDraw.cs" />
     <Compile Include="MonoGameControl\ImageDraw.cs" />
@@ -340,8 +341,10 @@
     <Compile Include="MonoGameControl\PalletUI.cs" />
     <Compile Include="MonoGameControl\SpritePallete.cs" />
     <Compile Include="MonoGameControl\TileDraw.cs" />
+    <Compile Include="MonoGameControl\TilePallete.cs" />
     <Compile Include="MonoGameControl\UnitDraw.cs" />
     <Compile Include="MonoGameControl\UnitPallete.cs" />
+    <Compile Include="Task\Events\DoodadEvent.cs" />
     <Compile Include="Task\Events\LocationEvent.cs" />
     <Compile Include="Task\Events\MaskEvent.cs" />
     <Compile Include="Task\Events\SpriteEvent.cs" />

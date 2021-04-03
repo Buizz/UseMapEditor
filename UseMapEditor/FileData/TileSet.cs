@@ -97,6 +97,24 @@ namespace UseMapEditor.FileData
         }
 
 
+        public class DoodadPalletGroup
+        {
+            public string groupname;
+            public List<int> dddids = new List<int>();
+            //0x0001 = Edge?
+            //0x0004 = Cliff?
+            //0x0040 = Creep
+            //0x0080 = Unbuildable
+            //0x0n00 = Deprecated ground height?
+            //0x1000 = Sprites.dat Reference
+            //0x2000 = Units.dat Reference(unit sprite)
+            //0x4000 = Overlay is Flipped
+            //0x8000 = Buildable for Start Location and Beacons
+        }
+
+
+
+
 
         public struct vf4
         {
@@ -118,6 +136,7 @@ namespace UseMapEditor.FileData
         public Dictionary<TileType, cv5[]> cv5data;
         public Dictionary<TileType, vf4[]> vf4data;
         public Dictionary<TileType, Dictionary<ushort, DoodadPallet>> DoodadPallets;
+        public Dictionary<TileType, List<DoodadPalletGroup>> DoodadGroups;
 
 
         public void TextureLoad(MapDrawer mapDrawer)
@@ -166,7 +185,7 @@ namespace UseMapEditor.FileData
             cv5data = new Dictionary<TileType, cv5[]>();
             vf4data = new Dictionary<TileType, vf4[]>();
             DoodadPallets = new Dictionary<TileType, Dictionary<ushort, DoodadPallet>>();
-
+            DoodadGroups = new Dictionary<TileType, List<DoodadPalletGroup>>();
 
 
             foreach (TileType tileType in Enum.GetValues(typeof(TileType)))
@@ -227,15 +246,19 @@ namespace UseMapEditor.FileData
                                 DoodadPallet doodadPallet = new DoodadPallet();
 
                                 doodadPallet.dddID = dddID;
-                                doodadPallet.tblString = Global.WindowTool.stat_txt.Strings[tblString].val1;
-                                doodadPallet.dddWidth = dddWidth;
-                                doodadPallet.dddHeight = dddHeight;
-                                doodadPallet.dddOverlayID = dddOverlayID;
-                                doodadPallet.dddFlags = dddFlags;
-                                doodadPallet.dddGroup = dddGroup;
+                                if(tblString != 0)
+                                {
+                                    doodadPallet.tblString = Global.WindowTool.stat_txt.Strings[tblString - 1].val1;
+                                    //doodadPallet.tblString = Global.WindowTool.stat_txt.Strings[tblString + 1].val1;
+                                    doodadPallet.dddWidth = dddWidth;
+                                    doodadPallet.dddHeight = dddHeight;
+                                    doodadPallet.dddOverlayID = dddOverlayID;
+                                    doodadPallet.dddFlags = dddFlags;
+                                    doodadPallet.dddGroup = dddGroup;
 
 
-                                DoodadDic.Add(dddID, doodadPallet);
+                                    DoodadDic.Add(dddID, doodadPallet);
+                                }
                             }
                         }
 
@@ -296,6 +319,28 @@ namespace UseMapEditor.FileData
                     vf4data.Add(tileType, _vf4data);
                     br.Close();
                 }
+                {
+                    List<DoodadPalletGroup> doodadPalletGroups = new List<DoodadPalletGroup>();
+                    List<DoodadPallet> doodad = DoodadPallets[tileType].Values.ToList();
+                    for (int i = 0; i < doodad.Count; i++)
+                    {
+                        string groupname = doodad[i].tblString;
+
+                        DoodadPalletGroup doodadPalletGroup = doodadPalletGroups.Find((x) => x.groupname == groupname);
+                        if(doodadPalletGroup == null)
+                        {
+                            doodadPalletGroup = new DoodadPalletGroup();
+                            doodadPalletGroup.groupname = groupname;
+                            doodadPalletGroups.Add(doodadPalletGroup);
+                        }
+
+
+                        doodadPalletGroup.dddids.Add(doodad[i].dddID);
+
+                    }
+                    DoodadGroups.Add(tileType, doodadPalletGroups);
+                }
+
             }
         }
 

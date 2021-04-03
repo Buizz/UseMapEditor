@@ -13,6 +13,7 @@ using UseMapEditor.FileData;
 using WpfTest.Components;
 using static Data.Map.MapData;
 using static UseMapEditor.FileData.TileSet;
+using Point = System.Windows.Point;
 
 namespace UseMapEditor.MonoGameControl
 {
@@ -333,6 +334,10 @@ namespace UseMapEditor.MonoGameControl
             }
             _spriteBatch.End();
         }
+
+
+
+        private List<CDD2> hoverDoodad = new List<CDD2>();
         private void RenderDoodad(bool IsDrawGrp)
         {
             if (!IsDrawGrp)
@@ -342,7 +347,8 @@ namespace UseMapEditor.MonoGameControl
 
 
 
-            _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+            hoverDoodad.Clear();
+            _spriteBatch.Begin(samplerState: SamplerState.PointClamp, blendState: BlendState.NonPremultiplied);
             for (int i = 0; i < mapeditor.mapdata.DD2.Count; i++)
             {
                 DrawDooDad(mapeditor.mapdata.DD2[i]);
@@ -354,25 +360,70 @@ namespace UseMapEditor.MonoGameControl
 
 
 
-        private void DrawDooDad(CDD2 cDD2)
+        private void DrawDooDad(CDD2 cDD2, List<CImage> templist = null, bool IsPallete = false)
         {
             var t = tileSet.DoodadPallets[mapeditor.mapdata.TILETYPE];
-            if (t.Count <= cDD2.ID)
+            
+            if (!t.ContainsKey(cDD2.ID))
             {
                 return;
             }
 
             DoodadPallet pallete = t[cDD2.ID];
 
+            ushort X;
+            ushort Y;
+
+            if (IsPallete)
+            {
+                X = cDD2.PalleteX;
+                Y = cDD2.PalleteY;
+            }
+            else
+            {
+                X = cDD2.X;
+                Y = cDD2.Y;
+            }
 
 
 
-            int _x = cDD2.X / 32 * 32 - (pallete.dddWidth / 2) * 32;
-            int _y = cDD2.Y / 32 * 32 - (pallete.dddHeight / 2) * 32;
+            bool IsSelect = false;
+            bool IsHover = false;
+            if (mapeditor.PalleteLayer == Control.MapEditor.Layer.Doodad)
+            {
+                if (mapeditor.mapDataBinding.DOODAD_SELECTMODE)
+                {
+                    if (mouse_IsDrag)
+                    {
+                        //선택모드
+                        Vector2 min = new Vector2(Math.Min(mouse_DragMapStart.X, MouseMapPos.X), Math.Min(mouse_DragMapStart.Y, MouseMapPos.Y));
+                        Vector2 max = new Vector2(Math.Max(mouse_DragMapStart.X, MouseMapPos.X), Math.Max(mouse_DragMapStart.Y, MouseMapPos.Y));
+
+
+
+                        if (((min.X - 8 < X & X < max.X + 8) & (min.Y - 8 < Y & Y < max.Y + 8)))
+                        {
+                            hoverDoodad.Add(cDD2);
+                        }
+                    }
+                    if (mapeditor.SelectDoodad.Contains(cDD2))
+                    {
+                        IsSelect = true;
+                    }
+                    else if (hoverDoodad.Contains(cDD2))
+                    {
+                        IsHover = true;
+                    }
+                }
+            }
+
+
+            int _x = X / 32 * 32 - (pallete.dddWidth / 2) * 32;
+            int _y = Y / 32 * 32 - (pallete.dddHeight / 2) * 32;
 
 
             Vector2 screen = mapeditor.PosMapToScreen(new Vector2(_x, _y));
-            Vector2 spritescreen = mapeditor.PosMapToScreen(new Vector2(cDD2.X, cDD2.Y));
+            Vector2 spritescreen = mapeditor.PosMapToScreen(new Vector2(X, Y));
 
 
 
@@ -399,7 +450,15 @@ namespace UseMapEditor.MonoGameControl
                     for (int i = 0; i < cDD2.Images.Count; i++)
                     {
                         cDD2.Images[i].screen = spritescreen;
-                        ImageList.Add(cDD2.Images[i]);
+
+                        if (templist != null)
+                        {
+                            templist.Add(cDD2.Images[i]);
+                        }
+                        else
+                        {
+                            ImageList.Add(cDD2.Images[i]);
+                        }
                         cDD2.Images[i].PlayScript();
                     }
                     for (int y = 0; y < pallete.dddHeight; y++)
@@ -419,25 +478,128 @@ namespace UseMapEditor.MonoGameControl
                             {
                                 color = mapeditor.DoodadOverlay;
                             }
+                            Vector2 StartPoint = screen + new Vector2(x, y) * mag;
+
                             switch (mapeditor.opt_drawType)
                             {
                                 case Control.MapEditor.DrawType.SD:
                                     {
                                         Texture2D texture2D = tileSet.GetTile(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, group, index);
-                                        _spriteBatch.Draw(texture2D, screen + new Vector2(x,y) * mag, null, color, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent, SpriteEffects.None, 0);
+                                        _spriteBatch.Draw(texture2D, StartPoint, null, color, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent, SpriteEffects.None, 0);
                                     }
                                     break;
                                 case Control.MapEditor.DrawType.HD:
                                 case Control.MapEditor.DrawType.CB:
                                     {
                                         Texture2D texture2D = tileSet.GetTile(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, group, index);
-                                        _spriteBatch.Draw(texture2D, screen + new Vector2(x, y) * mag, null, color, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent / 2, SpriteEffects.None, 0);
+                                        _spriteBatch.Draw(texture2D, StartPoint, null, color, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent / 2, SpriteEffects.None, 0);
                                     }
                                     break;
                             }
 
+                            if (IsSelect)
+                            {
+                                _spriteBatch.Draw(gridtexture, StartPoint, null, new Color(128, 255, 128, 128), 0, Vector2.Zero, (float)mapeditor.opt_scalepercent * 32, SpriteEffects.None, 0);
+                                DrawRect(_spriteBatch, StartPoint, StartPoint + new Vector2((float)(mapeditor.opt_scalepercent * 32)), Color.Yellow, 3);
+                            }
+                            if (IsHover)
+                            {
+                                _spriteBatch.Draw(gridtexture, StartPoint, null, new Color(128, 128, 255, 128), 0, Vector2.Zero, (float)mapeditor.opt_scalepercent * 32, SpriteEffects.None, 0);
+                                DrawRect(_spriteBatch, StartPoint, StartPoint + new Vector2((float)(mapeditor.opt_scalepercent * 32)), Color.Yellow, 3);
+                            }
+
+
+                            if (IsPallete)
+                            {
+                                DrawRect(_spriteBatch, StartPoint, StartPoint + new Vector2((float)(mapeditor.opt_scalepercent * 32)), Color.Lime, 3);
+                            }
                         }
                     }
+
+
+                    if (IsPallete)
+                    {
+                        Vector2 pos = new Vector2(cDD2.PalleteX, cDD2.PalleteY);
+                        DoodadPallet paldoodad;
+
+                        paldoodad = tileSet.DoodadPallets[mapeditor.mapdata.TILETYPE][cDD2.ID];
+
+
+
+                        int x = (ushort)pos.X / 32 * 32 - (paldoodad.dddWidth / 2) * 32;
+                        int y = (ushort)pos.Y / 32 * 32 - (paldoodad.dddHeight / 2) * 32;
+
+                        Rect rect = new Rect(new Point(x, y), new Point(x + paldoodad.dddWidth * 32, y + paldoodad.dddHeight * 32));
+
+                        for (int i = 0; i < mapeditor.mapdata.DD2.Count; i++)
+                        {
+                            CDD2 mcDD2 = mapeditor.mapdata.DD2[i];
+
+                            DoodadPallet mapdoodad = tileSet.DoodadPallets[mapeditor.mapdata.TILETYPE][mcDD2.ID];
+
+                            int tx = (ushort)mcDD2.X / 32 * 32 - (mapdoodad.dddWidth / 2) * 32;
+                            int ty = (ushort)mcDD2.Y / 32 * 32 - (mapdoodad.dddHeight / 2) * 32;
+
+
+                            Rect _rect = new Rect(new Point(tx, ty), new Point(tx + mapdoodad.dddWidth * 32, ty + mapdoodad.dddHeight * 32));
+
+                            Rect interRect = Rect.Intersect(rect, _rect);
+                            if (interRect != Rect.Empty)
+                            {
+                                //if (tileSet.IsBlack(mapeditor.mapdata.TILETYPE, group, index))
+                                //{
+                                //    continue;
+                                //}
+                                //충돌상황
+                                //하나하나 비교시작
+                                for (int iy = 0; iy < (int)(interRect.Height / 32); iy++)
+                                {
+                                    for (int ix = 0; ix < (int)(interRect.Width / 32); ix++)
+                                    {
+                                        int mx = (int)(interRect.X - tx) / 32;
+                                        int my = (int)(interRect.Y - ty) / 32;
+                                        int px = (int)(interRect.X - x) / 32;
+                                        int py = (int)(interRect.Y - y) / 32;
+
+
+                                        ushort mg = (ushort)(mapdoodad.dddGroup + my + iy);
+                                        ushort mi = (ushort)(mx + ix);
+                                        ushort pg = (ushort)(paldoodad.dddGroup + py + iy);
+                                        ushort pi = (ushort)(px + ix);
+
+
+
+                                        if (!tileSet.IsBlack(mapeditor.mapdata.TILETYPE, mg, mi) & !tileSet.IsBlack(mapeditor.mapdata.TILETYPE, pg, pi))
+                                        {
+                                            Vector2 _spos = mapeditor.PosMapToScreen(new Vector2((float)interRect.X + ix * 32, (float)interRect.Y + iy * 32));
+                                            DrawRect(_spriteBatch, _spos, _spos + new Vector2((float)(mapeditor.opt_scalepercent * 32)), Color.Red, 3);
+                                        }
+                                    }
+                                }
+
+                            }
+
+                        }
+
+
+
+                        //if (DoodadCollsionCheckTile(new Vector2(_mapx + x, _mapy + y)))
+                        //{
+                        //    DrawRect(_spriteBatch, StartPoint, StartPoint + new Vector2((float)(mapeditor.opt_scalepercent * 32)), Color.Lime, 3);
+                        //}
+                        //else
+                        //{
+                        //    DrawRect(_spriteBatch, StartPoint, StartPoint + new Vector2((float)(mapeditor.opt_scalepercent * 32)), Color.Red, 3);
+                        //}
+
+                    }
+
+
+
+
+
+
+
                 }
             }
         }

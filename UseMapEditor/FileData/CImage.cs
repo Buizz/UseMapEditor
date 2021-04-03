@@ -651,7 +651,7 @@ namespace UseMapEditor.FileData
             }
             if (Isint == 0)
             {
-                if (iscriptOffset == 31162)
+                if ((imageID == 271 & iscriptOffset == 31162) | imageID != 271)
                 {
                     if (StartAnim != 0)
                     {
@@ -659,7 +659,7 @@ namespace UseMapEditor.FileData
                         Isint = 1;
                     }
                 }
-                    
+
             }
         }
 

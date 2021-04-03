@@ -85,6 +85,76 @@ namespace UseMapEditor.DataBinding
         }
 
 
+
+
+        public bool DOODAD_BRUSHMODE
+        {
+            get
+            {
+                return mapEditor.doodad_BrushMode;
+            }
+            set
+            {
+                mapEditor.doodad_BrushMode = value;
+                OnPropertyChanged("DOODAD_BRUSHMODE");
+            }
+        }
+        public bool DOODAD_SELECTMODE
+        {
+            get
+            {
+                return mapEditor.doodad_SelectMode;
+            }
+            set
+            {
+                mapEditor.doodad_SelectMode = value;
+                OnPropertyChanged("DOODAD_SELECTMODE");
+            }
+        }
+
+
+        public bool DOODAD_STACKALLOW
+        {
+            get
+            {
+                return mapEditor.DoodadPalleteStackAllow;
+            }
+            set
+            {
+                mapEditor.DoodadPalleteStackAllow = value;
+                OnPropertyChanged("DOODAD_STACKALLOW");
+            }
+        }
+        public bool DOODAD_TOTILE
+        {
+            get
+            {
+                return mapEditor.DoodadPalleteToTile;
+            }
+            set
+            {
+                mapEditor.DoodadPalleteToTile = value;
+                OnPropertyChanged("DOODAD_TOTILE");
+            }
+        }
+        public bool DOODAD_SIZEUP
+        {
+            get
+            {
+                return mapEditor.DoodadPalleteSizeUp;
+            }
+            set
+            {
+                mapEditor.DoodadPalleteSizeUp = value;
+                OnPropertyChanged("DOODAD_SIZEUP");
+            }
+        }
+
+
+
+
+
+
         public int SPRITEPLAYER
         {
             get
@@ -350,7 +420,7 @@ namespace UseMapEditor.DataBinding
                     mapEditor.mapdata.DD2[i].ImageReset();
                 }
 
-
+                mapEditor.TileSetUIRefresh();
                 mapEditor.IsMinimapLoad = false;
 
                 mapEditor.SetDirty();

@@ -136,7 +136,7 @@ namespace UseMapEditor.MonoGameControl
 
 
                             //생성모드
-                            if (CollsionCheck(mappos, cUNIT.unitID, IsBuilding, false))
+                            if (UnitCollsionCheck(mappos, cUNIT.unitID, IsBuilding, false))
                             {
                                 CUNIT _cUNIT = new CUNIT(cUNIT);
                                 _cUNIT.SetMapEditor(mapeditor);
@@ -207,7 +207,7 @@ namespace UseMapEditor.MonoGameControl
                     //생성모드
                     if ((LastCreatePos - mappos).Length() >= Math.Max(gridsize, 4))
                     {
-                        if (CollsionCheck(mappos, unitid, IsBuilding, false))
+                        if (UnitCollsionCheck(mappos, unitid, IsBuilding, false))
                         {
                             LastCreatePos = mappos;
 
@@ -232,7 +232,7 @@ namespace UseMapEditor.MonoGameControl
         }
 
 
-        private bool CollsionCheck(Vector2 pos, int unitid, bool IsBuilding, bool IsDrawRedLine)
+        private bool UnitCollsionCheck(Vector2 pos, int unitid, bool IsBuilding, bool IsDrawRedLine)
         {
             if (mapeditor.UnitPalleteStackAllow)
             {

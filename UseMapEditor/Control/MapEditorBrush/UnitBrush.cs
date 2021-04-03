@@ -357,7 +357,26 @@ namespace UseMapEditor.Control
         }
 
 
+        private void UnitPlaceList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (UnitPlaceList.SelectedIndex == -1)
+            {
+                return;
+            }
 
+            CUNIT spdata = (CUNIT) UnitPlaceList.SelectedItem;
+
+            int width = (int)MapViewer.ActualWidth;
+            int height = (int)MapViewer.ActualHeight;
+
+            int x = (int)spdata.X;
+            int y = (int)spdata.Y;
+
+
+
+            opt_xpos = (int)(x - width / opt_scalepercent / 2);
+            opt_ypos = (int)(y - height / opt_scalepercent / 2);
+        }
 
         public void unit_Cut()
         {
