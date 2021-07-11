@@ -44,18 +44,18 @@ namespace UseMapEditor.Windows
 
 
 
-            PaletteHelper paletteHelper = new PaletteHelper();
-            ITheme theme = paletteHelper.GetTheme();
+            //PaletteHelper paletteHelper = new PaletteHelper();
+            //ITheme theme = paletteHelper.GetTheme();
             if (Global.Setting.Vals[Global.Setting.Settings.Program_IsDark] == "true")
             {
-                theme.SetBaseTheme(Theme.Dark);
-                paletteHelper.SetTheme(theme);
+                //theme.SetBaseTheme(Theme.Dark);
+                //paletteHelper.SetTheme(theme);
                 DarkToggleBtn.IsChecked = true;
             }
             else
             {
-                theme.SetBaseTheme(Theme.Light);
-                paletteHelper.SetTheme(theme);
+                //theme.SetBaseTheme(Theme.Light);
+                //paletteHelper.SetTheme(theme);
                 DarkToggleBtn.IsChecked = false;
             }
 

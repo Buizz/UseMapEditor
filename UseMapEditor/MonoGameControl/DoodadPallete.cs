@@ -285,6 +285,7 @@ namespace UseMapEditor.MonoGameControl
                                 mapeditor.mapdata.DD2.Add(cDD2);
                                 cDD2.ImageReset();
 
+                                mapeditor.mapdata.DD2ToMTXM(cDD2);
                                 mapeditor.taskManager.TaskAdd(new DoodadEvent(mapeditor, cDD2, true));
                             }
                         }
@@ -350,6 +351,7 @@ namespace UseMapEditor.MonoGameControl
                             mapeditor.mapdata.DD2.Add(cDD2);
                             cDD2.ImageReset();
 
+                            mapeditor.mapdata.DD2ToMTXM(cDD2);
                             mapeditor.taskManager.TaskAdd(new DoodadEvent(mapeditor, cDD2, true));
                         }
                     }

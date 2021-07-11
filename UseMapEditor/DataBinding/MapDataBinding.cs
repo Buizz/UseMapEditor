@@ -86,6 +86,32 @@ namespace UseMapEditor.DataBinding
 
 
 
+        public bool TILE_BRUSHMODE
+        {
+            get
+            {
+                return mapEditor.tile_BrushMode;
+            }
+            set
+            {
+                mapEditor.tile_BrushMode = value;
+                OnPropertyChanged("TILE_BRUSHMODE");
+            }
+        }
+        public bool TILE_SELECTMODE
+        {
+            get
+            {
+                return mapEditor.tile_SelectMode;
+            }
+            set
+            {
+                mapEditor.tile_SelectMode = value;
+                OnPropertyChanged("TILE_SELECTMODE");
+            }
+        }
+
+
 
         public bool DOODAD_BRUSHMODE
         {

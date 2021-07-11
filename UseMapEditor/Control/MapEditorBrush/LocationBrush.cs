@@ -103,6 +103,8 @@ namespace UseMapEditor.Control
             }
 
 
+            UnitEditPanel.Visibility = Visibility.Collapsed;
+            SpriteEditPanel.Visibility = Visibility.Collapsed;
             LocEditPanel.Visibility = Visibility.Visible;
             PopupGrid.Visibility = Visibility.Visible;
             PopupReLocatied();

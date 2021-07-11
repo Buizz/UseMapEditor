@@ -55,8 +55,6 @@ namespace Data.Map
             FORC,//Force Settings                   STR사용
 
 
-            //ISOM,//Isometric Terrain
-            //TODO:여기서부터 만들어야됨
             DD2,//StarEdit Sprites (Doodads)
             THG2,//StarCraft Sprites
             MASK,//Fog of War Layer
@@ -84,6 +82,56 @@ namespace Data.Map
             TECx,//BW Tech Settings
         }
 
+        public void DD2DeleteMTXM(CDD2 cDD2)
+        {
+            DoodadPallet pallete = UseMapEditor.Global.WindowTool.MapViewer.tileSet.DoodadPallets[TILETYPE][cDD2.ID];
+
+            int _x = cDD2.X / 32 - (pallete.dddWidth / 2);
+            int _y = cDD2.Y / 32 - (pallete.dddHeight / 2);
+
+
+            for (int y = 0; y < pallete.dddHeight; y++)
+            {
+                for (int x = 0; x < pallete.dddWidth; x++)
+                {
+                    ushort group = (ushort)(pallete.dddGroup + y);
+                    ushort index = (ushort)x;
+
+
+                    if (UseMapEditor.Global.WindowTool.MapViewer.tileSet.IsBlack(TILETYPE, group, index))
+                    {
+                        continue;
+                    }
+
+                    MTXM[_x + x + (_y + y) * WIDTH] = TILE[_x + x + (_y + y) * WIDTH];
+                }
+            }
+        }
+        public void DD2ToMTXM(CDD2 cDD2)
+        {
+            DoodadPallet pallete = UseMapEditor.Global.WindowTool.MapViewer.tileSet.DoodadPallets[TILETYPE][cDD2.ID];
+
+            int _x = cDD2.X / 32 - (pallete.dddWidth / 2);
+            int _y = cDD2.Y / 32 - (pallete.dddHeight / 2);
+
+
+            for (int y = 0; y < pallete.dddHeight; y++)
+            {
+                for (int x = 0; x < pallete.dddWidth; x++)
+                {
+                    ushort group = (ushort)(pallete.dddGroup + y);
+                    ushort index = (ushort)x;
+
+
+                    if (UseMapEditor.Global.WindowTool.MapViewer.tileSet.IsBlack(TILETYPE, group, index))
+                    {
+                        continue;
+                    }
+
+                    MTXM[_x + x + (_y + y) * WIDTH] = (ushort)((group << 4) + index);
+                }
+            }
+        }
 
         private void GetCHKAll(BinaryWriter bw)
         {
@@ -97,27 +145,7 @@ namespace Data.Map
                 CDD2 cDD2 = DD2[i];
 
                 DoodadPallet pallete = UseMapEditor.Global.WindowTool.MapViewer.tileSet.DoodadPallets[TILETYPE][cDD2.ID];
-
-                int _x = cDD2.X / 32 - (pallete.dddWidth / 2);
-                int _y = cDD2.Y / 32 - (pallete.dddHeight / 2);
-
-
-                for (int y = 0; y < pallete.dddHeight; y++)
-                {
-                    for (int x = 0; x < pallete.dddWidth; x++)
-                    {
-                        ushort group = (ushort)(pallete.dddGroup + y);
-                        ushort index = (ushort)x;
-
-
-                        if (UseMapEditor.Global.WindowTool.MapViewer.tileSet.IsBlack(TILETYPE, group, index))
-                        {
-                            continue;
-                        }
-
-                        MTXM[_x + x + (_y + y) * WIDTH] = (ushort)((group << 4) + index);
-                    }
-                }
+                DD2ToMTXM(cDD2);
 
                 CTHG2 cTHG2 = new CTHG2();
                 cTHG2.FLAG = pallete.dddFlags;
@@ -314,7 +342,6 @@ namespace Data.Map
 
                     break;
                 case TOKENTYPE.MTXM:
-                    //TODO:TILE단락에다가 DD2등 합성해야됨
                     bw.Write(tokenbyte);
                     bw.Write((int)WIDTH * HEIGHT * 2);
                     for (int i = 0; i < WIDTH * HEIGHT; i++)
@@ -324,7 +351,6 @@ namespace Data.Map
 
                     break;
                 case TOKENTYPE.DD2:
-                    //TODO:TILE단락에다가 DD2등 합성해야됨
                     bw.Write(tokenbyte);
                     bw.Write((int)DD2.Count * 8);
                     for (int i = 0; i < DD2.Count; i++)
@@ -338,7 +364,6 @@ namespace Data.Map
 
                     break;
                 case TOKENTYPE.THG2:
-                    //TODO:TILE단락에다가 DD2등 합성해야됨
                     bw.Write(tokenbyte);
 
                     DDDTHG2.AddRange(THG2);
@@ -356,7 +381,6 @@ namespace Data.Map
 
                     break;
                 case TOKENTYPE.MASK:
-                    //TODO:TILE단락에다가 DD2등 합성해야됨
                     bw.Write(tokenbyte);
                     bw.Write((int)MASK.Length);
                     bw.Write(MASK);

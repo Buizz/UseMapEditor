@@ -90,6 +90,8 @@ namespace UseMapEditor.Tools
         {
             MyHotKeyManager = new HotKeyManager(mapEditor.mainWindow);
 
+
+            //TODO 단축기 설정 옵션
             {
                 LocalHotKey hoykey = new LocalHotKey("New", ModifierKeys.Control, Keys.N);
                 MyHotKeyManager.AddLocalHotKey(hoykey);

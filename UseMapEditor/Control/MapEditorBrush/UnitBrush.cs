@@ -319,11 +319,48 @@ namespace UseMapEditor.Control
             }
             PopupGrid.Visibility = Visibility.Visible;
             UnitEditPanel.Visibility = Visibility.Visible;
+            SpriteEditPanel.Visibility = Visibility.Collapsed;
+            LocEditPanel.Visibility = Visibility.Collapsed;
             UnitContextMenu.Visibility = Visibility.Collapsed;
             MapViewer.IsEnabled = false;
 
-            Vector2 m = PosMapToScreen(new Vector2(SelectUnit.First().X, SelectUnit.First().Y));
+
+            Vector2 center = new Vector2();
+            foreach (var item in SelectUnit)
+            {
+                center.X += item.X;
+                center.Y += item.Y;
+            }
+
+            center.X /= SelectUnit.Count;
+            center.Y /= SelectUnit.Count;
+
+            Vector2 m = PosMapToScreen(center);
+            if (SelectUnit.Count > 1)
+            {
+                m.X -= (float)UnitEditPanel.Width / 2;
+                m.Y -= (float)UnitEditPanel.Height / 2;
+            }
+
+            m.X = Math.Max(0, m.X);
+            m.Y = Math.Max(0, m.Y);
+
+            Vector2 screenSize = GetScreenSize();
+            if (screenSize.X < (m.X + UnitEditPanel.Width))
+            {
+                m.X = (float)(screenSize.X - UnitEditPanel.Width);
+            }
+
+            if (screenSize.Y < (m.Y + UnitEditPanel.Height))
+            {
+                m.Y = (float)(screenSize.Y - UnitEditPanel.Height);
+            }
+
+
+
+
             PopupInnerGrid.Margin = new Thickness(m.X, m.Y, 0, 0);
+
 
 
             UnitEditList.Items.Clear();
@@ -333,27 +370,257 @@ namespace UseMapEditor.Control
                 boxItem.Content = mapdata.GetCodeName(Codetype.Unit, item.unitID);
                 boxItem.Tag = item;
                 UnitEditList.Items.Add(boxItem);
+                UnitEditList.SelectedItems.Add(boxItem);
             }
-            UnitEditList.SelectedIndex = 0;
-            PopupReLocatied();
-
+            //PopupReLocatied();
             //LocEditPanel.DataContext = locdata;
         }
 
+        private void uEdit_Changed(object sender, RoutedEventArgs e)
+        {
+            if (unitEditIsLoad)
+            {
+                return;
+            }
 
+
+            uint tuint;
+            ushort tushort;
+            byte tbyte;
+
+            uint? _resoruceAmount = null;
+
+            ushort? _X = null;
+            ushort? _Y = null;
+            ushort? _unitID = null;
+            ushort? _hangar = null;
+
+            byte? _player = null;
+            byte? _hitPoints = null;
+            byte? _shieldPoints = null;
+            byte? _energyPoints = null;
+
+            bool? _hpvalid = null;
+            bool? _shvalid = null;
+            bool? _envalid = null;
+            bool? _resvalid = null;
+            bool? _hangarvalid = null;
+            bool? _cloakvalid = null;
+            bool? _cloakstate = null;
+            bool? _burrowvalid = null;
+            bool? _burrowstate = null;
+            bool? _tranvalid = null;
+            bool? _buildstate = null;
+            bool? _hallvalid = null;
+            bool? _hallstate = null;
+            bool? _invinvalid = null;
+            bool? _invincstate = null;
+
+            if (uint.TryParse(uEdit_resoruceAmount.Text, out tuint)) _resoruceAmount = tuint;
+
+            if (ushort.TryParse(uEdit_X.Text, out tushort)) _X = tushort;
+            if (ushort.TryParse(uEdit_Y.Text, out tushort)) _Y = tushort;
+            if (ushort.TryParse(uEdit_unitID.Text, out tushort)) _unitID = tushort;
+            if (ushort.TryParse(uEdit_hangar.Text, out tushort)) _hangar = tushort;
+
+            if (uEdit_player.SelectedIndex != -1) _player = (byte)uEdit_player.SelectedIndex;
+            if (byte.TryParse(uEdit_hitPoints.Text, out tbyte)) _hitPoints = tbyte;
+            if (byte.TryParse(uEdit_shieldPoints.Text, out tbyte)) _shieldPoints = tbyte;
+            if (byte.TryParse(uEdit_energyPoints.Text, out tbyte)) _energyPoints = tbyte;
+
+            if (uEdit_hpvalid.IsChecked != null) _hpvalid = uEdit_hpvalid.IsChecked;
+            if (uEdit_shvalid.IsChecked != null) _shvalid = uEdit_shvalid.IsChecked;
+            if (uEdit_envalid.IsChecked != null) _envalid = uEdit_envalid.IsChecked;
+            if (uEdit_resvalid.IsChecked != null) _resvalid = uEdit_resvalid.IsChecked;
+            if (uEdit_hangarvalid.IsChecked != null) _hangarvalid = uEdit_hangarvalid.IsChecked;
+            if (uEdit_cloakvalid.IsChecked != null) _cloakvalid = uEdit_cloakvalid.IsChecked;
+            if (uEdit_cloakstate.IsChecked != null) _cloakstate = uEdit_cloakstate.IsChecked;
+            if (uEdit_burrowvalid.IsChecked != null) _burrowvalid = uEdit_burrowvalid.IsChecked;
+            if (uEdit_burrowstate.IsChecked != null) _burrowstate = uEdit_burrowstate.IsChecked;
+            if (uEdit_tranvalid.IsChecked != null) _tranvalid = uEdit_tranvalid.IsChecked;
+            if (uEdit_buildstate.IsChecked != null) _buildstate = uEdit_buildstate.IsChecked;
+            if (uEdit_hallvalid.IsChecked != null) _hallvalid = uEdit_hallvalid.IsChecked;
+            if (uEdit_hallstate.IsChecked != null) _hallstate = uEdit_hallstate.IsChecked;
+            if (uEdit_invinvalid.IsChecked != null) _invinvalid = uEdit_invinvalid.IsChecked;
+            if (uEdit_invincstate.IsChecked != null) _invincstate = uEdit_invincstate.IsChecked;
+
+            //_hpvalid
+            //_shvalid
+            //_envalid
+            //_resvalid
+            //_hangarvalid
+            //_cloakvalid
+            //_cloakstate
+            //_burrowvalid
+            //_burrowstate
+            //_tranvalid
+            //_buildstate
+            //_hallvalid
+            //_hallstate
+            //_invinvalid
+            //_invincstate
+
+
+
+            foreach (ListBoxItem item in UnitEditList.SelectedItems)
+            {
+                CUNIT spdata = (CUNIT)item.Tag;
+
+                UnitPropertyEvent.UnitData OLDunitData = new UnitPropertyEvent.UnitData(spdata);
+
+                if (_X != null) spdata.X = (ushort)_X;
+                if (_Y != null) spdata.Y = (ushort)_Y;
+                if (_unitID != null) spdata.unitID = (ushort)_unitID;
+                if (_hangar != null) spdata.hangar = (ushort)_hangar;
+                if (_resoruceAmount != null) spdata.resoruceAmount = (uint)_resoruceAmount;
+                if (_player != null) spdata.player = (byte)_player;
+                if (_hitPoints != null) spdata.hitPoints = (byte)_hitPoints;
+                if (_shieldPoints != null) spdata.shieldPoints = (byte)_shieldPoints;
+                if (_energyPoints != null) spdata.energyPoints = (byte)_energyPoints;
+                if (_hpvalid != null) spdata.hpvalid = (bool)_hpvalid;
+                if (_shvalid != null) spdata.shvalid = (bool)_shvalid;
+                if (_envalid != null) spdata.envalid = (bool)_envalid;
+                if (_resvalid != null) spdata.resvalid = (bool)_resvalid;
+                if (_hangarvalid != null) spdata.hangarvalid = (bool)_hangarvalid;
+                if (_cloakvalid != null) spdata.cloakvalid = (bool)_cloakvalid;
+                if (_cloakstate != null) spdata.cloakstate = (bool)_cloakstate;
+                if (_burrowvalid != null) spdata.burrowvalid = (bool)_burrowvalid;
+                if (_burrowstate != null) spdata.burrowstate = (bool)_burrowstate;
+                if (_tranvalid != null) spdata.tranvalid = (bool)_tranvalid;
+                if (_buildstate != null) spdata.buildstate = (bool)_buildstate;
+                if (_hallvalid != null) spdata.hallvalid = (bool)_hallvalid;
+                if (_hallstate != null) spdata.hallstate = (bool)_hallstate;
+                if (_invinvalid != null) spdata.invinvalid = (bool)_invinvalid;
+                if (_invincstate != null) spdata.invincstate = (bool)_invincstate;
+
+                UnitPropertyEvent.UnitData NEWunitData = new UnitPropertyEvent.UnitData(spdata);
+
+                taskManager.TaskAdd(new UnitPropertyEvent(this, spdata, NEWunitData, OLDunitData));
+            }
+
+
+
+            if (_player != null)
+            {
+                MinimapUnitRefresh();
+            }
+        }
+
+        private bool unitEditIsLoad = false;
         private void UnitEditList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (UnitEditList.SelectedIndex == -1)
             {
                 return;
             }
-
-            ListBoxItem listBoxItem = (ListBoxItem)UnitEditList.SelectedItem;
-            CUNIT spdata = (CUNIT)listBoxItem.Tag;
-            UnitName.Text = mapdata.GetCodeName(Codetype.Unit, spdata.unitID);
+            unitEditIsLoad = true;
 
 
-            UnitEditPanel.DataContext = spdata;
+
+            CUNIT fspdata = (CUNIT)((ListBoxItem)UnitEditList.SelectedItems[0]).Tag;
+
+            string selectheaders = "[" + UnitEditList.SelectedItems.Count + "개] " + mapdata.GetCodeName(Codetype.Unit, fspdata.unitID) + " ";
+
+
+            ushort _X = fspdata.X;
+            ushort _Y = fspdata.Y;
+            ushort _unitID = fspdata.unitID;
+            byte _player = fspdata.player;
+            bool _hpvalid = fspdata.hpvalid;
+            byte _hitPoints = fspdata.hitPoints;
+            bool _shvalid = fspdata.shvalid;
+            byte _shieldPoints = fspdata.shieldPoints;
+            bool _envalid = fspdata.envalid;
+            byte _energyPoints = fspdata.energyPoints;
+            bool _resvalid = fspdata.resvalid;
+            uint _resoruceAmount = fspdata.resoruceAmount;
+            bool _hangarvalid = fspdata.hangarvalid;
+            ushort _hangar = fspdata.hangar;
+            bool _cloakvalid = fspdata.cloakvalid;
+            bool _cloakstate = fspdata.cloakstate;
+            bool _burrowvalid = fspdata.burrowvalid;
+            bool _burrowstate = fspdata.burrowstate;
+            bool _tranvalid = fspdata.tranvalid;
+            bool _buildstate = fspdata.buildstate;
+            bool _hallvalid = fspdata.hallvalid;
+            bool _hallstate = fspdata.hallstate;
+            bool _invinvalid = fspdata.invinvalid;
+            bool _invincstate = fspdata.invincstate;
+
+
+            uEdit_X.Text = _X.ToString();
+            uEdit_Y.Text = _Y.ToString();
+            uEdit_unitID.Text = _unitID.ToString();
+            uEdit_player.SelectedIndex = _player;
+            uEdit_hpvalid.IsChecked = _hpvalid;
+            uEdit_hitPoints.Text = _hitPoints.ToString();
+            uEdit_shvalid.IsChecked = _shvalid;
+            uEdit_shieldPoints.Text = _shieldPoints.ToString();
+            uEdit_envalid.IsChecked = _envalid;
+            uEdit_energyPoints.Text = _energyPoints.ToString();
+            uEdit_resvalid.IsChecked = _resvalid;
+            uEdit_resoruceAmount.Text = _resoruceAmount.ToString();
+            uEdit_hangarvalid.IsChecked = _hangarvalid;
+            uEdit_hangar.Text = _hangar.ToString();
+            uEdit_cloakvalid.IsChecked = _cloakvalid;
+            uEdit_cloakstate.IsChecked = _cloakstate;
+            uEdit_burrowvalid.IsChecked = _burrowvalid;
+            uEdit_burrowstate.IsChecked = _burrowstate;
+            uEdit_tranvalid.IsChecked = _tranvalid;
+            uEdit_buildstate.IsChecked = _buildstate;
+            uEdit_hallvalid.IsChecked = _hallvalid;
+            uEdit_hallstate.IsChecked = _hallstate;
+            uEdit_invinvalid.IsChecked = _invinvalid;
+            uEdit_invincstate.IsChecked = _invincstate;
+
+
+            for (int i = 1; i < UnitEditList.SelectedItems.Count; i++)
+            {
+                CUNIT spdata = (CUNIT)((ListBoxItem)UnitEditList.SelectedItems[i]).Tag;
+                selectheaders += mapdata.GetCodeName(Codetype.Unit, spdata.unitID) + " ";
+
+                if (_X != spdata.X) uEdit_X.Text = "";
+                if (_Y != spdata.Y) uEdit_Y.Text = "";
+                if (_unitID != spdata.unitID) uEdit_unitID.Text = "";
+                if (_player != spdata.player) uEdit_player.SelectedIndex = -1;
+                if (_hpvalid != spdata.hpvalid) uEdit_hpvalid.IsChecked = null;
+                if (_hitPoints != spdata.hitPoints) uEdit_hitPoints.Text = "";
+                if (_shvalid != spdata.shvalid) uEdit_shvalid.IsChecked = null;
+                if (_shieldPoints != spdata.shieldPoints) uEdit_shieldPoints.Text = "";
+                if (_envalid != spdata.envalid) uEdit_envalid.IsChecked = null;
+                if (_energyPoints != spdata.energyPoints) uEdit_energyPoints.Text = "";
+                if (_resvalid != spdata.resvalid) uEdit_resvalid.IsChecked = null;
+                if (_resoruceAmount != spdata.resoruceAmount) uEdit_resoruceAmount.Text = "";
+                if (_hangarvalid != spdata.hangarvalid) uEdit_hangarvalid.IsChecked = null;
+                if (_hangar != spdata.hangar) uEdit_hangar.Text = "";
+                if (_cloakvalid != spdata.cloakvalid) uEdit_cloakvalid.IsChecked = null;
+                if (_cloakstate != spdata.cloakstate) uEdit_cloakstate.IsChecked = null;
+                if (_burrowvalid != spdata.burrowvalid) uEdit_burrowvalid.IsChecked = null;
+                if (_burrowstate != spdata.burrowstate) uEdit_burrowstate.IsChecked = null;
+                if (_tranvalid != spdata.tranvalid) uEdit_tranvalid.IsChecked = null;
+                if (_buildstate != spdata.buildstate) uEdit_buildstate.IsChecked = null;
+                if (_hallvalid != spdata.hallvalid) uEdit_hallvalid.IsChecked = null;
+                if (_hallstate != spdata.hallstate) uEdit_hallstate.IsChecked = null;
+                if (_invinvalid != spdata.invinvalid) uEdit_invinvalid.IsChecked = null;
+                if (_invincstate != spdata.invincstate) uEdit_invincstate.IsChecked = null;
+            }
+
+
+
+
+            //ListBoxItem listBoxItem = (ListBoxItem)UnitEditList.SelectedItem;
+            //CUNIT spdata = (CUNIT)listBoxItem.Tag;
+            //UnitName.Text = mapdata.GetCodeName(Codetype.Unit, spdata.unitID);
+
+            selectheaders = selectheaders.Replace("\n", "");
+            selectheaders = selectheaders.Replace("\r", "");
+            //UnitEditPanel.DataContext = spdata;
+            if (selectheaders.Length > 35)
+            {
+                selectheaders = selectheaders.Substring(0, 33) + " ...";
+            }
+            UnitName.Text = selectheaders;
+            unitEditIsLoad = false;
         }
 
 

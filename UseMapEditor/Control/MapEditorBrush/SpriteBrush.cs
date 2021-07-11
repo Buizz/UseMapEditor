@@ -156,12 +156,48 @@ namespace UseMapEditor.Control
                 return;
             }
             PopupGrid.Visibility = Visibility.Visible;
+            UnitEditPanel.Visibility = Visibility.Collapsed;
             SpriteEditPanel.Visibility = Visibility.Visible;
+            LocEditPanel.Visibility = Visibility.Collapsed;
             SpriteContextMenu.Visibility = Visibility.Collapsed;
             PopupReLocatied();
             MapViewer.IsEnabled = false;
 
-            Vector2 m = PosMapToScreen(new Vector2(SelectSprite.First().X, SelectSprite.First().Y));
+
+
+            Vector2 center = new Vector2();
+            foreach (var item in SelectSprite)
+            {
+                center.X += item.X;
+                center.Y += item.Y;
+            }
+
+            center.X /= SelectSprite.Count;
+            center.Y /= SelectSprite.Count;
+
+            Vector2 m = PosMapToScreen(center);
+            if (SelectSprite.Count > 1)
+            {
+                m.X -= (float)SpriteEditPanel.Width / 2;
+                m.Y -= (float)SpriteEditPanel.Height / 2;
+            }
+
+            m.X = Math.Max(0, m.X);
+            m.Y = Math.Max(0, m.Y);
+
+            Vector2 screenSize = GetScreenSize();
+            if (screenSize.X < (m.X + SpriteEditPanel.Width))
+            {
+                m.X = (float)(screenSize.X - SpriteEditPanel.Width);
+            }
+
+            if (screenSize.Y < (m.Y + SpriteEditPanel.Height))
+            {
+                m.Y = (float)(screenSize.Y - SpriteEditPanel.Height);
+            }
+
+
+
             PopupInnerGrid.Margin = new Thickness(m.X, m.Y, 0, 0);
 
 
@@ -174,7 +210,7 @@ namespace UseMapEditor.Control
                 SpriteEditList.Items.Add(boxItem);
             }
             SpriteEditList.SelectedIndex = 0;
-            PopupReLocatied();
+            //PopupReLocatied();
 
             //LocEditPanel.DataContext = locdata;
         }

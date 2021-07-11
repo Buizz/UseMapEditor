@@ -186,7 +186,22 @@ namespace UseMapEditor.Control
         }
 
 
+        public Rect GetMapRect()
+        {
+            Vector2 mapend = PosScreenToMap(new Vector2((float)MapViewer.ActualWidth, (float)MapViewer.ActualHeight));
+            Rect rect = new Rect(opt_xpos, opt_ypos, mapend.X, mapend.Y);
 
+            return rect;
+        }
+
+        public Vector2 GetScreenSize()
+        {
+            float screenWidth = (float)(MapViewer.ActualWidth - GetToolBarWidth());
+            float screenHeight = (float)MapViewer.ActualHeight;
+
+
+            return new Vector2(screenWidth, screenHeight);
+        }
 
 
         public Vector2 PosScreenToMap(Vector2 pos)
@@ -205,7 +220,7 @@ namespace UseMapEditor.Control
             return new Vector2((float)((pos.X - opt_xpos) * opt_scalepercent), (float)((pos.Y - opt_ypos) * opt_scalepercent));
         }
 
-
+        
 
 
 
@@ -320,13 +335,13 @@ namespace UseMapEditor.Control
 
         public bool IsToolBarOpen()
         {
-            return ToolBarExpander.IsExpanded;
+            return RightExpander.IsExpanded;
         }
 
 
         public double GetToolBarWidth()
         {
-            return ToolBarExpander.ActualWidth - 48;
+            return RightExpander.ActualWidth - 48;
         }
 
 
@@ -376,6 +391,32 @@ namespace UseMapEditor.Control
         }
 
 
+        //설정한 스타일대로 변경
+        public void StyleChange()
+        {
+            //TODO Expander
+            if (false)
+            {
+                LeftExpander.Style = null;
+                RightExpander.Style = null;
+                BottomExpander.Style = null;
+            }
+            else
+            {
+                LeftExpander.Style = (Style)Application.Current.Resources["MaterialDesignExpander"];
+                RightExpander.Style = (Style)Application.Current.Resources["MaterialDesignExpander"];
+                BottomExpander.Style = (Style)Application.Current.Resources["MaterialDesignExpander"];
+            }
+
+            //TODO 툴바 작게하는 옵션
+            if (true)
+            {
+            }
+            else
+            {
+            }
+
+        }
 
 
         private UIBinding uIBinding;
@@ -397,6 +438,10 @@ namespace UseMapEditor.Control
             TileBack = Microsoft.Xna.Framework.Color.Black;
             DoodadOverlay = new Microsoft.Xna.Framework.Color(255, 0, 0, 255);
             SpriteOverlay = new Microsoft.Xna.Framework.Color(0, 255, 0, 255);
+
+            StyleChange();
+
+
 
 
             if (Global.Setting.Vals[Global.Setting.Settings.Program_GRPLoad] == "false")
@@ -513,7 +558,7 @@ namespace UseMapEditor.Control
             double nx = PopupInnerGrid.Margin.Left;
             double ny = PopupInnerGrid.Margin.Top;
 
-            if (x > (MapViewer.ActualWidth - ToolBarExpander.ActualWidth))
+            if (x > (MapViewer.ActualWidth - RightExpander.ActualWidth))
             {
                 nx -= PopupInnerGrid.ActualWidth;
             }
@@ -523,8 +568,11 @@ namespace UseMapEditor.Control
                 ny -= PopupInnerGrid.ActualHeight;
             }
 
-            PopupInnerGrid.Margin = new Thickness(nx,ny,0,0);
+            nx = Math.Max(0, nx);
+            ny = Math.Max(0, ny);
 
+
+            PopupInnerGrid.Margin = new Thickness(nx,ny,0,0);
         }
 
         private void PopupVisbleManage(MouseButtonEventArgs e)
@@ -943,18 +991,18 @@ namespace UseMapEditor.Control
 
             if (Isonoff)
             {
-                if (ToolBarExpander.IsExpanded)
+                if (RightExpander.IsExpanded)
                 {
                     //열려있을 경우
                     if (this.PalleteLayer == PalleteLayer)
                     {
-                        ToolBarExpander.IsExpanded = false;
+                        RightExpander.IsExpanded = false;
                     }
                 }
                 else
                 {
                     //닫혀있을 경우
-                    ToolBarExpander.IsExpanded = true;
+                    RightExpander.IsExpanded = true;
                 }
             }
 
@@ -1167,6 +1215,8 @@ namespace UseMapEditor.Control
             OuterMouse.X = (float)e.GetPosition(MapViewer).X;
             OuterMouse.Y = (float)e.GetPosition(MapViewer).Y;
         }
+
+
 
 
     }

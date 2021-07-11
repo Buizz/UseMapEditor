@@ -21,7 +21,7 @@
     </UserControl.Resources>
     <Grid>
         <DockPanel x:Name="MainPanel">
-            <ToolBarTray x:Name="Toolbar" DockPanel.Dock="Top" IsLocked="True">
+            <ToolBarTray x:Name="Toolbar" DockPanel.Dock="Top" IsLocked="False" >
                 <ToolBar Style="{DynamicResource MaterialDesignToolBar}" ClipToBounds="False">
                     <Button ToolTip="새 맵(Ctrl N)" Click="NewBtn_Click">
                         <materialDesign:PackIcon Kind="FileDocument" />
@@ -45,7 +45,10 @@
                     <Button x:Name="RedoBtn" ToolTip="다시 실행(Ctrl U)" Click="RedoBtn_Click" IsEnabled="False">
                         <materialDesign:PackIcon Kind="Redo" />
                     </Button>
-                    <Separator/>
+
+                </ToolBar>
+                <ToolBar Style="{DynamicResource MaterialDesignToolBar}">
+
                     <materialDesign:PopupBox StaysOpen="True" Style="{StaticResource MaterialDesignToolPopupBox}" Padding="4" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Center">
                         <materialDesign:PopupBox.ToggleContent>
                             <materialDesign:PackIcon Kind="Visibility" Margin="14"/>
@@ -165,10 +168,11 @@
                             </ToggleButton>
                         </UniformGrid>
                     </materialDesign:PopupBox>
-                    
-                    
-                    
-                    <Separator/>
+
+
+
+                </ToolBar>
+                <ToolBar Style="{DynamicResource MaterialDesignToolBar}">
                     <ToggleButton />
                     <Button>
                         <materialDesign:PackIcon Kind="Play" />
@@ -186,12 +190,12 @@
             </ToolBarTray>
 
 
-            <Expander DockPanel.Dock="Bottom" ExpandDirection="Up" Header="콘솔">
+            <Expander x:Name="BottomExpander" DockPanel.Dock="Bottom" ExpandDirection="Up" Header="콘솔">
                 <DockPanel>
                     <TextBox MinHeight="100" AcceptsReturn="True"/>
                 </DockPanel>
             </Expander>
-            <Expander DockPanel.Dock="Left" ExpandDirection="Right">
+            <Expander x:Name="LeftExpander" DockPanel.Dock="Left" ExpandDirection="Right" >
                 <Expander.Header>
                     <TextBlock Text="시나리오설정" RenderTransformOrigin=".5,.5" >
                         <TextBlock.LayoutTransform>
@@ -256,12 +260,12 @@
                                 <ListBoxItem Content="이름 2"/>
                             </ListBox>
                         </materialDesign:Card>
-                        <materialDesign:Card x:Name="LocEditPanel" Visibility="Collapsed">
-                            <DockPanel>
-                                <ListBox x:Name="LocEditList" DockPanel.Dock="Left" MaxHeight="240" SelectionChanged="LocEditList_SelectionChanged" PreviewMouseUp="LocEditList_PreviewMouseUp">
+                        <materialDesign:Card x:Name="LocEditPanel" Visibility="Collapsed" Height="240" Width="440">
+                            <DockPanel >
+                                <ListBox x:Name="LocEditList" DockPanel.Dock="Left" Width="200" SelectionChanged="LocEditList_SelectionChanged" PreviewMouseUp="LocEditList_PreviewMouseUp">
 
                                 </ListBox>
-                                <StackPanel Margin="8" Width="240">
+                                <StackPanel >
                                     <StackPanel DockPanel.Dock="Left" >
                                         <TextBox Text="{Binding Path=NAME, UpdateSourceTrigger=PropertyChanged}" Margin="4"/>
                                         <UniformGrid Rows="1" Columns="4">
@@ -324,12 +328,12 @@
                                 </MenuItem>
                             </Menu>
                         </materialDesign:Card>
-                        <materialDesign:Card x:Name="SpriteEditPanel" Visibility="Collapsed">
-                            <DockPanel>
-                                <ListBox x:Name="SpriteEditList" DockPanel.Dock="Left" MaxHeight="240" SelectionChanged="SpriteEditList_SelectionChanged">
+                        <materialDesign:Card x:Name="SpriteEditPanel" Visibility="Collapsed" Height="240" Width="440">
+                            <DockPanel >
+                                <ListBox x:Name="SpriteEditList" DockPanel.Dock="Left" Width="200" SelectionChanged="SpriteEditList_SelectionChanged">
 
                                 </ListBox>
-                                <StackPanel Margin="8" Width="240">
+                                <StackPanel Margin="8" >
                                     <StackPanel>
                                         <TextBlock x:Name="SpriteName" Margin="4"/>
                                         <UniformGrid Rows="1" Columns="2">
@@ -417,20 +421,20 @@
                                 </MenuItem>
                             </Menu>
                         </materialDesign:Card>
-                        <materialDesign:Card x:Name="UnitEditPanel" Visibility="Collapsed">
+                        <materialDesign:Card x:Name="UnitEditPanel" Visibility="Collapsed" Width="540" Height="280">
                             <DockPanel>
-                                <ListBox x:Name="UnitEditList" DockPanel.Dock="Left" MaxHeight="240" SelectionChanged="UnitEditList_SelectionChanged">
+                                <ListBox x:Name="UnitEditList" DockPanel.Dock="Left" Width="200" SelectionMode="Extended" SelectionChanged="UnitEditList_SelectionChanged">
 
                                 </ListBox>
-                                <StackPanel Margin="8" Width="300">
+                                <StackPanel Margin="8" >
                                     <StackPanel>
                                         <TextBlock x:Name="UnitName" Margin="4"/>
                                         <UniformGrid Rows="1" Columns="4">
 
-                                            <TextBox Text="{Binding Path=X}" Margin="4" materialDesign:TextFieldAssist.SuffixText="X"/>
-                                            <TextBox Text="{Binding Path=Y}" Margin="4" materialDesign:TextFieldAssist.SuffixText="Y"/>
-                                            <TextBox Text="{Binding Path=unitID}" Margin="4" materialDesign:TextFieldAssist.SuffixText="UnitID"/>
-                                            <ComboBox SelectedIndex="{Binding player}" MaxDropDownHeight="140">
+                                            <TextBox x:Name="uEdit_X" Text="{Binding Path=X}" Margin="4" materialDesign:TextFieldAssist.SuffixText="X" TextChanged="uEdit_Changed"/>
+                                            <TextBox x:Name="uEdit_Y" Text="{Binding Path=Y}" Margin="4" materialDesign:TextFieldAssist.SuffixText="Y" TextChanged="uEdit_Changed"/>
+                                            <TextBox x:Name="uEdit_unitID" Text="{Binding Path=unitID}" Margin="4" materialDesign:TextFieldAssist.SuffixText="UnitID" TextChanged="uEdit_Changed"/>
+                                            <ComboBox x:Name="uEdit_player"  SelectedIndex="{Binding player}" MaxDropDownHeight="140" SelectionChanged="uEdit_Changed">
                                                 <ComboBoxItem Content="플레이어 1"/>
                                                 <ComboBoxItem Content="플레이어 2"/>
                                                 <ComboBoxItem Content="플레이어 3"/>
@@ -450,93 +454,102 @@
 
                                     <UniformGrid Columns="2">
                                         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
-                                            <ToggleButton x:Name="HPDefault" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}"
-                                                      IsChecked="{Binding hpvalid}">
+                                            <ToggleButton x:Name="uEdit_hpvalid" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}"
+                                                      IsChecked="{Binding hpvalid}" Checked="uEdit_Changed" Unchecked="uEdit_Changed">
                                                 <materialDesign:PackIcon Kind="Add" Height="21" Width="21"/>
                                             </ToggleButton>
-                                            <StackPanel IsEnabled="{Binding ElementName=HPDefault, Path=IsChecked}" Orientation="Horizontal">
+                                            <StackPanel IsEnabled="{Binding ElementName=uEdit_hpvalid, Path=IsChecked}" Orientation="Horizontal">
                                                 <TextBlock Text="체력" VerticalAlignment="Center" Width="40" HorizontalAlignment="Center" FlowDirection="RightToLeft"/>
-                                                <TextBox Width="40" VerticalAlignment="Center" Text="{Binding hitPoints}" />
+                                                <TextBox x:Name="uEdit_hitPoints" Width="40" VerticalAlignment="Center" Text="{Binding hitPoints}" TextChanged="uEdit_Changed"/>
                                                 <TextBlock Text="%" VerticalAlignment="Center"/>
                                             </StackPanel>
                                         </StackPanel>
                                         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
-                                            <ToggleButton x:Name="ShildDefault" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" 
-                                                      IsChecked="{Binding shvalid}">
+                                            <ToggleButton x:Name="uEdit_shvalid" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" 
+                                                      IsChecked="{Binding shvalid}" Checked="uEdit_Changed" Unchecked="uEdit_Changed">
                                                 <materialDesign:PackIcon Kind="Add" Height="21" Width="21"/>
                                             </ToggleButton>
-                                            <StackPanel IsEnabled="{Binding ElementName=ShildDefault, Path=IsChecked}" Orientation="Horizontal">
+                                            <StackPanel IsEnabled="{Binding ElementName=uEdit_shvalid, Path=IsChecked}" Orientation="Horizontal">
                                                 <TextBlock Text="쉴드" VerticalAlignment="Center" Width="40" HorizontalAlignment="Center" FlowDirection="RightToLeft"/>
-                                                <TextBox Width="40" VerticalAlignment="Center" Text="{Binding shieldPoints}" />
+                                                <TextBox x:Name="uEdit_shieldPoints" Width="40" VerticalAlignment="Center" Text="{Binding shieldPoints}" TextChanged="uEdit_Changed"/>
                                                 <TextBlock Text="%" VerticalAlignment="Center"/>
                                             </StackPanel>
                                         </StackPanel>
                                         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
-                                            <ToggleButton x:Name="EnergyDefault" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" 
-                                                      IsChecked="{Binding envalid}">
+                                            <ToggleButton x:Name="uEdit_envalid" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" 
+                                                      IsChecked="{Binding envalid}" Checked="uEdit_Changed" Unchecked="uEdit_Changed">
                                                 <materialDesign:PackIcon Kind="Add" Height="21" Width="21"/>
                                             </ToggleButton>
-                                            <StackPanel IsEnabled="{Binding ElementName=EnergyDefault, Path=IsChecked}" Orientation="Horizontal">
+                                            <StackPanel IsEnabled="{Binding ElementName=uEdit_envalid, Path=IsChecked}" Orientation="Horizontal">
                                                 <TextBlock Text="에너지" VerticalAlignment="Center" Width="40" HorizontalAlignment="Center" FlowDirection="RightToLeft"/>
-                                                <TextBox Width="40" VerticalAlignment="Center" Text="{Binding energyPoints}" />
+                                                <TextBox x:Name="uEdit_energyPoints" Width="40" VerticalAlignment="Center" Text="{Binding energyPoints}" TextChanged="uEdit_Changed"/>
                                                 <TextBlock Text="%" VerticalAlignment="Center"/>
                                             </StackPanel>
                                         </StackPanel>
                                         <DockPanel DockPanel.Dock="Top" >
-                                            <ToggleButton x:Name="ResourceDefault" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" 
-                                                      IsChecked="{Binding resvalid}">
+                                            <ToggleButton x:Name="uEdit_resvalid" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" 
+                                                      IsChecked="{Binding resvalid}" Checked="uEdit_Changed" Unchecked="uEdit_Changed">
                                                 <materialDesign:PackIcon Kind="Add" Height="21" Width="21"/>
                                             </ToggleButton>
-                                            <StackPanel IsEnabled="{Binding ElementName=ResourceDefault, Path=IsChecked}" Orientation="Horizontal">
+                                            <StackPanel IsEnabled="{Binding ElementName=uEdit_resvalid, Path=IsChecked}" Orientation="Horizontal">
                                                 <TextBlock Text="자원" DockPanel.Dock="Left" VerticalAlignment="Center" Width="40" HorizontalAlignment="Center" FlowDirection="RightToLeft"/>
-                                                <TextBox VerticalAlignment="Center" Width="60" HorizontalAlignment="Left" Text="{Binding resoruceAmount}" />
+                                                <TextBox x:Name="uEdit_resoruceAmount" VerticalAlignment="Center" Width="60" HorizontalAlignment="Left" Text="{Binding resoruceAmount}"
+                                                         TextChanged="uEdit_Changed"/>
                                             </StackPanel>
                                         </DockPanel>
                                         <DockPanel DockPanel.Dock="Top" >
-                                            <ToggleButton x:Name="HangerDefault" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" 
-                                                      IsChecked="{Binding hangarvalid}">
+                                            <ToggleButton x:Name="uEdit_hangarvalid" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" 
+                                                      IsChecked="{Binding hangarvalid}" Checked="uEdit_Changed" Unchecked="uEdit_Changed">
                                                 <materialDesign:PackIcon Kind="Add" Height="21" Width="21"/>
                                             </ToggleButton>
-                                            <StackPanel IsEnabled="{Binding ElementName=HangerDefault, Path=IsChecked}" Orientation="Horizontal">
+                                            <StackPanel IsEnabled="{Binding ElementName=uEdit_hangarvalid, Path=IsChecked}" Orientation="Horizontal">
                                                 <TextBlock Text="격납수" DockPanel.Dock="Left" VerticalAlignment="Center" Width="40" HorizontalAlignment="Center" FlowDirection="RightToLeft"/>
-                                                <TextBox VerticalAlignment="Center" Width="60" HorizontalAlignment="Left" Text="{Binding hangar}" />
+                                                <TextBox x:Name="uEdit_hangar" VerticalAlignment="Center" Width="60" HorizontalAlignment="Left" Text="{Binding hangar}"
+                                                         TextChanged="uEdit_Changed"/>
                                             </StackPanel>
                                         </DockPanel>
                                         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
-                                            <ToggleButton x:Name="Clackefault" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" 
-                                                      IsChecked="{Binding cloakvalid}">
+                                            <ToggleButton x:Name="uEdit_cloakvalid" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" 
+                                                      IsChecked="{Binding cloakvalid}" Checked="uEdit_Changed" Unchecked="uEdit_Changed">
                                                 <materialDesign:PackIcon Kind="Add" Height="21" Width="21"/>
                                             </ToggleButton>
-                                            <CheckBox IsChecked="{Binding cloakstate}" IsEnabled="{Binding ElementName=Clackefault, Path=IsChecked}" Content="클로킹" DockPanel.Dock="Top" />
+                                            <CheckBox x:Name="uEdit_cloakstate" IsChecked="{Binding cloakstate}" IsEnabled="{Binding ElementName=uEdit_cloakvalid, Path=IsChecked}" Content="클로킹" DockPanel.Dock="Top"
+                                                      Checked="uEdit_Changed" Unchecked="uEdit_Changed"/>
                                         </StackPanel>
                                         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
-                                            <ToggleButton x:Name="BurrowDefault" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" 
-                                                      IsChecked="{Binding burrowvalid}">
+                                            <ToggleButton x:Name="uEdit_burrowvalid" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" 
+                                                      IsChecked="{Binding burrowvalid}" Checked="uEdit_Changed" Unchecked="uEdit_Changed">
                                                 <materialDesign:PackIcon Kind="Add" Height="21" Width="21"/>
                                             </ToggleButton>
-                                            <CheckBox IsChecked="{Binding burrowstate}" IsEnabled="{Binding ElementName=BurrowDefault, Path=IsChecked}" Content="버러우" DockPanel.Dock="Top" />
+                                            <CheckBox x:Name="uEdit_burrowstate" IsChecked="{Binding burrowstate}" IsEnabled="{Binding ElementName=uEdit_burrowvalid, Path=IsChecked}" Content="버러우" DockPanel.Dock="Top"
+                                                      Checked="uEdit_Changed" Unchecked="uEdit_Changed"/>
                                         </StackPanel>
                                         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
-                                            <ToggleButton x:Name="LiftDefault" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" 
-                                                      IsChecked="{Binding tranvalid}">
+                                            <ToggleButton x:Name="uEdit_tranvalid" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" 
+                                                      IsChecked="{Binding tranvalid}" Checked="uEdit_Changed" Unchecked="uEdit_Changed">
                                                 <materialDesign:PackIcon Kind="Add" Height="21" Width="21"/>
                                             </ToggleButton>
-                                            <CheckBox IsChecked="{Binding buildstate}" IsEnabled="{Binding ElementName=LiftDefault, Path=IsChecked}" Content="건물뛰움" DockPanel.Dock="Top" />
+                                            <CheckBox x:Name="uEdit_buildstate" IsChecked="{Binding buildstate}" IsEnabled="{Binding ElementName=uEdit_tranvalid, Path=IsChecked}" Content="건물뛰움" DockPanel.Dock="Top"
+                                                      Checked="uEdit_Changed" Unchecked="uEdit_Changed"/>
                                         </StackPanel>
                                         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
-                                            <ToggleButton x:Name="HallDefault" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" 
-                                                      IsChecked="{Binding hallvalid}">
+                                            <ToggleButton x:Name="uEdit_hallvalid" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" 
+                                                      IsChecked="{Binding hallvalid}" Checked="uEdit_Changed" Unchecked="uEdit_Changed">
                                                 <materialDesign:PackIcon Kind="Add" Height="21" Width="21"/>
                                             </ToggleButton>
-                                            <CheckBox IsChecked="{Binding hallstate}" IsEnabled="{Binding ElementName=HallDefault, Path=IsChecked}" Content="환상" DockPanel.Dock="Top" />
+                                            <CheckBox x:Name="uEdit_hallstate" IsChecked="{Binding hallstate}" IsEnabled="{Binding ElementName=uEdit_hallvalid, Path=IsChecked}" Content="환상" DockPanel.Dock="Top"
+                                                      Checked="uEdit_Changed" Unchecked="uEdit_Changed"/>
                                         </StackPanel>
                                         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
-                                            <ToggleButton x:Name="InviDefault" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" 
-                                                      IsChecked="{Binding invinvalid}">
+                                            <ToggleButton x:Name="uEdit_invinvalid" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" 
+                                                      IsChecked="{Binding invinvalid}" Checked="uEdit_Changed" Unchecked="uEdit_Changed">
                                                 <materialDesign:PackIcon Kind="Add" Height="21" Width="21"/>
                                             </ToggleButton>
-                                            <CheckBox IsChecked="{Binding invincstate}" IsEnabled="{Binding ElementName=InviDefault, Path=IsChecked}" Content="무적" DockPanel.Dock="Top" />
+                                            <CheckBox x:Name="uEdit_invincstate" IsChecked="{Binding invincstate}" IsEnabled="{Binding ElementName=uEdit_invinvalid, Path=IsChecked}" Content="무적" DockPanel.Dock="Top"
+                                                      Checked="uEdit_Changed" Unchecked="uEdit_Changed"/>
                                         </StackPanel>
+
+
                                     </UniformGrid>
                                 </StackPanel>
                             </DockPanel>
@@ -580,7 +593,7 @@
                     </Grid>
                 </Grid>
 
-                <Expander x:Name="ToolBarExpander" Grid.ColumnSpan="2" DockPanel.Dock="Right" ExpandDirection="Left" Background="Transparent" HorizontalAlignment="Right">
+                <Expander x:Name="RightExpander" Grid.ColumnSpan="2" DockPanel.Dock="Right" ExpandDirection="Left" Background="Transparent" HorizontalAlignment="Right">
                     <Expander.Header >
                         <TextBlock Text="팔레트" RenderTransformOrigin=".5,.5" >
                             <TextBlock.LayoutTransform>
@@ -613,7 +626,7 @@
                             </Button>
                         </StackPanel>
                         <Grid>
-                            <DockPanel x:Name="TilePallet" Visibility="Collapsed">
+                            <DockPanel x:Name="TilePallet" Visibility="Visible">
                                 <ToolBarTray IsLocked="True" DockPanel.Dock="Top">
                                     <ToolBar Style="{DynamicResource MaterialDesignToolBar}" >
                                         <TextBlock Text="펜 크기:" VerticalAlignment="Center"/>
@@ -636,19 +649,59 @@
                                         </ListBox>
                                     </ToolBar>
                                 </ToolBarTray>
-                                <Separator DockPanel.Dock="Top"/>
-                                <Grid DockPanel.Dock="Top" Width="512" Height="32" HorizontalAlignment="Left">
 
-                                </Grid>
-                                <Separator DockPanel.Dock="Top"/>
-                                <Grid DockPanel.Dock="Top" Width="512" Height="64" HorizontalAlignment="Left">
 
-                                </Grid>
-                                <Separator DockPanel.Dock="Top" Width="512" HorizontalAlignment="Left"/>
-                                <Grid x:Name="TileDrawPanel">
+
+
+                                <Expander DockPanel.Dock="Top" HorizontalAlignment="Stretch" Background="#00000000">
+                                    <Expander.Header >
+                                        <Grid Margin="-24,-24,-64,-24" Background="{DynamicResource MaterialDesignPaper}">
+                                            <TextBlock Text="ISOM" FontSize="16" Padding="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="24,0,0,0"/>
+                                        </Grid>
+                                    </Expander.Header>
+                                    <Grid DockPanel.Dock="Top" Width="512" Height="64" HorizontalAlignment="Left">
+
+                                    </Grid>
+                                </Expander>
+                                <Separator DockPanel.Dock="Top"/>
+
+                                <Expander DockPanel.Dock="Top" HorizontalAlignment="Stretch" Background="#00000000">
+                                    <Expander.Header >
+                                        <Grid Margin="-24,-24,-64,-24" Background="{DynamicResource MaterialDesignPaper}">
+                                            <TextBlock Text="사각형" FontSize="16" Padding="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="24,0,0,0"/>
+                                        </Grid>
+                                    </Expander.Header>
+
+                                    <Grid DockPanel.Dock="Top" Width="512" Height="64" HorizontalAlignment="Left">
+
+                                    </Grid>
+                                </Expander>
+                                <Separator DockPanel.Dock="Top"/>
+
+                                <Expander DockPanel.Dock="Top" HorizontalAlignment="Stretch" Background="#00000000">
+                                    <Expander.Header >
+                                        <Grid Margin="-24,-24,-64,-24" Background="{DynamicResource MaterialDesignPaper}">
+                                            <TextBlock Text="커스텀ISOM" FontSize="16" Padding="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="24,0,0,0"/>
+                                        </Grid>
+                                    </Expander.Header>
+                                    <Grid DockPanel.Dock="Top" Width="512" Height="64" HorizontalAlignment="Left" >
+
+                                    </Grid>
+                                </Expander>
+                                <Separator DockPanel.Dock="Top"/>
+
+
+                                <TextBlock Text="모든 지형" FontSize="16" Padding="24, 14, 24, 14" DockPanel.Dock="Top" Background="{DynamicResource MaterialDesignPaper}"/>
+
+
+                                <Grid x:Name="TilePalletPanel" Background="#02000000"
+                                      PreviewMouseWheel="TileSetListBox_PreviewMouseWheel" PreviewMouseDown="TileSetListBox_PreviewMouseDown"
+                                      PreviewMouseUp="TileSetListBox_PreviewMouseUp" PreviewMouseMove="TileSetListBox_PreviewMouseMove" >
                                     <ScrollBar x:Name="TileScroll" HorizontalAlignment="Right" Maximum="600" LargeChange="100" SmallChange="10" ViewportSize="4" 
         Background="{DynamicResource MaterialDesignPaper}"/>
                                 </Grid>
+
+
                             </DockPanel>
                             <DockPanel x:Name="DoodadPallet" Visibility="Collapsed">
                                 <ToolBarTray IsLocked="True" DockPanel.Dock="Top">
@@ -686,10 +739,10 @@
                                     <ListBoxItem Content="하이"/>
                                 </ListBox>
                                 <Grid x:Name="DoodadListBox" PreviewMouseWheel="DoodadListBox_PreviewMouseWheel" PreviewMouseDown="DoodadListBox_PreviewMouseDown" PreviewMouseUp="DoodadListBox_PreviewMouseUp" PreviewMouseMove="DoodadListBox_PreviewMouseMove" Background="#02000000">
-                                    
+
                                 </Grid>
                             </DockPanel>
-                            <DockPanel x:Name="UnitPallet" Visibility="Visible" Background="{DynamicResource MaterialDesignPaper}">
+                            <DockPanel x:Name="UnitPallet" Visibility="Collapsed" Background="{DynamicResource MaterialDesignPaper}">
                                 <ToolBarTray IsLocked="True" DockPanel.Dock="Top">
                                     <ToolBar Style="{DynamicResource MaterialDesignToolBar}" >
                                         <RadioButton IsChecked="{Binding UNIT_BRUSHMODE, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"

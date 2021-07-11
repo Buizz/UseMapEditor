@@ -18,7 +18,8 @@ namespace Data.Map
             {
                 _filepath = filepath;
             }
-            //파일이 존재하지 않을 경우 경고문 뜨기
+
+            //지정된 파일 없는 새로 저장일 경우
             if (!File.Exists(_filepath))
             {
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -43,11 +44,41 @@ namespace Data.Map
 
             if (!File.Exists(_filepath))
             {
+                //지정한 경로가 새로 만들기 일 경우
                 StromLib.SFileCreateArchive(_filepath, 0, 24, ref hmpq);
                 StromLib.SFileAddListFile(hmpq, StromLib.LISTFILE_NAME);
             }
             else
             {
+                //덮어쓰기 저장일 경우
+                //MsgDialog msgDialog = new MsgDialog("본 버전은 테스트 버전으로 맵이 날라 갈 수 있습니다.\r\n백업맵을 저장하시겠습니까?", System.Windows.MessageBoxButton.YesNoCancel, System.Windows.MessageBoxImage.Warning);
+                //msgDialog.ShowDialog();
+                //if (msgDialog.msgresult == System.Windows.MessageBoxResult.Cancel)
+                //{
+                //    return false;
+                //}else if (msgDialog.msgresult == System.Windows.MessageBoxResult.Yes)
+                //{
+                //    if (!Directory.Exists(UseMapEditor.Global.Setting.backFolder))
+                //    {
+                //        Directory.CreateDirectory(UseMapEditor.Global.Setting.backFolder);
+                //    }
+                //    FileInfo fileInfo = new FileInfo(_filepath);
+
+
+                //    File.Copy(_filepath, UseMapEditor.Global.Setting.backFolder + @"\" + fileInfo.Name + DateTime.Now.ToString("yyMMddHHmmss") + ".scx");
+                //}
+                if (!Directory.Exists(UseMapEditor.Global.Setting.backFolder))
+                {
+                    Directory.CreateDirectory(UseMapEditor.Global.Setting.backFolder);
+                }
+                FileInfo fileInfo = new FileInfo(_filepath);
+
+
+                File.Copy(_filepath, UseMapEditor.Global.Setting.backFolder + @"\" + fileInfo.Name + DateTime.Now.ToString("yyMMddHHmmss") + ".scx");
+
+
+
+
                 StromLib.SFileOpenArchive(_filepath, 0, 0, ref hmpq);
 
 

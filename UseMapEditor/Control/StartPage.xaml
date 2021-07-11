@@ -26,14 +26,14 @@
                 </DockPanel>
                 <DockPanel Grid.Column="1" Margin="10">
                     <TextBlock DockPanel.Dock="Top" FontSize="15" >빠른 시작</TextBlock>
-                    <StackPanel Background="#19808080" >
-                        <Button Click="NewMapBtn_Click">
+                    <StackPanel >
+                        <Button Click="NewMapBtn_Click" Height="64" Margin="8">
                             <DockPanel>
                                 <materialDesign:PackIcon Kind="EarthBox" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                                 <TextBlock Text="새로 만들기"/>
                             </DockPanel>
                         </Button>
-                        <Button Click="OpenMapBtn_Click">
+                        <Button Click="OpenMapBtn_Click" Height="64" Margin="8">
                             <DockPanel>
                                 <materialDesign:PackIcon Kind="FolderOpen" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
                                 <TextBlock Text="불러오기"/>

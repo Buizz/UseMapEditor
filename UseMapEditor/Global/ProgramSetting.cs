@@ -9,7 +9,8 @@ namespace UseMapEditor.Global
 {
     public static class Setting
     {
-        readonly static string iniFile = AppDomain.CurrentDomain.BaseDirectory + @"\Setting.ini";
+        public readonly static string iniFile = AppDomain.CurrentDomain.BaseDirectory + @"\Setting.ini";
+        public readonly static string backFolder = AppDomain.CurrentDomain.BaseDirectory + @"\Data\BackUp";
 
 
 

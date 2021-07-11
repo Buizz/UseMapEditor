@@ -55,7 +55,11 @@ namespace Data.Map
             WIDTH = (ushort)Width;
             HEIGHT = (ushort)Height;
             MASK = new byte[Width * Height];
+
+            //TODO:스타트타일에 맞게금 시작 타일 까는 로직 필요
             TILE = new ushort[Width * Height];
+            MTXM = new ushort[Width * Height];
+
 
             IOWN = new byte[12];
             for (int i = 0; i < 12; i++)

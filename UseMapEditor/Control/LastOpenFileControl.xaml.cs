@@ -25,7 +25,16 @@ namespace UseMapEditor.Control
             InitializeComponent();
 
             SavePath.Text = System.IO.Path.GetFileName(filepath);
-            FullPath.Text = filepath;
+
+
+            string folder = System.IO.Path.GetDirectoryName(filepath);
+
+            if(folder.Length > 33)
+            {
+                folder = folder.Substring(0, 30) + " ...";
+            }
+
+            FullPath.Text = folder;
         }
     }
 }

@@ -25,7 +25,7 @@
         <controls:WindowCommands>
             <materialDesign:PackIcon Kind="Earth" Width="28" Height="28" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
             <Menu IsMainMenu="True">
-                <MenuItem Header="파일(_F)" x:Name="FileMenuBtn" Height="32" Background="{DynamicResource PrimaryHueDarkBrush}" Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}">
+                <MenuItem Header="파일(_F)" x:Name="FileMenuBtn" Height="32" Background="{DynamicResource PrimaryHueDarkBrush}" Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}" Padding="0">
                     <MenuItem Header="새로 만들기(_N)" Click="NewMapBtn_Click" Foreground="{DynamicResource MaterialDesignBody}">
                         <MenuItem.Icon>
                             <materialDesign:PackIcon Kind="EarthBox" />
@@ -64,7 +64,7 @@
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
-                <MenuItem Header="설정(_S)" x:Name="SettingMenuBtn" Height="32" Background="{DynamicResource PrimaryHueDarkBrush}" Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}">
+                <MenuItem Header="설정(_S)" x:Name="SettingMenuBtn" Height="32" Background="{DynamicResource PrimaryHueDarkBrush}" Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}" Padding="0">
                     <MenuItem Header="확장자 연결" Foreground="{DynamicResource MaterialDesignBody}" Click="ConnectExecMenuItem_Click">
                         <MenuItem.Icon>
                             <materialDesign:PackIcon Kind="Extension" />

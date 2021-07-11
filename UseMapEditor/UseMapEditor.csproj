@@ -249,6 +249,7 @@
     <Compile Include="Control\MapEditorBrush\DoodadBrush.cs" />
     <Compile Include="Control\MapEditorBrush\LocationBrush.cs" />
     <Compile Include="Control\MapEditorBrush\SpriteBrush.cs" />
+    <Compile Include="Control\MapEditorBrush\TileBrush.cs" />
     <Compile Include="Control\MapEditorBrush\UnitBrush.cs" />
     <Compile Include="Control\MapEditorControl\CodeSelecter.xaml.cs">
       <DependentUpon>CodeSelecter.xaml</DependentUpon>
@@ -349,6 +350,7 @@
     <Compile Include="Task\Events\MaskEvent.cs" />
     <Compile Include="Task\Events\SpriteEvent.cs" />
     <Compile Include="Task\Events\UnitEvent.cs" />
+    <Compile Include="Task\Events\UnitPropertyEvent.cs" />
     <Compile Include="Tools\KalmanFilter.cs" />
     <Compile Include="Tools\MemoryFunc.cs" />
     <Compile Include="Tools\ShortCutManager.cs" />
@@ -496,6 +498,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="ResourceDictionary\MaterialDesignExpanderFast.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Windows\Preprocessing.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

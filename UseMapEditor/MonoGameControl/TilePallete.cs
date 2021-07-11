@@ -25,14 +25,14 @@ namespace UseMapEditor.MonoGameControl
         {
             if (mapeditor.PalleteLayer == Control.MapEditor.Layer.Tile)
             {
-                double maxvalue = tileSet.cv5data[mapeditor.mapdata.TILETYPE].Length * 32;
+                double maxvalue = tileSet.cv5data[mapeditor.mapdata.TILETYPE].Length * 32 - mapeditor.TilePalletPanel.ActualHeight;
                 if (maxvalue != mapeditor.TileScroll.Maximum)
                 {
                     mapeditor.TileScroll.Maximum = maxvalue;
                 }
 
 
-                Point relativePoint = mapeditor.TileDrawPanel.TransformToAncestor(mapeditor.ToolBarExpander).Transform(new Point(0, 0));
+                Point relativePoint = mapeditor.TilePalletPanel.TransformToAncestor(mapeditor.RightExpander).Transform(new Point(0, 0));
 
 
                 int startX = ((int)(screenwidth));

@@ -231,6 +231,7 @@ namespace UseMapEditor.Control
             for (int i = 0; i < templist.Count; i++)
             {
                 taskManager.TaskAdd(new DoodadEvent(this, templist[i], false));
+                mapdata.DD2DeleteMTXM(templist[i]);
                 mapdata.DD2.Remove(templist[i]);
             }
             taskManager.TaskEnd();

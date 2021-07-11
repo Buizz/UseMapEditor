@@ -442,7 +442,6 @@ namespace UseMapEditor.FileData
 
 
 
-        //TODO:데이터로 다시 반환해야됨.
         public string ItemText
         {
             get

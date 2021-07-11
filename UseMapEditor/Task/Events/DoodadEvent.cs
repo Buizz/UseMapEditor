@@ -31,10 +31,12 @@ namespace UseMapEditor.Task.Events
             {
                 if (IsCreate)
                 {
+                    mapEditor.mapdata.DD2ToMTXM(cDD2);
                     mapEditor.mapdata.DD2.Add(cDD2);
                 }
                 else
                 {
+                    mapEditor.mapdata.DD2DeleteMTXM(cDD2);
                     mapEditor.mapdata.DD2.Remove(cDD2);
                 }
             }
@@ -46,10 +48,12 @@ namespace UseMapEditor.Task.Events
             {
                 if (IsCreate)
                 {
+                    mapEditor.mapdata.DD2DeleteMTXM(cDD2);
                     mapEditor.mapdata.DD2.Remove(cDD2);
                 }
                 else
                 {
+                    mapEditor.mapdata.DD2ToMTXM(cDD2);
                     mapEditor.mapdata.DD2.Add(cDD2);
                 }
             }
