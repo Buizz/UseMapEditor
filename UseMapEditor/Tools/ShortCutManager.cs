@@ -80,11 +80,73 @@ namespace UseMapEditor.Tools
                     { mapEditor.TabChange(MapEditor.Layer.Location); break; }
                 case "FogofWar":
                     { mapEditor.TabChange(MapEditor.Layer.FogOfWar); break; }
+                case "W":
+                    {
+                        if(Whoykey.WhenToRaise == RaiseLocalEvent.OnKeyDown)
+                        {
+                            mapEditor.key_WDown = true;
+                            Whoykey.WhenToRaise = RaiseLocalEvent.OnKeyUp;
+                        }
+                        else
+                        {
+                            mapEditor.key_WDown = false;
+                            Whoykey.WhenToRaise = RaiseLocalEvent.OnKeyDown;
+                        }
+                        break;
+                    }
+                case "A":
+                    {
+                        if (Ahoykey.WhenToRaise == RaiseLocalEvent.OnKeyDown)
+                        {
+                            mapEditor.key_ADown = true;
+                            Ahoykey.WhenToRaise = RaiseLocalEvent.OnKeyUp;
+                        }
+                        else
+                        {
+                            mapEditor.key_ADown = false;
+                            Ahoykey.WhenToRaise = RaiseLocalEvent.OnKeyDown;
+                        }
+                        break;
+                    }
+                case "S":
+                    {
+                        if (Shoykey.WhenToRaise == RaiseLocalEvent.OnKeyDown)
+                        {
+                            mapEditor.key_SDown = true;
+                            Shoykey.WhenToRaise = RaiseLocalEvent.OnKeyUp;
+                        }
+                        else
+                        {
+                            mapEditor.key_SDown = false;
+                            Shoykey.WhenToRaise = RaiseLocalEvent.OnKeyDown;
+                        }
+                        break;
+                    }
+                case "D":
+                    {
+                        if (Dhoykey.WhenToRaise == RaiseLocalEvent.OnKeyDown)
+                        {
+                            mapEditor.key_DDown = true;
+                            Dhoykey.WhenToRaise = RaiseLocalEvent.OnKeyUp;
+                        }
+                        else
+                        {
+                            mapEditor.key_DDown = false;
+                            Dhoykey.WhenToRaise = RaiseLocalEvent.OnKeyDown;
+                        }
+                        break;
+                    }
             }
         }
 
 
         private HotKeyManager MyHotKeyManager;
+
+
+        LocalHotKey Whoykey;
+        LocalHotKey Ahoykey;
+        LocalHotKey Shoykey;
+        LocalHotKey Dhoykey;
 
         private void HotkeyInit()
         {
@@ -173,6 +235,28 @@ namespace UseMapEditor.Tools
                 LocalHotKey hoykey = new LocalHotKey("FogofWar", ModifierKeys.Control, Keys.D6);
                 MyHotKeyManager.AddLocalHotKey(hoykey);
             }
+
+            //TODO WASD단축키
+            {
+                Whoykey = new LocalHotKey("W", ModifierKeys.None, Keys.W, RaiseLocalEvent.OnKeyDown);
+                MyHotKeyManager.AddLocalHotKey(Whoykey);
+            }
+            {
+                Ahoykey = new LocalHotKey("A", ModifierKeys.None, Keys.A, RaiseLocalEvent.OnKeyDown);
+                MyHotKeyManager.AddLocalHotKey(Ahoykey);
+            }
+            {
+                Shoykey = new LocalHotKey("S", ModifierKeys.None, Keys.S, RaiseLocalEvent.OnKeyDown);
+                MyHotKeyManager.AddLocalHotKey(Shoykey);
+            }
+            {
+                Dhoykey = new LocalHotKey("D", ModifierKeys.None, Keys.D, RaiseLocalEvent.OnKeyDown);
+                MyHotKeyManager.AddLocalHotKey(Dhoykey);
+            }
+
+
+
+
 
 
             MyHotKeyManager.LocalHotKeyPressed += MyHotKeyManager_LocalHotKeyPressed;

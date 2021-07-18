@@ -7,7 +7,7 @@
              xmlns:junglecontrols="clr-namespace:JungleControls;assembly=JungleControls"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" IsTabStop="True"
-             d:DesignHeight="550" Width="508">
+             d:DesignHeight="550" Width="700">
     <UserControl.Resources>        
         <Style x:Key="myLBStyle" TargetType="{x:Type ListBoxItem}">
             <Style.Resources>
@@ -20,6 +20,9 @@
         <DockPanel>
             <DockPanel DockPanel.Dock="Top" Margin="8">
                 <DockPanel DockPanel.Dock="Top" >
+                    <Border Width="40"  DockPanel.Dock="Right">
+                        
+                    </Border>
                     <Button x:Name="TrigEditPlusBtn" Content="TrigEditPlus에서 열기" DockPanel.Dock="Right" Click="OpenTrigEditPlus_Click"/>
                     <TextBlock Text="검색" Style="{StaticResource MaterialDesignHeadline5TextBlock}"/>
                 </DockPanel>
@@ -118,7 +121,7 @@
 
 
         <Border Grid.ColumnSpan="5" x:Name="EditWindow" Background="#7F000000" Visibility="Hidden" MouseDown="EditWindow_MouseDown">
-            <materialDesign:Card x:Name="InputDialog" materialDesign:ShadowAssist.ShadowDepth="Depth3" VerticalAlignment="Top" Height="400" Margin="0,145,0,0">
+            <materialDesign:Card x:Name="InputDialog" materialDesign:ShadowAssist.ShadowDepth="Depth3" VerticalAlignment="Top" Height="400" Width="508" Margin="0,145,0,0">
                 <Grid>
                     <DockPanel x:Name="TrigEditPage" Background="{DynamicResource MaterialDesignPaper}">
                         <DockPanel DockPanel.Dock="Bottom">
@@ -262,6 +265,18 @@
         <materialDesign:Card x:Name="ValueSelecter" Visibility="Collapsed" Width="250" MaxHeight="350" HorizontalAlignment="Left" VerticalAlignment="Top">
             <local:ValueSelecter x:Name="ValueSelecterControl"/>
         </materialDesign:Card>
+
+
+        <Border x:Name="PopupBackground" Visibility="Collapsed">
+            <Button Click="PopupClose_BtnClick" Height="Auto" Background="#7F000000">
+                <Border  Background="{DynamicResource PrimaryHueMidBrush}" Padding="10" >
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="ApplicationImport" HorizontalAlignment="Center" VerticalAlignment="Center" Width="20" Height="20" />
+                        <TextBlock Text="창 닫기"/>
+                    </StackPanel>
+                </Border>
+            </Button>
+        </Border>
     </Grid>
     
 </UserControl>

@@ -587,12 +587,45 @@ namespace UseMapEditor.Control.MapEditorControl
 
         }
 
+        public bool IsOpenTEP = false;
+
+        public Rect GetRect()
+        {
+            Rect rect = new Rect(trigEditPlus.Left, trigEditPlus.Top, trigEditPlus.ActualWidth, trigEditPlus.ActualHeight);
+
+            return rect;
+        }
+
         public TrigEditPlus trigEditPlus;
         private void OpenTrigEditPlus_Click(object sender, RoutedEventArgs e)
         {
-            mapEditor.DisableWindow();
-            trigEditPlus = new TrigEditPlus(mapEditor);
+            //mapEditor.DisableWindow();
+            trigEditPlus = new TrigEditPlus(mapEditor, this);
             trigEditPlus.Show();
+
+            PopupBackground.Visibility = Visibility.Visible;
+            IsOpenTEP = true;
+        }
+
+        public void CloseTrigEditPlus()
+        {
+            PopupBackground.Visibility = Visibility.Collapsed;
+            IsOpenTEP = false;
+            try
+            {
+                trigEditPlus.Close();
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+
+        private void PopupClose_BtnClick(object sender, RoutedEventArgs e)
+        {
+            trigEditPlus.Close();
+            PopupBackground.Visibility = Visibility.Collapsed;
+            IsOpenTEP = false;
         }
     }
 }

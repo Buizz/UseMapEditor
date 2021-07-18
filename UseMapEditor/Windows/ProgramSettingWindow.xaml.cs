@@ -31,6 +31,7 @@ namespace UseMapEditor.Windows
         {
             InitializeComponent();
         }
+        bool ISLoad = false;
         string tempfolder = AppDomain.CurrentDomain.BaseDirectory + @"\Data\temp";
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -95,6 +96,7 @@ namespace UseMapEditor.Windows
             //MainWindow main = new MainWindow();
             //main.Show();
             //Close();
+            ISLoad = true;
         }
 
         private void GridColorButton_ColorSelectEvent(object sender, EventArgs e)
@@ -109,22 +111,28 @@ namespace UseMapEditor.Windows
 
         private void DarkToggleBtn_Checked(object sender, RoutedEventArgs e)
         {
-            Global.Setting.Vals[Global.Setting.Settings.Program_IsDark] = "true";
+            if (ISLoad)
+            {
+                Global.Setting.Vals[Global.Setting.Settings.Program_IsDark] = "true";
 
-            PaletteHelper paletteHelper = new PaletteHelper();
-            ITheme theme = paletteHelper.GetTheme();
-            theme.SetBaseTheme(Theme.Dark);
-            paletteHelper.SetTheme(theme);
+                PaletteHelper paletteHelper = new PaletteHelper();
+                ITheme theme = paletteHelper.GetTheme();
+                theme.SetBaseTheme(Theme.Dark);
+                paletteHelper.SetTheme(theme);
+            }
         }
 
         private void DarkToggleBtn_Unchecked(object sender, RoutedEventArgs e)
         {
-            Global.Setting.Vals[Global.Setting.Settings.Program_IsDark] = "false";
+            if (ISLoad)
+            {
+                Global.Setting.Vals[Global.Setting.Settings.Program_IsDark] = "false";
 
-            PaletteHelper paletteHelper = new PaletteHelper();
-            ITheme theme = paletteHelper.GetTheme();
-            theme.SetBaseTheme(Theme.Light);
-            paletteHelper.SetTheme(theme);
+                PaletteHelper paletteHelper = new PaletteHelper();
+                ITheme theme = paletteHelper.GetTheme();
+                theme.SetBaseTheme(Theme.Light);
+                paletteHelper.SetTheme(theme);
+            }
         }
 
         private void SCMapBtn_Click(object sender, RoutedEventArgs e)

@@ -19,12 +19,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using UseMapEditor.Control.MapEditorControl;
 using UseMapEditor.DataBinding;
 using UseMapEditor.Dialog;
 using UseMapEditor.FileData;
 using UseMapEditor.MonoGameControl;
 using UseMapEditor.Task;
 using UseMapEditor.Tools;
+using UseMapEditor.Windows;
 using static Data.Map.MapData;
 
 namespace UseMapEditor.Control
@@ -106,22 +108,25 @@ namespace UseMapEditor.Control
         private int _opt_ypos = 0;
 
 
+
         public int opt_xpos
         {
             get
             {
-                return _opt_xpos;
+                return _opt_xpos + (int)(GetLeftToolBarWidth() / opt_scalepercent);
             }
             set
             {
-                _opt_xpos = value;
-                int MapLeft = -(int)(MapViewer.ActualWidth / opt_scalepercent / 2);
+                _opt_xpos = value - (int)(GetLeftToolBarWidth() / opt_scalepercent);
+
+
+                int MapLeft = -(int)((MapViewer.ActualWidth + GetLeftToolBarWidth()) / opt_scalepercent / 2);
                 int MapRight = mapdata.WIDTH * 32 + MapLeft;
 
                 Vector2 MapMin = PosMapToScreen(new Vector2(0, 0));
                 Vector2 MapMax = PosMapToScreen(new Vector2(mapdata.WIDTH, mapdata.HEIGHT) * 32);
                 Vector2 MapSize = MapMax - MapMin;
-                if (!((MapSize.X < MapViewer.ActualWidth) & (MapSize.Y < MapViewer.ActualHeight)))
+                if (!((MapSize.X < (MapViewer.ActualWidth - GetLeftToolBarWidth())) & (MapSize.Y < MapViewer.ActualHeight)))
                 {
                     if (_opt_xpos < MapLeft)
                     {
@@ -153,7 +158,7 @@ namespace UseMapEditor.Control
                 Vector2 MapMin = PosMapToScreen(new Vector2(0, 0));
                 Vector2 MapMax = PosMapToScreen(new Vector2(mapdata.WIDTH, mapdata.HEIGHT) * 32);
                 Vector2 MapSize = MapMax - MapMin;
-                if (!((MapSize.X < MapViewer.ActualWidth) & (MapSize.Y < MapViewer.ActualHeight)))
+                if (!((MapSize.X < (MapViewer.ActualWidth - GetLeftToolBarWidth())) & (MapSize.Y < MapViewer.ActualHeight)))
                 {
                     if (_opt_ypos < MapUp)
                     {
@@ -196,12 +201,13 @@ namespace UseMapEditor.Control
 
         public Vector2 GetScreenSize()
         {
-            float screenWidth = (float)(MapViewer.ActualWidth - GetToolBarWidth());
+            float screenWidth = (float)(MapViewer.ActualWidth - GetRightToolBarWidth());
             float screenHeight = (float)MapViewer.ActualHeight;
 
 
             return new Vector2(screenWidth, screenHeight);
         }
+
 
 
         public Vector2 PosScreenToMap(Vector2 pos)
@@ -320,6 +326,10 @@ namespace UseMapEditor.Control
         public bool opt_eudeditor = false;
 
 
+        public bool key_WDown;
+        public bool key_ADown;
+        public bool key_SDown;
+        public bool key_DDown;
 
 
 
@@ -339,13 +349,15 @@ namespace UseMapEditor.Control
         }
 
 
-        public double GetToolBarWidth()
+        public double GetRightToolBarWidth()
         {
             return RightExpander.ActualWidth - 48;
         }
 
-
-
+        public double GetLeftToolBarWidth()
+        {
+            return Math.Floor( LeftExpander.ActualWidth);
+        }
 
         internal void DisableWindow()
         {
@@ -391,11 +403,15 @@ namespace UseMapEditor.Control
         }
 
 
+        public void SettingWindowOpen()
+        {
+            Scenario.AllWindowClose();
+        }
+
         //설정한 스타일대로 변경
         public void StyleChange()
         {
-            //TODO Expander
-            if (false)
+            if (Global.Setting.Vals[Global.Setting.Settings.Program_FastExpander] == "true")
             {
                 LeftExpander.Style = null;
                 RightExpander.Style = null;
@@ -408,14 +424,7 @@ namespace UseMapEditor.Control
                 BottomExpander.Style = (Style)Application.Current.Resources["MaterialDesignExpander"];
             }
 
-            //TODO 툴바 작게하는 옵션
-            if (true)
-            {
-            }
-            else
-            {
-            }
-
+     
         }
 
 
@@ -426,10 +435,12 @@ namespace UseMapEditor.Control
 
             this.mainWindow = mainWindow;
 
+            Scenario = new ScenarioControl();
             mapdata = new MapData(this);
             taskManager = new TaskManager(this);
             shortCutManager = new ShortCutManager(this);
-
+            
+            ScenarioPanel.Child = Scenario;
             minimapcolor = new Microsoft.Xna.Framework.Color[256 * 256];
             miniampUnit = new Microsoft.Xna.Framework.Color[256 * 256];
 
@@ -439,7 +450,6 @@ namespace UseMapEditor.Control
             DoodadOverlay = new Microsoft.Xna.Framework.Color(255, 0, 0, 255);
             SpriteOverlay = new Microsoft.Xna.Framework.Color(0, 255, 0, 255);
 
-            StyleChange();
 
 
 
@@ -459,29 +469,24 @@ namespace UseMapEditor.Control
             }
         }
 
+        public ScenarioControl Scenario;
         public void InitControl()
         {
             RefreshGRPIcon();
 
             mapDataBinding = new MapDataBinding(this);
-            MapSettingTabItem.SetMapEditor(this);
-            PlayerSettingTabItem.SetMapEditor(this);
-            ForceSettingTabItem.SetMapEditor(this);
-            UnitSettingTabItem.SetMapEditor(this);
-            UpgradeSettingTabItem.SetMapEditor(this);
-            TechSettingTabItem.SetMapEditor(this);
-            SoundSettingTabItem.SetMapEditor(this);
-            StringSettingTabItem.SetMapEditor(this);
-            ClassTriggerEditorTabItem.SetMapEditor(this, true);
-            BriefingEditorTabItem.SetMapEditor(this, false);
+
+            StyleChange();
+
 
             LocationList.ItemsSource = mapdata.LocationDatas;
             LocationList.Items.SortDescriptions.Add(new SortDescription("INDEX", ListSortDirection.Ascending));
 
             UnitPlaceList.ItemsSource = IndexedUnitList;
             UnitPlaceList.Items.SortDescriptions.Add(new SortDescription("INDEX", ListSortDirection.Ascending));
-            
 
+
+            Scenario.Init(this);
 
             refreshLocBox();
             uIBinding = new UIBinding(this);
@@ -671,21 +676,23 @@ namespace UseMapEditor.Control
 
         public bool LoadMap(string _filepath)
         {
+            bool LoadSucess = mapdata.LoadMap(_filepath);
+            IsLoad = LoadSucess;
+            IsDirty = false;
+            if (LoadSucess == true)
+            {
+                optionReset();
+                //tabitem.Header = mapdata.SafeFileName;
+                //tabitem.Content = this;
+                InitControl();
+                mapDataBinding.PropertyChangeAll();
+            }
+
+            return LoadSucess;
+
             try
             {
-                bool LoadSucess = mapdata.LoadMap(_filepath);
-                IsLoad = LoadSucess;
-                IsDirty = false;
-                if (LoadSucess == true)
-                {
-                    optionReset();
-                    //tabitem.Header = mapdata.SafeFileName;
-                    //tabitem.Content = this;
-                    InitControl();
-                    mapDataBinding.PropertyChangeAll();
-                }
 
-                return LoadSucess;
             }
             catch (Exception e)
             {
@@ -805,7 +812,10 @@ namespace UseMapEditor.Control
             ChangeView();
         }
 
-
+        private void Scen_Click(object sender, RoutedEventArgs e)
+        {
+            mainWindow.ScenOpenCommand();
+        }
 
 
 
@@ -1093,23 +1103,7 @@ namespace UseMapEditor.Control
 
 
 
-        private int lasttabindex;
-        private void TabablzControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            int sindex = scenTabControl.SelectedIndex;
-            if(lasttabindex != sindex)
-            {
-                lasttabindex = sindex;
-                if (sindex == 2)
-                {
-                    ForceSettingTabItem.MainListRefresh();
-                }
-                if (sindex == 7)
-                {
-                    StringSettingTabItem.MainListRefresh();
-                }
-            }
-        }
+
 
         private void UndoBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -1215,8 +1209,6 @@ namespace UseMapEditor.Control
             OuterMouse.X = (float)e.GetPosition(MapViewer).X;
             OuterMouse.Y = (float)e.GetPosition(MapViewer).Y;
         }
-
-
 
 
     }

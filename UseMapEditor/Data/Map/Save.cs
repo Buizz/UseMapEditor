@@ -63,8 +63,6 @@ namespace Data.Map
                 //        Directory.CreateDirectory(UseMapEditor.Global.Setting.backFolder);
                 //    }
                 //    FileInfo fileInfo = new FileInfo(_filepath);
-
-
                 //    File.Copy(_filepath, UseMapEditor.Global.Setting.backFolder + @"\" + fileInfo.Name + DateTime.Now.ToString("yyMMddHHmmss") + ".scx");
                 //}
                 if (!Directory.Exists(UseMapEditor.Global.Setting.backFolder))
@@ -72,8 +70,6 @@ namespace Data.Map
                     Directory.CreateDirectory(UseMapEditor.Global.Setting.backFolder);
                 }
                 FileInfo fileInfo = new FileInfo(_filepath);
-
-
                 File.Copy(_filepath, UseMapEditor.Global.Setting.backFolder + @"\" + fileInfo.Name + DateTime.Now.ToString("yyMMddHHmmss") + ".scx");
 
 
@@ -91,19 +87,29 @@ namespace Data.Map
                 byte[] buffer = ReadMPQFileC(hmpq, @"(listfile)");
                 if (buffer.Length == 0)
                 {
-                    throw new Exception("listfile을 열지 못했습니다.");
+                    StromLib.SFileCloseArchive(hmpq);
+
+                    File.Delete(_filepath);
+
+
+                    StromLib.SFileCreateArchive(_filepath, 0, 24, ref hmpq);
+                    StromLib.SFileAddListFile(hmpq, StromLib.LISTFILE_NAME);
+                    //throw new Exception("listfile을 열지 못했습니다.");
                 }
-                string str = Encoding.GetEncoding(949).GetString(buffer);
-                mpqfileList.Clear();
-                str = str.Replace("\r", "");
-                mpqfileList = str.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList();
-
-
-
-
-                for (int i = 0; i < mpqfileList.Count; i++)
+                else
                 {
-                    RemoveMPQFile(hmpq, mpqfileList[i]);
+                    string str = Encoding.GetEncoding(949).GetString(buffer);
+                    mpqfileList.Clear();
+                    str = str.Replace("\r", "");
+                    mpqfileList = str.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+
+
+
+
+                    for (int i = 0; i < mpqfileList.Count; i++)
+                    {
+                        RemoveMPQFile(hmpq, mpqfileList[i]);
+                    }
                 }
             }
 

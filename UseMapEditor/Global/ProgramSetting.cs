@@ -71,7 +71,7 @@ namespace UseMapEditor.Global
                         rv = "";
                         break;
                     case Settings.Render_MaxFrame:
-                        rv = "60";
+                        rv = "0";
                         break;
                     case Settings.Render_UseVFR:
                         rv = "true";
@@ -84,6 +84,9 @@ namespace UseMapEditor.Global
                         break;
                     case Settings.Program_GridSize:
                         rv = "32";
+                        break;
+                    case Settings.Program_FastExpander:
+                        rv = "false";
                         break;
                 }
             }
@@ -114,7 +117,8 @@ namespace UseMapEditor.Global
             Program_GridSize,
             Render_MaxFrame,
             Render_UseVFR,
-            language_StatLan
+            language_StatLan,
+            Program_FastExpander
         }
 
 

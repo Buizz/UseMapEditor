@@ -132,6 +132,24 @@ namespace UseMapEditor
             SetWindowName();
         }
 
+
+        public void ScenOpenCommand(int index = -1)
+        {
+            mapeditor.LeftExpander.IsExpanded = !mapeditor.LeftExpander.IsExpanded;
+            //bool IsScenDialog = (Global.Setting.Vals[Global.Setting.Settings.Program_ScenDialog] == "true");
+            //if (IsScenDialog)
+            //{
+            //    //새 창으로 파일을 연다.
+            //    //mapeditor.DisableWindow();
+            //    mapeditor.scenEditor = new ScenEditor(mapeditor.Scenario);
+            //    mapeditor.scenEditor.Show();
+            //}
+            //else
+            //{
+            //}
+        }
+
+
         public void NewMapCommand()
         {
             if (MapIsLoad())
@@ -253,21 +271,12 @@ namespace UseMapEditor
                 mapEditorGrid.Children.Clear();
                 startpage.Visibility = Visibility.Visible;
                 startpage.LastOpenFIleRefresh();
-                if(mapeditor.ClassTriggerEditorTabItem.trigEditPlus != null)
-                {
-                    if (!mapeditor.ClassTriggerEditorTabItem.trigEditPlus.IsClosed)
-                    {
-                        mapeditor.ClassTriggerEditorTabItem.trigEditPlus.Close();
-                        mapeditor.EnableWindow();
-                    }
-                }
 
-
+                mapeditor.Scenario.AllWindowClose();
             }
             SetWindowName();
             return result;
         }
-
 
 
 
@@ -370,8 +379,16 @@ namespace UseMapEditor
 
         private void ProgramSetting_Click(object sender, RoutedEventArgs e)
         {
+            if (mapeditor != null)
+            {
+                mapeditor.SettingWindowOpen();
+            }
             ProgramSettingWindow programSettingWindow = new ProgramSettingWindow();
             programSettingWindow.ShowDialog();
+            if(mapeditor != null)
+            {
+                mapeditor.StyleChange();
+            }
         }
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
@@ -401,33 +418,34 @@ namespace UseMapEditor
 
         private void MetroWindow_Activated(object sender, EventArgs e)
         {
-            if(mapeditor != null)
-            {
-                if (mapeditor.ClassTriggerEditorTabItem.trigEditPlus != null)
-                {
+            //TODO TrigEditPlus 보이게 하는 코드
+            //if(mapeditor != null)
+            //{
+            //    if (mapeditor.Scenario.ClassTriggerEditorTabItem.trigEditPlus != null)
+            //    {
 
-                    if (!mapeditor.ClassTriggerEditorTabItem.trigEditPlus.IsClosed)
-                    {
-                        Window window = mapeditor.ClassTriggerEditorTabItem.trigEditPlus;
+            //        if (!mapeditor.Scenario.ClassTriggerEditorTabItem.trigEditPlus.IsClosed)
+            //        {
+            //            Window window = mapeditor.Scenario.ClassTriggerEditorTabItem.trigEditPlus;
 
-                        if (!window.IsVisible)
-                        {
-                            window.Show();
-                        }
+            //            if (!window.IsVisible)
+            //            {
+            //                window.Show();
+            //            }
 
-                        if (window.WindowState == WindowState.Minimized)
-                        {
-                            window.WindowState = WindowState.Normal;
-                        }
+            //            if (window.WindowState == WindowState.Minimized)
+            //            {
+            //                window.WindowState = WindowState.Normal;
+            //            }
 
-                        window.Activate();
-                        window.Topmost = true;  // important
-                        window.Topmost = false; // important
-                        window.Focus();         // important
+            //            window.Activate();
+            //            window.Topmost = true;  // important
+            //            window.Topmost = false; // important
+            //            window.Focus();         // important
 
-                    }
-                }
-            }
+            //        }
+            //    }
+            //}
         }
     }
 }

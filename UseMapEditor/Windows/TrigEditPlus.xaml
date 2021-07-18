@@ -9,6 +9,7 @@
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Closing="Window_Closing"
+        Topmost="True"
         Title="TrigEditPlus" Height="450" Width="800">
     <DockPanel>
         <ToolBarTray IsLocked="True" DockPanel.Dock="Top">

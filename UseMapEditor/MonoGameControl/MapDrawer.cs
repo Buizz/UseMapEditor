@@ -313,6 +313,9 @@ namespace UseMapEditor.MonoGameControl
             Vector2 MapMax = mapeditor.PosMapToScreen(new Vector2(mapeditor.mapdata.WIDTH, mapeditor.mapdata.HEIGHT) * 32);
             Vector2 MapSize = MapMax - MapMin;
 
+
+
+
             if ((MapSize.X < screenwidth) & (MapSize.Y < screenheight))
             {
                 //화면이 충분히 작을 경우
@@ -320,11 +323,28 @@ namespace UseMapEditor.MonoGameControl
                 mapeditor.opt_ypos = -(int)((screenheight - (int)MapSize.Y) / 2 / mapeditor.opt_scalepercent);
             }
 
+
+            if (mapeditor.Scenario.CheckWindowPos(new System.Windows.Point(MousePos.X + mapeditor.LeftExpander.ActualWidth, MousePos.Y)))
+            {
+                this.IsEnabled = false;
+            }
+
             if (mapeditor.IsToolBarOpen())
             {
                 if (MousePos.X > screenwidth)
                 {
-                    this.IsEnabled = false;
+                    if (this.IsFocused)
+                    {
+                        this.IsEnabled = false;
+                        //mapeditor.Dispatcher.Invoke(new Action(() => {
+                        //    System.Threading.Thread.Sleep(100);
+                        //    this.mapeditor.Focus();
+                        //    System.Threading.Thread.Sleep(100);
+                        //    this.IsEnabled = true;
+                        //}), System.Windows.Threading.DispatcherPriority.Normal);
+                    }
+                  
+
                 }
             }
 
@@ -463,9 +483,12 @@ namespace UseMapEditor.MonoGameControl
             }
             else
             {
-                return;
+                if (MaxFrame != 0)
+                {
+                    return;
+                }
             }
-            ToolBaStreachValue = (int)(mapeditor.GetToolBarWidth());
+            ToolBaStreachValue = (int)(mapeditor.GetRightToolBarWidth());
             screenwidth = (float)this.ActualWidth - ToolBaStreachValue;
             screenheight = (float)this.ActualHeight;
 
@@ -521,6 +544,7 @@ namespace UseMapEditor.MonoGameControl
 
 
             _liveFrames++;
+            //TODO 시스템드로우
             SystemDraw();
 
             base.Draw(time);

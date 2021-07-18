@@ -25,10 +25,10 @@ namespace UseMapEditor.MonoGameControl
         private bool key_QDown;
 
 
-        private bool key_WDown;
-        private bool key_ADown;
-        private bool key_SDown;
-        private bool key_DDown;
+        //private bool key_WDown;
+        //private bool key_ADown;
+        //private bool key_SDown;
+        //private bool key_DDown;
 
         public void KeyboardEvent(KeyboardState keyboardState)
         {
@@ -138,39 +138,39 @@ namespace UseMapEditor.MonoGameControl
             }
 
 
-            if (EnterKey(keyboardState, Keys.W))
-            {
-                key_WDown = true;
-            }
-            if (EnterKey(keyboardState, Keys.A))
-            {
-                key_ADown = true;
-            }
-            if (EnterKey(keyboardState, Keys.S))
-            {
-                key_SDown = true;
-            }
-            if (EnterKey(keyboardState, Keys.D))
-            {
-                key_DDown = true;
-            }
+            //if (EnterKey(keyboardState, Keys.W))
+            //{
+            //    key_WDown = true;
+            //}
+            //if (EnterKey(keyboardState, Keys.A))
+            //{
+            //    key_ADown = true;
+            //}
+            //if (EnterKey(keyboardState, Keys.S))
+            //{
+            //    key_SDown = true;
+            //}
+            //if (EnterKey(keyboardState, Keys.D))
+            //{
+            //    key_DDown = true;
+            //}
 
-            if (UpKey(keyboardState, Keys.W))
-            {
-                key_WDown = false;
-            }
-            if (UpKey(keyboardState, Keys.A))
-            {
-                key_ADown = false;
-            }
-            if (UpKey(keyboardState, Keys.S))
-            {
-                key_SDown = false;
-            }
-            if (UpKey(keyboardState, Keys.D))
-            {
-                key_DDown = false;
-            }
+            //if (UpKey(keyboardState, Keys.W))
+            //{
+            //    key_WDown = false;
+            //}
+            //if (UpKey(keyboardState, Keys.A))
+            //{
+            //    key_ADown = false;
+            //}
+            //if (UpKey(keyboardState, Keys.S))
+            //{
+            //    key_SDown = false;
+            //}
+            //if (UpKey(keyboardState, Keys.D))
+            //{
+            //    key_DDown = false;
+            //}
 
 
             if (key_LeftCtrl)
@@ -179,19 +179,19 @@ namespace UseMapEditor.MonoGameControl
             }
 
 
-            if (key_WDown)
+            if (mapeditor.key_WDown)
             {
                 mapeditor.ScrollUp();
             }
-            if (key_SDown)
+            if (mapeditor.key_SDown)
             {
                 mapeditor.ScrollDown();
             }
-            if (key_ADown)
+            if (mapeditor.key_ADown)
             {
                 mapeditor.ScrollLeft();
             }
-            if (key_DDown)
+            if (mapeditor.key_DDown)
             {
                 mapeditor.ScrollRight();
             }

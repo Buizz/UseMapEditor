@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using UseMapEditor.Control;
+using UseMapEditor.Control.MapEditorControl;
 using UseMapEditor.FileData;
 
 namespace UseMapEditor.Windows
@@ -23,15 +24,17 @@ namespace UseMapEditor.Windows
     public partial class TrigEditPlus : Window
     {
         MapEditor mapEditor;
+        TriggerEditor triggerEditor;
 
         bool IsTrigger;
-        public TrigEditPlus(MapEditor mapEditor)
+        public TrigEditPlus(MapEditor mapEditor, TriggerEditor triggerEditor) 
         {
             InitializeComponent();
 
             this.mapEditor = mapEditor;
+            this.triggerEditor = triggerEditor;
             this.IsTrigger = true;
-            Title = mapEditor.mapdata.FilePath;
+            //Title = mapEditor.mapdata.FilePath;
 
             StringBuilder stringBuilder = new StringBuilder();
             for (int i = 0; i < mapEditor.mapdata.Triggers.Count; i++)
@@ -46,15 +49,17 @@ namespace UseMapEditor.Windows
         public bool IsClosed { get; set; } = false;
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            triggerEditor.CloseTrigEditPlus();
             IsClosed = true;
-            mapEditor.EnableWindow();
+            //mapEditor.EnableWindow();
         }
 
         private Lua.TrigEditPlus.Main teplua = Global.WindowTool.lua.tepMain;
-        private void Button_Click(object sender, RoutedEventArgs e)
+
+        public void SaveCode()
         {
             List<CTrigger> cTriggers = teplua.exec(CodeEditor.Text, mapEditor, IsTrigger);
-            if(cTriggers == null)
+            if (cTriggers == null)
             {
                 return;
             }
@@ -66,6 +71,11 @@ namespace UseMapEditor.Windows
                 mapEditor.mapdata.Triggers.Add(item);
             }
             mapEditor.SetDirty();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            SaveCode();
         }
     }
 }

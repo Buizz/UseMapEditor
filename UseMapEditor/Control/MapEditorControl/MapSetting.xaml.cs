@@ -24,6 +24,7 @@ namespace UseMapEditor.Control.MapEditorControl
         public void SetMapEditor(MapEditor _mapEditor)
         {
             mapEditor = _mapEditor;
+            this.DataContext = mapEditor.mapDataBinding;
         }
 
 
