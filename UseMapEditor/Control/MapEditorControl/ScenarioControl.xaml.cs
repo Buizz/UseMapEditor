@@ -51,9 +51,30 @@ namespace UseMapEditor.Control.MapEditorControl
 
         List<DialogableControlPanel> dialogableControlPanels = new List<DialogableControlPanel>();
 
+        public void SwitchTab(int index)
+        {
+            scenTabControl.SelectedIndex = index;
+        }
+
+        public void OpenPopupWindow(int index)
+        {
+            dialogableControlPanels[index].PopupWindowOpen();
+        }
 
         public bool CheckWindowPos(Point p)
         {
+            if(mapEditor == null)
+            {
+                return false;
+            }
+            else
+            {
+                if(!mapEditor.IsLoad)
+                {
+                    return false;
+                }
+            }
+
             p = mapEditor.PointToScreen(p);
             p.Y += 34;
             //
@@ -86,7 +107,7 @@ namespace UseMapEditor.Control.MapEditorControl
 
 
 
-            mapEditor.BottomExpander.Header = tt;
+            //mapEditor.BottomExpander.Header = tt;
 
             return false;
         }

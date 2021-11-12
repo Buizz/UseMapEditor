@@ -175,7 +175,11 @@ namespace UseMapEditor.MonoGameControl
 
             int xitemcount = 6;
             int yitemcount = 6;
-            int itemsize = 64;
+            int itemsize = (int)((mapeditor.opt_palletSize - 128) / 6);
+
+            
+
+
 
             if (mapeditor.DoodadPalleteSizeUp)
             {
@@ -219,7 +223,7 @@ namespace UseMapEditor.MonoGameControl
 
 
 
-        private void DoodadPalleteDraw()
+        private void DoodadPaint()
         {
             if (mapeditor.mapDataBinding.DOODAD_SELECTMODE)
             {

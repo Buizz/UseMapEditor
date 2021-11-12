@@ -291,17 +291,20 @@ namespace UseMapEditor.MonoGameControl
             //=========================팔레트 처리는 여기서==================================
             switch (mapeditor.PalleteLayer)
             {
+                case Control.MapEditor.Layer.Tile:
+                    TilePaint();
+                    break;
                 case Control.MapEditor.Layer.Doodad:
-                    DoodadPalleteDraw();
+                    DoodadPaint();
                     break;
                 case Control.MapEditor.Layer.Unit:
-                    UnitPalleteDraw();
+                    UnitPaint();
                     break;
                 case Control.MapEditor.Layer.Sprite:
-                    SpritePalleteDraw();
+                    SpritePaint();
                     break;
                 case Control.MapEditor.Layer.FogOfWar:
-                    FogofWarPalleteDraw();
+                    FogofWarPaint();
                     break;
             }
             //===============================================================================
@@ -545,7 +548,8 @@ namespace UseMapEditor.MonoGameControl
 
             _liveFrames++;
             //TODO 시스템드로우
-            SystemDraw();
+            if(mapeditor.opt_sysdraw)
+                SystemDraw();
 
             base.Draw(time);
         }

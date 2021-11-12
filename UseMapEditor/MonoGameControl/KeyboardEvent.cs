@@ -81,27 +81,27 @@ namespace UseMapEditor.MonoGameControl
             }
 
 
-            if (EnterKey(keyboardState, Keys.F5))
-            {
-                mapeditor.NextgrpType();
-            }
+            //if (EnterKey(keyboardState, Keys.F5))
+            //{
+            //    mapeditor.NextgrpType();
+            //}
 
 
 
-            if (EnterKey(keyboardState, Keys.F1))
-            {
-                mapeditor.SetGrpType(Control.MapEditor.DrawType.SD);
-            }
+            //if (EnterKey(keyboardState, Keys.F1))
+            //{
+            //    mapeditor.SetGrpType(Control.MapEditor.DrawType.SD);
+            //}
 
-            if (EnterKey(keyboardState, Keys.F2))
-            {
-                mapeditor.SetGrpType(Control.MapEditor.DrawType.HD);
-            }
+            //if (EnterKey(keyboardState, Keys.F2))
+            //{
+            //    mapeditor.SetGrpType(Control.MapEditor.DrawType.HD);
+            //}
 
-            if (EnterKey(keyboardState, Keys.F3))
-            {
-                mapeditor.SetGrpType(Control.MapEditor.DrawType.CB);
-            }
+            //if (EnterKey(keyboardState, Keys.F3))
+            //{
+            //    mapeditor.SetGrpType(Control.MapEditor.DrawType.CB);
+            //}
 
 
             switch (mapeditor.PalleteLayer)

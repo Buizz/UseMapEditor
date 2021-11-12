@@ -385,9 +385,12 @@ namespace UseMapEditor
             }
             ProgramSettingWindow programSettingWindow = new ProgramSettingWindow();
             programSettingWindow.ShowDialog();
+
+            
             if(mapeditor != null)
             {
                 mapeditor.StyleChange();
+                mapeditor.shortCutManager.ResetShortCut();
             }
         }
 

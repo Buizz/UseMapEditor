@@ -611,13 +611,15 @@ namespace UseMapEditor.Control.MapEditorControl
         {
             PopupBackground.Visibility = Visibility.Collapsed;
             IsOpenTEP = false;
-            try
-            {
-                trigEditPlus.Close();
-            }
-            catch (Exception)
-            {
-            }
+            if(trigEditPlus != null)
+                try
+                {
+                    trigEditPlus.Close();
+                }
+                catch (Exception)
+                {
+                }
+            
         }
 
 

@@ -150,6 +150,9 @@ namespace UseMapEditor.MonoGameControl
         {
             switch (mapeditor.PalleteLayer)
             {
+                case Control.MapEditor.Layer.Tile:
+                    TileRightMouseClick();
+                    break;
                 case Control.MapEditor.Layer.Location:
                     LocationRightMouseClick();
                     break;
@@ -174,6 +177,9 @@ namespace UseMapEditor.MonoGameControl
 
             switch (mapeditor.PalleteLayer)
             {
+                case Control.MapEditor.Layer.Tile:
+                    TileLeftClickStart();
+                    break;
                 case Control.MapEditor.Layer.Doodad:
                     DoodadTaskStart();
                     break;
@@ -191,6 +197,9 @@ namespace UseMapEditor.MonoGameControl
         {
             switch (mapeditor.PalleteLayer)
             {
+                case Control.MapEditor.Layer.Tile:
+                    TileLeftClickEnd();
+                    break;
                 case Control.MapEditor.Layer.Location:
                     LocationLeftMouseClick();
                     break;
@@ -223,6 +232,9 @@ namespace UseMapEditor.MonoGameControl
             mouse_DragMapEnd = mapeditor.PosScreenToMap(mouse_DragScreenEnd);
             switch (mapeditor.PalleteLayer)
             {
+                case Control.MapEditor.Layer.Tile:
+                    TileDragEnd();
+                    break;
                 case Control.MapEditor.Layer.Location:
                     LocationDragEnd();
                     break;

@@ -1,11 +1,15 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Microsoft.Office.Interop.Excel;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Pfim;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using UseMapEditor.Control;
 using UseMapEditor.MonoGameControl;
 
 namespace UseMapEditor.FileData
@@ -131,6 +135,8 @@ namespace UseMapEditor.FileData
             //Rest unknown/unused.;
         }
 
+        public Dictionary<TileType, List<ISOMTIle>> ISOMdata;
+        public Dictionary<TileType, List<ISOMTIle>> CustomISOMdata;
 
 
         public Dictionary<TileType, cv5[]> cv5data;
@@ -179,14 +185,12 @@ namespace UseMapEditor.FileData
             }
         }
 
-
         public TileSet()
         {
             cv5data = new Dictionary<TileType, cv5[]>();
             vf4data = new Dictionary<TileType, vf4[]>();
             DoodadPallets = new Dictionary<TileType, Dictionary<ushort, DoodadPallet>>();
             DoodadGroups = new Dictionary<TileType, List<DoodadPalletGroup>>();
-
 
             foreach (TileType tileType in Enum.GetValues(typeof(TileType)))
             {
@@ -340,9 +344,207 @@ namespace UseMapEditor.FileData
                     }
                     DoodadGroups.Add(tileType, doodadPalletGroups);
                 }
+            }
+            LoadPalletData();
+        }
 
+        private void ReleaseExcelObject(object obj)
+        {
+            try
+            {
+                if (obj != null)
+                {
+                    Marshal.ReleaseComObject(obj);
+                    obj = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                obj = null;
+                throw ex;
+            }
+            finally
+            {
+                GC.Collect();
             }
         }
+
+
+        private bool IsTestDataCreate = false;
+        private void LoadPalletData()
+        {
+            ISOMdata = new Dictionary<TileType, List<ISOMTIle>>();
+
+
+
+            foreach (var item in cv5data)
+            {
+                cv5[] cv5s = item.Value;
+
+                if (IsTestDataCreate)
+                {
+
+                    string filepath = AppDomain.CurrentDomain.BaseDirectory + "TEST\\" + item.Key.ToString() + "_TerrainInfor.xlsx";
+                    if (File.Exists(filepath))
+                    {
+                        File.Delete(filepath);
+                    }
+
+                    Microsoft.Office.Interop.Excel.Application application;
+                    application = new Microsoft.Office.Interop.Excel.Application();
+                    application.Visible = false;
+                    Workbook workBook = null;
+
+
+
+                    Worksheet workSheet = null;
+
+
+                    workBook = application.Workbooks.Add();
+                    //마지막 시트 뒤에 새로운 시트 추가
+                    //workSheet = workBook.Worksheets.Add(After: workBook.Worksheets.Item[workBook.Worksheets.Count]);
+                    workSheet = workBook.Worksheets.Item["Sheet1"];
+                    //시트 이름 변경
+                    workSheet.Name = "Terrain";
+
+
+
+                    string[] header = {"NO","Index","Bottom","EdgeDown","EdgeUp_Width","Flags","Left_OverlayID","Right_DoodadGroupString","Top","Unknown1_DoodadID","Unknown2_Height"};
+                    {
+                        int _i = 1;
+                        foreach (var h in header)
+                        {
+                            //헤더 설정
+                            Range cell = workSheet.Cells[1, _i++];
+                            cell.Value = h;
+                        }
+                    }
+                    for (int i = 0; i < cv5s.Length; i++)
+                    {
+                        {
+                            Range cell = workSheet.Cells[i + 2, 1];
+                            cell.Value = i;
+                        }
+
+                        {
+                            Range cell = workSheet.Cells[i + 2, 2];
+                            cell.Value = cv5s[i].Index;
+                        }
+                        {
+                            Range cell = workSheet.Cells[i + 2, 3];
+                            cell.Value = cv5s[i].Bottom;
+                        }
+                        {
+                            Range cell = workSheet.Cells[i + 2, 4];
+                            cell.Value = cv5s[i].EdgeDown;
+                        }
+                        {
+                            Range cell = workSheet.Cells[i + 2, 5];
+                            cell.Value = cv5s[i].EdgeUp_Width;
+                        }
+                        {
+                            Range cell = workSheet.Cells[i + 2, 6];
+                            cell.Value = "b" + Convert.ToString(cv5s[i].Flags, 2).ToString().PadLeft(16, '0');
+                        }
+                        {
+                            Range cell = workSheet.Cells[i + 2, 7];
+                            cell.Value = cv5s[i].Left_OverlayID;
+                        }
+                        {
+                            Range cell = workSheet.Cells[i + 2, 8];
+                            cell.Value = cv5s[i].Right_DoodadGroupString;
+                        }
+                        {
+                            Range cell = workSheet.Cells[i + 2, 9];
+                            cell.Value = cv5s[i].Top;
+                        }
+                        {
+                            Range cell = workSheet.Cells[i + 2, 10];
+                            cell.Value = cv5s[i].Unknown1_DoodadID;
+                        }
+                        {
+                            Range cell = workSheet.Cells[i + 2, 11];
+                            cell.Value = cv5s[i].Unknown2_Height;
+                        }
+
+                    }
+
+              
+
+
+
+                    workBook.SaveAs(filepath);
+
+                    //변경점 저장하면서 닫기
+                    workBook.Close(true);
+                    //Excel 프로그램 종료
+                    application.Quit();
+                    //오브젝트 해제
+                    ReleaseExcelObject(workBook);
+                    ReleaseExcelObject(application);
+                }
+
+                List<ISOMTIle> isoms = new List<ISOMTIle>();
+
+                {
+                    ISOMTIle isom = new ISOMTIle();
+
+                    isom.group1 = 2;
+                    isom.group2 = 3;
+
+
+                    isoms.Add(isom);
+                }
+
+                {
+                    ISOMTIle isom = new ISOMTIle();
+
+                    isom.group1 = 4;
+                    isom.group2 = 5;
+
+
+                    isoms.Add(isom);
+                }
+                //for (int i = 0; i < 10; i++)
+                //{
+
+                //    isoms.Add(new ISOM());
+                //}
+
+
+
+                ISOMdata.Add(item.Key, isoms);
+            }
+        }
+
+        
+        public class ISOMTIle
+        {
+            public bool IsCustomISOM;
+
+            #region 기본 ISOM
+            public ushort group1;
+            public ushort group2;
+
+            //대각선 정보는 나중에
+
+            #endregion
+        }
+
+
+        public List<ISOMTIle> GetISOMData(MapEditor mapEditor)
+        {
+            if(mapEditor.mapdata == null)
+            {
+                return new List<ISOMTIle>();
+            }
+
+            MapEditor.DrawType drawType = mapEditor.opt_drawType;
+            TileType tileType = mapEditor.mapdata.TILETYPE;
+
+            return ISOMdata[tileType];
+        }
+
 
 
 
@@ -415,9 +617,18 @@ namespace UseMapEditor.FileData
                 return null;
             }
 
-
             return GetTileDic(drawType)[tileType][t[group].tiles[index]];
         }
+
+
+
+
+
+
+
+
+
+
 
         public bool IsBlack(TileType tileType, ushort group, ushort index)
         {

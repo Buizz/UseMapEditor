@@ -64,29 +64,121 @@ namespace UseMapEditor.MonoGameControl
             Vector2 MapMax = mapeditor.PosMapToScreen(new Vector2(mapeditor.mapdata.WIDTH, mapeditor.mapdata.HEIGHT) * 32);
 
 
-            float startx = (float)-((mapeditor.opt_xpos % mapeditor.opt_grid) * mapeditor.opt_scalepercent);
-            float starty = (float)-((mapeditor.opt_ypos % mapeditor.opt_grid) * mapeditor.opt_scalepercent);
-
-
-            float mag = (float)(mapeditor.opt_grid * mapeditor.opt_scalepercent);
-
-
-
-            Vector2 StartPoint = new Vector2(Math.Max(startx, MapMin.X), Math.Max(starty, MapMin.Y)); ;
-            Vector2 EndPoint = new Vector2(Math.Min(screenwidth, MapMax.X), Math.Min(screenheight, MapMax.Y));
-
-
 
 
             _spriteBatch.Begin();
-            for (float xi = StartPoint.X; xi < EndPoint.X; xi += mag)
+
+
+            if (mapeditor.PalleteLayer == Control.MapEditor.Layer.Tile && (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.ISOM || mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.CUSTOMISOM))
             {
-                DrawLine(_spriteBatch, new Vector2(xi, StartPoint.Y), new Vector2(xi, EndPoint.Y), GridColor, 1);
+
+                // 128, 64
+
+                float mag = (float)(32 * mapeditor.opt_scalepercent);
+
+                float startx = (float)-((mapeditor.opt_xpos % 128)  * mapeditor.opt_scalepercent);
+                float starty = (float)-((mapeditor.opt_ypos % 64) * mapeditor.opt_scalepercent);
+
+
+                Vector2 StartPoint = new Vector2(Math.Max(startx, MapMin.X), Math.Max(starty, MapMin.Y));
+                Vector2 EndPoint = new Vector2(Math.Min(screenwidth, MapMax.X), Math.Min(screenheight, MapMax.Y));
+
+                Vector2 Gab = EndPoint - StartPoint;
+
+
+                int width = (int)(Gab.X / (mag * 4));
+                int height = (int)(Gab.Y / (mag * 2));
+
+                float grdcount = width + height;
+
+                for (float i = 0; i < grdcount + 2; i++)
+                {
+                    float x1 = StartPoint.X;
+                    float y1 = StartPoint.Y + mag * 2 * i + mag;
+                    float x2 = StartPoint.X + mag * 4 * i + 2 * mag;
+                    float y2 = StartPoint.Y;
+
+                    if(y1 > EndPoint.Y)
+                    {
+                        x1 += (y1 - EndPoint.Y) * 2;
+                        y1 = EndPoint.Y;
+                    }
+
+
+                    if (x2 > EndPoint.X)
+                    {
+                        y2 += (x2 - EndPoint.X) / 2;
+                        x2 = EndPoint.X;
+                    }
+
+
+                    if (y1 < y2)
+                    {
+                        continue;
+                    }
+
+
+                    DrawLine(_spriteBatch, new Vector2(x1, y1), new Vector2(x2, y2), Color.Red, 1);
+                }
+
+                for (float i = 0; i < grdcount + 2; i++)
+                {
+                    float x1 = StartPoint.X;
+                    float y1 = StartPoint.Y + ( height + 1 ) * (mag * 2) - (mag * 2 * i) - mag;
+                    float y2 = EndPoint.Y;
+
+                    float x2 = StartPoint.X + (y2 - y1) * 2;
+
+
+                    if (y1 < StartPoint.Y)
+                    {
+                        x1 += (StartPoint.Y - y1) * 2;
+                        y1 = StartPoint.Y;
+                    }
+
+
+                    if (x2 > EndPoint.X)
+                    {
+                        y2 -= (x2 - EndPoint.X) / 2;
+                        x2 = EndPoint.X;
+                    }
+
+
+                    if (y1 > y2)
+                    {
+                        continue;
+                    }
+                    if (x1 > x2)
+                    {
+                        continue;
+                    }
+
+
+                    DrawLine(_spriteBatch, new Vector2(x1, y1), new Vector2(x2, y2), Color.Red, 1);
+                }
+
+
             }
-            for (float yi = StartPoint.Y; yi < EndPoint.Y; yi += mag)
+            else
             {
-                DrawLine(_spriteBatch, new Vector2(StartPoint.X, yi), new Vector2(EndPoint.X, yi), GridColor, 1);
+
+                float startx = (float)-((mapeditor.opt_xpos % mapeditor.opt_grid) * mapeditor.opt_scalepercent);
+                float starty = (float)-((mapeditor.opt_ypos % mapeditor.opt_grid) * mapeditor.opt_scalepercent);
+
+                float mag = (float)(mapeditor.opt_grid * mapeditor.opt_scalepercent);
+
+                Vector2 StartPoint = new Vector2(Math.Max(startx, MapMin.X), Math.Max(starty, MapMin.Y)); ;
+                Vector2 EndPoint = new Vector2(Math.Min(screenwidth, MapMax.X), Math.Min(screenheight, MapMax.Y));
+                for (float xi = StartPoint.X; xi < EndPoint.X; xi += mag)
+                {
+                    DrawLine(_spriteBatch, new Vector2(xi, StartPoint.Y), new Vector2(xi, EndPoint.Y), GridColor, 1);
+                }
+                for (float yi = StartPoint.Y; yi < EndPoint.Y; yi += mag)
+                {
+                    DrawLine(_spriteBatch, new Vector2(StartPoint.X, yi), new Vector2(EndPoint.X, yi), GridColor, 1);
+                }
             }
+
 
             _spriteBatch.End();
             return;

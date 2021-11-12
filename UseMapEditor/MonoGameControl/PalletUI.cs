@@ -29,7 +29,7 @@ namespace UseMapEditor.MonoGameControl
             if (mapeditor.IsToolBarOpen())
             {
                 //열려 있을 경우
-                if(ToolBaStreachValue >= 512)
+                if(ToolBaStreachValue >= mapeditor.opt_palletSize)
                 {
                     //열림 상태
                     IsOpen = true;
@@ -44,16 +44,16 @@ namespace UseMapEditor.MonoGameControl
             ToolBaStreachValue = Math.Max(0, ToolBaStreachValue);
 
 
-            Color Back;
+            Color Back = Color.Black;
             //베이스 깔기
-            if (Global.Setting.Vals[Global.Setting.Settings.Program_IsDark] == "true")
-            {
-                Back = new Color(0xFF303030);
-            }
-            else
-            {
-                Back = new Color(0xFFFAFAFA);
-            }
+            //if (Global.Setting.Vals[Global.Setting.Settings.Program_IsDark] == "true")
+            //{
+            //    Back = new Color(0xFF303030);
+            //}
+            //else
+            //{
+            //    Back = new Color(0xFFFAFAFA);
+            //}
 
             _spriteBatch.Begin();
             _spriteBatch.Draw(gridtexture, new Rectangle((int)(screenwidth), 0, ToolBaStreachValue, (int)screenheight), Back);

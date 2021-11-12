@@ -143,7 +143,22 @@
                         </ComboBoxItem>
                     </ComboBox>
 
+
                     <Button ToolTip="시나리오" Click="Scen_Click" Padding="4">
+                        <Button.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="맵" Tag="mapSetting" Click="MenuScenBtn_Click"/>
+                                <MenuItem Header="플레이어" Tag="playerSetting" Click="MenuScenBtn_Click"/>
+                                <MenuItem Header="세력" Tag="forceSetting" Click="MenuScenBtn_Click"/>
+                                <MenuItem Header="유닛" Tag="unitSetting" Click="MenuScenBtn_Click"/>
+                                <MenuItem Header="업그레이드" Tag="upgradeSetting" Click="MenuScenBtn_Click"/>
+                                <MenuItem Header="테크" Tag="techSetting" Click="MenuScenBtn_Click"/>
+                                <MenuItem Header="사운드" Tag="soundSetting" Click="MenuScenBtn_Click"/>
+                                <MenuItem Header="스트링" Tag="stringSetting" Click="MenuScenBtn_Click"/>
+                                <MenuItem Header="트리거" Tag="classTriggerEditor" Click="MenuScenBtn_Click"/>
+                                <MenuItem Header="브리핑" Tag="brinfingTriggerEditor" Click="MenuScenBtn_Click"/>
+                            </ContextMenu>
+                        </Button.ContextMenu>
                         <materialDesign:PackIcon Kind="EarthBox" />
                     </Button>
 
@@ -538,6 +553,8 @@
                     </Grid>
                 </Grid>
 
+
+
                 <Expander x:Name="RightExpander" Grid.ColumnSpan="2" DockPanel.Dock="Right" ExpandDirection="Left" Background="Transparent" HorizontalAlignment="Right" MinWidth="48">
                     <Expander.Header >
                         <TextBlock Text="팔레트" RenderTransformOrigin=".5,.5" >
@@ -546,8 +563,9 @@
                             </TextBlock.LayoutTransform>
                         </TextBlock>
                     </Expander.Header>
-                    <DockPanel Width="512">
+                    <DockPanel Width="{Binding ElementName =PalletSize, Path =Value}" x:Name="PalletDock" MinWidth="302" MaxWidth="512">
                         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Background="{DynamicResource MaterialDesignPaper}">
+                            <Label Background="{DynamicResource PrimaryHueMidBrush}" PreviewMouseUp="PalletSizeChange_PreviewMouseUp"/>
                             <Button ToolTip="지형" x:Name="TilePalleteBtn" Padding="4" Style="{StaticResource MaterialDesignOutlinedButton}" Height="Auto" Click="TileButton_Click">
                                 <materialDesign:PackIcon Kind="Mountain" Width="32" Height="32" />
                             </Button>
@@ -598,50 +616,59 @@
 
 
 
-                                <Expander DockPanel.Dock="Top" HorizontalAlignment="Stretch" Background="#00000000">
+                                <Expander x:Name="Tile_ISOM_Expander" DockPanel.Dock="Top" HorizontalAlignment="Stretch" Background="#00000000" Expanded="Tile_Pallet_Expanded">
                                     <Expander.Header >
                                         <Grid Margin="-24,-24,-64,-24" Background="{DynamicResource MaterialDesignPaper}">
                                             <TextBlock Text="ISOM" FontSize="16" Padding="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="24,0,0,0"/>
                                         </Grid>
                                     </Expander.Header>
-                                    <Grid DockPanel.Dock="Top" Width="512" Height="64" HorizontalAlignment="Left">
+                                    <Grid x:Name="Tile_ISOM_Pallet" DockPanel.Dock="Top" Width="512" Height="64" HorizontalAlignment="Left" Background="#02000000"
+                                            PreviewMouseDown="Tile_ISOM_Pallet_PreviewMouseDown"
+                                            PreviewMouseUp="Tile_ISOM_Pallet_PreviewMouseUp"
+                                            PreviewMouseMove="Tile_ISOM_Pallet_PreviewMouseMove"
+                                          >
 
                                     </Grid>
                                 </Expander>
-                                <Separator DockPanel.Dock="Top"/>
 
-                                <Expander DockPanel.Dock="Top" HorizontalAlignment="Stretch" Background="#00000000">
+                                <Expander x:Name="Tile_Rect_Expander" DockPanel.Dock="Top" HorizontalAlignment="Stretch" Background="#00000000" Expanded="Tile_Pallet_Expanded">
                                     <Expander.Header >
                                         <Grid Margin="-24,-24,-64,-24" Background="{DynamicResource MaterialDesignPaper}">
                                             <TextBlock Text="사각형" FontSize="16" Padding="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="24,0,0,0"/>
                                         </Grid>
                                     </Expander.Header>
 
-                                    <Grid DockPanel.Dock="Top" Width="512" Height="64" HorizontalAlignment="Left">
+                                    <Grid x:Name="Tile_Rect_Pallet" DockPanel.Dock="Top" Width="512" Height="64" HorizontalAlignment="Left" Background="#02000000"
+                                            PreviewMouseDown="Tile_Rect_Pallet_PreviewMouseDown"
+                                            PreviewMouseUp="Tile_Rect_Pallet_PreviewMouseUp"
+                                            PreviewMouseMove="Tile_Rect_Pallet_PreviewMouseMove"
+                                          >
 
                                     </Grid>
                                 </Expander>
-                                <Separator DockPanel.Dock="Top"/>
 
-                                <Expander DockPanel.Dock="Top" HorizontalAlignment="Stretch" Background="#00000000">
+                                <Expander x:Name="Tile_Custom_Expander" DockPanel.Dock="Top" HorizontalAlignment="Stretch" Background="#00000000" Expanded="Tile_Pallet_Expanded">
                                     <Expander.Header >
                                         <Grid Margin="-24,-24,-64,-24" Background="{DynamicResource MaterialDesignPaper}">
                                             <TextBlock Text="커스텀ISOM" FontSize="16" Padding="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="24,0,0,0"/>
                                         </Grid>
                                     </Expander.Header>
-                                    <Grid DockPanel.Dock="Top" Width="512" Height="64" HorizontalAlignment="Left" >
+                                    <Grid x:Name="Tile_Custom_Pallet" DockPanel.Dock="Top" Width="512" Height="64" HorizontalAlignment="Left" Background="#02000000"
+                                            PreviewMouseDown="Tile_Custom_Pallet_PreviewMouseDown"
+                                            PreviewMouseUp="Tile_Custom_Pallet_PreviewMouseUp"
+                                            PreviewMouseMove="Tile_Custom_Pallet_PreviewMouseMove"
+                                          >
 
                                     </Grid>
                                 </Expander>
-                                <Separator DockPanel.Dock="Top"/>
 
 
-                                <TextBlock Text="모든 지형" FontSize="16" Padding="24, 14, 24, 14" DockPanel.Dock="Top" Background="{DynamicResource MaterialDesignPaper}"/>
+                                <TextBlock x:Name="Tile_All_Label" Text="모든 지형" FontSize="16" Padding="24, 14, 24, 14" DockPanel.Dock="Top" Background="{DynamicResource MaterialDesignPaper}"/>
 
-
-                                <Grid x:Name="TilePalletPanel" Background="#02000000"
-                                      PreviewMouseWheel="TileSetListBox_PreviewMouseWheel" PreviewMouseDown="TileSetListBox_PreviewMouseDown"
-                                      PreviewMouseUp="TileSetListBox_PreviewMouseUp" PreviewMouseMove="TileSetListBox_PreviewMouseMove" >
+                                <TextBlock x:Name="LogText"/>
+                                <Grid x:Name="Tile_All_Pallet" Background="#02000000"
+                                      PreviewMouseWheel="Tile_All_Pallet_PreviewMouseWheel" PreviewMouseDown="Tile_All_Pallet_PreviewMouseDown"
+                                      PreviewMouseUp="Tile_All_Pallet_PreviewMouseUp" PreviewMouseMove="Tile_All_Pallet_PreviewMouseMove">
                                     <ScrollBar x:Name="TileScroll" HorizontalAlignment="Right" Maximum="600" LargeChange="100" SmallChange="10" ViewportSize="4" 
         Background="{DynamicResource MaterialDesignPaper}"/>
                                 </Grid>
@@ -680,7 +707,7 @@
                                         </ListBox>
                                     </ToolBar>
                                 </ToolBarTray>
-                                <ListBox DockPanel.Dock="Left" Width="128" x:Name="DoodadTypes" SelectionChanged="DoodadTypes_SelectionChanged">
+                                <ListBox DockPanel.Dock="Left" Width="128" x:Name="DoodadTypes" SelectionChanged="DoodadTypes_SelectionChanged" Background="{DynamicResource MaterialDesignPaper}">
                                     <ListBoxItem Content="하이"/>
                                 </ListBox>
                                 <Grid x:Name="DoodadListBox" PreviewMouseWheel="DoodadListBox_PreviewMouseWheel" PreviewMouseDown="DoodadListBox_PreviewMouseDown" PreviewMouseUp="DoodadListBox_PreviewMouseUp" PreviewMouseMove="DoodadListBox_PreviewMouseMove" Background="#02000000">
@@ -963,6 +990,12 @@
                         </Grid>
                     </DockPanel>
                 </Expander>
+
+                <Border x:Name="PalletSizeBorder" Background="#667D7D7D" Height="42" VerticalAlignment="Top" Width="512" HorizontalAlignment="Right" Visibility="Collapsed">
+                    <Slider x:Name="PalletSize" TickFrequency="5" Orientation="Horizontal" Minimum="1" Maximum="512" Value="400" FlowDirection="RightToLeft"  TickPlacement="Both" VerticalAlignment="Center"
+                            ValueChanged="PalletSize_ValueChanged"
+                            LostMouseCapture="PalletSize_LostMouseCapture"/>
+                </Border>
             </Grid>
         </DockPanel>
         <Border x:Name="DisEnablePanel" Background="#B2000000" Visibility="Collapsed"/>

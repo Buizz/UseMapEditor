@@ -85,7 +85,7 @@ namespace UseMapEditor.MonoGameControl
 
 
 
-        private void UnitPalleteDraw()
+        private void UnitPaint()
         {
             int gridsize = mapeditor.opt_grid;
 

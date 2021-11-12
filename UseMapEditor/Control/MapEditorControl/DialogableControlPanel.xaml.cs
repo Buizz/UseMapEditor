@@ -59,6 +59,8 @@ namespace UseMapEditor.Control.MapEditorControl
         }
         public void PopupWindowClose()
         {
+            if (popupWindow == null)
+                return;
             try
             {
                 popupWindow.Close();

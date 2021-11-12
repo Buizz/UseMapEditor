@@ -86,7 +86,7 @@ namespace UseMapEditor.DataBinding
 
 
 
-        public bool TILE_BRUSHMODE
+        public MapEditor.TileSetBrushMode TILE_BRUSHMODE
         {
             get
             {
@@ -96,18 +96,6 @@ namespace UseMapEditor.DataBinding
             {
                 mapEditor.tile_BrushMode = value;
                 OnPropertyChanged("TILE_BRUSHMODE");
-            }
-        }
-        public bool TILE_SELECTMODE
-        {
-            get
-            {
-                return mapEditor.tile_SelectMode;
-            }
-            set
-            {
-                mapEditor.tile_SelectMode = value;
-                OnPropertyChanged("TILE_SELECTMODE");
             }
         }
 

@@ -5,46 +5,110 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UseMapEditor.Dialog"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" xmlns:control="clr-namespace:UseMapEditor.Control"
-                      mc:Ignorable="d"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:control="clr-namespace:UseMapEditor.Control"
+        mc:Ignorable="d"
         materialDesign:ShadowAssist.CacheMode="{x:Null}"
         Closing="MetroWindow_Closing"
         Loaded="Window_Loaded"
-        Title="프로그램 세팅" Height="400" Width="600" WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow">
-    <StackPanel Margin="10">
-        <TextBlock Text="그래픽 설정" Margin="0,5" FontSize="16"/>
-        <StackPanel Margin="10" >
+        ShowMinButton="False"
+        ShowMaxRestoreButton="False"
+        WindowTitleBrush="{DynamicResource MaterialDesignPaper}"
+        BorderBrush="{DynamicResource MaterialDesignPaper}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        Title="" Height="600" Width="600" WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow" ResizeMode="NoResize">
+    <Grid>
+        <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <StackPanel>
 
-            <TextBlock Text="스타크래프트 실행 파일" Margin="0,5"/>
-            <DockPanel>
-                <Button DockPanel.Dock="Right" Click="SCMapBtn_Click" Height="24">
-                    <materialDesign:PackIcon Kind="FolderOpen" />
-                </Button>
-                <TextBox x:Name="SCPathTB" IsReadOnly="True"/>
-            </DockPanel>
+                <Expander>
+                    <Expander.Header>
+                        <TextBlock Text="프로그램 설정" FontSize="20" Margin="-16,0,0,0"/>
+                    </Expander.Header>
+                    <materialDesign:Card Margin="10">
+                        <StackPanel Margin="10" >
+                            <TextBlock Text="스타크래프트 실행 파일" Margin="0,5"/>
+                            <DockPanel>
+                                <Button DockPanel.Dock="Right" Click="SCMapBtn_Click" Height="24">
+                                    <materialDesign:PackIcon Kind="FolderOpen" />
+                                </Button>
+                                <TextBox x:Name="SCPathTB" IsReadOnly="True"/>
+                            </DockPanel>
+                            <Separator Margin="0,10"/>
+                            <TextBlock Text="스타크래프트 텍스트 언어" Margin="0,5"/>
+                            <ComboBox x:Name="starTxt" SelectionChanged="starTxt_SelectionChanged">
+                                <ComboBoxItem Content="기본" Tag="stat_txt"/>
+                                <ComboBoxItem Content="음역" Tag="stat_txt_kor_eng"/>
+                                <ComboBoxItem Content="완역" Tag="stat_txt_kor_kor"/>
+                            </ComboBox>
+                        </StackPanel>
+                    </materialDesign:Card>
+                </Expander>
 
-            <TextBlock x:Name="ErrorText" Foreground="Red" Text="" MaxHeight="150" ScrollViewer.HorizontalScrollBarVisibility="Auto"/>
 
-            <StackPanel x:Name="RenderSetting">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="최대 프레임" VerticalAlignment="Center"/>
-                    <TextBox x:Name="MaxFrameTB" Width="40"/>
-                </StackPanel>
-                <CheckBox x:Name="UseVFRCB" Content="프레임 최적화 사용" ToolTip="최대 프레임을 임의로 조절하여 렉을 최소화합니다."/>
+
+                <Expander>
+                    <Expander.Header>
+                        <TextBlock Text="그래픽 설정" FontSize="20" Margin="-16,0,0,0"/>
+                    </Expander.Header>
+                    <materialDesign:Card Margin="10">
+                        <StackPanel Margin="10" x:Name="RenderSetting">
+                            <TextBlock x:Name="ErrorText" Foreground="Red" Text="" MaxHeight="150" ScrollViewer.HorizontalScrollBarVisibility="Auto" Visibility="Collapsed"/>
+
+                            <UniformGrid Columns="2" Rows="3" HorizontalAlignment="Left" Width="250">
+                                <TextBlock Text="그리드 색상 " VerticalAlignment="Center"/>
+                                <control:ColorSelectButton x:Name="GridColorButton" HorizontalAlignment="Left"/>
+
+                                <TextBlock Text="프레임 최적화" VerticalAlignment="Center"/>
+                                <CheckBox x:Name="UseVFRCB" Content="" ToolTip="최대 프레임을 임의로 조절하여 렉을 최소화합니다." Margin="0,2,20,0"/>
+
+                                <TextBlock Text="최대 프레임" VerticalAlignment="Center"/>
+                                <TextBox x:Name="MaxFrameTB" VerticalAlignment="Center" Width="40" HorizontalAlignment="Left" />
+                            </UniformGrid>
+                        </StackPanel>
+                    </materialDesign:Card>
+                </Expander>
+                <Expander>
+                    <Expander.Header>
+                        <TextBlock Text="테마" FontSize="20" Margin="-16,0,0,0"/>
+                    </Expander.Header>
+                    <materialDesign:Card Margin="10">
+                        <StackPanel Margin="10">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="다크테마 사용"/>
+                                <ToggleButton x:Name="DarkToggleBtn" Checked="DarkToggleBtn_Checked" Unchecked="DarkToggleBtn_Unchecked" Style="{StaticResource MaterialDesignSwitchToggleButton}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </materialDesign:Card>
+                </Expander>
+                <Expander>
+                    <Expander.Header>
+                        <TextBlock Text="기본설정" FontSize="20" Margin="-16,0,0,0"/>
+                    </Expander.Header>
+                    <materialDesign:Card Margin="10">
+                        <StackPanel Margin="10">
+                            <CheckBox x:Name="FastExpander" Content="빠른 닫기" ToolTip="좌우의 Expander의 애니메이션 속도를 조절합니다." VerticalAlignment="Top" Margin="0,2,20,0"
+                                      Unchecked="FastExpander_Unchecked" Checked="FastExpander_Checked"/>
+                            <StackPanel Orientation="Horizontal">
+
+                            </StackPanel>
+                        </StackPanel>
+                    </materialDesign:Card>
+                </Expander>
+                <Expander>
+                    <Expander.Header>
+                        <TextBlock Text="단축키설정" FontSize="20" Margin="-16,0,0,0"/>
+                    </Expander.Header>
+                    <materialDesign:Card Margin="10">
+                        <StackPanel Margin="10" >
+                            <Button Content="초기화" Click="Button_Click"/>
+                            <StackPanel x:Name="ShortCutSetting">
+                            </StackPanel>
+                        </StackPanel>
+                    </materialDesign:Card>
+                </Expander>
             </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="그리드 색상 : " VerticalAlignment="Center"/>
-                <control:ColorSelectButton x:Name="GridColorButton"/>
-            </StackPanel>
-        </StackPanel>
-        <Separator/>
-        <TextBlock Text="테마" Margin="0,5" FontSize="16"/>
-        <StackPanel Margin="10">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="다크테마 사용"/>
-                <ToggleButton x:Name="DarkToggleBtn" Checked="DarkToggleBtn_Checked" Unchecked="DarkToggleBtn_Unchecked" Style="{StaticResource MaterialDesignSwitchToggleButton}"/>
-            </StackPanel>
-        </StackPanel>
-        <Separator/>
-    </StackPanel>
+        </ScrollViewer>
+    </Grid>
+    
 </controls:MetroWindow>

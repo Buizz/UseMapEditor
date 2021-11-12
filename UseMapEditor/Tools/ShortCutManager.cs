@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using UseMapEditor.Control;
+using static UseMapEditor.Global.Setting;
 
 namespace UseMapEditor.Tools
 {
@@ -62,10 +63,10 @@ namespace UseMapEditor.Tools
                     { mapEditor.taskManager.Undo(); break; }
                 case "Redo":
                     { mapEditor.taskManager.Redo(); break; }
-                case "GridUp":
-                    { mapEditor.GridSizeUp(); break; }
-                case "GridDown":
-                    { mapEditor.GridSizeDown(); break; }
+                //case "GridUp":
+                //    { mapEditor.GridSizeUp(); break; }
+                //case "GridDown":
+                //    { mapEditor.GridSizeDown(); break; }
                 case "CopyPaste":
                     { mapEditor.TabChange(MapEditor.Layer.CopyPaste); break; }
                 case "Tileset":
@@ -80,6 +81,37 @@ namespace UseMapEditor.Tools
                     { mapEditor.TabChange(MapEditor.Layer.Location); break; }
                 case "FogofWar":
                     { mapEditor.TabChange(MapEditor.Layer.FogOfWar); break; }
+
+                case "Grid1":
+                    { mapEditor.GridSizeChange(0); break; }
+                case "Grid2":
+                    { mapEditor.GridSizeChange(1); break; }
+                case "Grid3":
+                    { mapEditor.GridSizeChange(2); break; }
+                case "Grid4":
+                    { mapEditor.GridSizeChange(3); break; }
+
+                case "GrpChange":
+                    { mapEditor.NextgrpType(); break; }
+                case "SDGrp":
+                    { mapEditor.SetGrpType(MapEditor.DrawType.SD); break; }
+                case "HDGrp":
+                    { mapEditor.SetGrpType(MapEditor.DrawType.HD); break; }
+                case "CBGrp":
+                    { mapEditor.SetGrpType(MapEditor.DrawType.CB); break; }
+                case "SystemDraw":
+                    { mapEditor.ToggleSysdraw(); break; }
+                case "mapSetting":
+                case "playerSetting":
+                case "forceSetting":
+                case "unitSetting":
+                case "upgradeSetting":
+                case "techSetting":
+                case "soundSetting":
+                case "stringSetting":
+                case "classTriggerEditor":
+                case "brinfingTriggerEditor":
+                    { mapEditor.ScenOpenCommand(e.HotKey.Name); break; }
                 case "W":
                     {
                         if(Whoykey.WhenToRaise == RaiseLocalEvent.OnKeyDown)
@@ -148,39 +180,43 @@ namespace UseMapEditor.Tools
         LocalHotKey Shoykey;
         LocalHotKey Dhoykey;
 
+
+        public void ResetShortCut()
+        {
+            foreach (var item in localHotKeys)
+            {
+                MyHotKeyManager.RemoveLocalHotKey(item);
+            }
+
+            foreach (var item in Global.Setting.ShortCutKeys)
+            {
+                string key = item.Key;
+                ShortCutKey shortCutKey = item.Value;
+
+
+                LocalHotKey hotkey = new LocalHotKey(key, shortCutKey.modifierKeys, shortCutKey.keys);
+                MyHotKeyManager.AddLocalHotKey(hotkey);
+                localHotKeys.Add(hotkey);
+            }
+        }
+
+
+        List<LocalHotKey> localHotKeys = new List<LocalHotKey>();
         private void HotkeyInit()
         {
             MyHotKeyManager = new HotKeyManager(mapEditor.mainWindow);
 
 
-            //TODO 단축기 설정 옵션
+
+            foreach (var item in Global.Setting.ShortCutKeys)
             {
-                LocalHotKey hoykey = new LocalHotKey("New", ModifierKeys.Control, Keys.N);
-                MyHotKeyManager.AddLocalHotKey(hoykey);
-            }
-            {
-                LocalHotKey hoykey = new LocalHotKey("Open", ModifierKeys.Control, Keys.O);
-                MyHotKeyManager.AddLocalHotKey(hoykey);
-            }
-            {
-                LocalHotKey hoykey = new LocalHotKey("Save", ModifierKeys.Control, Keys.S);
-                MyHotKeyManager.AddLocalHotKey(hoykey);
-            }
-            {
-                LocalHotKey hoykey = new LocalHotKey("Undo", ModifierKeys.Control, Keys.Z);
-                MyHotKeyManager.AddLocalHotKey(hoykey);
-            }
-            {
-                LocalHotKey hoykey = new LocalHotKey("Redo", ModifierKeys.Control, Keys.U);
-                MyHotKeyManager.AddLocalHotKey(hoykey);
-            }
-            {
-                LocalHotKey hoykey = new LocalHotKey("GridUp", ModifierKeys.Control, Keys.Q);
-                MyHotKeyManager.AddLocalHotKey(hoykey);
-            }
-            {
-                LocalHotKey hoykey = new LocalHotKey("GridDown", ModifierKeys.Control, Keys.E);
-                MyHotKeyManager.AddLocalHotKey(hoykey);
+                string key = item.Key;
+                ShortCutKey shortCutKey = item.Value;
+
+
+                LocalHotKey hotkey = new LocalHotKey(key, shortCutKey.modifierKeys, shortCutKey.keys);
+                MyHotKeyManager.AddLocalHotKey(hotkey);
+                localHotKeys.Add(hotkey);
             }
 
 
@@ -207,36 +243,6 @@ namespace UseMapEditor.Tools
 
 
 
-            {
-                LocalHotKey hoykey = new LocalHotKey("CopyPaste", ModifierKeys.Control, Keys.Oemtilde);
-                MyHotKeyManager.AddLocalHotKey(hoykey);
-            }
-            {
-                LocalHotKey hoykey = new LocalHotKey("Tileset", ModifierKeys.Control, Keys.D1);
-                MyHotKeyManager.AddLocalHotKey(hoykey);
-            }
-            {
-                LocalHotKey hoykey = new LocalHotKey("Doodad", ModifierKeys.Control, Keys.D2);
-                MyHotKeyManager.AddLocalHotKey(hoykey);
-            }
-            {
-                LocalHotKey hoykey = new LocalHotKey("Unit", ModifierKeys.Control, Keys.D3);
-                MyHotKeyManager.AddLocalHotKey(hoykey);
-            }
-            {
-                LocalHotKey hoykey = new LocalHotKey("Sprite", ModifierKeys.Control, Keys.D4);
-                MyHotKeyManager.AddLocalHotKey(hoykey);
-            }
-            {
-                LocalHotKey hoykey = new LocalHotKey("Location", ModifierKeys.Control, Keys.D5);
-                MyHotKeyManager.AddLocalHotKey(hoykey);
-            }
-            {
-                LocalHotKey hoykey = new LocalHotKey("FogofWar", ModifierKeys.Control, Keys.D6);
-                MyHotKeyManager.AddLocalHotKey(hoykey);
-            }
-
-            //TODO WASD단축키
             {
                 Whoykey = new LocalHotKey("W", ModifierKeys.None, Keys.W, RaiseLocalEvent.OnKeyDown);
                 MyHotKeyManager.AddLocalHotKey(Whoykey);

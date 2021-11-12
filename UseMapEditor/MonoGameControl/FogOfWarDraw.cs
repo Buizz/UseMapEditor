@@ -124,7 +124,7 @@ namespace UseMapEditor.MonoGameControl
             FogofWarPalletePreview();
         }
 
-        private void FogofWarPalleteDraw()
+        private void FogofWarPaint()
         {
             if (mapeditor.brush_fogofwarcircle)
             {

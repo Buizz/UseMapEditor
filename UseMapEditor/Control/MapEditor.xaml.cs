@@ -104,6 +104,19 @@ namespace UseMapEditor.Control
         public int opt_FogofWarplayer;
 
 
+        public double opt_palletSize
+        {
+            get
+            {
+                return PalletDock.Width;
+            }
+            set
+            {
+                PalletDock.Width = value;
+            }
+        }
+
+
         private int _opt_xpos = 0;
         private int _opt_ypos = 0;
 
@@ -171,6 +184,15 @@ namespace UseMapEditor.Control
                 }
             }
         }
+
+
+        public bool opt_sysdraw = false;
+        public void ToggleSysdraw()
+        {
+            opt_sysdraw = !opt_sysdraw;
+        }
+
+
 
         int scrollspeed = 10;
         public void ScrollUp()
@@ -437,6 +459,9 @@ namespace UseMapEditor.Control
 
             Scenario = new ScenarioControl();
             mapdata = new MapData(this);
+            PalletSizeRefresh();
+
+
             taskManager = new TaskManager(this);
             shortCutManager = new ShortCutManager(this);
             
@@ -518,6 +543,8 @@ namespace UseMapEditor.Control
         public void TileSetUIRefresh()
         {
             List<TileSet.DoodadPalletGroup> t = Global.WindowTool.MapViewer.tileSet.DoodadGroups[mapdata.TILETYPE];
+
+            TilePalletSelectReset();
 
             DoodadTypes.Items.Clear();
             for (int i = 0; i < t.Count; i++)
@@ -676,23 +703,21 @@ namespace UseMapEditor.Control
 
         public bool LoadMap(string _filepath)
         {
-            bool LoadSucess = mapdata.LoadMap(_filepath);
-            IsLoad = LoadSucess;
-            IsDirty = false;
-            if (LoadSucess == true)
-            {
-                optionReset();
-                //tabitem.Header = mapdata.SafeFileName;
-                //tabitem.Content = this;
-                InitControl();
-                mapDataBinding.PropertyChangeAll();
-            }
-
-            return LoadSucess;
-
             try
             {
+                bool LoadSucess = mapdata.LoadMap(_filepath);
+                IsLoad = LoadSucess;
+                IsDirty = false;
+                if (LoadSucess == true)
+                {
+                    optionReset();
+                    //tabitem.Header = mapdata.SafeFileName;
+                    //tabitem.Content = this;
+                    InitControl();
+                    mapDataBinding.PropertyChangeAll();
+                }
 
+                return LoadSucess;
             }
             catch (Exception e)
             {
@@ -849,7 +874,10 @@ namespace UseMapEditor.Control
             ChangeView();
         }
 
-
+        public void GridSizeChange(int index)
+        {
+            GridCB.SelectedIndex = index;
+        }
 
         public void GridSizeUp()
         {
@@ -1210,6 +1238,82 @@ namespace UseMapEditor.Control
             OuterMouse.Y = (float)e.GetPosition(MapViewer).Y;
         }
 
+        private void MenuScenBtn_Click(object sender, RoutedEventArgs e)
+        {
+            MenuItem button = (MenuItem)sender;
+            string tag = (string)button.Tag;
 
+
+            ScenOpenCommand(tag);
+        }
+
+
+        public void ScenOpenCommand(string tag)
+        {
+            string[] scennames = {"mapSetting","playerSetting","forceSetting",
+                "unitSetting","upgradeSetting","techSetting","soundSetting",
+                "stringSetting","classTriggerEditor","brinfingTriggerEditor" };
+
+            int index = scennames.ToList().IndexOf(tag);
+
+            if (index == -1)
+                return;
+
+            //열리지 않았을 경우 열게하기
+            if (!LeftExpander.IsExpanded)
+            {
+                LeftExpander.IsExpanded = true;
+            }
+            else
+            {
+                if(Scenario.SelectedIndex == index)
+                {
+                    //열린 상태에선 윈도우 열기
+                    Scenario.OpenPopupWindow(index);
+
+                    LeftExpander.IsExpanded = false;
+                    return;
+                }
+            }
+            Scenario.SwitchTab(index);
+        }
+
+        private void PalletSizeChange_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            PalletSizeBorder.Visibility = Visibility.Visible;
+        }
+
+        private void PalletSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if(e.NewValue < 302)
+            {
+                PalletSize.Value = 302;
+            }
+
+            PalletSizeRefresh();
+        }
+        private void PalletSizeRefresh()
+        {
+            List<TileSet.ISOMTIle> iSOMs = Global.WindowTool.MapViewer.tileSet.GetISOMData(this);
+
+            int columns = iSOMs.Count / 8 + 1;
+
+
+            Tile_ISOM_Pallet.Height = columns * TileSize;
+            Tile_Rect_Pallet.Height = columns * TileSize;
+            Tile_Custom_Pallet.Height = columns * TileSize;
+        }
+
+
+
+        private void PalletSize_LostMouseCapture(object sender, MouseEventArgs e)
+        {
+            PalletSizeBorder.Visibility = Visibility.Collapsed;
+        }
+
+        private void Tile_Pallet_Expanded(object sender, RoutedEventArgs e)
+        {
+            PalletSizeRefresh();
+        }
     }
 }

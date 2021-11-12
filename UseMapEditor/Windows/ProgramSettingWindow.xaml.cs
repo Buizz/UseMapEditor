@@ -19,6 +19,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using UseMapEditor.Control;
 
 namespace UseMapEditor.Windows
 {
@@ -72,6 +73,7 @@ namespace UseMapEditor.Windows
             else
             {
                 RenderSetting.IsEnabled = false;
+                ErrorText.Visibility = Visibility.Visible;
                 ErrorText.Text = "그래픽이 로드되지 않았습니다.";
             }
 
@@ -90,12 +92,51 @@ namespace UseMapEditor.Windows
 
             GridColorButton.ColorSelectEvent += GridColorButton_ColorSelectEvent;
 
+
+            if (Global.Setting.Vals[Global.Setting.Settings.Program_FastExpander] == "true")
+            {
+                //theme.SetBaseTheme(Theme.Dark);
+                //paletteHelper.SetTheme(theme);
+                FastExpander.IsChecked = true;
+            }
+            else
+            {
+                //theme.SetBaseTheme(Theme.Light);
+                //paletteHelper.SetTheme(theme);
+                FastExpander.IsChecked = false;
+            }
+
+
             //Global.WindowTool.LoadGrp();
 
 
             //MainWindow main = new MainWindow();
             //main.Show();
             //Close();
+
+
+            foreach (var item in Global.Setting.ShortCutKeys)
+            {
+                string key = item.Key;
+
+                ShortCutSetting.Children.Add(new ShortCutEditControl(key));
+            }
+
+            string setting_starTxt = Global.Setting.Vals[Global.Setting.Settings.language_StatLan];
+
+            for (int i = 0; i < starTxt.Items.Count; i++)
+            {
+                ComboBoxItem cb = (ComboBoxItem)starTxt.Items[i];
+                string settingname = (string)cb.Tag;
+
+                if(settingname == setting_starTxt)
+                {
+                    starTxt.SelectedIndex = i;
+                    break;
+                }
+            }
+
+
             ISLoad = true;
         }
 
@@ -162,6 +203,45 @@ namespace UseMapEditor.Windows
                 Global.Setting.Vals[Global.Setting.Settings.Render_MaxFrame] = mf.ToString();
             }
             Global.Setting.Vals[Global.Setting.Settings.Render_UseVFR] = UseVFRCB.IsChecked.ToString().ToLower();
+        }
+
+        private void FastExpander_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (ISLoad)
+            {
+                Global.Setting.Vals[Global.Setting.Settings.Program_FastExpander] = "false";
+            }
+        }
+
+        private void FastExpander_Checked(object sender, RoutedEventArgs e)
+        {
+            if (ISLoad)
+            {
+                Global.Setting.Vals[Global.Setting.Settings.Program_FastExpander] = "true";
+            }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Global.Setting.ResetShortCut();
+            ShortCutSetting.Children.Clear();
+
+            foreach (var item in Global.Setting.ShortCutKeys)
+            {
+                string key = item.Key;
+
+                ShortCutSetting.Children.Add(new ShortCutEditControl(key));
+            }            
+        }
+
+        private void starTxt_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ISLoad)
+            {
+                ComboBoxItem comboBoxItem = (ComboBoxItem)starTxt.SelectedItem;
+
+                Global.Setting.Vals[Global.Setting.Settings.language_StatLan] = comboBoxItem.Tag.ToString();
+            }
         }
     }
 }

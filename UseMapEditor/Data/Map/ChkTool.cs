@@ -92,8 +92,14 @@ namespace Data.Map
 
             for (int y = 0; y < pallete.dddHeight; y++)
             {
+
                 for (int x = 0; x < pallete.dddWidth; x++)
                 {
+                    if (!((0 <= _x + x && _x + x < WIDTH) && (0 <= _y + y && _y + y < HEIGHT)))
+                    {
+                        continue;
+                    }
+
                     ushort group = (ushort)(pallete.dddGroup + y);
                     ushort index = (ushort)x;
 
@@ -117,8 +123,15 @@ namespace Data.Map
 
             for (int y = 0; y < pallete.dddHeight; y++)
             {
+
                 for (int x = 0; x < pallete.dddWidth; x++)
                 {
+                    if (!((0 <= _x + x && _x + x < WIDTH) && (0 <= _y + y && _y + y < HEIGHT)))
+                    {
+                        continue;
+                    }
+
+
                     ushort group = (ushort)(pallete.dddGroup + y);
                     ushort index = (ushort)x;
 
