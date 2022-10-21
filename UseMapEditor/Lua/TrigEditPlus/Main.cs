@@ -14,7 +14,7 @@ namespace UseMapEditor.Lua.TrigEditPlus
 {
     public class Main
     {
-        public LuaInterface.Lua Lua;
+        public NLua.Lua Lua;
         public MapData mapData;
 
 
@@ -22,7 +22,7 @@ namespace UseMapEditor.Lua.TrigEditPlus
 
         public Main()
         {
-            Lua = new LuaInterface.Lua();
+            Lua = new NLua.Lua();
 
             Lua.DoFile(AppDomain.CurrentDomain.BaseDirectory + "Lua\\TrigEditPlus\\constparser.lua");
             Lua.DoFile(AppDomain.CurrentDomain.BaseDirectory + "Lua\\TrigEditPlus\\condition.lua");
@@ -107,7 +107,7 @@ namespace UseMapEditor.Lua.TrigEditPlus
         }
 
 
-        public CUPRP ParseUPRP(LuaInterface.LuaTable t)
+        public CUPRP ParseUPRP(NLua.LuaTable t)
         {
             CUPRP cUPRP = new CUPRP();
 
@@ -203,13 +203,13 @@ namespace UseMapEditor.Lua.TrigEditPlus
             return cUPRP;
         }
 
-        public void Triggerinterpreter(LuaInterface.LuaTable t)
+        public void Triggerinterpreter(NLua.LuaTable t)
         {
             CTrigger cTrigger = new CTrigger(mapData, IsTrigger);
 
             if (t["players"] != null)
             {
-                LuaInterface.LuaTable players = (LuaInterface.LuaTable)t["players"];
+                NLua.LuaTable players = (NLua.LuaTable)t["players"];
                 for (int i = 1; i <= players.Values.Count; i++)
                 {
                     double v = (double)Lua.GetFunction("ParsePlayer").Call(players[i])[0];
@@ -220,7 +220,7 @@ namespace UseMapEditor.Lua.TrigEditPlus
             }
             if (t["flag"] != null)
             {
-                LuaInterface.LuaTable flags = (LuaInterface.LuaTable)t["flag"];
+                NLua.LuaTable flags = (NLua.LuaTable)t["flag"];
 
                 ushort flag = 0;
                 for (int i = 1; i <= flags.Values.Count; i++)
@@ -235,15 +235,15 @@ namespace UseMapEditor.Lua.TrigEditPlus
             }
             if (t["conditions"] != null)
             {
-                LuaInterface.LuaTable conds = (LuaInterface.LuaTable)t["conditions"];
+                NLua.LuaTable conds = (NLua.LuaTable)t["conditions"];
                 for (int i = 1; i <= conds.Values.Count; i++)
                 {
-                    LuaInterface.LuaTable con = (LuaInterface.LuaTable)conds[i];
+                    NLua.LuaTable con = (NLua.LuaTable)conds[i];
 
                     bool tEnable = true;
                     if(con["Disable"] != null)
                     {
-                        con = (LuaInterface.LuaTable)con["item"];
+                        con = (NLua.LuaTable)con["item"];
                         tEnable = false;
                     }
 
@@ -261,15 +261,15 @@ namespace UseMapEditor.Lua.TrigEditPlus
             }
             if (t["actions"] != null)
             {
-                LuaInterface.LuaTable acts = (LuaInterface.LuaTable)t["actions"];
+                NLua.LuaTable acts = (NLua.LuaTable)t["actions"];
                 for (int i = 1; i <= acts.Values.Count; i++)
                 {
-                    LuaInterface.LuaTable act = (LuaInterface.LuaTable)acts[i];
+                    NLua.LuaTable act = (NLua.LuaTable)acts[i];
 
                     bool tEnable = true;
                     if (act["Disable"] != null)
                     {
-                        act = (LuaInterface.LuaTable)act["item"];
+                        act = (NLua.LuaTable)act["item"];
                         tEnable = false;
                     }
 
@@ -288,7 +288,7 @@ namespace UseMapEditor.Lua.TrigEditPlus
             Triggers.Add(cTrigger);
         }
 
-        public TrigItem GetTrigItem(LuaInterface.LuaTable t)
+        public TrigItem GetTrigItem(NLua.LuaTable t)
         {
             bool IsAction = true;
 

@@ -10,7 +10,7 @@ namespace Data.Map
 {
     public partial class MapData
     {
-        private bool AddMPQFile(uint hmpq, string filename, string chkfilename)
+        private bool AddMPQFile(ulong hmpq, string filename, string chkfilename)
         {
 
             bool chkfilesave = StromLib.SFileAddFileEx(hmpq, filename, chkfilename, StromLib.MPQ_FILE_COMPRESS | StromLib.MPQ_FILE_ENCRYPTED | StromLib.MPQ_FILE_REPLACEEXISTING, StromLib.MPQ_COMPRESSION_ZLIB, StromLib.MPQ_COMPRESSION_ZLIB);
@@ -19,7 +19,7 @@ namespace Data.Map
             return chkfilesave;
         }
 
-        private void RemoveMPQFile(uint hmpq, string filename)
+        private void RemoveMPQFile(ulong hmpq, string filename)
         {
             StromLib.SFileRemoveFile(hmpq, filename, 0);
         }
@@ -34,12 +34,12 @@ namespace Data.Map
 
         private byte[] ReadMPQFile(string filename)
         {
-            uint hmpq = 0;
-            uint hfile = 0;
+            ulong hmpq = 0;
+            ulong hfile = 0;
             byte[] buffer = new byte[0];
-            uint filesize = 0;
+            ulong filesize = 0;
 
-            uint pdwread = 0;
+            ulong pdwread = 0;
 
             UseMapEditor.FileData.StromLib.SFileOpenArchive(filepath, 0, 0, ref hmpq);
             string openFilename = filename;
@@ -65,25 +65,25 @@ namespace Data.Map
 
 
 
-        private uint OpenArchive()
+        private ulong OpenArchive()
         {
-            uint hmpq = 0;
+            ulong hmpq = 0;
 
             UseMapEditor.FileData.StromLib.SFileOpenArchive(filepath, 0, 0, ref hmpq);
 
             return hmpq;
         }
-        private void CloseArchive(uint hmpq)
+        private void CloseArchive(ulong hmpq)
         {
             UseMapEditor.FileData.StromLib.SFileCloseArchive(hmpq);
         }
-        private byte[] ReadMPQFileC(uint hmpq, string filename)
+        private byte[] ReadMPQFileC(ulong hmpq, string filename)
         {
-            uint hfile = 0;
+            ulong hfile = 0;
             byte[] buffer = new byte[0];
-            uint filesize = 0;
+            ulong filesize = 0;
 
-            uint pdwread = 0;
+            ulong pdwread = 0;
 
             string openFilename = filename;
 

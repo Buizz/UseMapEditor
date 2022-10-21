@@ -7,12 +7,14 @@ using System.Threading.Tasks;
 
 namespace UseMapEditor.FileData
 {
+
     public class StromLib
     {
         /// <summary>
         ///         ''' Path to DLL file.
         ///         ''' </summary>
         public const string DLL = "StormLib.dll";
+
 
         public const uint STORMLIB_VERSION = 0x815;
         public const string STORMLIB_VERSION_STRING = "8.21";
@@ -241,7 +243,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="phMpq">Pointer to a variable of HANDLE type, where the opened archive handle will be stored.</param>
         ///         ''' <returns>When the function succeeds, it returns nonzero and phMPQ contains the handle of the opened archive. When the archive cannot be open, function returns false and GetLastError gives the error code.</returns>
         [DllImport(DLL, EntryPoint = "SFileOpenArchive")]
-        public static extern bool SFileOpenArchive(string szMpqName, uint dwPriority, uint dwFlags, ref uint phMpq);
+        public static extern bool SFileOpenArchive(string szMpqName, UInt64 dwPriority, UInt64 dwFlags, ref UInt64 phMpq);
         /// <summary>
         ///         ''' Function SFileCreateArchive opens or creates the MPQ archive. The function can also convert an existing file to MPQ archive. The MPQ archive is always open for write operations. The function internally verifies the file using SFileOpenArchive. If the file already exists and it is an MPQ archive, the function fails and GetLastError() returns ERROR_ALREADY_EXISTS.
         ///         ''' </summary>
@@ -251,7 +253,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="phMpq">Pointer to a variable of HANDLE type, where the opened archive handle will be stored.</param>
         ///         ''' <returns>When the function succeeds, it returns nonzero and phMPQ contains the handle of the new archive. On an error, the function returns false and GetLastError gives the error code.</returns>
         [DllImport(DLL, EntryPoint = "SFileCreateArchive")]
-        public static extern bool SFileCreateArchive(string szMpqName, uint dwFlags, uint dwMaxFileCount, ref uint phMpq);
+        public static extern bool SFileCreateArchive(string szMpqName, UInt64 dwFlags, UInt64 dwMaxFileCount, ref UInt64 phMpq);
         /// <summary>
         ///         ''' SFileAddListFile adds an external listfile to the open MPQ. Note that the listfile is merely added to the memory structures of the open MPQ. On-disk structures of the MPQ are not changed. Use this function to specify an extra listfile to an opened MPQ, for example when there is no internal listfile, or if the internal listfile is not complete.
         ///         ''' </summary>
@@ -259,7 +261,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="szListFile">Listfile name to add. If this parameter is NULL, the function adds the internal listfile from the MPQ, if present. Adding the same listfile multiple times has no effect.</param>
         ///         ''' <returns>When the function succeeds, it returns ERROR_SUCCESS. On an error, the function returns error code.</returns>
         [DllImport(DLL, EntryPoint = "SFileAddListFile")]
-        public static extern bool SFileAddListFile(uint hMpq, string szListFile);
+        public static extern bool SFileAddListFile(UInt64 hMpq, string szListFile);
 
         /// <summary>
         ///         ''' Function SFileSetLocale sets a preferred locale for file functions, such as SFileOpenFileEx or SFileAddFileEx. The locale is stored as a global variable and thus affects every open or add operation.
@@ -268,21 +270,21 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="lcNewLocale">Locale ID to be set.</param>
         ///         ''' <returns>The function never fails and always returns lcNewLocale.</returns>
         [DllImport(DLL, EntryPoint = "SFileSetLocale")]
-        public static extern uint SFileSetLocale(uint lcNewLocale);
+        public static extern UInt64 SFileSetLocale(UInt64 lcNewLocale);
 
         /// <summary>
         ///         ''' Function SFileGetLocale returns locale that is set as a preferred locale for files that will be open by SFileOpenFileEx and added by SFileAddFileEx. The locale is stored as a global variable and thus affects every open or add operation.
         ///         ''' </summary>
         ///         ''' <returns>The function never fails and always returns current locale ID.</returns>
         [DllImport(DLL, EntryPoint = "SFileGetLocale")]
-        public static extern uint SFileGetLocale();
+        public static extern UInt64 SFileGetLocale();
 
         /// <summary>
         ///         ''' Function SFileFlushArchive saves any in-memory structures to the MPQ archive on disk. Due to performance reasons, StormLib caches several data structures in memory (e.g. block table or hash table). When a file is added to the MPQ, those structures are only updated in memory. Calling SFileFlushArchive forces saving in-memory MPQ tables to the file, preventing a MPQ corruption incase of power down or crash of the calling application. Note that this function is called internally when the archive is closed.
         ///         ''' </summary>
         ///         ''' <param name="hMpq">Handle to an open MPQ.</param>
         [DllImport(DLL, EntryPoint = "SFileFlushArchive")]
-        public static extern bool SFileFlushArchive(uint hMpq);
+        public static extern bool SFileFlushArchive(UInt64 hMpq);
 
         /// <summary>
         ///         ''' Function SFileFlushArchive saves any in-memory structures to the MPQ archive on disk. Due to performance reasons, StormLib caches several data structures in memory (e.g. block table or hash table). When a file is added to the MPQ, those structures are only updated in memory. Calling SFileFlushArchive forces saving in-memory MPQ tables to the file, preventing a MPQ corruption incase of power down or crash of the calling application. Note that this function is called internally when the archive is closed.
@@ -290,7 +292,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="phMpq"> Handle to an open MPQ.</param>
         ///         ''' <returns>When the function succeeds, it returns nonzero. On an error, the function returns false and GetLastError gives the error code.</returns>
         [DllImport(DLL, EntryPoint = "SFileCloseArchive")]
-        public static extern bool SFileCloseArchive(uint phMpq);
+        public static extern bool SFileCloseArchive(UInt64 phMpq);
 
         /// <summary>
         ///         ''' Function SFileSetMaxFileCount changes the limit for number of files that can be stored in the archive. No files are changed during this operation.
@@ -299,7 +301,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="dwMaxFileCount">New size of the hash table. This parameter must be in range of HASH_TABLE_SIZE_MIN and HASH_TABLE_SIZE_MAX.</param>
         ///         ''' <returns>When the function succeeds, it returns nonzero. On an error, the function returns false and GetLastError gives the error code.</returns>
         [DllImport(DLL, EntryPoint = "SFileSetMaxFileCount")]
-        public static extern bool SFileSetMaxFileCount(uint hMpq, uint dwMaxFileCount);
+        public static extern bool SFileSetMaxFileCount(UInt64 hMpq, UInt64 dwMaxFileCount);
 
         /// <summary>
         ///         ''' SFileCompactArchive might take several minutes to complete, depending on size of the archive being rebuilt. If you want to use SFileCompactArchive in your application, you can utilize a compact callback, which can be set by SFileSetCompactCallback.
@@ -309,7 +311,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="bReserved">Not used, set to zero.</param>
         ///         ''' <returns>When the function succeeds, it returns nonzero. On an error, the function returns false and GetLastError gives the error code.</returns>
         [DllImport(DLL, EntryPoint = "SFileCompactArchive")]
-        public static extern bool SFileCompactArchive(uint hMpq, string szListFile, bool bReserved);
+        public static extern bool SFileCompactArchive(UInt64 hMpq, string szListFile, bool bReserved);
 
         /// <summary>
         ///         ''' Function SFileSetCompactCallback sets a callback that will be called during operations performed by SFileCompactArchive. Registering a callback will help the calling application to show a progress about the operation, which will enhance user experience with the application.
@@ -319,7 +321,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="pvUserData">User defined data that will be passed to the callback function.</param>
         ///         ''' <returns>The function never fails and always sets the callback.</returns>
         [DllImport(DLL, EntryPoint = "SFileSetCompactCallback")]
-        public static extern bool SFileSetCompactCallback(uint hMpq, SFILE_COMPACT_CALLBACK pfnCompactCB, IntPtr pvUserData);
+        public static extern bool SFileSetCompactCallback(UInt64 hMpq, SFILE_COMPACT_CALLBACK pfnCompactCB, IntPtr pvUserData);
 
 
         // Using patched archives
@@ -332,7 +334,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="dwFlags">Reserved for future use.</param>
         ///         ''' <returns>When the function succeeds, it returns nonzero. When the archive cannot be added as patch archive, function returns false and GetLastError gives the error code.</returns>
         [DllImport(DLL, EntryPoint = "SFileOpenPatchArchive")]
-        public static extern bool SFileOpenPatchArchive(uint hMpq, string szMpqName, string szPatchPathPrefix, uint dwFlags);
+        public static extern bool SFileOpenPatchArchive(UInt64 hMpq, string szMpqName, string szPatchPathPrefix, UInt64 dwFlags);
 
         /// <summary>
         ///         ''' Function SFileIsPatchedArchive returns true, if the given MPQ has one or more patches added.
@@ -340,7 +342,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="hMpq">Handle to a MPQ in question.</param>
         ///         ''' <returns>The function returns true, when there is at least one patch added to the MPQ. Otherwise, it returns false.</returns>
         [DllImport(DLL, EntryPoint = "SFileIsPatchedArchive")]
-        public static extern bool SFileIsPatchedArchive(uint hMpq);
+        public static extern bool SFileIsPatchedArchive(UInt64 hMpq);
 
 
         // Reading files
@@ -353,7 +355,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="phFile">Pointer to a variable of HANDLE type, that will receive HANDLE to the open file.</param>
         ///         ''' <returns>When the function succeeds, it returns nonzero and phFile contains the handle of the opened file. When the file cannot be open, function returns false and GetLastError gives the error code.</returns>
         [DllImport(DLL, EntryPoint = "SFileOpenFileEx")]
-        public static extern bool SFileOpenFileEx(uint hMpq, string szFileName, uint dwSearchScope, ref uint phFile);
+        public static extern bool SFileOpenFileEx(UInt64 hMpq, string szFileName, UInt64 dwSearchScope, ref UInt64 phFile);
 
         /// <summary>
         ///         ''' Function SFileGetFileSize retrieves the size of an open file.
@@ -362,7 +364,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="pdwFileSizeHigh">Receives high 32 bits of the a file size. This parameter can be NULL.</param>
         ///         ''' <returns>When the function succeeds, it returns lower 32-bit of the file size. On an error, it returns SFILE_INVALID_SIZE and GetLastError returns an error code.</returns>
         [DllImport(DLL, EntryPoint = "SFileGetFileSize")]
-        public static extern uint SFileGetFileSize(uint hMpq, ref uint pdwFileSizeHigh);
+        public static extern UInt64 SFileGetFileSize(UInt64 hMpq, ref UInt64 pdwFileSizeHigh);
 
         /// <summary>
         ///         ''' Function SFileSetFilePointer sets current position in an open file.
@@ -373,7 +375,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="dwMoveMethod">The starting point for the file pointer move.</param>
         ///         ''' <returns>When the function succeeds, it returns lower 32-bit of the file size. On an error, it returns SFILE_INVALID_SIZE and GetLastError returns an error code.</returns>
         [DllImport(DLL, EntryPoint = "SFileSetFilePointer")]
-        public static extern uint SFileSetFilePointer(uint hMpq, int lFilePos, ref int plFilePosHigh, uint dwMoveMethod);
+        public static extern UInt64 SFileSetFilePointer(UInt64 hMpq, int lFilePos, ref int plFilePosHigh, UInt64 dwMoveMethod);
 
         /// <summary>
         ///         ''' Function SFileReadFile reads data from an open file.
@@ -385,7 +387,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="lpOverlapped">If hFile is handle to a local disk file, lpOverlapped is passed to ReadFile. Otherwise not used.</param>
         ///         ''' <returns>When all requested bytes have been read, the function returns true. When less than requested bytes have been read, the function returns false and GetLastError returns ERROR_HANDLE_EOF. If an error occured, the function returns false and GetLastError returns an error code different from ERROR_HANDLE_EOF.</returns>
         [DllImport(DLL, EntryPoint = "SFileReadFile")]
-        public static extern bool SFileReadFile(uint hMpq, byte[] lpBuffer, uint dwToRead, ref uint pdwRead, IntPtr lpOverlapped);
+        public static extern bool SFileReadFile(UInt64 hMpq, byte[] lpBuffer, UInt64 dwToRead, ref UInt64 pdwRead, IntPtr lpOverlapped);
 
         /// <summary>
         ///         ''' Function SFileCloseFile closes an open MPQ file. All in-memory data are freed. After this function finishes, the hFile handle is no longer valid and must not be used in any file operations.
@@ -393,7 +395,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="hFile">Handle to an open file.</param>
         ///         ''' <returns>When the function succeeds, it returns nonzero. On an error, the function returns false and GetLastError gives the error code.</returns>
         [DllImport(DLL, EntryPoint = "SFileCloseFile")]
-        public static extern bool SFileCloseFile(uint hFile);
+        public static extern bool SFileCloseFile(UInt64 hFile);
 
         /// <summary>
         ///         ''' Function SFileHasFile performs a quick check if a file exists within the MPQ archive. The function does not perform file open, not even internally. It merely checks hash table if the file is present.
@@ -402,7 +404,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="szFileName">Name of the file to check.</param>
         ///         ''' <returns>When the file is present in the MPQ, function returns true. When the file is not present in the MPQ archive, the function returns false and GetLastError returns ERROR_FILE_NOT_FOUND. If an error occured, the function returns false and GetLastError returns an error code different than ERROR_FILE_NOT_FOUND.</returns>
         [DllImport(DLL, EntryPoint = "SFileHasFile")]
-        public static extern bool SFileHasFile(uint hMpq, string szFileName);
+        public static extern bool SFileHasFile(UInt64 hMpq, string szFileName);
 
         /// <summary>
         ///         ''' Function SFileGetFileName retrieves the name of an open file.
@@ -411,7 +413,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="szFileName">Receives the file name. The buffer must be at least MAX_PATH characters long.</param>
         ///         ''' <returns>When the function succeeds, it returns true and buffer pointed by szFileName contains name of the file. On an error, the function returns false and GetLastError returns an error code.</returns>
         [DllImport(DLL, EntryPoint = "SFileGetFileName")]
-        public static extern bool SFileGetFileName(uint hMpq, ref string szFileName);
+        public static extern bool SFileGetFileName(UInt64 hMpq, ref string szFileName);
 
         /// <summary>
         ///         ''' Function SFileGetFileInfo retrieves an information about an open MPQ archive or a file.
@@ -423,7 +425,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="pcbLengthNeeded">Size, in bytes, needed to store the information into pvFileInfo.</param>
         ///         ''' <returns>When the function succeeds, it returns true. On an error, the function returns false and GetLastError returns error code. Possible error codes may be ERROR_INVALID_PARAMETER (unknown file info type) or ERROR_INSUFFICIENT_BUFFER (not enough space in the supplied buffer).</returns>
         [DllImport(DLL, EntryPoint = "SFileGetFileInfo")]
-        public static extern bool SFileGetFileInfo(uint hMpqOrFile, uint dwInfoType, IntPtr pvFileInfo, uint cbFileInfo, ref uint pcbLengthNeeded);
+        public static extern bool SFileGetFileInfo(UInt64 hMpqOrFile, UInt64 dwInfoType, IntPtr pvFileInfo, UInt64 cbFileInfo, ref UInt64 pcbLengthNeeded);
 
         /// <summary>
         ///         ''' Function SFileVerifyFile verifies the file by its CRC and MD5. The (attributes) file must exist in the MPQ and must have been open by SFileOpenArchive or created by SFileCreateArchive. The entire file is always checked for readability. Additional flags in dwFlags turn on extra checks on the file.
@@ -433,7 +435,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="dwFlags">Specifies what to verify.</param>
         ///         ''' <returns>Return value is zero when no problerms were found.</returns>
         [DllImport(DLL, EntryPoint = "SFileVerifyFile")]
-        public static extern uint SFileVerifyFile(uint hMpq, string szFileName, uint dwFlags);
+        public static extern UInt64 SFileVerifyFile(UInt64 hMpq, string szFileName, UInt64 dwFlags);
 
         /// <summary>
         ///         ''' Function SFileVerifyArchive verifies digital signature of the archive, is a digital signature is present. in the MPQ and must have been open by SFileOpenArchive. Note that MPQ archives created by StormLib are never signed.
@@ -441,7 +443,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="hMpq">Handle to an open MPQ archive to be verified.</param>
         ///         ''' <returns>Return value can be one of the following values:</returns>
         [DllImport(DLL, EntryPoint = "SFileVerifyArchive")]
-        public static extern uint SFileVerifyArchive(uint hMpq);
+        public static extern UInt64 SFileVerifyArchive(UInt64 hMpq);
 
         /// <summary>
         ///         ''' Function SFileExtractFile extracts one file from an MPQ archive.
@@ -452,7 +454,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="dwSearchScope">This parameter refines the definition of what to extract. If you want ot extract an unpatched file, use SFILE_OPEN_FROM_MPQ (this is the default parameter). If you want to extract patched version of the file, use SFILE_OPEN_PATCHED_FILE.</param>
         ///         ''' <returns>If the MPQ file has been successfully extracted into the target file, the function returns true. On an error, the function returns false and GetLastError returns an error code.</returns>
         [DllImport(DLL, EntryPoint = "SFileExtractFile")]
-        public static extern bool SFileExtractFile(uint hMpq, string szToExtract, string szExtracted, uint dwSearchScope);
+        public static extern bool SFileExtractFile(UInt64 hMpq, string szToExtract, string szExtracted, UInt64 dwSearchScope);
 
 
         // File searching
@@ -465,7 +467,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="szListFile">Name of an extra list file that will be used for searching. Note that SFileAddListFile is called internally. The internal listfile in the MPQ is always used (if exists). This parameter can be NULL.</param>
         ///         ''' <returns>When the function succeeds, it returns handle to the MPQ search object and the SFILE_FIND_DATA structure is filled with information about the file. On an error, the function returns NULL and GetLastError gives the error code.</returns>
         [DllImport(DLL, EntryPoint = "SFileFindFirstFile")]
-        public static extern uint SFileFindFirstFile(uint hMpq, string szMask, [MarshalAs(UnmanagedType.LPStruct)] SFILE_FIND_DATA lpFindFileData, string szListFile);
+        public static extern UInt64 SFileFindFirstFile(UInt64 hMpq, string szMask, [MarshalAs(UnmanagedType.LPStruct)] SFILE_FIND_DATA lpFindFileData, string szListFile);
 
         /// <summary>
         ///         ''' Function SFileFindNextFile continues search that has been initiated by SFileFindFirstFile. When the caller finishes searching, the returned handle must be freed by calling SFileFindClose.
@@ -474,7 +476,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="lpFindFileData">Pointer to SFILE_FIND_DATA structure that will receive information about the found file. For layout of the structure, see SFileFindFirstFile.</param>
         ///         ''' <returns>When the function succeeds, it returns nonzero and the SFILE_FIND_DATA structure is filled with information about the file. On an error, the function returns zero and GetLastError gives the error code.</returns>
         [DllImport(DLL, EntryPoint = "SFileFindNextFile")]
-        public static extern bool SFileFindNextFile(uint hFind, [MarshalAs(UnmanagedType.LPStruct)] SFILE_FIND_DATA lpFindFileData);
+        public static extern bool SFileFindNextFile(UInt64 hFind, [MarshalAs(UnmanagedType.LPStruct)] SFILE_FIND_DATA lpFindFileData);
 
         /// <summary>
         ///         ''' Function SFileFindClose closes a find handle that has been created by SFileFindFirstFile.
@@ -482,7 +484,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="hFind">Search handle. Must have been obtained by call to SFileFindFirstFile.</param>
         ///         ''' <returns>When the function succeeds, it returns nonzero. On an error, the function returns zero and GetLastError gives the error code.</returns>
         [DllImport(DLL, EntryPoint = "SFileFindClose")]
-        public static extern bool SFileFindClose(uint hFind);
+        public static extern bool SFileFindClose(UInt64 hFind);
 
         /// <summary>
         ///         ''' Function SListFileFindFirstFile searches a listfile and returns name of the first file that matches the given search mask. When the caller finishes searching, the returned handle must be freed by calling SListFileFindClose. Note that unlike SFileFindFirstFile, this function does not check if the file exists within the archive and doesn't call SFileAddListFile.
@@ -493,7 +495,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="lpFindFileData">Pointer to SFILE_FIND_DATA structure that will receive name of the found file. For layout of this structure, see SFileFindFirstFile.</param>
         ///         ''' <returns>When the function succeeds, it returns handle to the MPQ search object and the cFileName member of SFILE_FIND_DATA structure is filled with name of the file. On an error, the function returns NULL and GetLastError gives the error code.</returns>
         [DllImport(DLL, EntryPoint = "SListFileFindFirstFile")]
-        public static extern uint SListFileFindFirstFile(uint hMpq, string szListFile, string szMask, [MarshalAs(UnmanagedType.LPStruct)] SFILE_FIND_DATA lpFindFileData);
+        public static extern UInt64 SListFileFindFirstFile(UInt64 hMpq, string szListFile, string szMask, [MarshalAs(UnmanagedType.LPStruct)] SFILE_FIND_DATA lpFindFileData);
 
         /// <summary>
         ///         ''' Function SListFileFindNextFile continues listfile searching initiated by SListFileFindFirstFile.
@@ -502,7 +504,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="lpFindFileData">Pointer to SFILE_FIND_DATA structure that will receive name of the found file. For layout of the structure, see SFileFindFirstFile.</param>
         ///         ''' <returns>When the function succeeds, it returns nonzero and the cFileName member of SFILE_FIND_DATA structure is filled with name of the file. On an error, the function returns zero and GetLastError gives the error code.</returns>
         [DllImport(DLL, EntryPoint = "SListFileFindNextFile")]
-        public static extern uint SListFileFindNextFile(uint hFind, [MarshalAs(UnmanagedType.LPStruct)] SFILE_FIND_DATA lpFindFileData);
+        public static extern UInt64 SListFileFindNextFile(UInt64 hFind, [MarshalAs(UnmanagedType.LPStruct)] SFILE_FIND_DATA lpFindFileData);
 
         /// <summary>
         ///         ''' Function SListFileFindClose closes a find handle that has been created by SListFileFindFirstFile.
@@ -510,7 +512,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="hFind">Search handle. Must have been obtained by call to SListFileFindFirstFile.</param>
         ///         ''' <returns>When the function succeeds, it returns nonzero. On an error, the function returns zero and GetLastError gives the error code.</returns>
         [DllImport(DLL, EntryPoint = "SListFileFindClose")]
-        public static extern bool SListFileFindClose(uint hFind);
+        public static extern bool SListFileFindClose(UInt64 hFind);
 
         /// <summary>
         ///         ''' Function SFileEnumLocales enumerates all locales for the given file that are present in the MPQ.
@@ -522,7 +524,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="dwSearchScope">This parameter is ignored.</param>
         ///         ''' <returns>When the function succeeds, it returns ERROR_SUCCESS. On an error, the function returns an error code.</returns>
         [DllImport(DLL, EntryPoint = "SFileEnumLocales")]
-        public static extern bool SListFileFindClose(uint hMpq, string szFileName, ref uint plcLocales, ref uint pdwMaxLocales, uint dwSearchScope);
+        public static extern bool SListFileFindClose(UInt64 hMpq, string szFileName, ref UInt64 plcLocales, ref UInt64 pdwMaxLocales, UInt64 dwSearchScope);
 
 
         // Adding files to MPQ
@@ -538,7 +540,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="phFile">Pointer to a variable of HANDLE type that receives a valid handle. Note that this handle can only be used in call to SFileWriteFile and SFileFinishFile. This handle must never be passed to another file function. Moreover, this handle must always be freed by SFileFinishFile, if not NULL.</param>
         ///         ''' <returns>When the function succeeds, it returns nonzero. On an error, the function returns false and GetLastError gives the error code.</returns>
         [DllImport(DLL, EntryPoint = "SFileCreateFile")]
-        public static extern bool SFileCreateFile(uint hMpq, string szArchivedName, ulong FileTime, uint dwFileSize, uint lcLocale, uint dwFlags, ref uint phFile);
+        public static extern bool SFileCreateFile(UInt64 hMpq, string szArchivedName, ulong FileTime, UInt64 dwFileSize, UInt64 lcLocale, UInt64 dwFlags, ref UInt64 phFile);
 
         /// <summary>
         ///         ''' Function SFileWriteFile writes data to the archive. The file must have been created by SFileCreateFile.
@@ -549,7 +551,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="dwCompression">Specifies the type of data compression that is to be applied to the data, in case the amount of the data will reach size of one file sector. For more information about the available compressions, see SFileAddFileEx.</param>
         ///         ''' <returns>When the function succeeds, it returns nonzero. On an error, the function returns false and GetLastError gives the error code.</returns>
         [DllImport(DLL, EntryPoint = "SFileWriteFile")]
-        public static extern bool SFileWriteFile(uint hMpq, IntPtr pvData, uint dwSize, uint dwCompression);
+        public static extern bool SFileWriteFile(UInt64 hMpq, IntPtr pvData, UInt64 dwSize, UInt64 dwCompression);
 
         /// <summary>
         ///         ''' Function SFileFinishFile finalized creation of the archived file. The file must have been created by SFileCreateFile.
@@ -557,7 +559,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="hFile">Handle to a new file within MPQ. This handle must have been obtained by calling SFileCreateFile.</param>
         ///         ''' <returns>When the function succeeds, it returns nonzero. On an error, the function returns false and GetLastError gives the error code.</returns>
         [DllImport(DLL, EntryPoint = "SFileFinishFile")]
-        public static extern bool SFileFinishFile(uint hFile);
+        public static extern bool SFileFinishFile(UInt64 hFile);
 
         /// <summary>
         ///         ''' Function SFileAddFileEx adds a file to the MPQ archive. The MPQ must have been open by SFileOpenArchive or created by SFileCreateArchive. Note that this operation might cause MPQ fragmentation. To reduce size of the MPQ, use SFileCompactArchive.
@@ -570,7 +572,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="dwCompressionNext">Compression method of rest of the file. This parameter optional and is ignored if MPQ_FILE_COMPRESS is not specified in dwFlags.</param>
         ///         ''' <returns>When the function succeeds, it returns nonzero. On an error, the function returns false and GetLastError gives the error code.</returns>
         [DllImport(DLL, EntryPoint = "SFileAddFileEx")]
-        public static extern bool SFileAddFileEx(uint hMpq, string szfileName, string szArchivedName, uint dwFlags, uint dwCompression, uint dwCompressionNext);
+        public static extern bool SFileAddFileEx(UInt64 hMpq, string szfileName, string szArchivedName, UInt64 dwFlags, UInt64 dwCompression, UInt64 dwCompressionNext);
 
         /// <summary>
         ///         ''' Function SFileAddFile adds a file to the MPQ archive. The MPQ must have been open by SFileOpenArchive or created by SFileCreateArchive. Note that this operation might cause MPQ fragmentation. To reduce size of the MPQ, use SFileCompactArchive.
@@ -581,7 +583,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="dwFlags">Specifies additional options about how to add the file to the MPQ. For more information about these flags, see SFileAddFileEx.</param>
         ///         ''' <returns>When the function succeeds, it returns nonzero. On an error, the function returns false and GetLastError gives the error code.</returns>
         [DllImport(DLL, EntryPoint = "SFileAddFile")]
-        public static extern bool SFileAddFile(uint hMpq, string szfileName, string szArchivedName, uint dwFlags);
+        public static extern bool SFileAddFile(UInt64 hMpq, string szfileName, string szArchivedName, UInt64 dwFlags);
 
         /// <summary>
         ///         ''' Function SFileAddWave adds a WAVE file to the MPQ archive. The MPQ must have been open by SFileOpenArchive or created by SFileCreateArchive. Note that this operation might cause MPQ fragmentation. To reduce size of the MPQ, use SFileCompactArchive. This function is obsolete. WAVE files should be stored the same way like normal data files.
@@ -593,7 +595,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="dwQuality">Specifies quality of WAVE compression. This parameter is ignored if MPQ_FILE_COMPRESS is not specified in dwFlags.</param>
         ///         ''' <returns>When the function succeeds, it returns nonzero. On an error, the function returns false and GetLastError gives the error code.</returns>
         [DllImport(DLL, EntryPoint = "SFileAddWave")]
-        public static extern bool SFileAddWave(uint hMpq, string szfileName, string szArchivedName, uint dwFlags, uint dwQuality);
+        public static extern bool SFileAddWave(UInt64 hMpq, string szfileName, string szArchivedName, UInt64 dwFlags, UInt64 dwQuality);
 
         /// <summary>
         ///         ''' Function SFileRemoveFile removes a file from MPQ. The MPQ must have been open by SFileOpenArchive or created by SFileCreateArchive. Note that this operation leaves a gap in the MPQ file. To reduce size of the MPQ, use SFileCompactArchive.
@@ -603,7 +605,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="dwSearchScope">This parameter is ignored in the current version of StormLib.</param>
         ///         ''' <returns>When the function succeeds, it returns nonzero. On an error, the function returns false and GetLastError gives the error code.</returns>
         [DllImport(DLL, EntryPoint = "SFileRemoveFile")]
-        public static extern bool SFileRemoveFile(uint hMpq, string szFileName, uint dwSearchScope);
+        public static extern bool SFileRemoveFile(UInt64 hMpq, string szFileName, UInt64 dwSearchScope);
 
         /// <summary>
         ///         ''' Function SFileRenameFile renames a file within MPQ. The MPQ must have been open by SFileOpenArchive or created by SFileCreateArchive. Note that this operation does not cause MPQ fragmentation and thus it is not necessary to compact the archive.
@@ -613,7 +615,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="szNewFileName">New name of the file.</param>
         ///         ''' <returns>When the function succeeds, it returns nonzero. On an error, the function returns false and GetLastError gives the error code.</returns>
         [DllImport(DLL, EntryPoint = "SFileRenameFile")]
-        public static extern bool SFileRenameFile(uint hMpq, string szOldFileName, string szNewFileName);
+        public static extern bool SFileRenameFile(UInt64 hMpq, string szOldFileName, string szNewFileName);
 
         /// <summary>
         ///         ''' Function SFileSetFileLocale sets new locale ID for an open file. The locale ID is changed in the block table of the MPQ. The MPQ must have been open by SFileOpenArchive or created by SFileCreateArchive. Note that this operation does not cause MPQ fragmentation and thus it is not necessary to compact the archive.
@@ -622,7 +624,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="lcNewLocale">New locale ID for the file. For more onformation about locales, see SFileSetLocale.</param>
         ///         ''' <returns>When the function succeeds, it returns nonzero. On an error, the function returns false and GetLastError gives the error code.</returns>
         [DllImport(DLL, EntryPoint = "SFileSetFileLocale")]
-        public static extern bool SFileSetFileLocale(uint hFile, uint lcNewLocale);
+        public static extern bool SFileSetFileLocale(UInt64 hFile, UInt64 lcNewLocale);
 
         /// <summary>
         ///         ''' Function SFileSetDataCompression configures compression mask for subsequent calls to SFileAddFile. The compression mask is remembered until changed.
@@ -630,7 +632,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="DataCompression">Bit mask of data compression.</param>
         ///         ''' <returns>When the function succeeds, it returns nonzero. On an error, the function returns false and GetLastError gives the error code.</returns>
         [DllImport(DLL, EntryPoint = "SFileSetDataCompression")]
-        public static extern bool SFileSetDataCompression(uint DataCompression);
+        public static extern bool SFileSetDataCompression(UInt64 DataCompression);
 
         /// <summary>
         ///         ''' Function SFileSetAddFileCallback sets a callback that will be called during operations performed by SFileAddFileEx. Registering a callback will help the calling application to show a progress about the operation, which enhances user experience with the application.
@@ -640,7 +642,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="pvUserData">User defined data that will be passed to the callback function.</param>
         ///         ''' <returns>The function never fails and always sets the callback.</returns>
         [DllImport(DLL, EntryPoint = "SFileSetAddFileCallback")]
-        public static extern bool SFileSetAddFileCallback(uint hMpq, SFILE_ADDFILE_CALLBACK pfnAddFileCB, IntPtr pvUserData);
+        public static extern bool SFileSetAddFileCallback(UInt64 hMpq, SFILE_ADDFILE_CALLBACK pfnAddFileCB, IntPtr pvUserData);
 
 
         // Compression functions
@@ -678,7 +680,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="nCmpLevel">An extra parameter, specific to compression type. This parameter is used by ADPCM compression and is related to WAVE quality. See Remarks section for additional information.</param>
         ///         ''' <returns>When the function succeeds, it returns nonzero. On an error, the function returns FALSE and GetLastError gives the error code.</returns>
         [DllImport(DLL, EntryPoint = "SCompCompress")]
-        public static extern int SCompCompress(IntPtr pvOutBuffer, ref int pcbOutBuffer, IntPtr pbInBuffer, int cbInBuffer, uint uCompressionMask, int nCmpType, int nCmpLevel);
+        public static extern int SCompCompress(IntPtr pvOutBuffer, ref int pcbOutBuffer, IntPtr pbInBuffer, int cbInBuffer, UInt64 uCompressionMask, int nCmpType, int nCmpLevel);
 
         /// <summary>
         ///         ''' SCompDecompress decompresses a data block compressed by SCompCompress.
@@ -700,7 +702,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="dwWorkType">Contains identifier of the work that is currently being done.</param>
         ///         ''' <param name="pBytesProcessed">Pointer to Int64, indicating what part of the archive has already been compacted.</param>
         ///         ''' <param name="pTotalBytes">Pointer to Int64, containing total number of bytes that has to be compacted.</param>
-        public delegate void SFILE_COMPACT_CALLBACK(IntPtr pvUserData, uint dwWorkType, ref Int64 pBytesProcessed, ref Int64 pTotalBytes);
+        public delegate void SFILE_COMPACT_CALLBACK(IntPtr pvUserData, UInt64 dwWorkType, ref Int64 pBytesProcessed, ref Int64 pTotalBytes);
 
         /// <summary>
         ///         ''' Callback function used by SFileSetAddFileCallback.
@@ -709,7 +711,7 @@ namespace UseMapEditor.FileData
         ///         ''' <param name="dwBytesWritten"> Contains number of bytes that has already been written to the MPQ.</param>
         ///         ''' <param name="dwTotalBytes">Contains total number of bytes to be written to the MPQ. It is the size of the file being added.</param>
         ///         ''' <param name="bFinalCall">If this parameter is true, it means that the operation is complete and succeeded. It also means that this is the last call to the callback function.</param>
-        public delegate void SFILE_ADDFILE_CALLBACK(IntPtr pvUserData, uint dwBytesWritten, uint dwTotalBytes, bool bFinalCall);
+        public delegate void SFILE_ADDFILE_CALLBACK(IntPtr pvUserData, UInt64 dwBytesWritten, UInt64 dwTotalBytes, bool bFinalCall);
 
         public struct SFILE_FIND_DATA
         {
@@ -724,35 +726,35 @@ namespace UseMapEditor.FileData
             /// <summary>
             ///             ''' Hash table index for the file
             ///             ''' </summary>
-            public uint dwHashIndex;
+            public UInt64 dwHashIndex;
             /// <summary>
             ///             ''' Block table index for the file
             ///             ''' </summary>
-            public uint dwBlockIndex;
+            public UInt64 dwBlockIndex;
             /// <summary>
             ///             ''' Uncompressed size of the file, in bytes
             ///             ''' </summary>
-            public uint dwFileSize;
+            public UInt64 dwFileSize;
             /// <summary>
             ///             ''' MPQ file flags
             ///             ''' </summary>
-            public uint dwFileFlags;
+            public UInt64 dwFileFlags;
             /// <summary>
             ///             ''' Compressed file size
             ///             ''' </summary>
-            public uint dwCompSize;
+            public UInt64 dwCompSize;
             /// <summary>
             ///             ''' Low 32-bits of the file time (0 if not present)
             ///             ''' </summary>
-            public uint dwFileTimeLo;
+            public UInt64 dwFileTimeLo;
             /// <summary>
             ///             ''' High 32-bits of the file time (0 if not present)
             ///             ''' </summary>
-            public uint dwFileTimeHi;
+            public UInt64 dwFileTimeHi;
             /// <summary>
             ///             ''' Locale version
             ///             ''' </summary>
-            public uint lcLocale;
+            public UInt64 lcLocale;
         }
     }
 }

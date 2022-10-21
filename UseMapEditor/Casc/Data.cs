@@ -68,7 +68,8 @@ namespace UseMapEditor.Casc
             BinaryReader bytereader = new BinaryReader(memstream);
             byte[] Buffer = new byte[1025];
 
-            CascLib.CascOpenFile(hStorage, Hash, 0, 0x1, ref hfile);
+            //CascLib.CascOpenFile(hStorage, Hash, 0, 0x1, ref hfile);
+            CascLib.CascOpenFile(hStorage, Hash, 0, 0, ref hfile);
 
             while ((true))
             {
@@ -115,7 +116,13 @@ namespace UseMapEditor.Casc
 
             BinaryWriter bytewriter = new BinaryWriter(memstream);
 
-            CascLib.CascOpenFile(hStorage, Hash, 0, 0x1, ref hfile);
+            bool r = CascLib.CascOpenFile(hStorage, Hash, 0, 0, ref hfile);
+
+
+            if (hfile.ToInt64() == 0)
+            {
+                throw new Exception(filename + " 파일을 열 수 없었습니다.");
+            }
 
             while ((true))
             {

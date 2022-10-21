@@ -215,7 +215,7 @@ namespace UseMapEditor
                 mapEditorGrid.Children.Add(mapeditor);
                 startpage.Visibility = Visibility.Collapsed;
                 Global.WindowTool.AddLastOpenFile(mapname);
-                this.WindowState = WindowState.Maximized;
+                //this.WindowState = WindowState.Maximized;
             }
             SetWindowName();
             return result;

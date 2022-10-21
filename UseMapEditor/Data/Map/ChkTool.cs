@@ -818,7 +818,7 @@ namespace Data.Map
 
 
             //soundDatas
-            uint hmpq = OpenArchive();
+            ulong hmpq = OpenArchive();
             soundDatas.Clear();
             for (int i = 0; i < WAV.Length; i++)
             {

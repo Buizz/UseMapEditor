@@ -39,7 +39,7 @@ namespace Data.Map
                 }
             }
 
-            uint hmpq = 0;
+            ulong hmpq = 0;
 
 
             if (!File.Exists(_filepath))

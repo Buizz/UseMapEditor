@@ -8,7 +8,9 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Windows;
+using UseMapEditor.Control;
 using UseMapEditor.FileData;
 using UseMapEditor.Tools;
 using WpfTest.Components;
@@ -52,15 +54,23 @@ namespace UseMapEditor.MonoGameControl
             _mouse = new WpfMouse(this);
 
 
+
             //Components.Add(new FpsComponent(this));
 
             // must be called after the WpfGraphicsDeviceService instance was created
             base.Initialize();
 
+            GraphicsDevice.PresentationParameters.IsFullScreen = true;
+            GraphicsDevice.PresentationParameters.HardwareModeSwitch = true;
+            GraphicsDevice.PresentationParameters.BackBufferWidth = GraphicsDevice.DisplayMode.Width;
+            GraphicsDevice.PresentationParameters.BackBufferHeight = GraphicsDevice.DisplayMode.Height;
+
+
+
 
             string gridcolorstr = Global.Setting.Vals[Global.Setting.Settings.Program_GridColor];
             uint gridcolorcode;
-            if (uint.TryParse(gridcolorstr ,out gridcolorcode))
+            if (uint.TryParse(gridcolorstr, out gridcolorcode))
             {
                 GridColor = new Color(gridcolorcode);
             }
@@ -127,7 +137,7 @@ namespace UseMapEditor.MonoGameControl
             _locationfont = fontBakeResult.CreateSpriteFont(GraphicsDevice);
 
             gridtexture = new Texture2D(GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
-            gridtexture.SetData(new[] {Color.White});
+            gridtexture.SetData(new[] { Color.White });
 
 
 
@@ -266,7 +276,7 @@ namespace UseMapEditor.MonoGameControl
 
             if (mouseState.ScrollWheelValue != LastScroll)
             {
-                if((LastScroll - mouseState.ScrollWheelValue) > 0)
+                if ((LastScroll - mouseState.ScrollWheelValue) > 0)
                 {
                     mapeditor.ScaleDown(MousePos);
                 }
@@ -346,7 +356,7 @@ namespace UseMapEditor.MonoGameControl
                         //    this.IsEnabled = true;
                         //}), System.Windows.Threading.DispatcherPriority.Normal);
                     }
-                  
+
 
                 }
             }
@@ -379,7 +389,23 @@ namespace UseMapEditor.MonoGameControl
         double updateTick;
         double drawTick = 0;
 
-        int droptimer = 0;
+        //private List<scaleframe> scals = new List<scaleframe>();
+        //private class scaleframe
+        //{
+        //    public int scale;
+        //    public int frame;
+
+        //    public scaleframe(int scale, int frame)
+        //    {
+        //        this.scale = scale;
+        //        this.frame = frame;
+        //    }
+        //}
+
+
+        double period = 0.05;
+        double startline = 0.5;
+
         KalmanFilter framefilter = new KalmanFilter(1, 1, 0.125, 1, 0.1, 0);
         protected override void Draw(GameTime time)
         {
@@ -393,85 +419,111 @@ namespace UseMapEditor.MonoGameControl
             }
 
             int.TryParse(Global.Setting.Vals[Global.Setting.Settings.Render_MaxFrame], out MaxFrame);
+            if (MaxFrame == 0)
+            {
+                MaxFrame = 60;
+            }
 
+            ////현재 프레임 기록
+            double scale = mapeditor.opt_scalepercent;
+
+
+            //비율 0.05
 
 
             double minTick = 1f / MaxFrame * 10000000;
             //프레임이 원하는 만큼 나오지 않을 경우
             if (Global.Setting.Vals[Global.Setting.Settings.Render_UseVFR] == "true")
             {
-                TimeSpan gab = time.TotalGameTime - _LastDrawTime;
-                _LastDrawTime = time.TotalGameTime;
+                double countedFrame = MaxFrame;// scaleframe[scale] * 0.1);// scaleframe[scale] - 5);
 
-                drawTick = framefilter.Output(gab.Ticks);
+                if (scale <= startline)
+                {
+                    countedFrame = MaxFrame * ((scale - period) / startline - period);
+                }
 
-                ////_frames == 현재 프레임
-                //if(MaxFrame > _frames + 4)
+
+
+                minTick = 1f / countedFrame * 10000000;
+
+
+
+                //TimeSpan gab = time.TotalGameTime - _LastDrawTime;
+                //_LastDrawTime = time.TotalGameTime;
+
+                //drawTick = framefilter.Output(gab.Ticks);
+
+                //////_frames == 현재 프레임
+                ////if(MaxFrame > _frames + 4)
+                ////{
+                ////    //프레임 드랍 발생
+
+                ////    if (VarFrame > _frames + 4)
+                ////    {
+                ////        //가변 프레임에서도 드랍발생
+                ////        VarFrame = _frames - 5;
+                ////    }
+                ////    else
+                ////    {
+                ////        //가변 프레임에서는 멀쩡
+                ////        if(VarFrame < 4)
+                ////        {
+                ////            VarFrame = 4;
+                ////        }
+                ////        VarFrame += 1;
+                ////    }
+
+
+                ////    updateTime = 1f / VarFrame;
+                ////}
+                ////else
+                ////{
+                ////    //발생안함.
+                ////    updateTime = 1f / MaxFrame;
+                ////}
+
+
+                //if(updateTick < (drawTick * 2))
                 //{
-                //    //프레임 드랍 발생
-
-                //    if (VarFrame > _frames + 4)
+                //    //프레임 드랍
+                //    if(drawTick <= 167000)
                 //    {
-                //        //가변 프레임에서도 드랍발생
-                //        VarFrame = _frames - 5;
+                //        if (droptimer > 400)
+                //        {
+                //            updateTick *= 0.995;//;
+                //        }
+                //        else
+                //        {
+                //            droptimer += 1;
+                //        }
+
                 //    }
                 //    else
                 //    {
-                //        //가변 프레임에서는 멀쩡
-                //        if(VarFrame < 4)
-                //        {
-                //            VarFrame = 4;
-                //        }
-                //        VarFrame += 1;
+                //        droptimer = 0;
+                //        updateTick = drawTick * 2;//10 ms추가;
                 //    }
-
-
-                //    updateTime = 1f / VarFrame;
                 //}
                 //else
                 //{
-                //    //발생안함.
-                //    updateTime = 1f / MaxFrame;
+                //    //프레임 정상화
+                //    if(drawTick * 3 < updateTick)
+                //    {
+                //        updateTick = drawTick * 3;
+                //    }
+                //    updateTick *= 0.995;//;
                 //}
 
-
-                if(updateTick < (drawTick * 2))
-                {
-                    //프레임 드랍
-                    if(drawTick <= 167000)
-                    {
-                        if (droptimer > 400)
-                        {
-                            updateTick *= 0.995;//;
-                        }
-                        else
-                        {
-                            droptimer += 1;
-                        }
-
-                    }
-                    else
-                    {
-                        droptimer = 0;
-                        updateTick = drawTick * 2;//10 ms추가;
-                    }
-                }
-                else
-                {
-                    //프레임 정상화
-                    if(drawTick * 3 < updateTick)
-                    {
-                        updateTick = drawTick * 3;
-                    }
-                    updateTick *= 0.995;//;
-                }
-
-                if (updateTick < minTick)
-                {
-                    updateTick = minTick;
-                }
+                //if (updateTick < minTick)
+                //{
+                //    updateTick = minTick;
+                //}
 
                 //updateTick = drawTick + 100000;//1f / MaxFrame;
+
+
+
+                updateTick = minTick;
             }
             else
             {
@@ -548,7 +600,7 @@ namespace UseMapEditor.MonoGameControl
 
             _liveFrames++;
             //TODO 시스템드로우
-            if(mapeditor.opt_sysdraw)
+            if (mapeditor.opt_sysdraw)
                 SystemDraw();
 
             base.Draw(time);
@@ -560,7 +612,7 @@ namespace UseMapEditor.MonoGameControl
             //_spriteBatch.DrawString(_font, mapeditor.mapdata.FilePath, new Vector2(5), Color.White);
             //string status = "화면 좌표(" + mapeditor.opt_xpos.ToString() + "," + mapeditor.opt_ypos.ToString() + ")" + " 마우스좌표(" + MousePos.X.ToString() + "," + MousePos.Y.ToString() + ")" +
             //    "T(" + mapeditor.PosScreenToMap(MousePos).ToString() + ")";
-            string status = "FPS:" + _frames + " 드로우타임 : " + Math.Floor(drawTick / 10000)  + " 업데이트타임 : " + Math.Floor(updateTick / 10000) + "\n";
+            string status = "FPS:" + _frames + " 드로우타임 : " + Math.Floor(drawTick / 10000) + " 업데이트타임 : " + Math.Floor(updateTick / 10000) + "\n";
 
             status += mapeditor.mapdata.FilePath + "\n";
             status += mapeditor.mapdata.TILETYPE.ToString() + ":";
