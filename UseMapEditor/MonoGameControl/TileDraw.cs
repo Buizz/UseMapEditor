@@ -401,6 +401,7 @@ namespace UseMapEditor.MonoGameControl
                     {
                         ushort megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, MTXM);
                         Texture2D texture2D = tileSet.GetMegaTileGrp(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, megaindex);
+
                         //Texture2D texture2D = tileSet.GetTile(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, MTXM);
                         switch (mapeditor.opt_drawType)
                         {
