@@ -10,6 +10,8 @@ using System.Text;
 using System.Threading.Tasks;
 using UseMapEditor.Control;
 using UseMapEditor.FileData;
+using UseMapEditor.Global;
+using UseMapEditor.MonoGameControl;
 using UseMapEditor.Task;
 
 namespace Data.Map
@@ -59,7 +61,11 @@ namespace Data.Map
 
 
             UNIT.Remove(cUNIT);
-            mapEditor.MinimapUnitRefresh();
+
+            WindowTool.MapViewer.miniUnitUpdate(cUNIT, true);
+            mapEditor.ChangeMiniMap = true;
+
+            mapEditor.MinimapUnitInitRefresh();
             mapEditor.IndexedUnitCancel();
         }
 
@@ -237,9 +243,14 @@ namespace Data.Map
 
 
             UNIT.Add(cUNIT);
-            mapEditor.MinimapUnitRefresh();
+            //mapEditor.MinimapUnitRefresh();
+
+            WindowTool.MapViewer.miniUnitUpdate(cUNIT);
+            mapEditor.ChangeMiniMap = true;
+
             mapEditor.IndexedUnitCancel();
         }
+
 
 
 

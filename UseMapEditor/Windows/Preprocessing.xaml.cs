@@ -102,7 +102,7 @@ namespace UseMapEditor.Windows
             System.IO.File.WriteAllBytes(currentPath, bytes);
         }
 
-        private bool SaveToAnim(byte[] bytes, string filename, int img = -1)
+        private bool SaveFromAnim(byte[] bytes, string filename, int img = -1)
         {
             string[] paths = filename.Split('/');
 
@@ -126,6 +126,29 @@ namespace UseMapEditor.Windows
 
             return FileData.Anim.ReadAnim(bytes, savePath, img);
             //System.IO.File.WriteAllBytes(currentPath, bytes);
+        }
+
+        private void SaveFromTile(byte[] bytes, string filename)
+        {
+            string[] paths = filename.Split('/');
+
+
+
+            string currentPath = AppDomain.CurrentDomain.BaseDirectory + @"\CascData";
+            string savePath = AppDomain.CurrentDomain.BaseDirectory + @"CascData\" + filename.Replace("/", "\\");
+
+
+            foreach (string t in paths)
+            {
+                if (!System.IO.Directory.Exists(currentPath))
+                {
+                    System.IO.Directory.CreateDirectory(currentPath);
+                }
+                currentPath = currentPath + "\\" + t;
+            }
+
+
+            FileData.TileSet.ReadTile(bytes, savePath);
         }
 
 
@@ -276,7 +299,7 @@ namespace UseMapEditor.Windows
 
 
             SaveToDdsgrp(data.ReadFileCascStorage("SD/unit/cmdicons/cmdicons.dds.grp"), @"cmdicons/");
-            SaveToAnim(data.ReadFileCascStorage("SD/mainSD.anim"), @"SD/anim/");
+            SaveFromAnim(data.ReadFileCascStorage("SD/mainSD.anim"), @"SD/anim/");
             worker.ReportProgress(percent++);
 
             byte[] ExistFlag = new byte[999];
@@ -288,7 +311,7 @@ namespace UseMapEditor.Windows
 
                     string tname = $"HD/anim/" + i + "/";
 
-                    bool exist = SaveToAnim(data.ReadFileCascStorage(fname), tname, i);
+                    bool exist = SaveFromAnim(data.ReadFileCascStorage(fname), tname, i);
                     if (exist)
                     {
                         ExistFlag[i] = 1;
@@ -302,7 +325,7 @@ namespace UseMapEditor.Windows
                     string fname = $"HD2/anim/Carbot/main_{num}.anim";
 
                     string tname = $"CB/anim/" + i + "/";
-                    SaveToAnim(data.ReadFileCascStorage(fname), tname, i);
+                    SaveFromAnim(data.ReadFileCascStorage(fname), tname, i);
                 }
                 worker.ReportProgress(percent++);
             }
@@ -316,17 +339,23 @@ namespace UseMapEditor.Windows
             {
                 {
                     string fname = $"SD/TileSet/{tile}.dds.vr4";
-                    SaveToFile(data.ReadFileCascStorage(fname), fname);
+                    //SaveToFile(data.ReadFileCascStorage(fname), fname);
+                    SaveFromTile(data.ReadFileCascStorage(fname), fname + ".png");
+                    BMP.ImageSizeChange(fname + ".png", fname + "s.png", TileSet.miniScale);
                 }
                 {
                     string fname = $"HD2/TileSet/{tile}.dds.vr4";
                     string tname = $"HD/TileSet/{tile}.dds.vr4";
-                    SaveToFile(data.ReadFileCascStorage(fname), tname);
+                    //SaveToFile(data.ReadFileCascStorage(fname), tname);
+                    SaveFromTile(data.ReadFileCascStorage(fname), tname + ".png");
+                    BMP.ImageSizeChange(tname + ".png", tname + "s.png", TileSet.miniScale);
                 }
                 {
                     string fname = $"HD2/Carbot/TileSet/{tile}.dds.vr4";
                     string tname = $"CB/TileSet/{tile}.dds.vr4";
-                    SaveToFile(data.ReadFileCascStorage(fname), tname);
+                    //SaveToFile(data.ReadFileCascStorage(fname), tname);
+                    SaveFromTile(data.ReadFileCascStorage(fname), tname + ".png");
+                    BMP.ImageSizeChange(tname + ".png", tname + "s.png", TileSet.miniScale);
                 }
                 worker.ReportProgress(percent++);
 

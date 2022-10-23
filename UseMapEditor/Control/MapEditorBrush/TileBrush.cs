@@ -64,19 +64,15 @@ namespace UseMapEditor.Control
         public bool TileAllMouseDown;
 
 
-
-
-
-
         public TileSetBrushMode tile_BrushMode;
 
 
+        public int TileMouseStartXIndex;
+        public int TileMouseStartYIndex;
+        public int TileMouseStartY;
 
-        private int _TileScrollStart;
-        private int TileMouseStartY;
 
-
-
+        
         private void Tile_All_Pallet_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             if(e.LeftButton == MouseButtonState.Pressed)
@@ -85,8 +81,12 @@ namespace UseMapEditor.Control
 
                 if (!TileAllMouseDown)
                 {
+                    TileMouseStartXIndex = (int)e.GetPosition(Tile_All_Pallet).X / 25;
+                    TileMouseStartYIndex = (int)e.GetPosition(Tile_All_Pallet).Y / 25 + (int)TileScroll.Value / 30;
+
+
                     TileMouseStartY = (int)e.GetPosition(Tile_All_Pallet).Y;
-                    _TileScrollStart = (int)TileScroll.Value;
+
                 }
                 TileAllMouseDown = true;
             }

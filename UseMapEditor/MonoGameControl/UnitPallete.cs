@@ -143,6 +143,7 @@ namespace UseMapEditor.MonoGameControl
                                 _cUNIT.X = (ushort)mappos.X;
                                 _cUNIT.Y = (ushort)mappos.Y;
 
+                                cUNIT.ImageReset();
                                 mapeditor.mapdata.UNITListAdd(_cUNIT);
                                 //mapeditor.mapdata.UNIT.Add(_cUNIT);
 
@@ -220,9 +221,9 @@ namespace UseMapEditor.MonoGameControl
                             cUNIT.player = (byte)playerid;
 
 
+                            cUNIT.ImageReset();
                             mapeditor.mapdata.UNITListAdd(cUNIT);
                             //mapeditor.mapdata.UNIT.Add(cUNIT);
-                            cUNIT.ImageReset();
 
                             mapeditor.taskManager.TaskAdd(new UnitEvent(mapeditor, cUNIT, true));
                         }

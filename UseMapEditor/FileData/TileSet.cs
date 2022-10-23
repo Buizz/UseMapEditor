@@ -1,7 +1,9 @@
 ﻿using Microsoft.Office.Interop.Excel;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NAudio.SoundFont;
 using Pfim;
+using SharpDX.Direct2D1;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,13 +11,19 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using UseMapEditor.Casc;
 using UseMapEditor.Control;
 using UseMapEditor.MonoGameControl;
+using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace UseMapEditor.FileData
 {
     public class TileSet
     {
+        public static double compScale = 0.5;
+        public static double miniScale = 0.125;
+
+
         private Dictionary<FileData.TileSet.TileType, List<Texture2D>> SDTileSet;
         private Dictionary<FileData.TileSet.TileType, List<Texture2D>> HDTileSet;
         private Dictionary<FileData.TileSet.TileType, List<Texture2D>> CBTileSet;
@@ -31,6 +39,76 @@ namespace UseMapEditor.FileData
                     return CBTileSet;
             }
             return null;
+        }
+        public Dictionary<FileData.TileSet.TileType, AtlasTileSet> GetTileAltasDic(Control.MapEditor.DrawType drawType)
+        {
+            switch (drawType)
+            {
+                case Control.MapEditor.DrawType.SD:
+                    return SDAtlasTileSet;
+                case Control.MapEditor.DrawType.HD:
+                    return HDtlasTileSet;
+                case Control.MapEditor.DrawType.CB:
+                    return CBtlasTileSet;
+            }
+            return null;
+        }
+
+
+        private Dictionary<FileData.TileSet.TileType, AtlasTileSet> SDAtlasTileSet;
+        private Dictionary<FileData.TileSet.TileType, AtlasTileSet> HDtlasTileSet;
+        private Dictionary<FileData.TileSet.TileType, AtlasTileSet> CBtlasTileSet;
+        public class AtlasTileSet
+        {
+            public Texture2D texture2D;
+            public Texture2D smalltexture2D;
+
+            public Texture2D GetTexture(double scale)
+            {
+                if(compScale > scale)
+                {
+                    return smalltexture2D;
+                }
+                else
+                {
+                    return texture2D;
+                }
+            }
+
+            public double GetCompScale(double scale)
+            {
+                if (compScale > scale)
+                {
+                    return 1/ miniScale;
+                }
+                else
+                {
+                    return 1;
+                }
+            }
+
+
+            public int framesize;
+            public int length;
+
+            public void SetSize(int area)
+            {
+                length = (int) Math.Ceiling(Math.Sqrt(area));
+            }
+
+            public Rectangle GetRect(int c, double scale = 1)
+            {
+                int x = c % length;
+                int y = c / length;
+                int tframesize = framesize;
+
+                if (compScale > scale)
+                {
+                    tframesize = (int)(tframesize * miniScale);
+                }
+
+                return new Rectangle(x * tframesize, y * tframesize, tframesize, tframesize);
+            }
         }
 
 
@@ -151,6 +229,10 @@ namespace UseMapEditor.FileData
             HDTileSet = new Dictionary<TileType, List<Texture2D>>();
             CBTileSet = new Dictionary<TileType, List<Texture2D>>();
 
+            SDAtlasTileSet = new Dictionary<TileType, AtlasTileSet>();
+            HDtlasTileSet = new Dictionary<TileType, AtlasTileSet>();
+            CBtlasTileSet = new Dictionary<TileType, AtlasTileSet>();
+
             SDTileSetMiniMap = new Dictionary<TileType, List<Color>>();
             HDTileSetMiniMap = new Dictionary<TileType, List<Color>>();
             CBTileSetMiniMap = new Dictionary<TileType, List<Color>>();
@@ -160,7 +242,10 @@ namespace UseMapEditor.FileData
                     List<Texture2D> texture2Ds = new List<Texture2D>();
                     List<Color> colrlist = new List<Color>();
 
-                    ReadTile(mapDrawer, settings, "SD", texture2Ds, colrlist);
+                    //ReadTile(mapDrawer, settings, "SD", texture2Ds, colrlist);
+
+                    SDAtlasTileSet.Add(settings, ReadTileAltas(mapDrawer, settings, "SD", colrlist));
+
                     SDTileSetMiniMap.Add(settings, colrlist);
                     SDTileSet.Add(settings, texture2Ds);
                 }
@@ -168,7 +253,9 @@ namespace UseMapEditor.FileData
                     List<Texture2D> texture2Ds = new List<Texture2D>();
                     List<Color> colrlist = new List<Color>();
 
-                    ReadTile(mapDrawer, settings, "HD", texture2Ds, colrlist);
+                    //ReadTile(mapDrawer, settings, "HD", texture2Ds, colrlist);
+
+                    HDtlasTileSet.Add(settings, ReadTileAltas(mapDrawer, settings, "HD", colrlist));
 
                     HDTileSetMiniMap.Add(settings, colrlist);
                     HDTileSet.Add(settings, texture2Ds);
@@ -177,7 +264,9 @@ namespace UseMapEditor.FileData
                     List<Texture2D> texture2Ds = new List<Texture2D>();
                     List<Color> colrlist = new List<Color>();
 
-                    ReadTile(mapDrawer, settings, "CB", texture2Ds, colrlist);
+                    //ReadTile(mapDrawer, settings, "CB", texture2Ds, colrlist);
+
+                    CBtlasTileSet.Add(settings, ReadTileAltas(mapDrawer, settings, "CB", colrlist));
 
                     CBTileSetMiniMap.Add(settings, colrlist);
                     CBTileSet.Add(settings, texture2Ds);
@@ -571,10 +660,34 @@ namespace UseMapEditor.FileData
 
             return t[group].tiles[index];
         }
+
+
+        public int GetMegaTileIndex(Control.MapEditor.DrawType drawType, TileType tileType, ushort group, ushort index)
+        {
+            var t = cv5data[tileType];
+            if (t.Length <= group)
+            {
+                return 0;
+            }
+            if (t[group].Index >= 256)
+            {
+                return 0;
+            }
+
+            return t[group].tiles[index];
+        }
+
+
         public Texture2D GetMegaTileGrp(Control.MapEditor.DrawType drawType, TileType tileType, ushort megatileindex)
         {
             return GetTileDic(drawType)[tileType][megatileindex];
         }
+        public AtlasTileSet GetAtlasTileSetTexture(Control.MapEditor.DrawType drawType, TileType tileType)
+        {
+            return GetTileAltasDic(drawType)[tileType];
+        }
+
+
         public cv5 GetCV5(Control.MapEditor.DrawType drawType, TileType tileType, ushort MTXM)
         {
             int group = (MTXM >> 4);
@@ -628,8 +741,6 @@ namespace UseMapEditor.FileData
 
 
 
-
-
         public bool IsBlack(TileType tileType, ushort group, ushort index)
         {
             return (cv5data[tileType][group].tiles[index] == 0);
@@ -658,27 +769,56 @@ namespace UseMapEditor.FileData
 
 
 
-        private void ReadTile(MapDrawer mapDrawer, TileType tileType, string _fname, List<Texture2D> texture2Ds, List<Color> MiniMapColor)
+        /// <summary>
+        /// 타일을 읽어서 png파일로 만듭니다.
+        /// </summary>
+        /// <returns></returns>
+        public static bool ReadTile(byte[] bytes, string filename)
         {
-            string fname = AppDomain.CurrentDomain.BaseDirectory + $"CascData\\{_fname}\\TileSet\\{tileType.ToString()}.dds.vr4";
+            System.Drawing.Bitmap bitmap = null;
 
-            BinaryReader br = new BinaryReader(new MemoryStream(File.ReadAllBytes(fname)));
-
+            BinaryReader br = new BinaryReader(new MemoryStream(bytes));
 
             uint filesize = br.ReadUInt32();
             ushort frame = br.ReadUInt16(); //count
             ushort unknown = br.ReadUInt16();// (file version ?); -- value appears to always be 0x1001 in the files I've seen.
 
+
+            AtlasTileSet atlasTileSet = new AtlasTileSet();
+
+            atlasTileSet.SetSize(frame);
             if (unknown == 0x1011)
             {
+                atlasTileSet.framesize = 32;
+
+                int texturewidth = atlasTileSet.framesize * atlasTileSet.length;
+                bitmap = new System.Drawing.Bitmap(texturewidth, texturewidth);
+                System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bitmap);
+
                 //SD
                 ushort width = br.ReadUInt16();
                 ushort height = br.ReadUInt16();
 
-                uint[] pallet = new uint[400];
+
+                //uint[] pallet = new uint[400];
+                byte[] pallet = new byte[1024];
+
+
                 for (int i = 0; i < 256; i++)
                 {
-                    pallet[i] = br.ReadUInt32() + 0xFF000000;
+                    byte R, G, B, A;
+
+                    B = br.ReadByte();
+                    G = br.ReadByte();
+                    R = br.ReadByte();
+                    br.ReadByte();
+                    A = 255;
+
+
+                    pallet[i * 4 + 0] = R;
+                    pallet[i * 4 + 1] = G;
+                    pallet[i * 4 + 2] = B;
+                    pallet[i * 4 + 3] = A;
                 }
 
 
@@ -687,26 +827,49 @@ namespace UseMapEditor.FileData
                 {
                     uint[] textureData = new uint[1024];
 
-                    for (int p = 0; p < 1024; p++)
-                    {
-                        byte index = br.ReadByte();
 
-                        textureData[p] = pallet[index];
-                    }
+                    //Texture2D texture = new Texture2D(mapDrawer.GraphicsDevice, 32, 32, false, SurfaceFormat.Color);
+                    //texture.SetData(0, atlasTileSet.GetRect(i), textureData, 0, 1024);
 
 
-                    Texture2D texture = new Texture2D(mapDrawer.GraphicsDevice, 32, 32, false, SurfaceFormat.Color);
-                    texture.SetData(textureData, 0, 1024);
+                    BinaryWriter bitmapstream = new BinaryWriter(new MemoryStream());
+                    bitmapstream.Write(FileData.BMP.bmpheader);
+                    bitmapstream.Write(br.ReadBytes(1024));
 
-                    MiniMapColor.Add(new Color(textureData[0]));
-                    texture2Ds.Add(texture);
+                    bitmapstream.BaseStream.Position = 0x2;
+                    bitmapstream.Write((uint)bitmapstream.BaseStream.Length);
+
+                    bitmapstream.BaseStream.Position = 0x12;
+                    bitmapstream.Write((int)32);
+                    bitmapstream.Write((int)32);
+
+                    bitmapstream.BaseStream.Position = FileData.BMP.palletstart;
+                    bitmapstream.Write(pallet);
+
+
+
+                    var tbitmap = new System.Drawing.Bitmap(bitmapstream.BaseStream);
+
+
+                    bitmapstream.Close();
+
+
+
+                    g.DrawImage(tbitmap, atlasTileSet.GetRect(i).X, atlasTileSet.GetRect(i).Y);
                 }
             }
-            else if(unknown == 0x1002)
+            else if (unknown == 0x1002)
             {
+                atlasTileSet.framesize = 64;
+
+                int texturewidth = atlasTileSet.framesize * atlasTileSet.length;
+                bitmap = new System.Drawing.Bitmap(texturewidth, texturewidth);
+                System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bitmap);
                 //HD2
                 for (int i = 0; i < frame; i++)
-                {            //File Entry:
+                {
+                    //File Entry:
+
                     uint unk = br.ReadUInt32(); // --always zero ?
                     ushort width = br.ReadUInt16();
                     ushort height = br.ReadUInt16();
@@ -717,17 +880,120 @@ namespace UseMapEditor.FileData
                     byte[] textureData = br.ReadBytes((int)size);
 
                     int dxtHeaderOffset = 0x80;
-                    Texture2D texture = new Texture2D(mapDrawer.GraphicsDevice, width, height, false, SurfaceFormat.Dxt1);
-                    texture.SetData(textureData, dxtHeaderOffset, textureData.Length - dxtHeaderOffset);
+                    //Texture2D texture = new Texture2D(mapDrawer.GraphicsDevice, width, height, false, SurfaceFormat.Dxt1);
+                    //texture.SetData(0, atlasTileSet.GetRect(i), textureData, dxtHeaderOffset, textureData.Length - dxtHeaderOffset);
 
 
-                    MiniMapColor.Add(Dxt1.DecompressBlock(8,8, width, textureData));
-                    texture2Ds.Add(texture);
+                    using (var image = Pfim.Pfim.FromStream(new MemoryStream(textureData)))
+                    {
+                        System.Drawing.Imaging.PixelFormat format;
+
+                        // Convert from Pfim's backend agnostic image format into GDI+'s image format
+                        switch (image.Format)
+                        {
+                            case ImageFormat.Rgba32:
+                                format = System.Drawing.Imaging.PixelFormat.Format32bppArgb;
+                                break;
+                            case ImageFormat.Rgb24:
+                                format = System.Drawing.Imaging.PixelFormat.Format24bppRgb;
+                                break;
+                            default:
+                                // see the sample for more details
+                                throw new NotImplementedException();
+                        }
+
+                        // Pin pfim's data array so that it doesn't get reaped by GC, unnecessary
+                        // in this snippet but useful technique if the data was going to be used in
+                        // control like a picture box
+                        var handle = GCHandle.Alloc(image.Data, GCHandleType.Pinned);
+                        try
+                        {
+                            var data = Marshal.UnsafeAddrOfPinnedArrayElement(image.Data, 0);
+                            var tbitmap = new System.Drawing.Bitmap(image.Width, image.Height, image.Stride, format, data);
+
+                            g.DrawImage(tbitmap, atlasTileSet.GetRect(i).X, atlasTileSet.GetRect(i).Y);
+                        }
+                        finally
+                        {
+                            handle.Free();
+                        }
+                    }
+
+
                 }
+            }
+            br.Close();
+            
+            bitmap.Save(filename, System.Drawing.Imaging.ImageFormat.Png);
+
+            return true;
+        }
+
+
+
+
+        private AtlasTileSet ReadTileAltas(MapDrawer mapDrawer, TileType tileType, string _fname, List<Color> MiniMapColor)
+        {
+            AtlasTileSet atlasTileSet = new AtlasTileSet();
+
+            {
+                string fname = AppDomain.CurrentDomain.BaseDirectory + $"CascData\\{_fname}\\TileSet\\{tileType.ToString()}.dds.vr4.png";
+
+                Texture2D texture = mapDrawer.LoadFromFile(fname);
+                atlasTileSet.texture2D = texture;
+
+                if (_fname == "SD")
+                {
+                    atlasTileSet.framesize = 32;
+                }
+                else
+                {
+                    atlasTileSet.framesize = 64;
+                }
+
+                atlasTileSet.length = texture.Width / atlasTileSet.framesize;
+
+                System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(fname);
+
+                
+                for (int x = 0; x < atlasTileSet.length; x++)
+                {
+                    for (int y = 0; y < atlasTileSet.length; y++)
+                    {
+                        int r = 0;
+                        int g = 0;
+                        int b = 0;
+
+                        int count = 0;
+                        for (int x1 = 0; x1 < 2; x1++)
+                        {
+                            for (int y1 = 0; y1 < 2; y1++)
+                            {
+                                System.Drawing.Color c = bmp.GetPixel(x * atlasTileSet.framesize + x1 + atlasTileSet.framesize / 4, y * atlasTileSet.framesize  + y1 + atlasTileSet.framesize / 4);
+                                r += c.R;
+                                g += c.G;
+                                b += c.B;
+                                count++;
+                            }
+                        }
+
+                        MiniMapColor.Add(new Color(r / count, g / count, b / count));
+                    }
+                }
+
+                bmp.Dispose();
+            }
+            {
+                string fname = AppDomain.CurrentDomain.BaseDirectory + $"CascData\\{_fname}\\TileSet\\{tileType.ToString()}.dds.vr4s.png";
+
+                Texture2D texture = mapDrawer.LoadFromFile(fname);
+                atlasTileSet.smalltexture2D = texture;
             }
 
 
-            br.Close();
+
+
+            return atlasTileSet;
         }
     }
 }

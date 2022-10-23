@@ -257,7 +257,7 @@ namespace UseMapEditor.MonoGameControl
             mapeditor.minimapcolor[x + y * 256] = tileSet.GetTileColor(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, MTXM);
             //mapeditor.miniampUnit[x + y * 256] = Color.Transparent;
         }
-        public void miniUnitUpdate(CUNIT cUNIT)
+        public void miniUnitUpdate(CUNIT cUNIT, bool IsDelete = false)
         {
             int w = cUNIT.BoxWidth;
             int h = cUNIT.BoxHeight;
@@ -276,8 +276,15 @@ namespace UseMapEditor.MonoGameControl
                     mx = Math.Min(255, mx);
                     my = Math.Min(255, my);
 
+                    if (IsDelete)
+                    {
+                        mapeditor.miniampUnit[mx + my * 256] = new Microsoft.Xna.Framework.Color();
+                    }
+                    else
+                    {
+                        mapeditor.miniampUnit[mx + my * 256] = mapeditor.mapdata.UnitColor(cUNIT.player);
 
-                    mapeditor.miniampUnit[mx + my * 256] = mapeditor.mapdata.UnitColor(cUNIT.player);
+                    }
                 }
             }
         }

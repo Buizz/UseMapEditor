@@ -502,7 +502,7 @@ namespace UseMapEditor.Control
 
             if (_player != null)
             {
-                MinimapUnitRefresh();
+                MinimapUnitInitRefresh();
             }
         }
 

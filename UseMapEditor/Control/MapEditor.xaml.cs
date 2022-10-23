@@ -412,7 +412,7 @@ namespace UseMapEditor.Control
         {
             IsMinimapLoad = false;
         }
-        public void MinimapUnitRefresh()
+        public void MinimapUnitInitRefresh()
         {
             for (int y = 0; y < 256; y++)
             {

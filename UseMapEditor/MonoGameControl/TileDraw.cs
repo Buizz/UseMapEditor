@@ -400,19 +400,25 @@ namespace UseMapEditor.MonoGameControl
                     if (IsDrawGrp)
                     {
                         ushort megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, MTXM);
-                        Texture2D texture2D = tileSet.GetMegaTileGrp(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, megaindex);
 
-                        //Texture2D texture2D = tileSet.GetTile(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, MTXM);
+                        AtlasTileSet atlasTileSet = tileSet.GetAtlasTileSetTexture(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE);
+
+                        //Texture2D texture2D = tileSet.GetMegaTileGrp(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, megaindex);
+                        
+
+
                         switch (mapeditor.opt_drawType)
                         {
                             case Control.MapEditor.DrawType.SD:
                                 {
-                                    _spriteBatch.Draw(texture2D, new Vector2(xi, yi), null, Color.White, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent, SpriteEffects.None, 0);
+                                    //_spriteBatch.Draw(texture2D, new Vector2(xi, yi), null, Color.White, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent, SpriteEffects.None, 0);
+                                    _spriteBatch.Draw(atlasTileSet.GetTexture(mapeditor.opt_scalepercent), new Vector2(xi, yi), atlasTileSet.GetRect(megaindex, mapeditor.opt_scalepercent), Color.White, 0, Vector2.Zero, (float)(mapeditor.opt_scalepercent * atlasTileSet.GetCompScale(mapeditor.opt_scalepercent)), SpriteEffects.None, 0);
                                 }
                                 break;
                             case Control.MapEditor.DrawType.HD: case Control.MapEditor.DrawType.CB:
                                 {
-                                    _spriteBatch.Draw(texture2D, new Vector2(xi, yi), null, Color.White, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent / 2, SpriteEffects.None, 0);
+                                    //_spriteBatch.Draw(texture2D, new Vector2(xi, yi), null, Color.White, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent / 2, SpriteEffects.None, 0);
+                                    _spriteBatch.Draw(atlasTileSet.GetTexture(mapeditor.opt_scalepercent), new Vector2(xi, yi), atlasTileSet.GetRect(megaindex, mapeditor.opt_scalepercent), Color.White, 0, Vector2.Zero, (float)(mapeditor.opt_scalepercent / 2 * atlasTileSet.GetCompScale(mapeditor.opt_scalepercent)), SpriteEffects.None, 0);
                                 }
                                 break;
                         }
@@ -532,6 +538,9 @@ namespace UseMapEditor.MonoGameControl
             float maxX = screenwidth + grpwidth * 2;
             float maxY = screenheight + grpheight * 2;
 
+            AtlasTileSet atlasTileSet = tileSet.GetAtlasTileSetTexture(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE);
+
+
             if ((minX < screen.X) & (screen.X < maxX))
             {
                 if ((minY < screen.Y) & (screen.Y < maxY))
@@ -577,15 +586,15 @@ namespace UseMapEditor.MonoGameControl
                             {
                                 case Control.MapEditor.DrawType.SD:
                                     {
-                                        Texture2D texture2D = tileSet.GetTile(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, group, index);
-                                        _spriteBatch.Draw(texture2D, StartPoint, null, color, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent, SpriteEffects.None, 0);
+                                        int magaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, group, index);
+                                        _spriteBatch.Draw(atlasTileSet.texture2D, StartPoint, atlasTileSet.GetRect(magaindex), color, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent, SpriteEffects.None, 0);
                                     }
                                     break;
                                 case Control.MapEditor.DrawType.HD:
                                 case Control.MapEditor.DrawType.CB:
                                     {
-                                        Texture2D texture2D = tileSet.GetTile(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, group, index);
-                                        _spriteBatch.Draw(texture2D, StartPoint, null, color, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent / 2, SpriteEffects.None, 0);
+                                        int magaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, group, index);
+                                        _spriteBatch.Draw(atlasTileSet.texture2D, StartPoint, atlasTileSet.GetRect(magaindex), color, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent / 2, SpriteEffects.None, 0);
                                     }
                                     break;
                             }

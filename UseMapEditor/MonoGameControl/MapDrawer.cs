@@ -227,7 +227,7 @@ namespace UseMapEditor.MonoGameControl
 
 
 
-        private Texture2D LoadFromFile(string fname)
+        public Texture2D LoadFromFile(string fname)
         {
             Texture2D texture2D = null;
 
@@ -534,7 +534,8 @@ namespace UseMapEditor.MonoGameControl
             drawtimer += (float)time.ElapsedGameTime.Ticks;
             if (drawtimer >= updateTick)
             {
-                drawtimer -= updateTick;
+                //drawtimer -= updateTick;
+                drawtimer = 0;
             }
             else
             {
@@ -543,6 +544,8 @@ namespace UseMapEditor.MonoGameControl
                     return;
                 }
             }
+
+
             ToolBaStreachValue = (int)(mapeditor.GetRightToolBarWidth());
             screenwidth = (float)this.ActualWidth - ToolBaStreachValue;
             screenheight = (float)this.ActualHeight;

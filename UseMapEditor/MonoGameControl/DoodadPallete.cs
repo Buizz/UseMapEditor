@@ -8,6 +8,7 @@ using SpriteFontPlus;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Windows;
 using UseMapEditor.FileData;
 using UseMapEditor.Task.Events;
@@ -87,24 +88,25 @@ namespace UseMapEditor.MonoGameControl
 
         private void DrawTile(Vector2 start, int g, int i, double doodadindex)
         {
+            AtlasTileSet atlasTileSet = tileSet.GetAtlasTileSetTexture(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE);
             switch (mapeditor.opt_drawType)
             {
                 case Control.MapEditor.DrawType.SD:
                     {
-                        Texture2D texture2D = tileSet.GetTile(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, (ushort)g, (ushort)i);
-                        if (texture2D != null)
+                        int magaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, (ushort)g, (ushort)i);
+                        if (atlasTileSet != null && atlasTileSet.texture2D != null)
                         {
-                            _spriteBatch.Draw(texture2D, start, null, Color.White, 0, Vector2.Zero, (float)(doodadindex / 32), SpriteEffects.None, 0);
+                            _spriteBatch.Draw(atlasTileSet.texture2D, start, atlasTileSet.GetRect(magaindex), Color.White, 0, Vector2.Zero, (float)(doodadindex / 32), SpriteEffects.None, 0);
                         }
                     }
                     break;
                 case Control.MapEditor.DrawType.HD:
                 case Control.MapEditor.DrawType.CB:
                     {
-                        Texture2D texture2D = tileSet.GetTile(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, (ushort)g, (ushort)i);
-                        if (texture2D != null)
+                        int magaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, (ushort)g, (ushort)i);
+                        if (atlasTileSet != null && atlasTileSet.texture2D != null)
                         {
-                            _spriteBatch.Draw(texture2D, start, null, Color.White, 0, Vector2.Zero, (float)(doodadindex / 64), SpriteEffects.None, 0);
+                            _spriteBatch.Draw(atlasTileSet.texture2D, start, atlasTileSet.GetRect(magaindex), Color.White, 0, Vector2.Zero, (float)(doodadindex / 64), SpriteEffects.None, 0);
                         }
                     }
                     break;

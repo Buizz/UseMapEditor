@@ -353,6 +353,7 @@
     <Compile Include="Data\Map\CodeManager.cs" />
     <Compile Include="Data\Map\UnitPlaceManager.cs" />
     <Compile Include="Data\Map\UPRP.cs" />
+    <Compile Include="FileData\Bitmap.cs" />
     <Compile Include="FileData\CTrigger.cs" />
     <Compile Include="Data\Map\Load.cs" />
     <Compile Include="Data\Map\ChkTool.cs" />

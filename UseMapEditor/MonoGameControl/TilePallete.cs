@@ -12,6 +12,7 @@ using System.Windows;
 using UseMapEditor.FileData;
 using WpfTest.Components;
 using static Data.Map.MapData;
+using static UseMapEditor.FileData.TileSet;
 using Point = System.Windows.Point;
 
 namespace UseMapEditor.MonoGameControl
@@ -199,6 +200,8 @@ namespace UseMapEditor.MonoGameControl
 
             int isomindex = 0;
 
+            AtlasTileSet atlasTileSet = tileSet.GetAtlasTileSetTexture(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE);
+
 
             _spriteBatch.Begin(blendState: BlendState.NonPremultiplied, samplerState: SamplerState.PointClamp);
             for (int y = 0; y < columns; y++)
@@ -212,16 +215,16 @@ namespace UseMapEditor.MonoGameControl
 
                     TileSet.ISOMTIle iSOM = iSOMs[isomindex];
 
-                    Texture2D texture2D1 = tileSet.GetTile(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, iSOM.group1, 0);
-                    Texture2D texture2D2 = tileSet.GetTile(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, iSOM.group2, 0);
+                    int megaindex1 = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, iSOM.group1, 0);
+                    int megaindex2 = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, iSOM.group2, 0);
 
-                    if (texture2D1 != null)
+                    if (atlasTileSet != null && atlasTileSet.texture2D != null)
                     {
-                        _spriteBatch.Draw(texture2D1, new Vector2(startX + x * tilesize * 2, startY + y * tilesize), null, Color.White, 0, Vector2.Zero, drawtilesize, SpriteEffects.None, 0);
+                        _spriteBatch.Draw(atlasTileSet.texture2D, new Vector2(startX + x * tilesize * 2, startY + y * tilesize), atlasTileSet.GetRect(megaindex1), Color.White, 0, Vector2.Zero, drawtilesize, SpriteEffects.None, 0);
                     }
-                    if (texture2D2 != null)
+                    if (atlasTileSet != null && atlasTileSet.texture2D != null)
                     {
-                        _spriteBatch.Draw(texture2D2, new Vector2(startX + (2 * x + 1) * tilesize, startY + y * tilesize), null, Color.White, 0, Vector2.Zero, drawtilesize, SpriteEffects.None, 0);
+                        _spriteBatch.Draw(atlasTileSet.texture2D, new Vector2(startX + (2 * x + 1) * tilesize, startY + y * tilesize), atlasTileSet.GetRect(megaindex2), Color.White, 0, Vector2.Zero, drawtilesize, SpriteEffects.None, 0);
                     }
 
                     if((startX + x * tilesize * 2 < MousePos.X && MousePos.X < startX + (2 * x + 2) * tilesize)
@@ -250,7 +253,7 @@ namespace UseMapEditor.MonoGameControl
             }
             for (int y = 1; y < columns; y++)
             {
-                DrawLine(_spriteBatch, new Vector2(startX, startY + y * tilesize), new Vector2(startX + 8 * tilesize, startY + y * tilesize), Color.Black);
+                DrawLine(_spriteBatch, new Vector2(startX, startY + y * tilesize), new Vector2(startX + 16 * tilesize, startY + y * tilesize), Color.Black);
             }
 
             if(mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.ISOM)
@@ -342,10 +345,11 @@ namespace UseMapEditor.MonoGameControl
 
 
             int startX = ((int)(screenwidth));
-            int startY = (int)relativePoint.Y - mapeditor.brush_tilescroll % 32;
+            int startY = (int)relativePoint.Y - mapeditor.brush_tilescroll % 30;
 
-            int tiley = mapeditor.brush_tilescroll / 32;
+            int tiley = mapeditor.brush_tilescroll / 30;
 
+            AtlasTileSet atlasTileSet = tileSet.GetAtlasTileSetTexture(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE);
 
             _spriteBatch.Begin();
             for (int y = 0; y < yitemcount; y++)
@@ -356,26 +360,64 @@ namespace UseMapEditor.MonoGameControl
                     {
                         case Control.MapEditor.DrawType.SD:
                             {
-                                Texture2D texture2D = tileSet.GetTile(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, (ushort)(y + tiley), (ushort)x);
-                                if (texture2D != null)
+                                //Texture2D texture2D = tileSet.GetTile(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, (ushort)(y + tiley), (ushort)x);
+                                int megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, (ushort)(y + tiley), (ushort)x);
+                                if (atlasTileSet != null && atlasTileSet.texture2D != null)
                                 {
-                                    _spriteBatch.Draw(texture2D, new Vector2(startX + x * tilesize, startY + y * tilesize), null, Color.White, 0, Vector2.Zero, tilesize / 32, SpriteEffects.None, 0);
+                                    _spriteBatch.Draw(atlasTileSet.texture2D, new Vector2(startX + x * tilesize, startY + y * tilesize), atlasTileSet.GetRect(megaindex), Color.White, 0, Vector2.Zero, tilesize / 32, SpriteEffects.None, 0);
                                 }
                             }
                             break;
                         case Control.MapEditor.DrawType.HD:
                         case Control.MapEditor.DrawType.CB:
                             {
-                                Texture2D texture2D = tileSet.GetTile(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, (ushort)(y + tiley), (ushort)x);
-                                if (texture2D != null)
+                                //Texture2D texture2D = tileSet.GetTile(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, (ushort)(y + tiley), (ushort)x);
+                                int megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, (ushort)(y + tiley), (ushort)x);
+                                if (atlasTileSet != null && atlasTileSet.texture2D != null)
                                 {
-                                    _spriteBatch.Draw(texture2D, new Vector2(startX + x * tilesize, startY + y * tilesize), null, Color.White, 0, Vector2.Zero, tilesize / 64, SpriteEffects.None, 0);
+                                    _spriteBatch.Draw(atlasTileSet.texture2D, new Vector2(startX + x * tilesize, startY + y * tilesize), atlasTileSet.GetRect(megaindex), Color.White, 0, Vector2.Zero, tilesize / 64, SpriteEffects.None, 0);
                                 }
                             }
                             break;
                     }
+
+
+
+                    //if ((startX + x * tilesize < MousePos.X && MousePos.X < startX + (x + 1) * tilesize)
+                    //    && (startY + y * tilesize < MousePos.Y && MousePos.Y < startY + (y + 1) * tilesize))
+                    //{
+                    //    _spriteBatch.Draw(gridtexture, new Vector2(startX + x * tilesize, startY + y * tilesize), null, new Color(128, 128, 128, 32), 0, Vector2.Zero, new Vector2(tilesize, tilesize), SpriteEffects.None, 0);
+                    //    //호버링
+                    //    if (mapeditor.TileAllMouseDown)
+                    //    {
+                    //        //선택
+                    //        mapeditor.SelectALLTILEIndex.Add(10);
+                    //    }
+                    //}
+
                 }
             }
+
+            
+            for (int x = 1; x < 16; x++)
+            {
+                DrawLine(_spriteBatch, new Vector2(startX + x * tilesize, startY), new Vector2(startX + x * tilesize, startY + yitemcount * tilesize), Color.Black);
+            }
+            for (int y = 1; y < yitemcount; y++)
+            {
+                DrawLine(_spriteBatch, new Vector2(startX, startY + y * tilesize), new Vector2(startX + 16 * tilesize, startY + y * tilesize), Color.Black);
+            }
+
+            
+            //호버링
+            if (mapeditor.TileAllMouseDown)
+            {
+                _spriteBatch.Draw(gridtexture, new Vector2(startX + mapeditor.TileMouseStartXIndex * tilesize, startY + mapeditor.TileMouseStartYIndex * tilesize - tiley * tilesize), null, new Color(128, 128, 128, 32), 0, Vector2.Zero, new Vector2(tilesize, tilesize), SpriteEffects.None, 0);
+
+                //선택
+                //mapeditor.SelectALLTILEIndex.Add(10);
+            }
+
 
             _spriteBatch.End();
         }
