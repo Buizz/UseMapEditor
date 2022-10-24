@@ -46,9 +46,6 @@ namespace Data.Map
             for (int i = 0; i < TRIG.Count; i++)
             {
                 CTrigger trigger = new CTrigger(this, TRIG[i], true);
-
-
-
                 Triggers.Add(trigger);
             }
             for (int i = 0; i < MBRF.Count; i++)

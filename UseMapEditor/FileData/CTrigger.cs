@@ -653,6 +653,10 @@ namespace UseMapEditor.FileData
                     case TriggerManger.ArgType.SLOT:
                         return VALUE.ToString();
                     case TriggerManger.ArgType.SWITCH:
+                        if(mapData.SWNM.Length <= VALUE)
+                        {
+                            return "\"Switch " + (VALUE + 1) + "\"";
+                        }
                         string d = mapData.SWNM[VALUE].String;
                         if (mapData.SWNM[VALUE].IsLoaded)
                         {
@@ -784,6 +788,11 @@ namespace UseMapEditor.FileData
                 switch (ARGTYPE)
                 {
                     case TriggerManger.ArgType.SWITCH:
+                        if (mapData.SWNM.Length <= VALUE)
+                        {
+                            return "스위치 " + (VALUE + 1);
+                        }
+
                         string d = mapData.SWNM[VALUE].String;
                         if (mapData.SWNM[VALUE].IsLoaded)
                         {

@@ -747,11 +747,10 @@ namespace Data.Map
 
             while (br.BaseStream.Position < br.BaseStream.Length)
             {
-               if (!Applychk(br))
+                if (!Applychk(br))
                 {
                     return false;
                 }
-        
             }
 
 

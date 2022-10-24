@@ -51,6 +51,11 @@ namespace Data.Map
         {
             if (index >= 228)
             {
+                if(index >= 233)
+                {
+                    return "UnitID : " + index;
+                }
+
                 if (IsTran)
                 {
                     string[] addstring = { "없음", "유닛과 건물", "유닛", "건물", "생산건물" };
@@ -315,7 +320,8 @@ namespace Data.Map
     "Factories"
 };
         public string GetEditorUnitName(int index)
-        {            
+        {
+            if(index >= DefUnitDict.Count()) return "index : " + index;
             return DefUnitDict[index];
         }
 

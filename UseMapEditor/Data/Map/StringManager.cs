@@ -183,9 +183,9 @@ namespace Data.Map
                             return "NotLoad";
                         }
 
-                        if(LoadedIndex == -1 | LoadedIndex >= mapData.LOADSTRx.Length)
+                        if(LoadedIndex <= -1 | LoadedIndex >= mapData.LOADSTRx.Length)
                         {
-                            return "???";
+                            return "STRIndex : " + LoadedIndex;
                         }
                         val = mapData.LOADSTRx[LoadedIndex];
                         IsLoaded = true;

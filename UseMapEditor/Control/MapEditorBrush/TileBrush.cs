@@ -82,7 +82,7 @@ namespace UseMapEditor.Control
                 if (!TileAllMouseDown)
                 {
                     TileMouseStartXIndex = (int)e.GetPosition(Tile_All_Pallet).X / 25;
-                    TileMouseStartYIndex = (int)e.GetPosition(Tile_All_Pallet).Y / 25 + (int)TileScroll.Value / 30;
+                    TileMouseStartYIndex = (int)(e.GetPosition(Tile_All_Pallet).Y / 25 + TileScroll.Value / 30);
 
 
                     TileMouseStartY = (int)e.GetPosition(Tile_All_Pallet).Y;
