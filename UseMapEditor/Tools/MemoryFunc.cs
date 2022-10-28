@@ -33,7 +33,7 @@ namespace UseMapEditor.Tools
             else if (trigItem.name == "Deaths")
             {
                 trigItem.type = 24;
-                trigItem.triggerDefine = Global.WindowTool.triggerManger.Actions[25];
+                trigItem.triggerDefine = Global.WindowTool.triggerManger.Conditions[24];
                 trigItem.args[0].argDefine = trigItem.triggerDefine.argDefines[0];
                 trigItem.args[0].ARGTYPE = TriggerManger.ArgType.OFFSET;
                 trigItem.name = "Memory";

@@ -396,6 +396,7 @@
     <Compile Include="Task\Events\LocationEvent.cs" />
     <Compile Include="Task\Events\MaskEvent.cs" />
     <Compile Include="Task\Events\SpriteEvent.cs" />
+    <Compile Include="Task\Events\TileEvent.cs" />
     <Compile Include="Task\Events\UnitEvent.cs" />
     <Compile Include="Task\Events\UnitPropertyEvent.cs" />
     <Compile Include="Tools\KalmanFilter.cs" />

@@ -307,7 +307,26 @@ namespace UseMapEditor.MonoGameControl
         {
             for (int i = 0; i < mapeditor.mapdata.UNIT.Count; i++)
             {
-                miniUnitUpdate(mapeditor.mapdata.UNIT[i]);
+                if (mapeditor.mapdata.UNIT[i].unitID == 214)
+                {
+                    //스타트로케이션
+                    if (mapeditor.view_Unit_StartLoc)
+                    {
+                        miniUnitUpdate(mapeditor.mapdata.UNIT[i]);
+                    }
+                }
+                else if (mapeditor.mapdata.UNIT[i].unitID == 101)
+                {
+                    //맵리빌러
+                    if (mapeditor.view_Unit_Maprevealer)
+                    {
+                        miniUnitUpdate(mapeditor.mapdata.UNIT[i]);
+                    }
+                }
+                else
+                {
+                    miniUnitUpdate(mapeditor.mapdata.UNIT[i]);
+                }
             }
         }
 

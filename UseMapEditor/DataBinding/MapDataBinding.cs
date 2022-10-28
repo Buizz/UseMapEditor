@@ -100,6 +100,43 @@ namespace UseMapEditor.DataBinding
         }
 
 
+        public bool TILE_PENCIL
+        {
+            get
+            {
+                return mapEditor.TilePalletePencil;
+            }
+            set
+            {
+                mapEditor.TilePalletePencil = value;
+                OnPropertyChanged("TILE_PENCIL");
+            }
+        }
+
+        public bool TILE_RECT
+        {
+            get
+            {
+                return mapEditor.TilePalleteRect;
+            }
+            set
+            {
+                mapEditor.TilePalleteRect = value;
+                OnPropertyChanged("TILE_RECT");
+            }
+        }
+        public bool TILE_TRANSPARENTBLACK
+        {
+            get
+            {
+                return mapEditor.TilePalleteTransparentBlack;
+            }
+            set
+            {
+                mapEditor.TilePalleteTransparentBlack = value;
+                OnPropertyChanged("TILE_TRANSPARENTBLACK");
+            }
+        }
 
         public bool DOODAD_BRUSHMODE
         {

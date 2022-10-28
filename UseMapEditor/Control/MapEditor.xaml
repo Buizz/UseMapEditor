@@ -603,13 +603,24 @@
                                                     <TextBlock Text="ListBoxAssist.IsToggle allows more natural toggle behaviour" />
                                                 </StackPanel>
                                             </ListBox.ToolTip>
-                                            <ListBoxItem>
+                                            <ListBoxItem IsSelected="{Binding TILE_PENCIL, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                                 <materialDesign:PackIcon Kind="Pencil" />
                                             </ListBoxItem>
-                                            <ListBoxItem>
+                                            <ListBoxItem IsSelected="{Binding TILE_RECT, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                                 <materialDesign:PackIcon Kind="VectorSquare" />
                                             </ListBoxItem>
                                         </ListBox>
+
+                                        <ListBox SelectedIndex="-1">
+                                            <ListBoxItem IsSelected="{Binding TILE_TRANSPARENTBLACK, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <materialDesign:PackIcon Kind="Water" />
+                                            </ListBoxItem>
+                                        </ListBox>
+
+                                        <Button >
+                                            <materialDesign:PackIcon Kind="Image" />
+                                        </Button>
+
                                     </ToolBar>
                                 </ToolBarTray>
 
@@ -618,9 +629,10 @@
 
                                 <Expander x:Name="Tile_ISOM_Expander" DockPanel.Dock="Top" HorizontalAlignment="Stretch" Background="#00000000" Expanded="Tile_Pallet_Expanded">
                                     <Expander.Header >
-                                        <Grid Margin="-24,-24,-64,-24" Background="{DynamicResource MaterialDesignPaper}">
+                                        <StackPanel Margin="-24,-24,-64,-24" Background="{DynamicResource MaterialDesignPaper}" Orientation="Horizontal">
                                             <TextBlock Text="ISOM" FontSize="16" Padding="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="24,0,0,0"/>
-                                        </Grid>
+                                            <CheckBox x:Name="TileISOMRectCheckBox" Content="사각형"/>
+                                        </StackPanel>
                                     </Expander.Header>
                                     <Grid x:Name="Tile_ISOM_Pallet" DockPanel.Dock="Top" Width="512" Height="64" HorizontalAlignment="Left" Background="#02000000"
                                             PreviewMouseDown="Tile_ISOM_Pallet_PreviewMouseDown"
@@ -631,7 +643,7 @@
                                     </Grid>
                                 </Expander>
 
-                                <Expander x:Name="Tile_Rect_Expander" DockPanel.Dock="Top" HorizontalAlignment="Stretch" Background="#00000000" Expanded="Tile_Pallet_Expanded">
+                                <!--<Expander x:Name="Tile_Rect_Expander" DockPanel.Dock="Top" HorizontalAlignment="Stretch" Background="#00000000" Expanded="Tile_Pallet_Expanded">
                                     <Expander.Header >
                                         <Grid Margin="-24,-24,-64,-24" Background="{DynamicResource MaterialDesignPaper}">
                                             <TextBlock Text="사각형" FontSize="16" Padding="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="24,0,0,0"/>
@@ -660,7 +672,7 @@
                                           >
 
                                     </Grid>
-                                </Expander>
+                                </Expander>-->
 
 
                                 <TextBlock x:Name="Tile_All_Label" Text="모든 지형" FontSize="16" Padding="24, 14, 24, 14" DockPanel.Dock="Top" Background="{DynamicResource MaterialDesignPaper}"/>

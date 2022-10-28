@@ -11,6 +11,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Markup;
 using UseMapEditor.Casc;
 using UseMapEditor.Control;
 using UseMapEditor.MonoGameControl;
@@ -825,7 +826,16 @@ namespace UseMapEditor.FileData
 
                 for (int i = 0; i < frame; i++)
                 {
-                    uint[] textureData = new uint[1024];
+                    byte[] textureData = new byte[1024];
+
+
+                    for (int y = 31; y >= 0; y--)
+                    {
+                        for (int x = 0; x < 32; x++)
+                        {
+                            textureData[x + y * 32] = br.ReadByte();
+                        }
+                    }
 
 
                     //Texture2D texture = new Texture2D(mapDrawer.GraphicsDevice, 32, 32, false, SurfaceFormat.Color);
@@ -834,7 +844,7 @@ namespace UseMapEditor.FileData
 
                     BinaryWriter bitmapstream = new BinaryWriter(new MemoryStream());
                     bitmapstream.Write(FileData.BMP.bmpheader);
-                    bitmapstream.Write(br.ReadBytes(1024));
+                    bitmapstream.Write(textureData);
 
                     bitmapstream.BaseStream.Position = 0x2;
                     bitmapstream.Write((uint)bitmapstream.BaseStream.Length);
@@ -858,9 +868,9 @@ namespace UseMapEditor.FileData
                     g.DrawImage(tbitmap, atlasTileSet.GetRect(i).X, atlasTileSet.GetRect(i).Y);
                 }
             }
-            else if (unknown == 0x1002)
+            else if (unknown == 0x1004) 
             {
-                atlasTileSet.framesize = 64;
+                atlasTileSet.framesize = 128;
 
                 int texturewidth = atlasTileSet.framesize * atlasTileSet.length;
                 bitmap = new System.Drawing.Bitmap(texturewidth, texturewidth);
@@ -868,6 +878,13 @@ namespace UseMapEditor.FileData
                 //HD2
                 for (int i = 0; i < frame; i++)
                 {
+                    if (i == 0)
+                    {
+                        var tbitmap = new System.Drawing.Bitmap(128,128);
+                        g.FillRectangle(System.Drawing.Brushes.Black, 0, 0, 128, 128);
+                        continue;
+                    }
+
                     //File Entry:
 
                     uint unk = br.ReadUInt32(); // --always zero ?
@@ -955,31 +972,33 @@ namespace UseMapEditor.FileData
 
                 System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(fname);
 
-                
-                for (int x = 0; x < atlasTileSet.length; x++)
+                for (int y = 0; y < atlasTileSet.length; y++)
                 {
-                    for (int y = 0; y < atlasTileSet.length; y++)
+                    for (int x = 0; x < atlasTileSet.length; x++)
                     {
                         int r = 0;
                         int g = 0;
                         int b = 0;
 
-                        int count = 0;
-                        for (int x1 = 0; x1 < 2; x1++)
+                        System.Drawing.Color c;
+                        if (_fname == "SD")
                         {
-                            for (int y1 = 0; y1 < 2; y1++)
-                            {
-                                System.Drawing.Color c = bmp.GetPixel(x * atlasTileSet.framesize + x1 + atlasTileSet.framesize / 4, y * atlasTileSet.framesize  + y1 + atlasTileSet.framesize / 4);
-                                r += c.R;
-                                g += c.G;
-                                b += c.B;
-                                count++;
-                            }
+                            c = bmp.GetPixel(x * atlasTileSet.framesize + 7, y * atlasTileSet.framesize + 6);
+                        }
+                        else
+                        {
+                            c = bmp.GetPixel(x * atlasTileSet.framesize + 32 , y * atlasTileSet.framesize + 30 );
                         }
 
-                        MiniMapColor.Add(new Color(r / count, g / count, b / count));
+                        r += c.R;
+                        g += c.G;
+                        b += c.B;
+
+
+                        MiniMapColor.Add(new Color(r, g, b));
                     }
                 }
+               
 
                 bmp.Dispose();
             }

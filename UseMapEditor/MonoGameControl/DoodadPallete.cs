@@ -86,7 +86,7 @@ namespace UseMapEditor.MonoGameControl
 
 
 
-        private void DrawTile(Vector2 start, int g, int i, double doodadindex)
+        private void DrawDoodadTile(Vector2 start, int g, int i, double doodadindex)
         {
             AtlasTileSet atlasTileSet = tileSet.GetAtlasTileSetTexture(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE);
             switch (mapeditor.opt_drawType)
@@ -137,7 +137,7 @@ namespace UseMapEditor.MonoGameControl
                 {
                     Vector2 ipos = new Vector2((float)(x * blocksize), (float)(y * blocksize));
 
-                    DrawTile(DrawPos + ipos, group + y, x, blocksize);
+                    DrawDoodadTile(DrawPos + ipos, group + y, x, blocksize);
                 }
             }
 

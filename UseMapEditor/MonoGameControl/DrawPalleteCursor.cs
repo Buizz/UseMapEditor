@@ -294,7 +294,6 @@ namespace UseMapEditor.MonoGameControl
                     }
                     
                     break;
-
                 case Control.MapEditor.Layer.Sprite:
                     {
                         if (mapeditor.sprite_PasteMode)
@@ -437,6 +436,60 @@ namespace UseMapEditor.MonoGameControl
                     }
                     break;
 
+                case Control.MapEditor.Layer.Tile:
+                    if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.ALLTILE)
+                    {
+                        if (mapeditor.TilePalleteRect)
+                        {
+                            //드래그 하면 미리보기 그려짐
+                            //TODO:드래그시 미리보기 그리기
+                        }
+                        else
+                        {
+
+                            _spriteBatch.Begin(blendState: BlendState.NonPremultiplied, samplerState: SamplerState.PointClamp);
+                            AtlasTileSet atlasTileSet = tileSet.GetAtlasTileSetTexture(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE);
+                            Vector2 mappos = MouseTilePos;
+
+                            mappos.X = (float)(mappos.X * 32);
+                            mappos.Y = (float)(mappos.Y * 32);
+
+
+                            int width = (int)(mapeditor.tile_PalleteSelectEnd.X - mapeditor.tile_PalleteSelectStart.X) + 1;
+                            int height = (int)(mapeditor.tile_PalleteSelectEnd.Y - mapeditor.tile_PalleteSelectStart.Y) + 1;
+
+                            int sx = (int)Math.Floor(width / 2.0);
+                            int sy = (int)Math.Floor(height / 2.0);
+
+
+
+                            for (int y = 0; y < height; y++)
+                            {
+                                for (int x = 0; x < width; x++)
+                                {
+                                    int megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, (ushort)(mapeditor.tile_PalleteSelectStart.Y + y), (ushort)(mapeditor.tile_PalleteSelectStart.X + x));
+
+                                    if(mapeditor.TilePalleteTransparentBlack && megaindex == 0) continue;
+                           
+                                    DrawTilePreview(atlasTileSet, mappos.X + (x - sx) * 32, mappos.Y + (y - sy) * 32, megaindex);
+                                }
+                            }
+
+
+                            _spriteBatch.End();
+                        }
+
+                    }
+                    else if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.ISOM)
+                    {
+                        //TODO:ISOM
+                    }
+                    else if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.PASTE)
+                    {
+                        //TODO:붙여넣기 완성
+
+                    }
+                    break;
                 case Control.MapEditor.Layer.Doodad:
                     {
                         if (mapeditor.doodad_PasteMode)

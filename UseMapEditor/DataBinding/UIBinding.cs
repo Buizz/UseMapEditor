@@ -21,6 +21,7 @@ namespace UseMapEditor.DataBinding
         {
             get{return mapEditor.view_Unit;}
             set{mapEditor.view_Unit = value;
+                mapEditor.MinimapUnitInitRefresh();
                 OnPropertyChanged("view_Unit");
             }
         }
@@ -30,6 +31,7 @@ namespace UseMapEditor.DataBinding
         {
             get { return mapEditor.view_Unit_StartLoc; }
             set { mapEditor.view_Unit_StartLoc = value;
+                mapEditor.MinimapUnitInitRefresh();
                 OnPropertyChanged("view_Unit_StartLoc");
             }
         }
@@ -37,6 +39,7 @@ namespace UseMapEditor.DataBinding
         {
             get { return mapEditor.view_Unit_Maprevealer; }
             set { mapEditor.view_Unit_Maprevealer = value;
+                mapEditor.MinimapUnitInitRefresh();
                 OnPropertyChanged("view_Unit_Maprevealer");
             }
         }

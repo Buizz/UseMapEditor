@@ -100,6 +100,14 @@ namespace UseMapEditor.Control
             }
         }
 
+        public bool brush_useRect
+        {
+            get
+            {
+                return (bool)TileISOMRectCheckBox.IsChecked;
+            }
+        }
+
 
         public int opt_FogofWarplayer;
 
@@ -240,6 +248,12 @@ namespace UseMapEditor.Control
             return new Vector2((float)(opt_xpos + pos.X / opt_scalepercent), (float)(opt_ypos + pos.Y / opt_scalepercent));
         }
 
+        /// <summary>
+        /// 맵의 좌표를 화면의 좌표로 반환한다.
+        /// 현재 모서리 좌표와 맵의 좌표간의 사이의 거리를 구한다.
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <returns></returns>
         public Vector2 PosMapToScreen(Vector2 pos)
         {
             //맵의 좌표를 화면의 좌표로 반환한다.
@@ -1300,8 +1314,8 @@ namespace UseMapEditor.Control
 
 
             Tile_ISOM_Pallet.Height = columns * TileSize;
-            Tile_Rect_Pallet.Height = columns * TileSize;
-            Tile_Custom_Pallet.Height = columns * TileSize;
+            //Tile_Rect_Pallet.Height = columns * TileSize;
+            //Tile_Custom_Pallet.Height = columns * TileSize;
         }
 
 

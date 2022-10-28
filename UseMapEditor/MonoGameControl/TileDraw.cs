@@ -69,7 +69,7 @@ namespace UseMapEditor.MonoGameControl
             _spriteBatch.Begin();
 
 
-            if (mapeditor.PalleteLayer == Control.MapEditor.Layer.Tile && (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.ISOM || mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.CUSTOMISOM))
+            if (mapeditor.PalleteLayer == Control.MapEditor.Layer.Tile && ((mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.ISOM && !mapeditor.brush_useRect)))
             {
 
                 // 128, 64
@@ -118,7 +118,7 @@ namespace UseMapEditor.MonoGameControl
                     }
 
 
-                    DrawLine(_spriteBatch, new Vector2(x1, y1), new Vector2(x2, y2), Color.Red, 1);
+                    DrawLine(_spriteBatch, new Vector2(x1, y1), new Vector2(x2, y2), GridColor, 1);
                 }
 
                 for (float i = 0; i < grdcount + 2; i++)
@@ -154,7 +154,7 @@ namespace UseMapEditor.MonoGameControl
                     }
 
 
-                    DrawLine(_spriteBatch, new Vector2(x1, y1), new Vector2(x2, y2), Color.Red, 1);
+                    DrawLine(_spriteBatch, new Vector2(x1, y1), new Vector2(x2, y2), GridColor, 1);
                 }
 
 
@@ -434,6 +434,29 @@ namespace UseMapEditor.MonoGameControl
             _spriteBatch.End();
         }
 
+
+        private void DrawTilePreview(AtlasTileSet atlasTileSet, float x, float y, int megaindex)
+        {
+            Vector2 screen = mapeditor.PosMapToScreen(new Vector2(x, y));
+
+
+            switch (mapeditor.opt_drawType)
+            {
+                case Control.MapEditor.DrawType.SD:
+                    {
+                        //_spriteBatch.Draw(texture2D, new Vector2(xi, yi), null, Color.White, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent, SpriteEffects.None, 0);
+                        _spriteBatch.Draw(atlasTileSet.GetTexture(mapeditor.opt_scalepercent), screen, atlasTileSet.GetRect(megaindex, mapeditor.opt_scalepercent), new Color(Color.Wheat, 0.7f), 0, Vector2.Zero, (float)(mapeditor.opt_scalepercent * atlasTileSet.GetCompScale(mapeditor.opt_scalepercent)), SpriteEffects.None, 0);
+                    }
+                    break;
+                case Control.MapEditor.DrawType.HD:
+                case Control.MapEditor.DrawType.CB:
+                    {
+                        //_spriteBatch.Draw(texture2D, new Vector2(xi, yi), null, Color.White, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent / 2, SpriteEffects.None, 0);
+                        _spriteBatch.Draw(atlasTileSet.GetTexture(mapeditor.opt_scalepercent), screen, atlasTileSet.GetRect(megaindex, mapeditor.opt_scalepercent), new Color(Color.Wheat, 0.7f), 0, Vector2.Zero, (float)(mapeditor.opt_scalepercent / 2 * atlasTileSet.GetCompScale(mapeditor.opt_scalepercent)), SpriteEffects.None, 0);
+                    }
+                    break;
+            }
+        }
 
 
         private List<CDD2> hoverDoodad = new List<CDD2>();

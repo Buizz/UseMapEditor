@@ -54,7 +54,7 @@ namespace UseMapEditor.Windows
         private void Worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             //1008
-            progres.Value = ((double)e.ProgressPercentage / (double)1008) * 100;
+            progres.Value = ((double)e.ProgressPercentage / (double)1308) * 100;
             //throw new NotImplementedException();
         }
 
@@ -342,20 +342,28 @@ namespace UseMapEditor.Windows
                     //SaveToFile(data.ReadFileCascStorage(fname), fname);
                     SaveFromTile(data.ReadFileCascStorage(fname), fname + ".png");
                     BMP.ImageSizeChange(fname + ".png", fname + "s.png", TileSet.miniScale);
+                    percent += 100;
+                    worker.ReportProgress(percent);
                 }
                 {
-                    string fname = $"HD2/TileSet/{tile}.dds.vr4";
+                    string fname = $"TileSet/{tile}.dds.vr4";
                     string tname = $"HD/TileSet/{tile}.dds.vr4";
                     //SaveToFile(data.ReadFileCascStorage(fname), tname);
-                    SaveFromTile(data.ReadFileCascStorage(fname), tname + ".png");
+                    SaveFromTile(data.ReadFileCascStorage(fname), tname + "b.png");
+                    BMP.ImageSizeChange(tname + "b.png", tname + ".png", 0.5);
                     BMP.ImageSizeChange(tname + ".png", tname + "s.png", TileSet.miniScale);
+                    percent += 100;
+                    worker.ReportProgress(percent);
                 }
                 {
-                    string fname = $"HD2/Carbot/TileSet/{tile}.dds.vr4";
+                    string fname = $"Carbot/TileSet/{tile}.dds.vr4";
                     string tname = $"CB/TileSet/{tile}.dds.vr4";
                     //SaveToFile(data.ReadFileCascStorage(fname), tname);
-                    SaveFromTile(data.ReadFileCascStorage(fname), tname + ".png");
+                    SaveFromTile(data.ReadFileCascStorage(fname), tname + "b.png");
+                    BMP.ImageSizeChange(tname + "b.png", tname + ".png", 0.5);
                     BMP.ImageSizeChange(tname + ".png", tname + "s.png", TileSet.miniScale);
+                    percent += 100;
+                    worker.ReportProgress(percent);
                 }
                 worker.ReportProgress(percent++);
 
