@@ -878,12 +878,7 @@ namespace UseMapEditor.FileData
                 //HD2
                 for (int i = 0; i < frame; i++)
                 {
-                    if (i == 0)
-                    {
-                        var tbitmap = new System.Drawing.Bitmap(128,128);
-                        g.FillRectangle(System.Drawing.Brushes.Black, 0, 0, 128, 128);
-                        continue;
-                    }
+                  
 
                     //File Entry:
 
@@ -935,6 +930,9 @@ namespace UseMapEditor.FileData
                             handle.Free();
                         }
                     }
+
+                g.FillRectangle(System.Drawing.Brushes.Black, 0, 0, 128, 128);
+
 
 
                 }

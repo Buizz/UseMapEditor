@@ -19,12 +19,6 @@ namespace UseMapEditor.MonoGameControl
 {
     public partial class MapDrawer : WpfGame
     {
-
-
-
-
-
-
         public void DrawRect(SpriteBatch spriteBatch, Vector2 point1, Vector2 point2, Color color, float thickness = 1f)
         {
             DrawLine(spriteBatch, new Vector2(point1.X, point1.Y), new Vector2(point2.X, point1.Y), color, thickness);
@@ -371,12 +365,12 @@ namespace UseMapEditor.MonoGameControl
 
 
 
-            int tileindex = 0;
 
             int cxti = startxti;
             int cyti = startyti;
 
 
+            AtlasTileSet atlasTileSet = tileSet.GetAtlasTileSetTexture(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE);
             _spriteBatch.Begin(blendState: BlendState.NonPremultiplied, samplerState: SamplerState.PointClamp);
             for (float yi = starty; yi < height; yi += mag)
             {
@@ -395,18 +389,14 @@ namespace UseMapEditor.MonoGameControl
                     }
 
 
-                    tileindex = cxti + cyti * mapeditor.mapdata.WIDTH;
+                    int tileindex = cxti + cyti * mapeditor.mapdata.WIDTH;
                     ushort MTXM = mapeditor.mapdata.TILE[tileindex];
                     if (IsDrawGrp)
                     {
                         ushort megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, MTXM);
 
-                        AtlasTileSet atlasTileSet = tileSet.GetAtlasTileSetTexture(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE);
-
                         //Texture2D texture2D = tileSet.GetMegaTileGrp(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, megaindex);
                         
-
-
                         switch (mapeditor.opt_drawType)
                         {
                             case Control.MapEditor.DrawType.SD:
@@ -431,7 +421,9 @@ namespace UseMapEditor.MonoGameControl
                 }
                 cyti++;
             }
+
             _spriteBatch.End();
+
         }
 
 
@@ -439,20 +431,25 @@ namespace UseMapEditor.MonoGameControl
         {
             Vector2 screen = mapeditor.PosMapToScreen(new Vector2(x, y));
 
+            string stropacity = Global.Setting.Vals[Global.Setting.Settings.TIlePreviewOpacity];
+
+            float opacity = 100;
+            float.TryParse(stropacity, out opacity);
+
 
             switch (mapeditor.opt_drawType)
             {
                 case Control.MapEditor.DrawType.SD:
                     {
                         //_spriteBatch.Draw(texture2D, new Vector2(xi, yi), null, Color.White, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent, SpriteEffects.None, 0);
-                        _spriteBatch.Draw(atlasTileSet.GetTexture(mapeditor.opt_scalepercent), screen, atlasTileSet.GetRect(megaindex, mapeditor.opt_scalepercent), new Color(Color.Wheat, 0.7f), 0, Vector2.Zero, (float)(mapeditor.opt_scalepercent * atlasTileSet.GetCompScale(mapeditor.opt_scalepercent)), SpriteEffects.None, 0);
+                        _spriteBatch.Draw(atlasTileSet.GetTexture(mapeditor.opt_scalepercent), screen, atlasTileSet.GetRect(megaindex, mapeditor.opt_scalepercent), new Color(new Color(0.8f, 0.8f, 1f), opacity / 100), 0, Vector2.Zero, (float)(mapeditor.opt_scalepercent * atlasTileSet.GetCompScale(mapeditor.opt_scalepercent)), SpriteEffects.None, 0);
                     }
                     break;
                 case Control.MapEditor.DrawType.HD:
                 case Control.MapEditor.DrawType.CB:
                     {
                         //_spriteBatch.Draw(texture2D, new Vector2(xi, yi), null, Color.White, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent / 2, SpriteEffects.None, 0);
-                        _spriteBatch.Draw(atlasTileSet.GetTexture(mapeditor.opt_scalepercent), screen, atlasTileSet.GetRect(megaindex, mapeditor.opt_scalepercent), new Color(Color.Wheat, 0.7f), 0, Vector2.Zero, (float)(mapeditor.opt_scalepercent / 2 * atlasTileSet.GetCompScale(mapeditor.opt_scalepercent)), SpriteEffects.None, 0);
+                        _spriteBatch.Draw(atlasTileSet.GetTexture(mapeditor.opt_scalepercent), screen, atlasTileSet.GetRect(megaindex, mapeditor.opt_scalepercent), new Color(new Color(0.8f, 0.8f, 1f), opacity / 100), 0, Vector2.Zero, (float)(mapeditor.opt_scalepercent / 2 * atlasTileSet.GetCompScale(mapeditor.opt_scalepercent)), SpriteEffects.None, 0);
                     }
                     break;
             }
@@ -718,13 +715,6 @@ namespace UseMapEditor.MonoGameControl
                         //}
 
                     }
-
-
-
-
-
-
-
                 }
             }
         }

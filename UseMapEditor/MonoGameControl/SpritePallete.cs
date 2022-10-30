@@ -13,6 +13,7 @@ using UseMapEditor.FileData;
 using UseMapEditor.Task.Events;
 using WpfTest.Components;
 using static Data.Map.MapData;
+using static UseMapEditor.FileData.TileSet;
 using Point = System.Windows.Point;
 
 namespace UseMapEditor.MonoGameControl
@@ -80,7 +81,23 @@ namespace UseMapEditor.MonoGameControl
             }
         }
 
+        private void DD2ToSprite(CDD2 cDD2)
+        {
+            DoodadPallet pallete = UseMapEditor.Global.WindowTool.MapViewer.tileSet.DoodadPallets[mapeditor.mapdata.TILETYPE][cDD2.ID];
+            CTHG2 cTHG2 = new CTHG2();
+            cTHG2.FLAG = pallete.dddFlags;
+            cTHG2.X = cDD2.X;
+            cTHG2.Y = cDD2.Y;
+            cTHG2.ID = pallete.dddOverlayID;
 
+            if (((cTHG2.FLAG & (0b1 << 12)) != 0) | ((cTHG2.FLAG & (0b1 << 13)) != 0))
+            {
+                mapeditor.mapdata.THG2.Add(cTHG2);
+                cTHG2.ImageReset();
+
+                mapeditor.taskManager.TaskAdd(new SpriteEvent(mapeditor, cTHG2, true));
+            }
+        }
 
         private void SpritePaint()
         {

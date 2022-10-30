@@ -1,4 +1,6 @@
-﻿using Data.Map;
+﻿using ControlzEx.Standard;
+using Data.Map;
+using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -86,45 +88,40 @@ namespace UseMapEditor.DataBinding
 
 
 
-        public MapEditor.TileSetBrushMode TILE_BRUSHMODE
+        public PackIconKind TILE_BRUSHICON
         {
             get
             {
-                return mapEditor.tile_BrushMode;
+                switch (mapEditor.tile_PaintType)
+                {
+                    case MapEditor.TileSetPaintType.SELECTION:
+                        return PackIconKind.HandRight;
+                    case MapEditor.TileSetPaintType.PENCIL:
+                        return PackIconKind.Pencil;
+                    case MapEditor.TileSetPaintType.RECT:
+                        return PackIconKind.VectorRectangle;
+                }
+
+                return PackIconKind.HandRight;
+            }
+        }
+
+
+
+        public MapEditor.TileSetPaintType TILE_PAINTTYPE
+        {
+            get
+            {
+                return mapEditor.tile_PaintType;
             }
             set
             {
-                mapEditor.tile_BrushMode = value;
+                mapEditor.tile_PaintType = value;
                 OnPropertyChanged("TILE_BRUSHMODE");
+                OnPropertyChanged("TILE_BRUSHICON");
             }
         }
 
-
-        public bool TILE_PENCIL
-        {
-            get
-            {
-                return mapEditor.TilePalletePencil;
-            }
-            set
-            {
-                mapEditor.TilePalletePencil = value;
-                OnPropertyChanged("TILE_PENCIL");
-            }
-        }
-
-        public bool TILE_RECT
-        {
-            get
-            {
-                return mapEditor.TilePalleteRect;
-            }
-            set
-            {
-                mapEditor.TilePalleteRect = value;
-                OnPropertyChanged("TILE_RECT");
-            }
-        }
         public bool TILE_TRANSPARENTBLACK
         {
             get

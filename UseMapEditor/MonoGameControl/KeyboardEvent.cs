@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
+using UseMapEditor.Control;
 using UseMapEditor.FileData;
 using WpfTest.Components;
 
@@ -133,6 +134,33 @@ namespace UseMapEditor.MonoGameControl
                     if (EnterKey(keyboardState, Keys.D2))
                     {
                         mapeditor.mapDataBinding.SPRITE_COPYTILEPOS = !mapeditor.mapDataBinding.SPRITE_COPYTILEPOS;
+                    }
+                    break;
+                case Control.MapEditor.Layer.Doodad:
+                    if (EnterKey(keyboardState, Keys.D1))
+                    {
+                        mapeditor.mapDataBinding.DOODAD_STACKALLOW = !mapeditor.mapDataBinding.DOODAD_STACKALLOW;
+                    }
+                    if (EnterKey(keyboardState, Keys.D2))
+                    {
+                        mapeditor.mapDataBinding.DOODAD_TOTILE = !mapeditor.mapDataBinding.DOODAD_TOTILE;
+                    }
+                    break;
+                case Control.MapEditor.Layer.Tile:
+                    if (EnterKey(keyboardState, Keys.D1))
+                    {
+                        if (mapeditor.mapDataBinding.TILE_PAINTTYPE == MapEditor.TileSetPaintType.RECT)
+                        {
+                            mapeditor.mapDataBinding.TILE_PAINTTYPE = 0;
+                        }
+                        else
+                        {
+                            mapeditor.mapDataBinding.TILE_PAINTTYPE += 1;
+                        }
+                    }
+                    if (EnterKey(keyboardState, Keys.D2))
+                    {
+                        mapeditor.mapDataBinding.TILE_TRANSPARENTBLACK = !mapeditor.mapDataBinding.TILE_TRANSPARENTBLACK;
                     }
                     break;
             }

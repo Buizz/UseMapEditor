@@ -197,6 +197,9 @@ namespace UseMapEditor.Global
                     case Settings.Program_FastExpander:
                         rv = "false";
                         break;
+                    case Settings.TIlePreviewOpacity:
+                        rv = "100";
+                        break;
                 }
             }
 
@@ -238,7 +241,8 @@ namespace UseMapEditor.Global
             Render_MaxFrame,
             Render_UseVFR,
             language_StatLan,
-            Program_FastExpander
+            Program_FastExpander,
+            TIlePreviewOpacity
         }
 
 

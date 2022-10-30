@@ -30,14 +30,12 @@ namespace UseMapEditor.Task.Events
 
         public override void Redo()
         {
-            int tileindex = X + Y * mapEditor.mapdata.WIDTH;
-            mapEditor.mapdata.TILE[tileindex] = newMTXM;
+            mapEditor.mapdata.TILEChange(X, Y, newMTXM);
         }
 
         public override void Undo()
         {
-            int tileindex = X + Y * mapEditor.mapdata.WIDTH;
-            mapEditor.mapdata.TILE[tileindex] = oldMTXM;
+            mapEditor.mapdata.TILEChange(X, Y, oldMTXM);
         }
     }
 }

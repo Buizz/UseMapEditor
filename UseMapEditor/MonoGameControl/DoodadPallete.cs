@@ -275,9 +275,6 @@ namespace UseMapEditor.MonoGameControl
                             mappos.X += (float)_cDD2.X;
                             mappos.Y += (float)_cDD2.Y;
 
-
-
-
                             if (DoodadCollsionCheck(mappos, pallete))
                             {
                                 LastCreatePos = mappos;
@@ -287,18 +284,22 @@ namespace UseMapEditor.MonoGameControl
                                 cDD2.Y = (ushort)mappos.Y;
                                 cDD2.ID = (ushort)doodadid;
                                 cDD2.PLAYER = (byte)_cDD2.PLAYER;
+                                if (mapeditor.mapDataBinding.DOODAD_TOTILE)
+                                {
+                                    DD2ToTile(cDD2);
+                                    DD2ToSprite(cDD2);
+                                }
+                                else
+                                {
+                                    mapeditor.mapdata.DD2.Add(cDD2);
+                                    cDD2.ImageReset();
 
-                                mapeditor.mapdata.DD2.Add(cDD2);
-                                cDD2.ImageReset();
-
-                                mapeditor.mapdata.DD2ToMTXM(cDD2);
-                                mapeditor.taskManager.TaskAdd(new DoodadEvent(mapeditor, cDD2, true));
+                                    mapeditor.mapdata.DD2ToMTXM(cDD2);
+                                    mapeditor.taskManager.TaskAdd(new DoodadEvent(mapeditor, cDD2, true));
+                                }
                             }
                         }
-
                     }
-
-                    
                 }
                 else
                 {
@@ -353,12 +354,19 @@ namespace UseMapEditor.MonoGameControl
                             cDD2.Y = (ushort)mappos.Y;
                             cDD2.ID = (ushort)doodadid;
                             cDD2.PLAYER = (byte)playerid;
+                            if (mapeditor.mapDataBinding.DOODAD_TOTILE)
+                            {
+                                DD2ToTile(cDD2);
+                                DD2ToSprite(cDD2);
+                            }
+                            else
+                            {
+                                mapeditor.mapdata.DD2.Add(cDD2);
+                                cDD2.ImageReset();
 
-                            mapeditor.mapdata.DD2.Add(cDD2);
-                            cDD2.ImageReset();
-
-                            mapeditor.mapdata.DD2ToMTXM(cDD2);
-                            mapeditor.taskManager.TaskAdd(new DoodadEvent(mapeditor, cDD2, true));
+                                mapeditor.mapdata.DD2ToMTXM(cDD2);
+                                mapeditor.taskManager.TaskAdd(new DoodadEvent(mapeditor, cDD2, true));
+                            }
                         }
                     }
                 }

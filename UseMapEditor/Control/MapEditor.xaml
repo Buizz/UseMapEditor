@@ -53,8 +53,8 @@
                         <materialDesign:PopupBox.ToggleContent>
                             <materialDesign:PackIcon Kind="Visibility" Margin="4"/>
                         </materialDesign:PopupBox.ToggleContent>
-                        <StackPanel>
-                            <StackPanel Orientation="Horizontal">
+                        <StackPanel Background="{DynamicResource MaterialDesignPaper}">
+                            <StackPanel Orientation="Horizontal" >
                                 <ToggleButton Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" IsChecked="{Binding Path=view_Tile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                     <materialDesign:PackIcon Kind="Mountain" Height="21" Width="21" />
                                 </ToggleButton>
@@ -121,25 +121,46 @@
                     <Label Content="레이어:" VerticalAlignment="Center"/>
                     <ComboBox x:Name="LayerCB" SelectionChanged="LayerCB_SelectionChanged" Width="40">
                         <ComboBoxItem>
-                            <materialDesign:PackIcon Kind="Mountain"/>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <materialDesign:PackIcon Kind="Mountain"/>
+                                <TextBlock Text="지형"/>
+                            </StackPanel>
                         </ComboBoxItem>
                         <ComboBoxItem>
-                            <materialDesign:PackIcon Kind="Sprout"/>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <materialDesign:PackIcon Kind="Sprout"/>
+                                <TextBlock Text="두데드"/>
+                            </StackPanel>
                         </ComboBoxItem>
                         <ComboBoxItem>
-                            <materialDesign:PackIcon Kind="HumanHandsdown"/>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <materialDesign:PackIcon Kind="HumanHandsdown"/>
+                                <TextBlock Text="유닛"/>
+                            </StackPanel>
                         </ComboBoxItem>
                         <ComboBoxItem>
-                            <materialDesign:PackIcon Kind="PineTree"/>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <materialDesign:PackIcon Kind="PineTree"/>
+                                <TextBlock Text="스프라이트"/>
+                            </StackPanel>
                         </ComboBoxItem>
                         <ComboBoxItem>
-                            <materialDesign:PackIcon Kind="AlphabetLBox"/>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <materialDesign:PackIcon Kind="AlphabetLBox"/>
+                                <TextBlock Text="로케이션"/>
+                            </StackPanel>
                         </ComboBoxItem>
                         <ComboBoxItem>
-                            <materialDesign:PackIcon Kind="Soundcloud"/>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <materialDesign:PackIcon Kind="Soundcloud"/>
+                                <TextBlock Text="전장의안개"/>
+                            </StackPanel>
                         </ComboBoxItem>
                         <ComboBoxItem>
-                            <materialDesign:PackIcon Kind="ShapeRectanglePlus"/>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <materialDesign:PackIcon Kind="ShapeRectanglePlus"/>
+                                <TextBlock Text="편집"/>
+                            </StackPanel>
                         </ComboBoxItem>
                     </ComboBox>
 
@@ -246,6 +267,33 @@
                                     </UniformGrid>
                                 </StackPanel>
                             </DockPanel>
+                        </materialDesign:Card>
+
+                        <materialDesign:Card x:Name="TileContextMenu" Visibility="Collapsed">
+
+                            <Menu>
+                                <Menu.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel/>
+                                    </ItemsPanelTemplate>
+                                </Menu.ItemsPanel>
+                                <MenuItem Header="선택해제" x:Name="TileDeselectMenuItem" Click="tileDeselect_Click">
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon Kind="BorderNoneVariant"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <Separator/>
+                                <MenuItem Header="복사" x:Name="TileCopyMenuItem" Click="tileCopy_Click" InputGestureText="Ctrl+C">
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon Kind="ContentCopy"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="붙여넣기" Click="tilePaste_Click" InputGestureText="Ctrl+V">
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon Kind="ContentPaste"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </Menu>
                         </materialDesign:Card>
                         <materialDesign:Card x:Name="SpriteContextMenu" Visibility="Collapsed">
 
@@ -592,24 +640,48 @@
                             <DockPanel x:Name="TilePallet" Visibility="Visible">
                                 <ToolBarTray IsLocked="True" DockPanel.Dock="Top">
                                     <ToolBar Style="{DynamicResource MaterialDesignToolBar}" >
+                                        <materialDesign:PopupBox 
+                                            Style="{StaticResource MaterialDesignToolPopupBox}"
+                                            Padding="2 0 2 0">
+                                            <materialDesign:PopupBox.ToggleContent>
+                                                <materialDesign:PackIcon Kind="{Binding TILE_BRUSHICON, UpdateSourceTrigger=PropertyChanged}" Width="40" Margin="4"/>
+                                            </materialDesign:PopupBox.ToggleContent>
+                                            <StackPanel>
+                                                <Button Click="TilePencil_Click">
+                                                    <materialDesign:PackIcon Kind="Pencil"/>
+                                                </Button>
+                                                <Button Click="TileSquare_Click">
+                                                    <materialDesign:PackIcon Kind="VectorSquare" />
+                                                </Button>
+                                                <Button Click="TileHand_Click">
+                                                    <materialDesign:PackIcon Kind="HandRight" />
+                                                </Button>
+                                                <Button Click="TilePaste_Click">
+                                                    <materialDesign:PackIcon Kind="ContentPaste" />
+                                                </Button>
+                                            </StackPanel>
+                                        </materialDesign:PopupBox>
+                                        <!--<RadioButton IsChecked="{Binding TILE_PENCIL, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                     GroupName="TILEEDIT" Style="{StaticResource MaterialDesignToolRadioButton}">
+                                            <materialDesign:PackIcon Kind="Pencil" />
+                                        </RadioButton>
+                                        <RadioButton IsChecked="{Binding TILE_RECT, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                     GroupName="TILEEDIT" Style="{StaticResource MaterialDesignToolRadioButton}">
+                                            <materialDesign:PackIcon Kind="VectorSquare" />
+                                        </RadioButton>
+                                        <RadioButton IsChecked="{Binding TILE_HNAD, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                     GroupName="TILEEDIT" Style="{StaticResource MaterialDesignToolRadioButton}">
+                                            <materialDesign:PackIcon Kind="HandRight" />
+                                        </RadioButton>-->
+
                                         <TextBlock Text="펜 크기:" VerticalAlignment="Center"/>
-                                        <TextBox Width="30" Text="{Binding BRUSHX, UpdateSourceTrigger=PropertyChanged}"/>
-                                        <TextBox Width="30" Text="{Binding BRUSHY, UpdateSourceTrigger=PropertyChanged}"/>
-                                        <ListBox SelectedIndex="0">
-                                            <ListBox.ToolTip>
-                                                <StackPanel>
-                                                    <TextBlock Text="MaterialDesignToolToggleFlatListBox" />
-                                                    <TextBlock Text="Exclusive selection" />
-                                                    <TextBlock Text="ListBoxAssist.IsToggle allows more natural toggle behaviour" />
-                                                </StackPanel>
-                                            </ListBox.ToolTip>
-                                            <ListBoxItem IsSelected="{Binding TILE_PENCIL, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                                <materialDesign:PackIcon Kind="Pencil" />
-                                            </ListBoxItem>
-                                            <ListBoxItem IsSelected="{Binding TILE_RECT, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                                <materialDesign:PackIcon Kind="VectorSquare" />
-                                            </ListBoxItem>
-                                        </ListBox>
+                                        <TextBox Width="20" Text="{Binding BRUSHX, UpdateSourceTrigger=PropertyChanged}"/>
+                                        <TextBox Width="20" Text="{Binding BRUSHY, UpdateSourceTrigger=PropertyChanged}"/>
+
+
+                                        <Separator/>
+
+
 
                                         <ListBox SelectedIndex="-1">
                                             <ListBoxItem IsSelected="{Binding TILE_TRANSPARENTBLACK, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
@@ -720,7 +792,7 @@
                                     </ToolBar>
                                 </ToolBarTray>
                                 <ListBox DockPanel.Dock="Left" Width="128" x:Name="DoodadTypes" SelectionChanged="DoodadTypes_SelectionChanged" Background="{DynamicResource MaterialDesignPaper}">
-                                    <ListBoxItem Content="하이"/>
+                                    <ListBoxItem Content="NONE"/>
                                 </ListBox>
                                 <Grid x:Name="DoodadListBox" PreviewMouseWheel="DoodadListBox_PreviewMouseWheel" PreviewMouseDown="DoodadListBox_PreviewMouseDown" PreviewMouseUp="DoodadListBox_PreviewMouseUp" PreviewMouseMove="DoodadListBox_PreviewMouseMove" Background="#02000000">
 

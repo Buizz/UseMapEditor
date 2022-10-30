@@ -90,7 +90,8 @@
                             <CheckBox x:Name="FastExpander" Content="빠른 닫기" ToolTip="좌우의 Expander의 애니메이션 속도를 조절합니다." VerticalAlignment="Top" Margin="0,2,20,0"
                                       Unchecked="FastExpander_Unchecked" Checked="FastExpander_Checked"/>
                             <StackPanel Orientation="Horizontal">
-
+                                <Label Content="지형 미리보기 투명도"/>
+                                <Slider x:Name="TilePreviewOpacity" Minimum="0" Maximum="100" Value="100" Width="100" VerticalAlignment="Center" ValueChanged="TilePreviewOpacity_ValueChanged"/>
                             </StackPanel>
                         </StackPanel>
                     </materialDesign:Card>

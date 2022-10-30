@@ -1176,6 +1176,9 @@ namespace UseMapEditor.Control
         {
             switch (PalleteLayer)
             {
+                case Layer.Tile:
+                    tile_PasteStart();
+                    break;
                 case Layer.Unit:
                     unit_PasteStart();
                     break;
@@ -1191,6 +1194,9 @@ namespace UseMapEditor.Control
         {
             switch (PalleteLayer)
             {
+                case Layer.Tile:
+                    tile_Copy();
+                    break;
                 case Layer.Unit:
                     unit_Copy();
                     break;
@@ -1328,6 +1334,26 @@ namespace UseMapEditor.Control
         private void Tile_Pallet_Expanded(object sender, RoutedEventArgs e)
         {
             PalletSizeRefresh();
+        }
+
+        private void TilePencil_Click(object sender, RoutedEventArgs e)
+        {
+            mapDataBinding.TILE_PAINTTYPE = TileSetPaintType.PENCIL;
+        }
+
+        private void TileSquare_Click(object sender, RoutedEventArgs e)
+        {
+            mapDataBinding.TILE_PAINTTYPE = TileSetPaintType.RECT;
+        }
+
+        private void TileHand_Click(object sender, RoutedEventArgs e)
+        {
+            mapDataBinding.TILE_PAINTTYPE = TileSetPaintType.SELECTION;
+        }
+
+        private void TilePaste_Click(object sender, RoutedEventArgs e)
+        {
+            tile_BrushMode = TileSetBrushMode.PASTE;
         }
     }
 }

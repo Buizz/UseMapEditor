@@ -8,8 +8,12 @@ using SpriteFontPlus;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Ports;
 using System.Windows;
+using System.Windows.Forms;
+using UseMapEditor.Control;
 using UseMapEditor.FileData;
+using UseMapEditor.Lua.TrigEditPlus;
 using UseMapEditor.Task.Events;
 using WpfTest.Components;
 using static Data.Map.MapData;
@@ -437,46 +441,237 @@ namespace UseMapEditor.MonoGameControl
                     break;
 
                 case Control.MapEditor.Layer.Tile:
-                    if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.ALLTILE)
+                    if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.ALLTILE || mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.PASTE)
                     {
-                        if (mapeditor.TilePalleteRect)
+                        if (mapeditor.tile_PaintType == MapEditor.TileSetPaintType.RECT)
                         {
                             //드래그 하면 미리보기 그려짐
                             //TODO:드래그시 미리보기 그리기
+
+
                         }
-                        else
+                        else if (mapeditor.tile_PaintType == MapEditor.TileSetPaintType.PENCIL)
                         {
 
-                            _spriteBatch.Begin(blendState: BlendState.NonPremultiplied, samplerState: SamplerState.PointClamp);
                             AtlasTileSet atlasTileSet = tileSet.GetAtlasTileSetTexture(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE);
                             Vector2 mappos = MouseTilePos;
 
-                            mappos.X = (float)(mappos.X * 32);
-                            mappos.Y = (float)(mappos.Y * 32);
+                            //mappos.X = (float)(mappos.X * 32);
+                            //mappos.Y = (float)(mappos.Y * 32);
+
+                            int width = 0;
+                            int height = 0;
 
 
-                            int width = (int)(mapeditor.tile_PalleteSelectEnd.X - mapeditor.tile_PalleteSelectStart.X) + 1;
-                            int height = (int)(mapeditor.tile_PalleteSelectEnd.Y - mapeditor.tile_PalleteSelectStart.Y) + 1;
+                     
+                            if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.ALLTILE)
+                            {
+                                width = (int)(mapeditor.tile_PalleteSelectEnd.X - mapeditor.tile_PalleteSelectStart.X) + 1;
+                                height = (int)(mapeditor.tile_PalleteSelectEnd.Y - mapeditor.tile_PalleteSelectStart.Y) + 1;
+                            }
+                            else if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.PASTE) {
+                                width = (int)mapeditor.tile_CopyedTileSize.X;
+                                height = (int)mapeditor.tile_CopyedTileSize.Y;
+                            }
+
 
                             int sx = (int)Math.Floor(width / 2.0);
                             int sy = (int)Math.Floor(height / 2.0);
 
+                            bool IsOneTile = false;
+                            if(width == 1 && height == 1)
+                            {
+                                IsOneTile = true;
+                                width = mapeditor.brush_x;
+                                height = mapeditor.brush_y;
+                            }
 
 
+                            _spriteBatch.Begin();
                             for (int y = 0; y < height; y++)
                             {
                                 for (int x = 0; x < width; x++)
                                 {
-                                    int megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, (ushort)(mapeditor.tile_PalleteSelectStart.Y + y), (ushort)(mapeditor.tile_PalleteSelectStart.X + x));
+                                    int mapx = (int)(mappos.X + (x - sx));
+                                    int mapy = (int)(mappos.Y + (y - sy));
+                                    Vector2 screen = mapeditor.PosMapToScreen(new Vector2(mapx * 32 , mapy * 32 ));
+                                    Vector2 screenm = mapeditor.PosMapToScreen(new Vector2((mapx + 1) * 32 , (mapy + 1) * 32 ));
 
-                                    if(mapeditor.TilePalleteTransparentBlack && megaindex == 0) continue;
-                           
-                                    DrawTilePreview(atlasTileSet, mappos.X + (x - sx) * 32, mappos.Y + (y - sy) * 32, megaindex);
+
+
+                                    int megaindex = 0;
+
+
+                                    if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.ALLTILE)
+                                    {
+                                        if (IsOneTile)
+                                        {
+                                            megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, (ushort)(mapeditor.tile_PalleteSelectStart.Y), (ushort)(mapeditor.tile_PalleteSelectStart.X));
+                                        }
+                                        else
+                                        {
+                                            megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, (ushort)(mapeditor.tile_PalleteSelectStart.Y + y), (ushort)(mapeditor.tile_PalleteSelectStart.X + x));
+                                        }
+                                    }
+                                    else if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.PASTE)
+                                    {
+                                        if (IsOneTile)
+                                        {
+                                            megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, mapeditor.Tile_GetCopyedTile(0, 0));
+                                        }
+                                        else
+                                        {
+                                            megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, mapeditor.Tile_GetCopyedTile(x, y));
+                                        }
+                                    }
+                                    if (mapeditor.TilePalleteTransparentBlack && megaindex == 0) continue;
+
+
+                                    DrawRect(_spriteBatch, screen, screenm, Color.Lime, 3);
+
+
+                                    //_spriteBatch.Draw(gridtexture, new Rectangle((int)screen.X - 2, (int)screen.Y - 2, (int)(32* mapeditor.opt_scalepercent) + 4, (int)(32 * mapeditor.opt_scalepercent) + 4), null, Color.Red, 0, new Vector2(), SpriteEffects.None, 0);
                                 }
                             }
 
-
                             _spriteBatch.End();
+
+
+
+                            _spriteBatch.Begin(blendState: BlendState.NonPremultiplied, samplerState: SamplerState.PointClamp);
+                            for (int y = 0; y < height; y++)
+                            {
+                                for (int x = 0; x < width; x++)
+                                {
+                                    int megaindex = 0;
+
+
+
+                                    if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.ALLTILE)
+                                    {
+                                        if (IsOneTile)
+                                        {
+                                            megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, (ushort)(mapeditor.tile_PalleteSelectStart.Y), (ushort)(mapeditor.tile_PalleteSelectStart.X));
+                                        }
+                                        else
+                                        {
+                                            megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, (ushort)(mapeditor.tile_PalleteSelectStart.Y + y), (ushort)(mapeditor.tile_PalleteSelectStart.X + x));
+                                        }
+                                    }
+                                    else if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.PASTE)
+                                    {
+                                        if (IsOneTile)
+                                        {
+                                            megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, mapeditor.Tile_GetCopyedTile(0, 0));
+                                        }
+                                        else
+                                        {
+                                            megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, mapeditor.Tile_GetCopyedTile(x, y));
+                                        }
+                                    }
+
+                                    if (mapeditor.TilePalleteTransparentBlack && megaindex == 0) continue;
+
+                                    int mapx = (int)(mappos.X + (x - sx));
+                                    int mapy = (int)(mappos.Y + (y - sy));
+
+                                    if (0 <= mapx && mapx < mapeditor.mapdata.WIDTH &&
+                                        0 <= mapy && mapy < mapeditor.mapdata.HEIGHT)
+                                    {
+
+                                        DrawTilePreview(atlasTileSet, mapx * 32, mapy * 32, megaindex);
+                                        //DrawRect(_spriteBatch, new Vector2(mapx * 32, mapy * 32), new Vector2(32, 32), Color.Red, 3);
+                                    }
+
+                                }
+                            }
+                            _spriteBatch.End();
+
+                        }
+
+
+                        if (mapeditor.mapDataBinding.TILE_PAINTTYPE == Control.MapEditor.TileSetPaintType.SELECTION)
+                        {
+                            if (mouse_IsDrag)
+                            {
+
+                                float minx = Math.Min(mouse_DragMapStart.X, MouseMapPos.X);
+                                float miny = Math.Min(mouse_DragMapStart.Y, MouseMapPos.Y);
+                                float maxx = Math.Max(mouse_DragMapStart.X, MouseMapPos.X);
+                                float maxy = Math.Max(mouse_DragMapStart.Y, MouseMapPos.Y);
+
+                                minx = (float)(Math.Floor(minx / 32) * 32);
+                                miny = (float)(Math.Floor(miny / 32) * 32);
+                                maxx = (float)(Math.Ceiling(maxx / 32) * 32);
+                                maxy = (float)(Math.Ceiling(maxy / 32) * 32);
+
+                                //선택모드
+                                Vector2 min = new Vector2(minx, miny);
+                                Vector2 max = new Vector2(maxx, maxy);
+
+
+
+                                _spriteBatch.Begin();
+                                DrawRect(_spriteBatch, mapeditor.PosMapToScreen(min), mapeditor.PosMapToScreen(max), Color.Lime, 3);
+
+                                _spriteBatch.End();
+
+                                //_spriteBatch.Draw(gridtexture, new Rectangle((int)MapMin.X, (int)MapMin.Y, (int)MapSize.X, (int)MapSize.Y), null, mapeditor.TileBack, 0, new Vector2(), SpriteEffects.None, 0);
+                            }
+
+                            _spriteBatch.Begin();
+                            AtlasTileSet atlasTileSet = tileSet.GetAtlasTileSetTexture(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE);
+                            foreach (var item in mapeditor.tile_SelectedTile)
+                            {
+                                int mapx = (int)(item.Key.X);
+                                int mapy = (int)(item.Key.Y);
+                                Vector2 screen = mapeditor.PosMapToScreen(new Vector2(mapx * 32, mapy * 32));
+                                Vector2 screenm = mapeditor.PosMapToScreen(new Vector2((mapx + 1) * 32, (mapy + 1) * 32));
+
+
+                                int tileindex = (int)(mapx + mapy * mapeditor.mapdata.WIDTH);
+
+                                if (!mapeditor.mapdata.CheckTILERange(mapx, mapy)) continue;
+                                int megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, mapeditor.mapdata.TILE[tileindex]);
+
+                                if (mapeditor.TilePalleteTransparentBlack && megaindex == 0) continue;
+
+                                DrawRect(_spriteBatch, screen, screenm, Color.Lime, 3);
+                            }
+                            _spriteBatch.End();
+
+
+                            _spriteBatch.Begin(blendState: BlendState.NonPremultiplied, samplerState: SamplerState.PointClamp);
+
+                            foreach (var item in mapeditor.tile_SelectedTile)
+                            {
+                                int mapx = (int)(item.Key.X);
+                                int mapy = (int)(item.Key.Y);
+
+
+                                int tileindex = (int)(mapx + mapy * mapeditor.mapdata.WIDTH);
+
+                                if (!mapeditor.mapdata.CheckTILERange(mapx, mapy)) continue;
+
+
+                                int megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, mapeditor.mapdata.TILE[tileindex]);
+
+                                if (mapeditor.TilePalleteTransparentBlack && megaindex == 0) continue;
+
+
+                                if (0 <= mapx && mapx < mapeditor.mapdata.WIDTH &&
+                                    0 <= mapy && mapy < mapeditor.mapdata.HEIGHT)
+                                {
+
+                                    DrawTilePreview(atlasTileSet, mapx * 32, mapy * 32, megaindex);
+                                    //DrawRect(_spriteBatch, new Vector2(mapx * 32, mapy * 32), new Vector2(32, 32), Color.Red, 3);
+                                }
+
+                            }
+                            _spriteBatch.End();
+
+
+
                         }
 
                     }
@@ -484,11 +679,73 @@ namespace UseMapEditor.MonoGameControl
                     {
                         //TODO:ISOM
                     }
-                    else if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.PASTE)
-                    {
-                        //TODO:붙여넣기 완성
+                    //else if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.PASTE)
+                    //{
+                    //    if (mapeditor.tile_PaintType == MapEditor.TileSetPaintType.RECT)
+                    //    {
 
-                    }
+                    //    }
+                    //    else if (mapeditor.tile_PaintType == MapEditor.TileSetPaintType.PENCIL)
+                    //    {
+                    //        _spriteBatch.Begin(blendState: BlendState.NonPremultiplied, samplerState: SamplerState.PointClamp);
+                    //        AtlasTileSet atlasTileSet = tileSet.GetAtlasTileSetTexture(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE);
+                    //        Vector2 mappos = MouseTilePos;
+
+                    //        //mappos.X = (float)(mappos.X * 32);
+                    //        //mappos.Y = (float)(mappos.Y * 32);
+
+
+                    //        int width = (int)mapeditor.tile_CopyedTileSize.X;
+                    //        int height = (int)mapeditor.tile_CopyedTileSize.Y;
+
+                    //        int sx = (int)Math.Floor(width / 2.0);
+                    //        int sy = (int)Math.Floor(height / 2.0);
+
+                    //        bool IsOneTile = false;
+                    //        if (width == 1 && height == 1)
+                    //        {
+                    //            IsOneTile = true;
+                    //            width = mapeditor.brush_x;
+                    //            height = mapeditor.brush_y;
+                    //        }
+
+                    //        for (int y = 0; y < height; y++)
+                    //        {
+                    //            for (int x = 0; x < width; x++)
+                    //            {
+                    //                int megaindex;
+
+                    //                if (IsOneTile)
+                    //                {
+                    //                    megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, mapeditor.Tile_GetCopyedTile(0, 0));
+                    //                }
+                    //                else
+                    //                {
+                    //                    megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, mapeditor.Tile_GetCopyedTile(x, y));
+                    //                }
+
+
+                    //                if (mapeditor.TilePalleteTransparentBlack && megaindex == 0) continue;
+
+                    //                int mapx = (int)(mappos.X + (x - sx));
+                    //                int mapy = (int)(mappos.Y + (y - sy));
+
+
+                    //                if (0 <= mapx && mapx < mapeditor.mapdata.WIDTH &&
+                    //                    0 <= mapy && mapy < mapeditor.mapdata.HEIGHT)
+                    //                {
+
+                    //                    DrawTilePreview(atlasTileSet, mapx * 32, mapy * 32, megaindex);
+                    //                }
+
+                    //            }
+                    //        }
+
+
+                    //        _spriteBatch.End();
+                    //    }
+                        
+                    //}
                     break;
                 case Control.MapEditor.Layer.Doodad:
                     {

@@ -365,6 +365,27 @@ namespace Data.Map
 
 
         public ushort[] TILE;
+        public void TILEChange(int x, int y, ushort mtxm)
+        {
+            if (CheckTILERange(x, y))
+            {
+                int tileindex = x + y * mapEditor.mapdata.WIDTH;
+
+                mapEditor.mapdata.TILE[tileindex] = mtxm;
+            }
+        }
+        public bool CheckTILERange(int x, int y)
+        {
+            if (0 <= x && x < mapEditor.mapdata.WIDTH &&
+                0 <= y && y < mapEditor.mapdata.HEIGHT)
+            {
+                return true;
+            }
+            return false;
+        }
+
+
+
         public ushort[] MTXM;
 
 

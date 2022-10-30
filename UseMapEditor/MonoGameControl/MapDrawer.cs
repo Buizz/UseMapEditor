@@ -321,7 +321,6 @@ namespace UseMapEditor.MonoGameControl
 
 
 
-
             Vector2 MapMin = mapeditor.PosMapToScreen(new Vector2(0, 0));
             Vector2 MapMax = mapeditor.PosMapToScreen(new Vector2(mapeditor.mapdata.WIDTH, mapeditor.mapdata.HEIGHT) * 32);
             Vector2 MapSize = MapMax - MapMin;
@@ -596,6 +595,9 @@ namespace UseMapEditor.MonoGameControl
                 RenderFogofWar();
             }
             DrawConnect();
+
+
+
 
             DrawPallet(IsDrawGrp);
 

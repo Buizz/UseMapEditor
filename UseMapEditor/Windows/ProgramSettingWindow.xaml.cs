@@ -137,6 +137,8 @@ namespace UseMapEditor.Windows
             }
 
 
+            TilePreviewOpacity.Value = 100;
+
             ISLoad = true;
         }
 
@@ -242,6 +244,11 @@ namespace UseMapEditor.Windows
 
                 Global.Setting.Vals[Global.Setting.Settings.language_StatLan] = comboBoxItem.Tag.ToString();
             }
+        }
+
+        private void TilePreviewOpacity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            Global.Setting.Vals[Global.Setting.Settings.TIlePreviewOpacity] = TilePreviewOpacity.Value.ToString();
         }
     }
 }
