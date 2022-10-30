@@ -53,6 +53,10 @@ namespace UseMapEditor.MonoGameControl
         //왼쪽 마우스 클릭
         private void TileLeftClickStart()
         {
+            if (!key_LeftShiftDown)
+            {
+                mapeditor.Tile_ResetSelectedTile();
+            }
             mapeditor.taskManager.TaskStart();
         }
         private void TileLeftClickEnd()
@@ -88,10 +92,7 @@ namespace UseMapEditor.MonoGameControl
                 maxx = (float)(Math.Ceiling(maxx / 32));
                 maxy = (float)(Math.Ceiling(maxy / 32));
 
-                if (!key_LeftShiftDown)
-                {
-                    mapeditor.Tile_ResetSelectedTile();
-                }
+       
 
 
                 for (int y = 0; y < (maxy - miny ); y++)
