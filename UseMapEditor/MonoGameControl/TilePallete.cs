@@ -519,11 +519,13 @@ namespace UseMapEditor.MonoGameControl
                                 if (IsOneTile)
                                 {
                                     newMTXM = mapeditor.Tile_GetCopyedTile(0, 0);
+                                    if (newMTXM == ushort.MaxValue) continue;
                                     megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, newMTXM);
                                 }
                                 else
                                 {
                                     newMTXM = mapeditor.Tile_GetCopyedTile(x, y);
+                                    if (newMTXM == ushort.MaxValue) continue;
                                     megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, newMTXM);
                                 }
                             }

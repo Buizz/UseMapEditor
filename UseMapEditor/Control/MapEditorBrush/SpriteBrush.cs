@@ -79,6 +79,7 @@ namespace UseMapEditor.Control
             PopupReLocatied();
             PopupInnerGrid.Margin = new Thickness(x, y, 0, 0);
             MapViewer.IsEnabled = false;
+            KewBoardReset();
             PopupReLocatied();
         }
 

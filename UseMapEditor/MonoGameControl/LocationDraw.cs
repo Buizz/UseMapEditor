@@ -145,14 +145,7 @@ namespace UseMapEditor.MonoGameControl
 
             if (mapeditor.PalleteLayer == Control.MapEditor.Layer.Location)
             {
-                if (key_QDown)
-                {
-                    mapeditor.MouseCursorChange(Cursors.Cross);
-                }
-                else
-                {
-                    mapeditor.MouseCursorChange(Cursors.Arrow);
-                }
+             
                 if (hoverLoc.Count >= 1)
                 {
                     for (int i = 0; i < hoverLoc.Count; i++)

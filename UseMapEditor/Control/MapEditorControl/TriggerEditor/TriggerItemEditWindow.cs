@@ -29,6 +29,7 @@ namespace UseMapEditor.Control.MapEditorControl
             if (SelectTrigitem == null)
             {
                 IsNewTrigEdit = true;
+                CopyedSelectTrigitem = null;
                 OpenTypeSelecter(SelectTrigitem, IsAction);
             }
             else

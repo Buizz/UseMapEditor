@@ -109,6 +109,7 @@ namespace UseMapEditor.Control
             PopupGrid.Visibility = Visibility.Visible;
             PopupReLocatied();
             MapViewer.IsEnabled = false;
+            KewBoardReset();
             taskManager.TaskStart();
         }
 

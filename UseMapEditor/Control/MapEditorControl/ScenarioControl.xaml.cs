@@ -49,6 +49,8 @@ namespace UseMapEditor.Control.MapEditorControl
         TriggerEditor classTriggerEditor = new TriggerEditor();
         TriggerEditor brinfingTriggerEditor = new TriggerEditor();
 
+        ChkSetting chkSetting = new ChkSetting();
+
         List<DialogableControlPanel> dialogableControlPanels = new List<DialogableControlPanel>();
 
         public void SwitchTab(int index)
@@ -151,6 +153,7 @@ namespace UseMapEditor.Control.MapEditorControl
             stringSetting.SetMapEditor(mapEditor);
             classTriggerEditor.SetMapEditor(mapEditor, true);
             brinfingTriggerEditor.SetMapEditor(mapEditor, false);
+            chkSetting.SetMapEditor(mapEditor);
 
 
             TabItemAdd(mapSetting, "맵");
@@ -163,6 +166,7 @@ namespace UseMapEditor.Control.MapEditorControl
             TabItemAdd(stringSetting, "스트링");
             TabItemAdd(classTriggerEditor, "트리거");
             TabItemAdd(brinfingTriggerEditor, "브리핑");
+            TabItemAdd(chkSetting, "데이터");
         }
 
 

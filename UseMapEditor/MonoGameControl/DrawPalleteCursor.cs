@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Framework.WpfInterop;
 using MonoGame.Framework.WpfInterop.Input;
+using SharpDX.Direct2D1.Effects;
+using SharpDX.Direct2D1;
 using SpriteFontPlus;
 using System;
 using System.Collections.Generic;
@@ -517,16 +519,21 @@ namespace UseMapEditor.MonoGameControl
                                     {
                                         if (IsOneTile)
                                         {
-                                            megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, mapeditor.Tile_GetCopyedTile(0, 0));
+                                            ushort newMTXM = mapeditor.Tile_GetCopyedTile(0, 0);
+                                            if (newMTXM == ushort.MaxValue) continue;
+                                            megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, newMTXM);
                                         }
                                         else
                                         {
-                                            megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, mapeditor.Tile_GetCopyedTile(x, y));
+                                            ushort newMTXM = mapeditor.Tile_GetCopyedTile(x, y);
+                                            if (newMTXM == ushort.MaxValue) continue;
+                                            megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, newMTXM);
                                         }
                                     }
                                     if (mapeditor.TilePalleteTransparentBlack && megaindex == 0) continue;
 
 
+                                    if (!mapeditor.mapdata.CheckTILERange(mapx, mapy)) continue;
                                     DrawRect(_spriteBatch, screen, screenm, Color.Lime, 3);
 
 
@@ -562,11 +569,15 @@ namespace UseMapEditor.MonoGameControl
                                     {
                                         if (IsOneTile)
                                         {
-                                            megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, mapeditor.Tile_GetCopyedTile(0, 0));
+                                            ushort newMtxm = mapeditor.Tile_GetCopyedTile(0, 0);
+                                            if (newMtxm == ushort.MaxValue) continue;
+                                            megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, newMtxm);
                                         }
                                         else
                                         {
-                                            megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, mapeditor.Tile_GetCopyedTile(x, y));
+                                            ushort newMtxm = mapeditor.Tile_GetCopyedTile(x, y);
+                                            if (newMtxm == ushort.MaxValue) continue;
+                                            megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, newMtxm);
                                         }
                                     }
 
@@ -575,6 +586,7 @@ namespace UseMapEditor.MonoGameControl
                                     int mapx = (int)(mappos.X + (x - sx));
                                     int mapy = (int)(mappos.Y + (y - sy));
 
+                                    if (!mapeditor.mapdata.CheckTILERange(mapx, mapy)) continue;
                                     if (0 <= mapx && mapx < mapeditor.mapdata.WIDTH &&
                                         0 <= mapy && mapy < mapeditor.mapdata.HEIGHT)
                                     {
@@ -619,26 +631,27 @@ namespace UseMapEditor.MonoGameControl
                                 //_spriteBatch.Draw(gridtexture, new Rectangle((int)MapMin.X, (int)MapMin.Y, (int)MapSize.X, (int)MapSize.Y), null, mapeditor.TileBack, 0, new Vector2(), SpriteEffects.None, 0);
                             }
 
-                            _spriteBatch.Begin();
-                            AtlasTileSet atlasTileSet = tileSet.GetAtlasTileSetTexture(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE);
-                            foreach (var item in mapeditor.tile_SelectedTile)
-                            {
-                                int mapx = (int)(item.Key.X);
-                                int mapy = (int)(item.Key.Y);
-                                Vector2 screen = mapeditor.PosMapToScreen(new Vector2(mapx * 32, mapy * 32));
-                                Vector2 screenm = mapeditor.PosMapToScreen(new Vector2((mapx + 1) * 32, (mapy + 1) * 32));
+                            #region 타일 선택시 그리기
+                            //_spriteBatch.Begin();
+                            //AtlasTileSet atlasTileSet = tileSet.GetAtlasTileSetTexture(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE);
+                            //foreach (var item in mapeditor.tile_SelectedTile)
+                            //{
+                            //    int mapx = (int)(item.Key.X);
+                            //    int mapy = (int)(item.Key.Y);
+                            //    Vector2 screen = mapeditor.PosMapToScreen(new Vector2(mapx * 32, mapy * 32));
+                            //    Vector2 screenm = mapeditor.PosMapToScreen(new Vector2((mapx + 1) * 32, (mapy + 1) * 32));
 
 
-                                int tileindex = (int)(mapx + mapy * mapeditor.mapdata.WIDTH);
+                            //    int tileindex = (int)(mapx + mapy * mapeditor.mapdata.WIDTH);
 
-                                if (!mapeditor.mapdata.CheckTILERange(mapx, mapy)) continue;
-                                int megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, mapeditor.mapdata.TILE[tileindex]);
+                            //    if (!mapeditor.mapdata.CheckTILERange(mapx, mapy)) continue;
+                            //    int megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, mapeditor.mapdata.TILE[tileindex]);
 
-                                if (mapeditor.TilePalleteTransparentBlack && megaindex == 0) continue;
+                            //    if (mapeditor.TilePalleteTransparentBlack && megaindex == 0) continue;
 
-                                DrawRect(_spriteBatch, screen, screenm, Color.Lime, 3);
-                            }
-                            _spriteBatch.End();
+                            //    DrawRect(_spriteBatch, screen, screenm, Color.Lime, 3);
+                            //}
+                            //_spriteBatch.End();
 
 
                             _spriteBatch.Begin(blendState: BlendState.NonPremultiplied, samplerState: SamplerState.PointClamp);
@@ -658,17 +671,23 @@ namespace UseMapEditor.MonoGameControl
 
                                 if (mapeditor.TilePalleteTransparentBlack && megaindex == 0) continue;
 
-
+                                Vector2 screen = mapeditor.PosMapToScreen(new Vector2(mapx * 32, mapy * 32));
                                 if (0 <= mapx && mapx < mapeditor.mapdata.WIDTH &&
-                                    0 <= mapy && mapy < mapeditor.mapdata.HEIGHT)
+                                0 <= mapy && mapy < mapeditor.mapdata.HEIGHT)
                                 {
 
-                                    DrawTilePreview(atlasTileSet, mapx * 32, mapy * 32, megaindex);
+                                    _spriteBatch.Draw(gridtexture, screen, null, new Color(0.4f, 0.4f, 7f, 0.35f), 0, new Vector2(), (float)(32 * mapeditor.opt_scalepercent), SpriteEffects.None, 0);
+
+                                  
+
+                                    //DrawTilePreview(atlasTileSet, mapx * 32, mapy * 32, megaindex);
+
                                     //DrawRect(_spriteBatch, new Vector2(mapx * 32, mapy * 32), new Vector2(32, 32), Color.Red, 3);
                                 }
 
                             }
                             _spriteBatch.End();
+                            #endregion
 
 
 

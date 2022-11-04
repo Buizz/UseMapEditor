@@ -9,6 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
+using System.Windows.Input;
+using UseMapEditor.Control;
 using UseMapEditor.FileData;
 using WpfTest.Components;
 
@@ -25,14 +27,110 @@ namespace UseMapEditor.MonoGameControl
         private Vector2 mouse_DragScreenEnd;
 
 
+
         private bool mouse_LeftDown;
         private bool mouse_RightDown;
         private bool mouse_IsDrag;
 
         private bool mouse_IsLeftDrag;
 
+        private bool mouse_middleClick;
+        private Vector2 mouse_middleClickPos;
         public void MouseEvent(MouseState mouseState)
         {
+            if (mouseState.MiddleButton == ButtonState.Pressed)
+            {
+                if (!mouse_middleClick)
+                {
+                    mouse_middleClick = true;
+                    mouse_middleClickPos = new Vector2(mouseState.X, mouseState.Y);
+                }
+            }
+            else if (mouseState.MiddleButton == ButtonState.Released)
+            {
+                mouse_middleClick = false;
+            }
+
+            if (mouse_middleClick) {
+                float x = mouseState.X - mouse_middleClickPos.X;
+                float y = mouseState.Y - mouse_middleClickPos.Y;
+
+                x /= 5;
+                y /= 5;
+
+                mapeditor.Scroll(x, y);
+
+                if(x > 0)
+                {
+                    if(y > 0)
+                    {
+                        mapeditor.MouseCursorChange(Cursors.ScrollSE);
+                    }
+                    else if (y < 0)
+                    {
+                        mapeditor.MouseCursorChange(Cursors.ScrollNE);
+                    }
+                    else
+                    {
+                        mapeditor.MouseCursorChange(Cursors.ScrollE);
+                    }
+                }
+                else if (x < 0)
+                {
+                    if (y > 0)
+                    {
+                        mapeditor.MouseCursorChange(Cursors.ScrollSW);
+                    }
+                    else if (y < 0)
+                    {
+                        mapeditor.MouseCursorChange(Cursors.ScrollNW);
+                    }
+                    else
+                    {
+                        mapeditor.MouseCursorChange(Cursors.ScrollW);
+                    }
+                }
+                else
+                {
+                    if (y > 0)
+                    {
+                        mapeditor.MouseCursorChange(Cursors.ScrollS);
+                    }
+                    else if (y < 0)
+                    {
+                        mapeditor.MouseCursorChange(Cursors.ScrollN);
+                    }
+                    else
+                    {
+                        mapeditor.MouseCursorChange(Cursors.ScrollAll);
+                    }
+                }
+
+                return;
+            }
+            else
+            {
+                if (mapeditor.PalleteLayer == Control.MapEditor.Layer.Location)
+                {
+                    if (key_QDown)
+                    {
+                        mapeditor.MouseCursorChange(Cursors.Cross);
+                    }
+                    else
+                    {
+                        mapeditor.MouseCursorChange(Cursors.Arrow);
+                    }
+                }
+                else
+                {
+                    mapeditor.MouseCursorChange(Cursors.Arrow);
+                }
+            }
+
+
+
+
+
             if (!mouse_IsDrag)
             {
                 MiniMapClick(mouseState);
@@ -61,6 +159,7 @@ namespace UseMapEditor.MonoGameControl
                     mapeditor.ScrollDown();
                 }
             }
+
 
 
             if (mouseState.RightButton == ButtonState.Pressed)
@@ -103,6 +202,22 @@ namespace UseMapEditor.MonoGameControl
 
             if (mouseState.LeftButton == ButtonState.Pressed)
             {
+                if (mapeditor.TilePalleteAllMouseDown)
+                {
+                    System.Windows.Point uipoint = mapeditor.MapViewer.TranslatePoint(new System.Windows.Point(), mapeditor.Tile_All_Pallet);
+
+                    int x = (int)(uipoint.X + MouseOuter.X);
+                    int y = (int)(uipoint.Y + MouseOuter.Y);
+
+
+                    x = Math.Max(0, x);
+
+                    mapeditor.TilePalletMouseBonder = true;
+                    mapeditor.Tile_All_Pallet_MouseMove(x, y);
+                    return;
+                }
+
+
                 if (!mouse_LeftDown)
                 {
                     LeftClickStart();
@@ -121,8 +236,17 @@ namespace UseMapEditor.MonoGameControl
             }
             if (mouseState.LeftButton == ButtonState.Released | !mapeditor.IsLeftMouseDown)
             {
+                if (mapeditor.TilePalleteAllMouseDown & mapeditor.TilePalletMouseBonder)
+                {
+                    mapeditor.TilePalletMouseBonder = false;
+                    mapeditor.Tile_All_Pallet_MouseUp();
+                    return;
+                }
+                mapeditor.TilePalletMouseBonder = false;
                 if (mouse_LeftDown)
                 {
+                 
+
                     mouse_DragScreenStart = new Vector2();
                     if (mouse_IsDrag & mouse_IsLeftDrag)
                     {

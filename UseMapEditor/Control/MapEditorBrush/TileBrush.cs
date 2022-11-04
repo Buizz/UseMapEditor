@@ -134,7 +134,7 @@ namespace UseMapEditor.Control
                 return tile_CopyedTile[tmp];
             }
 
-            return 0;
+            return ushort.MaxValue;
         }
 
         public void Tile_ResetSelectedTile()
@@ -194,6 +194,7 @@ namespace UseMapEditor.Control
         public bool TilePalleteAllMouseDown;
 
 
+        public bool TilePalletMouseBonder = false;
 
 
         public int TilePalleteMouseStartXIndex;
@@ -240,33 +241,45 @@ namespace UseMapEditor.Control
                 TilePalleteAllMouseDown = true;
             }
         }
+
+        public void Tile_All_Pallet_MouseUp()
+        {
+            if (TilePalleteAllMouseDown)
+            {
+                tile_SelectPalleteALLTILEStartXIndex = TilePalleteMouseStartXIndex;
+                tile_SelectPalleteALLTILEStartYIndex = TilePalleteMouseStartYIndex;
+                tile_SelectPalleteALLTILEEndXIndex = TilePalleteMouseMoveXIndex;
+                tile_SelectPalleteALLTILEEndYIndex = TilePalleteMouseMoveYIndex;
+            }
+            //mapDataBinding.TILE_BRUSHMODE = true;
+            //tile_PasteMode = false;
+
+            TilePalleteAllMouseDown = false;
+        }
         private void Tile_All_Pallet_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Released)
             {
-                if (TilePalleteAllMouseDown)
-                {
-                    tile_SelectPalleteALLTILEStartXIndex = TilePalleteMouseStartXIndex;
-                    tile_SelectPalleteALLTILEStartYIndex = TilePalleteMouseStartYIndex;
-                    tile_SelectPalleteALLTILEEndXIndex = TilePalleteMouseMoveXIndex;
-                    tile_SelectPalleteALLTILEEndYIndex = TilePalleteMouseMoveYIndex;
-                }
-                //mapDataBinding.TILE_BRUSHMODE = true;
-                //tile_PasteMode = false;
+                Tile_All_Pallet_MouseUp();
+            }
+        }
 
-                TilePalleteAllMouseDown = false;
+        public void Tile_All_Pallet_MouseMove(int x, int y)
+        {
+            if (TilePalleteAllMouseDown)
+            {
+               //TileScroll.Value = _TileScrollStart + (TileMouseStartY - (int)e.GetPosition(TilePalletPanel).Y);
+               TilePalleteMouseMoveXIndex = ((int)(x / viewTileSize));
+                TilePalleteMouseMoveYIndex = ((int)(y / viewTileSize + TileScroll.Value / 30));
             }
         }
         private void Tile_All_Pallet_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            if (TilePalleteAllMouseDown)
-            {
-                //TileScroll.Value = _TileScrollStart + (TileMouseStartY - (int)e.GetPosition(TilePalletPanel).Y);
-
-                TilePalleteMouseMoveXIndex = (int)(e.GetPosition(Tile_All_Pallet).X / viewTileSize);
-                TilePalleteMouseMoveYIndex = (int)(e.GetPosition(Tile_All_Pallet).Y / viewTileSize + TileScroll.Value / 30);
-            }
+            Tile_All_Pallet_MouseMove((int)e.GetPosition(Tile_All_Pallet).X, (int)e.GetPosition(Tile_All_Pallet).Y);
         }
+
+
+
 
 
         private void Tile_ISOM_Pallet_PreviewMouseDown(object sender, MouseButtonEventArgs e)
@@ -281,6 +294,7 @@ namespace UseMapEditor.Control
                 TilePalleteISOMMouseDown = true;
             }
         }
+
         private void Tile_ISOM_Pallet_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Released)
@@ -288,6 +302,7 @@ namespace UseMapEditor.Control
                 TilePalleteISOMMouseDown = false;
             }
         }
+
         private void Tile_ISOM_Pallet_PreviewMouseMove(object sender, MouseEventArgs e)
         {
         }
@@ -314,6 +329,7 @@ namespace UseMapEditor.Control
             PopupReLocatied();
             PopupInnerGrid.Margin = new Thickness(x, y, 0, 0);
             MapViewer.IsEnabled = false;
+            KewBoardReset();
             PopupReLocatied();
         }
 

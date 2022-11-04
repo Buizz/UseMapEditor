@@ -533,8 +533,8 @@ namespace UseMapEditor.MonoGameControl
             drawtimer += (float)time.ElapsedGameTime.Ticks;
             if (drawtimer >= updateTick)
             {
-                //drawtimer -= updateTick;
-                drawtimer = 0;
+                drawtimer -= updateTick;
+                //drawtimer = 0;
             }
             else
             {

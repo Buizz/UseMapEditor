@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -220,6 +221,12 @@ namespace UseMapEditor.Control
             opt_xpos += (int)Math.Ceiling(scrollspeed / opt_scalepercent);
         }
 
+        public void Scroll(float x, float y)
+        {
+            opt_xpos += (int)Math.Ceiling(x / opt_scalepercent);
+            opt_ypos += (int)Math.Ceiling(y / opt_scalepercent);
+        }
+
 
         public Rect GetMapRect()
         {
@@ -366,7 +373,13 @@ namespace UseMapEditor.Control
         public bool key_ADown;
         public bool key_SDown;
         public bool key_DDown;
-
+        public void KewBoardReset()
+        {
+            key_WDown = false;
+            key_ADown = false;
+            key_SDown = false;
+            key_DDown = false;
+        }
 
 
 
@@ -1355,5 +1368,15 @@ namespace UseMapEditor.Control
         {
             tile_BrushMode = TileSetBrushMode.PASTE;
         }
+
+        private void tileMinimap_Click(object sender, RoutedEventArgs e)
+        {
+            CloseTileMenu();
+            Windows.MinimapImageWindow minimapImageWindow = new MinimapImageWindow();
+            minimapImageWindow.ShowDialog();
+
+            tile_PasteStart();
+        }
+
     }
 }

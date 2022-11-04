@@ -277,6 +277,11 @@
                                         <StackPanel/>
                                     </ItemsPanelTemplate>
                                 </Menu.ItemsPanel>
+                                <MenuItem Header="미니맵이미지 삽입" x:Name="TileMinimapMenuItem" Click="tileMinimap_Click">
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon Kind="Image"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
                                 <MenuItem Header="선택해제" x:Name="TileDeselectMenuItem" Click="tileDeselect_Click">
                                     <MenuItem.Icon>
                                         <materialDesign:PackIcon Kind="BorderNoneVariant"/>
@@ -689,7 +694,7 @@
                                             </ListBoxItem>
                                         </ListBox>
 
-                                        <Button >
+                                        <Button Click="tileMinimap_Click">
                                             <materialDesign:PackIcon Kind="Image" />
                                         </Button>
 

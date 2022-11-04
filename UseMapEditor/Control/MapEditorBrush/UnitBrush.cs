@@ -233,11 +233,11 @@ namespace UseMapEditor.Control
             }
 
 
-
             PopupGrid.Visibility = Visibility.Visible;
             UnitContextMenu.Visibility = Visibility.Visible;
             PopupInnerGrid.Margin = new Thickness(x, y, 0, 0);
             MapViewer.IsEnabled = false;
+            KewBoardReset();
             PopupReLocatied();
         }
 

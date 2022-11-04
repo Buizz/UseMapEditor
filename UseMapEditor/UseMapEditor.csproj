@@ -102,6 +102,9 @@
     <Reference Include="Dragablz, Version=0.0.3.223, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Dragablz.0.0.3.223\lib\net45\Dragablz.dll</HintPath>
     </Reference>
+    <Reference Include="FastExcel, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FastExcel.3.0.13\lib\netstandard2.0\FastExcel.dll</HintPath>
+    </Reference>
     <Reference Include="HotKeyManagement.WPF.4, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\HotKeyManagement.WPF.4.1.1.1\lib\net40\HotKeyManagement.WPF.4.dll</HintPath>
     </Reference>
@@ -288,6 +291,12 @@
     <Compile Include="Control\MapEditorBrush\SpriteBrush.cs" />
     <Compile Include="Control\MapEditorBrush\TileBrush.cs" />
     <Compile Include="Control\MapEditorBrush\UnitBrush.cs" />
+    <Compile Include="Control\MapEditorControl\ChkSetting.xaml.cs">
+      <DependentUpon>ChkSetting.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Control\MapEditorControl\ChksettingListItem.xaml.cs">
+      <DependentUpon>ChksettingListItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Control\MapEditorControl\CodeSelecter.xaml.cs">
       <DependentUpon>CodeSelecter.xaml</DependentUpon>
     </Compile>
@@ -369,6 +378,7 @@
     <Compile Include="FileData\Anim.cs" />
     <Compile Include="FileData\DatFile.cs" />
     <Compile Include="FileData\CImage.cs" />
+    <Compile Include="FileData\ExcelData.cs" />
     <Compile Include="FileData\Iscript.cs" />
     <Compile Include="FileData\StromLib.cs" />
     <Compile Include="FileData\tblreader.cs" />
@@ -406,6 +416,9 @@
     <Compile Include="Task\TaskManager.cs" />
     <Compile Include="Task\TaskEvent.cs" />
     <Compile Include="Tools\VectorTool.cs" />
+    <Compile Include="Windows\MinimapImageWindow.xaml.cs">
+      <DependentUpon>MinimapImageWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\PopupWindow.xaml.cs">
       <DependentUpon>PopupWindow.xaml</DependentUpon>
     </Compile>
@@ -441,6 +454,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Control\MapEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Control\MapEditorControl\ChkSetting.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Control\MapEditorControl\ChksettingListItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -561,6 +582,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Windows\MinimapImageWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Windows\PopupWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -655,6 +680,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Data\SDGRPSIZE">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\StarCraftExcelTemplate.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Data\tbls\stat_txt.tbl">
