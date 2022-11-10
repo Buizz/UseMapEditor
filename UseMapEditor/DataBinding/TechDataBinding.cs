@@ -9,6 +9,7 @@ using System.Windows.Media.Imaging;
 using UseMapEditor.Control;
 using UseMapEditor.FileData;
 using static Data.Map.MapData;
+using static UseMapEditor.DataBinding.MapDataBinding;
 
 namespace UseMapEditor.DataBinding
 {
@@ -23,6 +24,8 @@ namespace UseMapEditor.DataBinding
         {
             mapEditor = _mapEditor;
             ObjectID = _ObjectID;
+
+            UsePlayerCode = new PlayerCode(mapEditor, ObjectID);
         }
 
 
@@ -108,7 +111,6 @@ namespace UseMapEditor.DataBinding
             {
             }
         }
-
 
 
 
@@ -200,6 +202,133 @@ namespace UseMapEditor.DataBinding
         }
 
 
+
+        public UserDefaultCode UseDefaultCode
+        {
+            get
+            {
+                byte mvar = mapEditor.mapdata.PTEx.DEFAULTMAXLEVEL[ObjectID];
+                byte svar = mapEditor.mapdata.PTEx.DEFAULTSTARTLEVEL[ObjectID];
+
+
+                if (mvar == 0 & svar == 0)
+                {
+                    return UserDefaultCode.Unusable;
+                }
+                else if (mvar == 1 & svar == 1)
+                {
+                    return UserDefaultCode.Complete;
+                }
+                else if (mvar == 1 & svar == 0)
+                {
+                    return UserDefaultCode.Usable;
+                }
+
+                return UserDefaultCode.Unusable;
+            }
+            set
+            {
+                byte mvar = mapEditor.mapdata.PTEx.DEFAULTMAXLEVEL[ObjectID];
+                byte svar = mapEditor.mapdata.PTEx.DEFAULTSTARTLEVEL[ObjectID];
+
+                if (value == UserDefaultCode.Unusable)
+                {
+                    mvar = 0; svar = 0;
+                }
+                else if (value == UserDefaultCode.Usable)
+                {
+                    mvar = 1; svar = 0;
+                }
+                else if (value == UserDefaultCode.Complete)
+                {
+                    mvar = 1; svar = 1;
+                }
+
+                mapEditor.mapdata.PTEx.DEFAULTMAXLEVEL[ObjectID] = mvar;
+                mapEditor.mapdata.PTEx.DEFAULTSTARTLEVEL[ObjectID] = svar;
+
+                OnPropertyChanged("UNITDEFAULTCOLOR");
+            }
+        }
+
+        public class PlayerCode
+        {
+            private MapEditor mapEditor;
+            private int ObjectID;
+            public PlayerCode(MapEditor mapEditor, int ObjectID)
+            {
+                this.mapEditor = mapEditor;
+                this.ObjectID = ObjectID;
+            }
+
+            public UserDefaultCode this[int player]
+            {
+                get
+                {
+                    byte svar = mapEditor.mapdata.PTEx.STARTLEVEL[player][ObjectID];
+                    byte mvar = mapEditor.mapdata.PTEx.MAXLEVEL[player][ObjectID];
+
+                    byte dvar = mapEditor.mapdata.PTEx.USEDEFAULT[player][ObjectID];
+
+                    if (dvar == 1)
+                    {
+                        return UserDefaultCode.Default;
+                    }
+
+
+                    if (mvar == 0 & svar == 0)
+                    {
+                        return UserDefaultCode.Unusable;
+                    }
+                    else if (mvar == 1 & svar == 1)
+                    {
+                        return UserDefaultCode.Complete;
+                    }
+                    else if (mvar == 1 & svar == 0)
+                    {
+                        return UserDefaultCode.Usable;
+                    }
+
+
+                    return UserDefaultCode.Unusable;
+                }
+                set
+                {
+                    byte mvar = mapEditor.mapdata.PTEx.MAXLEVEL[player][ObjectID];
+                    byte svar = mapEditor.mapdata.PTEx.STARTLEVEL[player][ObjectID];
+
+                    byte dvar = mapEditor.mapdata.PTEx.USEDEFAULT[player][ObjectID];
+
+
+
+
+                    if (value == UserDefaultCode.Unusable)
+                    {
+                        mvar = 0; svar = 0; dvar = 0;
+                    }
+                    else if (value == UserDefaultCode.Default)
+                    {
+                        mvar = 0; svar = 0; dvar = 1;
+                    }
+                    else if (value == UserDefaultCode.Usable)
+                    {
+                        mvar = 1; svar = 0; dvar = 0;
+                    }
+                    else if (value == UserDefaultCode.Complete)
+                    {
+                        mvar = 1; svar = 1; dvar = 0;
+                    }
+
+                    mapEditor.mapdata.PTEx.MAXLEVEL[player][ObjectID] = mvar;
+                    mapEditor.mapdata.PTEx.STARTLEVEL[player][ObjectID] = svar;
+
+                    mapEditor.mapdata.PTEx.USEDEFAULT[player][ObjectID] = dvar;
+
+                    //OnPropertyChanged("UNITENABLECOLOR" + player);
+                }
+            }
+        }
+        public PlayerCode UsePlayerCode;
 
         public void AddDEFAULTCOLOR()
         {
@@ -633,6 +762,12 @@ namespace UseMapEditor.DataBinding
             OnPropertyChanged("GAS");
             OnPropertyChanged("BASETIME");
             OnPropertyChanged("ENERGY");
+
+            OnPropertyChanged("UNITDEFAULTCOLOR");
+            for (int i = 0; i < 8; i++)
+            {
+                OnPropertyChanged("UNITENABLECOLOR" + i);
+            }
         }
 
 

@@ -30,6 +30,13 @@ namespace UseMapEditor.DataBinding
                 spriteDataBindings.Add(new SpriteDataBinding(mapEditor, i));
         }
 
+        public enum UserDefaultCode
+        {
+            Unusable,
+            Default,
+            Usable,
+            Complete,
+        }
 
         public List<PlayerBinding> playerBindings = new List<PlayerBinding>();
         public List<ForceBinding> forceBindings = new List<ForceBinding>();

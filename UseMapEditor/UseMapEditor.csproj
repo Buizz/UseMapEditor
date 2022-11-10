@@ -102,9 +102,6 @@
     <Reference Include="Dragablz, Version=0.0.3.223, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Dragablz.0.0.3.223\lib\net45\Dragablz.dll</HintPath>
     </Reference>
-    <Reference Include="FastExcel, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\FastExcel.3.0.13\lib\netstandard2.0\FastExcel.dll</HintPath>
-    </Reference>
     <Reference Include="HotKeyManagement.WPF.4, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\HotKeyManagement.WPF.4.1.1.1\lib\net40\HotKeyManagement.WPF.4.dll</HintPath>
     </Reference>

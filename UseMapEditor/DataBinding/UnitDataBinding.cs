@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using UseMapEditor.Control;
 using UseMapEditor.FileData;
+using static UseMapEditor.DataBinding.MapDataBinding;
 
 namespace UseMapEditor.DataBinding
 {
@@ -22,6 +23,8 @@ namespace UseMapEditor.DataBinding
         {
             mapEditor = _mapEditor;
             ObjectID = _ObjectID;
+
+            UsePlayerCode = new PlayerCode(mapEditor, ObjectID);
         }
 
 
@@ -54,7 +57,7 @@ namespace UseMapEditor.DataBinding
                     return System.Windows.Visibility.Collapsed;
                 }
             }
-            set{}
+            set { }
         }
 
 
@@ -64,7 +67,7 @@ namespace UseMapEditor.DataBinding
             {
                 return mapEditor.mapdata.GetUnitName(ObjectID);
             }
-            set{}
+            set { }
         }
         public string MainName
         {
@@ -72,7 +75,7 @@ namespace UseMapEditor.DataBinding
             {
                 return mapEditor.mapdata.GetMapUnitName(ObjectID);
             }
-            set{}
+            set { }
         }
 
         public string AlphaName
@@ -81,7 +84,7 @@ namespace UseMapEditor.DataBinding
             {
                 return UnitName + "[" + ObjectID.ToString().PadLeft(3, '0') + "]";
             }
-            set{}
+            set { }
         }
 
         public void UIPropertyChange()
@@ -100,7 +103,7 @@ namespace UseMapEditor.DataBinding
             {
                 if (Global.Setting.Vals[Global.Setting.Settings.Program_GRPLoad] == "true")
                 {
-                    if(imageIcon == null)
+                    if (imageIcon == null)
                     {
                         using (FileStream fileStream = new FileStream(AppDomain.CurrentDomain.BaseDirectory + @"\CascData\cmdicons\" + ObjectID + ".png", FileMode.Open))
                         {
@@ -121,7 +124,7 @@ namespace UseMapEditor.DataBinding
             }
         }
 
-        
+
 
         public string UnitName
         {
@@ -195,7 +198,7 @@ namespace UseMapEditor.DataBinding
         {
             get
             {
-                
+
                 return (mapEditor.mapdata.UNIx.USEDEFAULT[ObjectID] == 0);
             }
             set
@@ -245,7 +248,7 @@ namespace UseMapEditor.DataBinding
 
                 uint HP = point >> 8;
                 uint DOT = point & 0xFF;
-                if(DOT == 0)
+                if (DOT == 0)
                 {
                     return HP.ToString();
                 }
@@ -258,11 +261,11 @@ namespace UseMapEditor.DataBinding
             set
             {
                 string rvalue = value;
-                
 
-                if(rvalue.Length > 0)
+
+                if (rvalue.Length > 0)
                 {
-                    if(rvalue[0] == 'S')
+                    if (rvalue[0] == 'S')
                     {
                         rvalue = rvalue.Substring(1);
 
@@ -288,12 +291,12 @@ namespace UseMapEditor.DataBinding
 
                 string[] vals = rvalue.Split('.');
 
-                if(vals.Length == 1)
+                if (vals.Length == 1)
                 {
                     uint rval;
-                    if(uint.TryParse(vals[0], out rval))
+                    if (uint.TryParse(vals[0], out rval))
                     {
-                        if((rval) > 0xFFFFFFL)
+                        if ((rval) > 0xFFFFFFL)
                         {
                             rval = 0xFFFFFF;
                         }
@@ -303,7 +306,7 @@ namespace UseMapEditor.DataBinding
                         OnPropertyChanged("HIT");
                     }
                 }
-                else if(vals.Length == 2)
+                else if (vals.Length == 2)
                 {
                     uint rval;
                     if (uint.TryParse(vals[0], out rval))
@@ -425,11 +428,11 @@ namespace UseMapEditor.DataBinding
             get
             {
                 long WeaponNum = Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "Ground Weapon", ObjectID).Data;
-                if(WeaponNum == 130)
+                if (WeaponNum == 130)
                 {
                     return 0;
                 }
-                
+
                 long Dmg = mapEditor.mapdata.UNIx.DMG[WeaponNum];
 
                 return (ushort)Dmg;
@@ -569,6 +572,87 @@ namespace UseMapEditor.DataBinding
 
 
 
+
+        public UserDefaultCode UseDefaultCode
+        {
+            get
+            {
+                if (mapEditor.mapdata.PUNI.DEFAULT[ObjectID] == 0)
+                {
+                    return UserDefaultCode.Unusable;
+                }
+                else
+                {
+                    return UserDefaultCode.Usable;
+                }
+            }
+            set
+            {
+                if (value == UserDefaultCode.Unusable)
+                {
+                    mapEditor.mapdata.PUNI.DEFAULT[ObjectID] = 0;
+                }
+                else
+                {
+                    mapEditor.mapdata.PUNI.DEFAULT[ObjectID] = 1;
+                }
+                OnPropertyChanged("UNITDEFAULTCOLOR");
+            }
+        }
+
+        public class PlayerCode
+        {
+            private MapEditor mapEditor;
+            private int ObjectID;
+            public PlayerCode(MapEditor mapEditor, int ObjectID)
+            {
+                this.mapEditor = mapEditor;
+                this.ObjectID = ObjectID;
+            }
+
+            public UserDefaultCode this[int player]
+            {
+                get
+                {
+                    int evar = mapEditor.mapdata.PUNI.UNITENABLED[player][ObjectID];
+                    int dvar = mapEditor.mapdata.PUNI.USEDEFAULT[player][ObjectID];
+
+                    if (evar == 0 & dvar == 0)
+                    {
+                        return UserDefaultCode.Unusable;
+                    }
+                    else if (evar == 1 & dvar == 0)
+                    {
+                        return UserDefaultCode.Usable;
+                    }
+                    else
+                    {
+                        return UserDefaultCode.Default;
+                    }
+                }
+                set
+                {
+                    switch (value)
+                    {
+                        case UserDefaultCode.Unusable:
+                            mapEditor.mapdata.PUNI.UNITENABLED[player][ObjectID] = 0;
+                            mapEditor.mapdata.PUNI.USEDEFAULT[player][ObjectID] = 0;
+                            break;
+                        case UserDefaultCode.Usable:
+                            mapEditor.mapdata.PUNI.UNITENABLED[player][ObjectID] = 1;
+                            mapEditor.mapdata.PUNI.USEDEFAULT[player][ObjectID] = 0;
+                            break;
+                        case UserDefaultCode.Default:
+                            mapEditor.mapdata.PUNI.USEDEFAULT[player][ObjectID] = 1;
+                            break;
+                    }
+
+                    //OnPropertyChanged("UNITENABLECOLOR" + player);
+                }
+            }
+        }
+
+        public PlayerCode UsePlayerCode;
 
 
 

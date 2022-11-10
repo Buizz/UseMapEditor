@@ -57,7 +57,7 @@ namespace UseMapEditor.Control.MapEditorControl
                     SoundData soundData = mapEditor.mapdata.soundDatas.Find((x) => x.path == d);
                     if(soundData == null)
                     {
-                        soundListItem.Size = "외부파일";
+                        soundListItem.Size = "스타크래프트사운드";
                     }
                     else
                     {
