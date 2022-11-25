@@ -53,15 +53,26 @@ namespace UseMapEditor.Control.MapEditorControl
 
         private void LoadExcel_Click(object sender, RoutedEventArgs e)
         {
+            ExcelData excelData = new ExcelData(mapEditor);
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "엑셀|xlsx";
+            openFileDialog.Filter = "엑셀|*.xlsx";
 
-            //if ((bool)openFileDialog.ShowDialog())
+            if ((bool)openFileDialog.ShowDialog())
+            {
+                excelData.LoadExcel(openFileDialog.FileName, excelType);
+            }
         }
 
         private void SaveExcel_Click(object sender, RoutedEventArgs e)
         {
+            ExcelData excelData = new ExcelData(mapEditor);
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "엑셀|*.xlsx";
 
+            if ((bool)saveFileDialog.ShowDialog())
+            {
+                excelData.SaveExcel(saveFileDialog.FileName, excelType);
+            }
         }
     }
 }

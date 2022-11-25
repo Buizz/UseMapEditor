@@ -32,6 +32,10 @@ namespace UseMapEditor.Control.MapEditorControl
 
             foreach (ExcelData.ExcelType item in Enum.GetValues(typeof(ExcelData.ExcelType)))
             {
+                if(item == ExcelData.ExcelType.Code)
+                {
+                    continue;
+                }
                 ChksettingListItem chksettingListItem = new ChksettingListItem();
 
                 chksettingListItem.Init(item, mapEditor);
