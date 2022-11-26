@@ -24,7 +24,7 @@ namespace UseMapEditor.DataBinding
             mapEditor = _mapEditor;
             ObjectID = _ObjectID;
 
-            UsePlayerCode = new PlayerCode(mapEditor, ObjectID);
+            UsePlayerCode = new PlayerCode(mapEditor, this, ObjectID);
         }
 
 
@@ -440,7 +440,10 @@ namespace UseMapEditor.DataBinding
             set
             {
                 long WeaponNum = Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "Ground Weapon", ObjectID).Data;
-
+                if (WeaponNum == 130)
+                {
+                    return;
+                }
                 mapEditor.mapdata.UNIx.DMG[WeaponNum] = value;
                 mapEditor.SetDirty();
                 OnPropertyChanged("GDMG");
@@ -465,7 +468,10 @@ namespace UseMapEditor.DataBinding
             set
             {
                 long WeaponNum = Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "Ground Weapon", ObjectID).Data;
-
+                if (WeaponNum == 130)
+                {
+                    return;
+                }
                 mapEditor.mapdata.UNIx.BONUSDMG[WeaponNum] = value;
                 mapEditor.SetDirty();
                 OnPropertyChanged("GDMG");
@@ -492,7 +498,10 @@ namespace UseMapEditor.DataBinding
             set
             {
                 long WeaponNum = Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "Air Weapon", ObjectID).Data;
-
+                if (WeaponNum == 130)
+                {
+                    return;
+                }
                 mapEditor.mapdata.UNIx.DMG[WeaponNum] = value;
                 mapEditor.SetDirty();
                 OnPropertyChanged("GDMG");
@@ -517,7 +526,10 @@ namespace UseMapEditor.DataBinding
             set
             {
                 long WeaponNum = Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "Air Weapon", ObjectID).Data;
-
+                if (WeaponNum == 130)
+                {
+                    return;
+                }
                 mapEditor.mapdata.UNIx.BONUSDMG[WeaponNum] = value;
                 mapEditor.SetDirty();
                 OnPropertyChanged("GDMG");
@@ -602,10 +614,12 @@ namespace UseMapEditor.DataBinding
 
         public class PlayerCode
         {
+            private UnitDataBinding UnitDataBinding;
             private MapEditor mapEditor;
             private int ObjectID;
-            public PlayerCode(MapEditor mapEditor, int ObjectID)
+            public PlayerCode(MapEditor mapEditor, UnitDataBinding UnitDataBinding, int ObjectID)
             {
+                this.UnitDataBinding = UnitDataBinding;
                 this.mapEditor = mapEditor;
                 this.ObjectID = ObjectID;
             }
@@ -647,7 +661,7 @@ namespace UseMapEditor.DataBinding
                             break;
                     }
 
-                    //OnPropertyChanged("UNITENABLECOLOR" + player);
+                    UnitDataBinding.OnPropertyChanged("UNITENABLECOLOR" + player);
                 }
             }
         }
@@ -901,7 +915,7 @@ namespace UseMapEditor.DataBinding
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void OnPropertyChanged(string info)
+        public void OnPropertyChanged(string info)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null)

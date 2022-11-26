@@ -15,6 +15,11 @@ namespace Data.Map
     {
         public ObservableCollection<LocationData> LocationDatas = new ObservableCollection<LocationData>();
 
+        public bool CheckIndexDuplication(int index)
+        {
+            return LocationDatas.Select(x => x.INDEX == index).Count() == 0;
+        }
+
         public class LocationData : INotifyPropertyChanged
         {
             public MapEditor mapEditor;

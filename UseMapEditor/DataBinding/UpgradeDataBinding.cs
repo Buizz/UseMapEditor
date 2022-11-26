@@ -268,6 +268,21 @@ namespace UseMapEditor.DataBinding
             public MapEditor mapEditor;
             UpgradeDataBinding binding;
 
+            public void SetDefault(bool IsTrue)
+            {
+                if (IsTrue)
+                {
+                    mapEditor.mapdata.PUPx.USEDEFAULT[player][objid] = 1;
+                }
+                else
+                {
+                    mapEditor.mapdata.PUPx.USEDEFAULT[player][objid] = 0;
+                }
+                mapEditor.SetDirty();
+                OnPropertyChanged("LEVELENABLED");
+                OnPropertyChanged("UPGRADECOLOR");
+            }
+
             public void AddDefault()
             {
                 int evar = mapEditor.mapdata.PUPx.USEDEFAULT[player][objid];

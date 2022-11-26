@@ -65,16 +65,7 @@ namespace Data.Map
                 //    FileInfo fileInfo = new FileInfo(_filepath);
                 //    File.Copy(_filepath, UseMapEditor.Global.Setting.backFolder + @"\" + fileInfo.Name + DateTime.Now.ToString("yyMMddHHmmss") + ".scx");
                 //}
-                if (!Directory.Exists(UseMapEditor.Global.Setting.backFolder))
-                {
-                    Directory.CreateDirectory(UseMapEditor.Global.Setting.backFolder);
-                }
-                FileInfo fileInfo = new FileInfo(_filepath);
-                File.Copy(_filepath, UseMapEditor.Global.Setting.backFolder + @"\" + fileInfo.Name + DateTime.Now.ToString("yyMMddHHmmss") + ".scx");
-
-
-
-
+    
                 StromLib.SFileOpenArchive(_filepath, 0, 0, ref hmpq);
 
 
@@ -146,6 +137,21 @@ namespace Data.Map
             StromLib.SFileCloseArchive(hmpq);
 
 
+
+            if (!Directory.Exists(UseMapEditor.Global.Setting.backFolder))
+            {
+                Directory.CreateDirectory(UseMapEditor.Global.Setting.backFolder);
+            }
+            FileInfo fileInfo = new FileInfo(_filepath);
+            string backpath = UseMapEditor.Global.Setting.backFolder + @"\" + fileInfo.Name + DateTime.Now.ToString("yyMMddHHmmss_tt");
+
+            while (File.Exists(backpath))
+            {
+                backpath += "_1";
+            }
+
+
+            File.Copy(_filepath, backpath);
 
             return true;
         }

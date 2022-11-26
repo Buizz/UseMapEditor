@@ -417,6 +417,8 @@ namespace Data.Map
             public void ImageReset()
             {
                 Images.Clear();
+                if (!UseMapEditor.Global.WindowTool.MapViewer.tileSet.DoodadPallets[mapData.TILETYPE].ContainsKey(ID)) return;
+
                 DoodadPallet pallete = UseMapEditor.Global.WindowTool.MapViewer.tileSet.DoodadPallets[mapData.TILETYPE][ID];
                 if ((pallete.dddFlags & 0x1000) > 0)
                 {
