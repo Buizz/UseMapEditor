@@ -17,7 +17,7 @@ namespace Data.Map
 
         public bool CheckIndexDuplication(int index)
         {
-            return LocationDatas.Select(x => x.INDEX == index).Count() == 0;
+            return LocationDatas.Where(x => x.INDEX == index).Count() == 0;
         }
 
         public class LocationData : INotifyPropertyChanged

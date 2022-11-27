@@ -765,6 +765,7 @@ namespace UseMapEditor.FileData
                         string WIDTH = locationData.WIDTH.ToString();
                         string HEIGHT = locationData.HEIGHT.ToString();
                         string NAME = locationData.NAME;
+                        string FLAG = locationData.FLAG.ToString(); ;
 
                         cm.AddCells(1, 1 + i, locationData.INDEX.ToString());
                         cm.AddCells(2, 1 + i, NAME);
@@ -772,6 +773,7 @@ namespace UseMapEditor.FileData
                         cm.AddCells(4, 1 + i, Y);
                         cm.AddCells(5, 1 + i, WIDTH);
                         cm.AddCells(6, 1 + i, HEIGHT);
+                        cm.AddCells(7, 1 + i, FLAG);
                     }
                     cm.EndUpdate();
 
@@ -1125,8 +1127,9 @@ namespace UseMapEditor.FileData
 
                     break;
                 case ExcelType.LocationLayout:
-                    cm.ReadCells(6, 2 + LocationMaxCount);
+                    cm.ReadCells(7, 2 + LocationMaxCount);
                     mapEditor.mapdata.LocationDatas.Clear();
+                    mapEditor.mapdata.LocationDatas.Add(new LocationData(mapEditor));
                     for (int i = 1; i < LocationMaxCount; i++)
                     {
                         if (string.IsNullOrEmpty(cm.GetCells(1, 1 + i))) continue;
@@ -1141,6 +1144,7 @@ namespace UseMapEditor.FileData
 
                         LocationData locationData = new LocationData(mapEditor);
 
+
                         locationData.INDEX = locindex;
 
 
@@ -1149,6 +1153,7 @@ namespace UseMapEditor.FileData
                         locationData.Y = uint.Parse(cm.GetCells(4, 1 + i));
                         locationData.WIDTH = int.Parse(cm.GetCells(5, 1 + i));
                         locationData.HEIGHT = int.Parse(cm.GetCells(6, 1 + i));
+                        locationData.FLAG = ushort.Parse(cm.GetCells(7, 1 + i));
 
                         mapEditor.mapdata.LocationDatas.Add(locationData);
                     }

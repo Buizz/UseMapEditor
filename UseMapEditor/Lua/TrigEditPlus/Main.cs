@@ -23,7 +23,8 @@ namespace UseMapEditor.Lua.TrigEditPlus
         public Main()
         {
             Lua = new NLua.Lua();
-
+            Lua.State.Encoding = Encoding.UTF8;
+            //Lua.LoadCLRPackage();
             Lua.DoFile(AppDomain.CurrentDomain.BaseDirectory + "Lua\\TrigEditPlus\\constparser.lua");
             Lua.DoFile(AppDomain.CurrentDomain.BaseDirectory + "Lua\\TrigEditPlus\\condition.lua");
             Lua.DoFile(AppDomain.CurrentDomain.BaseDirectory + "Lua\\TrigEditPlus\\action.lua");
@@ -41,6 +42,7 @@ namespace UseMapEditor.Lua.TrigEditPlus
             Lua.RegisterFunction("ParseUPRP", this, this.GetType().GetMethod("ParseUPRP"));
             Lua.RegisterFunction("ParseUnit", this, this.GetType().GetMethod("ParseUnit"));
             Lua.RegisterFunction("ParseSwitchName", this, this.GetType().GetMethod("ParseSwitchName"));
+
         }
 
 
@@ -165,31 +167,31 @@ namespace UseMapEditor.Lua.TrigEditPlus
             ushort POINTVALID = 0;
             if (t["hitpoint"] != null)
             {
-                double v = (double)t["hitpoint"];
+                long v = (long)t["hitpoint"];
                 POINTVALID += (ushort)(0b1 << 1);
                 cUPRP.HITPOINT = (byte)v;
             }
             if (t["shield"] != null)
             {
-                double v = (double)t["shield"];
+                long v = (long)t["shield"];
                 POINTVALID += (ushort)(0b1 << 2);
                 cUPRP.SHIELDPOINT = (byte)v;
             }
             if (t["energy"] != null)
             {
-                double v = (double)t["energy"];
+                long v = (long)t["energy"];
                 POINTVALID += (ushort)(0b1 << 3);
                 cUPRP.ENERGYPOINT = (byte)v;
             }
             if (t["resource"] != null)
             {
-                double v = (double)t["resource"];
+                long v = (long)t["resource"];
                 POINTVALID += (ushort)(0b1 << 4);
                 cUPRP.RESOURCE = (uint)v;
             }
             if (t["hanger"] != null)
             {
-                double v = (double)t["hanger"];
+                long v = (long)t["hanger"];
                 POINTVALID += (ushort)(0b1 << 5);
                 cUPRP.HANGAR = (ushort)v;
             }
@@ -212,7 +214,7 @@ namespace UseMapEditor.Lua.TrigEditPlus
                 NLua.LuaTable players = (NLua.LuaTable)t["players"];
                 for (int i = 1; i <= players.Values.Count; i++)
                 {
-                    double v = (double)Lua.GetFunction("ParsePlayer").Call(players[i])[0];
+                    long v = (long)Lua.GetFunction("ParsePlayer").Call(players[i])[0];
                     int pnum = (int)v;
 
                     cTrigger.playerlist[pnum] = 1;
@@ -225,7 +227,7 @@ namespace UseMapEditor.Lua.TrigEditPlus
                 ushort flag = 0;
                 for (int i = 1; i <= flags.Values.Count; i++)
                 {
-                    double v = (double)Lua.GetFunction("ParseTrigFlag").Call(flags[i])[0];
+                    long v = (long)Lua.GetFunction("ParseTrigFlag").Call(flags[i])[0];
                     int flagv = (int)v;
 
                     flag += (ushort)(0b1 << flagv);
@@ -293,7 +295,7 @@ namespace UseMapEditor.Lua.TrigEditPlus
             bool IsAction = true;
 
 
-            int type = (int)(double)t[1];
+            int type = (int)(long)t[1];
 
             List<object> args = new List<object>();
             for (int c = 2; c <= t.Values.Count - 1; c++)
@@ -359,7 +361,7 @@ namespace UseMapEditor.Lua.TrigEditPlus
                         arg.UPRP = (CUPRP)args[i];
                         break;
                     default:
-                        arg.VALUE = (long)(double)args[i];
+                        arg.VALUE = (long)args[i];
                         break;
                 }
                 trigItem.args.Add(arg);
@@ -406,6 +408,11 @@ namespace UseMapEditor.Lua.TrigEditPlus
             try
             {
                 Lua.DoString(str);
+                //Lua.DoString(Encoding.UTF8.GetBytes(str));
+
+                //Lua.DoString("s=[[hello \\xED\\x95\\x9C\\xEA\\xB8\\x80\\xED\\x85\\x8C\\xEC\\x8A\\xA4\\xED\\x8A\\xB8]]\r\ns=s:gsub(\"\\\\x(%x%x)\",function (x) return string.char(tonumber(x,16)) end)msgbox(s)");
+
+                //Lua.DoString("msgbox(\"안녕하세요\")");
             }
             catch (Exception e)
             {
