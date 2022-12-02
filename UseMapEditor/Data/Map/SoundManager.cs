@@ -12,6 +12,14 @@ namespace Data.Map
         public List<SoundData> soundDatas;
         public class SoundData
         {
+            public SoundData(string path)
+            {
+                this.path = path;
+            }
+            public SoundData()
+            {
+            }
+
             public string path;
             public byte[] bytes;
         }
@@ -22,7 +30,7 @@ namespace Data.Map
             if (soundData == null)
             {
                 //맵에 없는 데이터
-                for (int i = 0; i < WAV.Length; i++)
+                for (int i = 0; i < WAV.Count; i++)
                 {
                     string d = WAV[i].String;
                     if (WAV[i].IsLoaded)
@@ -39,7 +47,7 @@ namespace Data.Map
             else
             {
                 //맵에 있는 데이터
-                for (int i = 0; i < WAV.Length; i++)
+                for (int i = 0; i < WAV.Count; i++)
                 {
                     string d = WAV[i].String;
                     if (WAV[i].IsLoaded)
@@ -82,16 +90,9 @@ namespace Data.Map
             soundData.bytes = bytes;
 
             soundDatas.Add(soundData);
-            for (int i = 0; i < WAV.Length; i++)
-            {
-                string d = WAV[i].String;
-                if (!WAV[i].IsLoaded)
-                {
-                    WAV[i].String = chkname;
-                    return soundData;
-                }
-            }
+            WAV.Add(new StringData(mapEditor.mapdata, chkname));
 
+           
             return null;
         }
 

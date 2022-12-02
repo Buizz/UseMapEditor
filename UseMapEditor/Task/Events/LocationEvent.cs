@@ -62,13 +62,13 @@ namespace UseMapEditor.Task
             if (IsCreate)
             {
                 //생성
-                mapEditor.mapdata.LocationDatas.Add(loc);
+                mapEditor.mapdata.AddLocation(loc);
                 return;
             }
             if (IsDelete)
             {
                 //삭제
-                mapEditor.mapdata.LocationDatas.Remove(loc);
+                mapEditor.mapdata.RemoveLocation(loc);
                 return;
             }
 
@@ -104,13 +104,13 @@ namespace UseMapEditor.Task
             if (IsCreate)
             {
                 //삭제
-                mapEditor.mapdata.LocationDatas.Remove(loc);
+                mapEditor.mapdata.RemoveLocation(loc);
                 return;
             }
             if (IsDelete)
             {
                 //생성
-                mapEditor.mapdata.LocationDatas.Add(loc);
+                mapEditor.mapdata.AddLocation(loc);
                 return;
             }
 

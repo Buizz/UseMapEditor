@@ -48,9 +48,9 @@ namespace UseMapEditor.MonoGameControl
 
 
 
-            for (int i = 1; i < mapeditor.mapdata.LocationDatas.Count; i++)
+            for (int i = 1; i < mapeditor.mapdata.GetLocationCount(); i++)
             {
-                DrawLocation(mapeditor.mapdata.LocationDatas[i]);
+                DrawLocation(mapeditor.mapdata.GetLocationFromListIndex(i));
             }
 
             if (mapeditor.PalleteLayer == Control.MapEditor.Layer.Location)
@@ -264,7 +264,7 @@ namespace UseMapEditor.MonoGameControl
             for (int i = 0; i < mapeditor.SelectLocation.Count; i++)
             {
                 mapeditor.taskManager.TaskAdd(new LocationEvent(mapeditor ,mapeditor.SelectLocation[i], false));
-                mapeditor.mapdata.LocationDatas.Remove(mapeditor.SelectLocation[i]);
+                mapeditor.mapdata.RemoveLocation(mapeditor.SelectLocation[i]);
             }
             mapeditor.taskManager.TaskEnd();
             mapeditor.SelectLocation.Clear();
@@ -596,11 +596,11 @@ namespace UseMapEditor.MonoGameControl
 
                 //로케이션 만들기
                 int index = 0;
-                for (int i = 1; i < 255; i++)
+                for (int i = 1; i < 256; i++)
                 {
-                    LocationData tloc = mapeditor.mapdata.LocationDatas.SingleOrDefault((x) => x.INDEX == i);
+                    LocationData tloc = mapeditor.mapdata.GetLocationFromLocIndex(i);
 
-                    if (tloc == null)
+                    if (!tloc.IsEnabled)
                     {
                         index = i;
                         break;
@@ -616,7 +616,7 @@ namespace UseMapEditor.MonoGameControl
                 LocationData locationData = new LocationData(mapeditor);
 
                 locationData.INDEX = index;
-                locationData.NAME = "로케이션 " + index;
+                locationData.NAME = mapeditor.mapdata.GetNextLocationName(index);
 
 
                 Vector2 mapmin = mapeditor.PosScreenToMap(temp_locCreatemin);
@@ -630,7 +630,7 @@ namespace UseMapEditor.MonoGameControl
                 locationData.B = (uint)mapmax.Y;
 
 
-                mapeditor.mapdata.LocationDatas.Add(locationData);
+                mapeditor.mapdata.AddLocation(locationData);
                 mapeditor.taskManager.TaskStart();
                 mapeditor.taskManager.TaskAdd(new LocationEvent(mapeditor ,locationData, true));
                 mapeditor.taskManager.TaskEnd();

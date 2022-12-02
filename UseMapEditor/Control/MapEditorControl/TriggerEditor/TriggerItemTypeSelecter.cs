@@ -28,18 +28,41 @@ namespace UseMapEditor.Control.MapEditorControl
             }
             else
             {
-                OpenTypeSelecter(SelectTrigitem);
+                if(SelectTrigitem == null)
+                {
+                    if(LastPage == 1)
+                    {
+                        OpenTypeSelecter(SelectTrigitem, false);
+                    }
+                    else if(LastPage == 2)
+                    {
+                        OpenTypeSelecter(SelectTrigitem, true);
+                    }
+                }
+                else
+                {
+                    OpenTypeSelecter(SelectTrigitem);
+                }
             }
         }
 
 
         private bool IsOpen;
+        private bool IsOpenWithAction;
         private void OpenTypeSelecter(TrigItem trigItem, bool IsAction = false)
         {
             if (trigItem != null)
             {
-                ActionName.Text = trigItem.name;
-                IsAction = trigItem.IsAction;
+                if(CopyedSelectTrigitem == null)
+                {
+                    ActionName.Text = trigItem.name;
+                    IsAction = trigItem.IsAction;
+                }
+                else
+                {
+                    ActionName.Text = CopyedSelectTrigitem.name;
+                    IsAction = CopyedSelectTrigitem.IsAction;
+                }
             }
             else
             {
@@ -57,10 +80,12 @@ namespace UseMapEditor.Control.MapEditorControl
             {
                 if (IsAction)
                 {
+                    IsOpenWithAction = true;
                     tlist = tm.Actions;
                 }
                 else
                 {
+                    IsOpenWithAction = false;
                     tlist = tm.Conditions;
                 }
             }
@@ -121,9 +146,9 @@ namespace UseMapEditor.Control.MapEditorControl
                     }
                 }
 
-
                 ListBoxItem listitem = (ListBoxItem)TrigItemTypeListBox.SelectedItem;
                 CopyedSelectTrigitem.Init((TriggerManger.TriggerDefine)listitem.Tag);
+                CopyedSelectTrigitem.IsAction = IsOpenWithAction;
                 RefreshItem(CopyedSelectTrigitem);
             }
 

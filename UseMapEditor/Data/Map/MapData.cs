@@ -99,8 +99,8 @@ namespace Data.Map
 
 
             DDDTHG2.Clear();
-            LocationDatas.Clear();
-            LocationDatas.Add(new LocationData(mapEditor));
+            LocationInit(mapEditor);
+
 
             UPRP = new CUPRP[64];
             for (int i = 0; i < 64; i++)
@@ -111,11 +111,11 @@ namespace Data.Map
 
             UPUS = new byte[64];
 
-            WAV = new StringData[512];
-            for (int i = 0; i < 512; i++)
-            {
-                WAV[i] = new StringData(this);
-            }
+            WAV.Clear();
+            //for (int i = 0; i < 512; i++)
+            //{
+            //    WAV[i] = new StringData(this);
+            //}
             SWNM = new StringData[256];
             for (int i = 0; i < 256; i++)
             {
@@ -991,7 +991,7 @@ namespace Data.Map
         public byte[] UPUS = new byte[64];
 
 
-        public StringData[] WAV;//512개
+        public List<StringData> WAV = new List<StringData>();//512개
 
 
 

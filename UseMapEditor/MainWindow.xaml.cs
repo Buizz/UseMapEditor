@@ -236,8 +236,8 @@ namespace UseMapEditor
             }
             else
             {
-                Dialog.MsgDialog msgDialog = new MsgDialog("저장에 실패했습니다.", MessageBoxButton.OK, MessageBoxImage.Error);
-                msgDialog.ShowDialog();
+                //Dialog.MsgDialog msgDialog = new MsgDialog("저장에 실패했습니다.", MessageBoxButton.OK, MessageBoxImage.Error);
+                //msgDialog.ShowDialog();
             }
             SetWindowName();
             return result;

@@ -54,6 +54,15 @@ namespace UseMapEditor.Windows
                 AddList(item);
             }
         }
+        public SoundImport(MapEditor _mapEditor)
+        {
+            InitializeComponent();
+
+            mapEditor = _mapEditor;
+            Rename.Visibility = Visibility.Collapsed;
+
+
+        }
 
         private void AddList(SoundData soundData)
         {
@@ -135,9 +144,6 @@ namespace UseMapEditor.Windows
         }
 
 
-
-
-
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -173,7 +179,7 @@ namespace UseMapEditor.Windows
 
 
 
-        private void LoadSound(string openfile, string chkname)
+        public void LoadSound(string openfile, string chkname)
         {
             Process prcFFMPEG = new Process();
             ProcessStartInfo psiProcInfo = new ProcessStartInfo();

@@ -46,7 +46,7 @@ namespace UseMapEditor.Control.MapEditorControl
         {
             MainListbox.ItemsSource = null;
             soundListItems.Clear();
-            for (int i = 0; i < mapEditor.mapdata.WAV.Length; i++)
+            for (int i = 0; i < mapEditor.mapdata.WAV.Count; i++)
             {
                 string d = mapEditor.mapdata.WAV[i].String;
                 if (mapEditor.mapdata.WAV[i].IsLoaded)
@@ -344,7 +344,7 @@ namespace UseMapEditor.Control.MapEditorControl
 
                     lastname = lastname.Replace("/", "\\");
 
-                    for (int i = 0; i < mapEditor.mapdata.WAV.Length; i++)
+                    for (int i = 0; i < mapEditor.mapdata.WAV.Count; i++)
                     {
                         string d = mapEditor.mapdata.WAV[i].String;
                         if (mapEditor.mapdata.WAV[i].IsLoaded)
@@ -357,7 +357,7 @@ namespace UseMapEditor.Control.MapEditorControl
                     }
 
 
-                    for (int i = 0; i < mapEditor.mapdata.WAV.Length; i++)
+                    for (int i = 0; i < mapEditor.mapdata.WAV.Count; i++)
                     {
                         string d = mapEditor.mapdata.WAV[i].String;
                         if (!mapEditor.mapdata.WAV[i].IsLoaded)

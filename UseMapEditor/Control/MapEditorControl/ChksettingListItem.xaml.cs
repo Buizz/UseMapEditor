@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,6 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using UseMapEditor.FileData;
+using UseMapEditor.Global;
 using static Data.Map.MapData;
 
 namespace UseMapEditor.Control.MapEditorControl
@@ -42,37 +44,46 @@ namespace UseMapEditor.Control.MapEditorControl
 
         private void OpenWithExcel_Click(object sender, RoutedEventArgs e)
         {
-            ExcelData excelData = new ExcelData(mapEditor);
+            string foldername = AppDomain.CurrentDomain.BaseDirectory + @"Data\Excel";
 
-            string fname = AppDomain.CurrentDomain.BaseDirectory + @"temp.xlsx"; ;
+            ExcelData excelData = new ExcelData(mapEditor);
+            if (!Directory.Exists(foldername))
+            {
+                Directory.CreateDirectory(foldername);
+            }
+
+            string fname = foldername + @"\" + Guid.NewGuid().ToString() + ".xlsx";
 
             excelData.SaveExcel(fname, excelType);
 
-            Process.Start(fname);
+            WindowTool.NewExcelProcess(mapEditor, fname);
+            excelData.Dispos();
         }
 
         private void LoadExcel_Click(object sender, RoutedEventArgs e)
         {
             ExcelData excelData = new ExcelData(mapEditor);
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "엑셀|*.xlsx";
+            openFileDialog.Filter = "Excel|*.xlsx";
 
             if ((bool)openFileDialog.ShowDialog())
             {
                 excelData.LoadExcel(openFileDialog.FileName, excelType);
             }
+            excelData.Dispos();
         }
 
         private void SaveExcel_Click(object sender, RoutedEventArgs e)
         {
             ExcelData excelData = new ExcelData(mapEditor);
             SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "엑셀|*.xlsx";
+            saveFileDialog.Filter = "Excel|*.xlsx";
 
             if ((bool)saveFileDialog.ShowDialog())
             {
                 excelData.SaveExcel(saveFileDialog.FileName, excelType);
             }
+            excelData.Dispos();
         }
     }
 }

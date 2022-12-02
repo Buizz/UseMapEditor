@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static Data.Map.MapData;
 
 namespace UseMapEditor.Control.MapEditorControl
 {
@@ -143,27 +144,29 @@ namespace UseMapEditor.Control.MapEditorControl
 
 
 
-            for (int i = 0; i < mapEditor.mapdata.LocationDatas.Count; i++)
+            for (int i = 1; i < mapEditor.mapdata.GetLocationCount(); i++)
             {
-                int ysize = (int)(Math.Abs((int)mapEditor.mapdata.LocationDatas[i].B - (int)mapEditor.mapdata.LocationDatas[i].T) / 32);
-                int xsize = (int)(Math.Abs((int)mapEditor.mapdata.LocationDatas[i].R - (int)mapEditor.mapdata.LocationDatas[i].L) / 32);
+                LocationData locationData = mapEditor.mapdata.GetLocationFromListIndex(i);
+
+                int ysize = (int)(Math.Abs((int)locationData.B - (int)locationData.T) / 32);
+                int xsize = (int)(Math.Abs((int)locationData.R - (int)locationData.L) / 32);
 
                 if((xsize == Width) & (ysize == Height))
                 {
-                    mapEditor.mapdata.LocationDatas[i].T = 0;
-                    mapEditor.mapdata.LocationDatas[i].L = 0;
+                    locationData.T = 0;
+                    locationData.L = 0;
 
 
-                    mapEditor.mapdata.LocationDatas[i].B = (uint)(ChangeHeight * 32);
-                    mapEditor.mapdata.LocationDatas[i].R = (uint)(ChangeWidth * 32);
+                    locationData.B = (uint)(ChangeHeight * 32);
+                    locationData.R = (uint)(ChangeWidth * 32);
 
                     break;
                 }
 
-                mapEditor.mapdata.LocationDatas[i].B += (uint)ydiffer * 32;
-                mapEditor.mapdata.LocationDatas[i].T += (uint)ydiffer * 32;
-                mapEditor.mapdata.LocationDatas[i].R += (uint)xdiffer * 32;
-                mapEditor.mapdata.LocationDatas[i].L += (uint)xdiffer * 32;
+                locationData.B += (uint)ydiffer * 32;
+                locationData.T += (uint)ydiffer * 32;
+                locationData.R += (uint)xdiffer * 32;
+                locationData.L += (uint)xdiffer * 32;
             }
 
             for (int i = 0; i < mapEditor.mapdata.UNIT.Count; i++)

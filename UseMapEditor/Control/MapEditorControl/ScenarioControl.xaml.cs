@@ -37,19 +37,19 @@ namespace UseMapEditor.Control.MapEditorControl
         private MapEditor mapEditor;
 
 
-        MapSetting mapSetting = new MapSetting();
-        PlayerSettingPanel playerSetting = new PlayerSettingPanel();
-        ForceSettingPanel forceSetting = new ForceSettingPanel();
-        UnitSetting unitSetting = new UnitSetting();
-        UpgradeSetting upgradeSetting = new UpgradeSetting();
+        public MapSetting mapSetting = new MapSetting();
+        public PlayerSettingPanel playerSetting = new PlayerSettingPanel();
+        public ForceSettingPanel forceSetting = new ForceSettingPanel();
+        public UnitSetting unitSetting = new UnitSetting();
+        public UpgradeSetting upgradeSetting = new UpgradeSetting();
 
-        TechSetting techSetting = new TechSetting();
-        SoundSetting soundSetting = new SoundSetting();
-        StringSetting stringSetting = new StringSetting();
-        TriggerEditor classTriggerEditor = new TriggerEditor();
-        TriggerEditor brinfingTriggerEditor = new TriggerEditor();
+        public TechSetting techSetting = new TechSetting();
+        public SoundSetting soundSetting = new SoundSetting();
+        public StringSetting stringSetting = new StringSetting();
+        public TriggerEditor classTriggerEditor = new TriggerEditor();
+        public TriggerEditor brinfingTriggerEditor = new TriggerEditor();
 
-        ChkSetting chkSetting = new ChkSetting();
+        public ChkSetting chkSetting = new ChkSetting();
 
         List<DialogableControlPanel> dialogableControlPanels = new List<DialogableControlPanel>();
 

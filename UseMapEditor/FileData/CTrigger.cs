@@ -386,7 +386,7 @@ namespace UseMapEditor.FileData
                         arg.STRING = new StringData(mapData, (int)value);
                         break;
                     case TriggerManger.ArgType.LOCATION:
-                        arg.LOCATION = mapData.LocationDatas.SingleOrDefault((x) => x.INDEX == (int)value);
+                        arg.LOCATION = mapData.GetLocationFromLocIndex((int)value);
                         if(arg.LOCATION == null)
                         {
                             LocationData locationData = new LocationData(mapData.mapEditor);
@@ -396,7 +396,7 @@ namespace UseMapEditor.FileData
 
 
 
-                            mapData.LocationDatas.Add(locationData);
+                            mapData.AddLocation(locationData);
                             arg.LOCATION = locationData;
                         }
                         break;
@@ -616,13 +616,13 @@ namespace UseMapEditor.FileData
                     case TriggerManger.ArgType.STRING:
                         return (uint)STRING.ResultIndex;
                     case TriggerManger.ArgType.LOCATION:
-                        if(mapData.LocationDatas.IndexOf(LOCATION) != -1)
+                        if(mapData.IsLocationExist(LOCATION))
                         {
                             return (uint)LOCATION.INDEX;
                         }
                         else
                         {
-                            LocationData location = mapData.LocationDatas.SingleOrDefault((x) => x.NAME == LOCATION.NAME);
+                            LocationData location = mapData.GetLocation(LOCATION.NAME);
                             if(location != null)
                             {
                                 LOCATION = location;
@@ -669,7 +669,7 @@ namespace UseMapEditor.FileData
 
                     case TriggerManger.ArgType.WAV:
                     case TriggerManger.ArgType.STRING:
-                        return "\"" + STRING.String + "\"";
+                        return "\"" + LOCATION.NAME + "\"";
                     case TriggerManger.ArgType.LOCATION:
                         return "\"" + LOCATION.STRING.String + "\"";
                     case TriggerManger.ArgType.OFFSET:
@@ -807,7 +807,7 @@ namespace UseMapEditor.FileData
                     case TriggerManger.ArgType.STRING:
                         return STRING.String;
                     case TriggerManger.ArgType.LOCATION:
-                        return LOCATION.STRING.String;
+                        return LOCATION.NAME;
                     case TriggerManger.ArgType.OFFSET:
                         return "0x" + VALUE.ToString("X");
                     case TriggerManger.ArgType.UPRP:

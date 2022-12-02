@@ -486,7 +486,7 @@ namespace Data.Map
 
                     for (int i = 0; i < 255; i++)
                     {
-                        LocationData locationData = LocationDatas.SingleOrDefault(x => x.INDEX == (i + 1));
+                        LocationData locationData = GetLocationFromLocIndex(i + 1);
                         
                         if (locationData == null)
                         {
@@ -529,9 +529,9 @@ namespace Data.Map
                     break;
                 case TOKENTYPE.WAV:
                     bw.Write(tokenbyte);
-                    bw.Write((int)WAV.Length * 4);
+                    bw.Write((int)WAV.Count * 4);
 
-                    for (int i = 0; i < WAV.Length; i++)
+                    for (int i = 0; i < WAV.Count; i++)
                     {
                         bw.Write(WAV[i].ResultIndex);
                     }
@@ -811,17 +811,13 @@ namespace Data.Map
             }
 
 
-
             TriggerLoad();
-
-
-
 
 
             //soundDatas
             ulong hmpq = OpenArchive();
             soundDatas.Clear();
-            for (int i = 0; i < WAV.Length; i++)
+            for (int i = 0; i < WAV.Count; i++)
             {
                 string d = WAV[i].String;
                 if (WAV[i].IsLoaded)
@@ -838,11 +834,10 @@ namespace Data.Map
             CloseArchive(hmpq);
 
 
-
-
-
             return true;
         }
+
+
         private bool Applychk(BinaryReader br)
         {
             CHKToken cHKToken = GetNextCHK(br);
@@ -1058,13 +1053,12 @@ namespace Data.Map
                     FORCEFLAG = br.ReadBytes(4);
                     break;
                 case TOKENTYPE.MRGN:
-                    LocationDatas.Clear();
-                    LocationDatas.Add(new LocationData(mapEditor));
-                    for (int i = 0; i < 255; i++)
+                    LocationInit(mapEditor);
+                    for (int i = 1; i < LocationDatas.Count; i++)
                     {
-                        LocationData locationData = new LocationData(mapEditor);
+                        LocationData locationData = GetLocationFromLocIndex(i);
 
-                        locationData.INDEX = i + 1;
+                        //locationData.INDEX = i + 1;
 
                         locationData.L = br.ReadUInt32();
                         locationData.T = br.ReadUInt32();
@@ -1073,15 +1067,37 @@ namespace Data.Map
                         locationData.STRING = new StringData(this, br.ReadUInt16());
                         locationData.FLAG = br.ReadUInt16();
 
-                        if(locationData.L == 0 & locationData.T == 0 & locationData.L == 0 & locationData.T == 0 &
+                        if (locationData.L == 0 & locationData.T == 0 & locationData.L == 0 & locationData.T == 0 &
                             locationData.STRING.LoadedIndex == -1 & locationData.FLAG == 0)
                         {
                             continue;
                         }
-
-
-                        LocationDatas.Add(locationData);
+                        locationData.Enable();
                     }
+                    //LocationDatas.Clear();
+                    //LocationDatas.Add(new LocationData(mapEditor));
+                    //for (int i = 0; i < 255; i++)
+                    //{
+                    //    LocationData locationData = new LocationData(mapEditor);
+
+                    //    locationData.INDEX = i + 1;
+
+                    //    locationData.L = br.ReadUInt32();
+                    //    locationData.T = br.ReadUInt32();
+                    //    locationData.R = br.ReadUInt32();
+                    //    locationData.B = br.ReadUInt32();
+                    //    locationData.STRING = new StringData(this, br.ReadUInt16());
+                    //    locationData.FLAG = br.ReadUInt16();
+
+                    //    if(locationData.L == 0 & locationData.T == 0 & locationData.L == 0 & locationData.T == 0 &
+                    //        locationData.STRING.LoadedIndex == -1 & locationData.FLAG == 0)
+                    //    {
+                    //        continue;
+                    //    }
+
+
+                    //    LocationDatas.Add(locationData);
+                    //}
                     //u32: Left(X1) coordinate of location, in pixels(usually 32 pt grid aligned)
                     //u32: Top(Y1) coordinate of location, in pixels
                     //u32: Right(X2) coordinate of location, in pixels
@@ -1124,10 +1140,11 @@ namespace Data.Map
                     UPUS = br.ReadBytes(64);
                     break;
                 case TOKENTYPE.WAV:
-                    WAV = new StringData[512];
-                    for (int i = 0; i < 512; i++)
+                    WAV.Clear();
+                    
+                    for (int i = 0; i < cHKToken.size / 4; i++)
                     {
-                        WAV[i] = new StringData(this, br.ReadInt32());
+                        WAV.Add(new StringData(this, br.ReadInt32()));
                     }
                     break;
                 case TOKENTYPE.SWNM:

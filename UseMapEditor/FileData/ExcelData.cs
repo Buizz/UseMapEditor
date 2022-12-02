@@ -29,6 +29,9 @@ using static UseMapEditor.FileData.TileSet;
 using UseMapEditor.MonoGameControl;
 using static UseMapEditor.FileData.ExcelData;
 using UseMapEditor.Global;
+using System.Runtime.CompilerServices;
+using UseMapEditor.Windows;
+using UseMapEditor.Dialog;
 
 namespace UseMapEditor.FileData
 {
@@ -127,6 +130,10 @@ namespace UseMapEditor.FileData
         }
 
 
+        public void Dispos()
+        {
+            ReleaseExcelObject(this);
+        }
 
         public static void ReleaseExcelObject(object obj)
         {
@@ -139,18 +146,16 @@ namespace UseMapEditor.FileData
                     obj = null;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 obj = null;
-                throw ex;
+                //throw ex;
             }
             finally
             {
                 GC.Collect();
             }
         }
-
-
 
 
         public bool SaveExcel(string filename, ExcelType excelType)
@@ -210,6 +215,10 @@ namespace UseMapEditor.FileData
                 template.Close(false, misValue, misValue);
                 excelApp.Quit();
             }
+            catch (Exception e){
+                MsgDialog msgDialog = new MsgDialog("엑셀 저장에 실패했습니다.\n" + e.Message, MessageBoxButton.OK, MessageBoxImage.Error);
+                msgDialog.ShowDialog();
+            }
             finally
             {
                 // Clean up
@@ -217,13 +226,8 @@ namespace UseMapEditor.FileData
                 ReleaseExcelObject(excelApp);
             }
 
-
-
             return true;
         }
-
-        
-
 
 
 
@@ -250,7 +254,6 @@ namespace UseMapEditor.FileData
             Number,
             HexColor
         }
-
         public object DecodeValue(CodeType codeType, string value)
         {
             int rval = 0;
@@ -410,10 +413,10 @@ namespace UseMapEditor.FileData
         }
 
 
-
         public void SetWorksheetData(ExcelType excelType, Workbook wb)
         {
             Worksheet ws = wb.Worksheets.Item[excelType.ToString()];
+            ws.Select();
             CellManager cm = new CellManager(ws);
 
             switch (excelType)
@@ -503,7 +506,16 @@ namespace UseMapEditor.FileData
                     {
                         string usedefault = EncodeValue(CodeType.Default, mapEditor.mapDataBinding.unitdataBindings[i].USEDEFAULT);
 
-                        string unitname = mapEditor.mapDataBinding.unitdataBindings[i].SecondName;
+                        string unitname = "";
+                        if(mapEditor.mapDataBinding.unitdataBindings[i].SecondNameVisble == Visibility.Visible)
+                        {
+                            unitname = mapEditor.mapDataBinding.unitdataBindings[i].SecondName;
+                        }
+                        else
+                        {
+                            unitname = mapEditor.mapDataBinding.unitdataBindings[i].MainName;
+                        }
+
                         string hp = mapEditor.mapDataBinding.unitdataBindings[i].HIT;
                         string shild = mapEditor.mapDataBinding.unitdataBindings[i].SHIELD.ToString();
                         string armor = mapEditor.mapDataBinding.unitdataBindings[i].ARMOR.ToString();
@@ -516,7 +528,6 @@ namespace UseMapEditor.FileData
                         string airplus = mapEditor.mapDataBinding.unitdataBindings[i].ABDMG.ToString();
 
                         string buliddefault = EncodeValue(CodeType.Able, mapEditor.mapDataBinding.unitdataBindings[i].UseDefaultCode);
-
 
 
                         cm.AddCells(3, 2 + i, usedefault);
@@ -632,7 +643,7 @@ namespace UseMapEditor.FileData
                 case ExcelType.Sound:
                     cm.BeginUpdate();
                     //사운드 파일들을 임시파일로 만들어야됨?
-                    for (int i = 0; i < mapEditor.mapdata.WAV.Length; i++)
+                    for (int i = 0; i < mapEditor.mapdata.WAV.Count; i++)
                     {
                         string d = mapEditor.mapdata.WAV[i].String;
                         if (mapEditor.mapdata.WAV[i].IsLoaded)
@@ -756,9 +767,9 @@ namespace UseMapEditor.FileData
                     break;
                 case ExcelType.LocationLayout:
                     cm.BeginUpdate();
-                    for (int i = 1; i < mapEditor.mapdata.LocationDatas.Count; i++)
+                    for (int i = 1; i < mapEditor.mapdata.GetLocationCount(); i++)
                     {
-                        LocationData locationData = mapEditor.mapdata.LocationDatas[i];
+                        LocationData locationData = mapEditor.mapdata.GetLocationFromListIndex(i);
 
                         string X = locationData.X.ToString();
                         string Y = locationData.Y.ToString();
@@ -934,9 +945,10 @@ namespace UseMapEditor.FileData
                     cm.ReadCells(24, 230);
                     for (int i = 0; i < 228; i++)
                     {
-                        mapEditor.mapDataBinding.unitdataBindings[i].USEDEFAULT = (bool) DecodeValue(CodeType.Default, cm.GetCells(3, 2 + i));
-
                         mapEditor.mapDataBinding.unitdataBindings[i].STRING = cm.GetCells(4, 2 + i);
+                        mapEditor.mapDataBinding.unitdataBindings[i].USEDEFAULT = (bool) DecodeValue(CodeType.Default, cm.GetCells(3, 2 + i));
+                       
+                       
                         mapEditor.mapDataBinding.unitdataBindings[i].HIT = cm.GetCells(5, 2 + i);
                         mapEditor.mapDataBinding.unitdataBindings[i].SHIELD = ushort.Parse(cm.GetCells(6, 2 + i));
                         mapEditor.mapDataBinding.unitdataBindings[i].ARMOR = byte.Parse(cm.GetCells(7, 2 + i));
@@ -1016,35 +1028,74 @@ namespace UseMapEditor.FileData
 
                     break;
                 case ExcelType.Sound:
-                    cm.BeginUpdate();
-                    //사운드 파일들을 임시파일로 만들어야됨?
-                    for (int i = 0; i < mapEditor.mapdata.WAV.Length; i++)
+                    int count = cm.ReadAllCell(2);
+                    List<string> newchksounds = new List<string>();
+                  
+                    mapEditor.mapdata.WAV.Clear();
+                    for (int i = 0; i < count; i++)
                     {
-                        string d = mapEditor.mapdata.WAV[i].String;
-                        if (mapEditor.mapdata.WAV[i].IsLoaded)
+                        string filename = cm.GetCells(1, 2 + i);
+                        string path = cm.GetCells(2, 2 + i);
+
+                        if (string.IsNullOrEmpty(filename)) break;
+
+                        if(path == "INCHK")
                         {
-                            string filname = d;
-                            string path = "???";
-
-
-                            SoundData soundData = mapEditor.mapdata.soundDatas.Find((x) => x.path == d);
-                            if (soundData == null)
+                            if(mapEditor.mapdata.soundDatas.Find(x => x.path == filename) == null)
                             {
-                                path = "StarCraftSound";
+                                throw new Exception(filename + "은 Chk안에 저장된 사운드가 아닙니다.");
                             }
-                            else
-                            {
-                                long s = soundData.bytes.Length;
-                                s /= 1024;
-
-                                path = "INCHK";
-                            }
-                            cm.AddCells(1, 2 + i, filname);
-                            cm.AddCells(2, 2 + i, path);
+                            newchksounds.Add(filename);
+                            mapEditor.mapdata.WAV.Add(new StringData(mapEditor.mapdata, filename));
+                        }
+                        else if (path == "StarCraftSound")
+                        {
+                            mapEditor.mapdata.WAV.Add(new StringData(mapEditor.mapdata, filename));
                         }
                     }
 
-                    cm.EndUpdate();
+                    //new에 없고 old에만 있는 파일 삭제
+                    int index = 0;
+                    for (int i = 0; i < mapEditor.mapdata.soundDatas.Count; i++)
+                    {
+                        if (!newchksounds.Contains(mapEditor.mapdata.soundDatas[index].path)){
+                            //새로 리프레시될 목록에 사운드가 없을 경우 삭제
+                            mapEditor.mapdata.soundDatas.RemoveAt(index);
+                        }
+                        else
+                        {
+                            index++;
+                        }
+                    }
+                    Dictionary<string, string> soundpaths = new Dictionary<string, string>();
+
+                    for (int i = 0; i < count; i++)
+                    {
+                        string filename = cm.GetCells(1, 2 + i);
+                        string path = cm.GetCells(2, 2 + i);
+
+                        if (string.IsNullOrEmpty(filename)) break;
+
+                        if (path != "INCHK" && path != "StarCraftSound")
+                        {
+                            if (!File.Exists(path))
+                            {
+                                throw new Exception(path + "을 찾을 수 없습니다.");
+                            }
+                            soundpaths.Add(filename, path);
+                        }
+                    }
+                  
+                    if (soundpaths.Count != 0)
+                    {
+                        SoundImport soundImport = new SoundImport(mapEditor);
+                        foreach (var item in soundpaths)
+                        {
+                            soundImport.LoadSound(item.Value, item.Key);
+                        }
+                        //soundImport.ShowDialog();
+                    }
+                    mapEditor.Scenario.soundSetting.RefreshListBox();
                     break;
                 case ExcelType.Trigger:
                     break;
@@ -1128,15 +1179,14 @@ namespace UseMapEditor.FileData
                     break;
                 case ExcelType.LocationLayout:
                     cm.ReadCells(7, 2 + LocationMaxCount);
-                    mapEditor.mapdata.LocationDatas.Clear();
-                    mapEditor.mapdata.LocationDatas.Add(new LocationData(mapEditor));
+                    mapEditor.mapdata.LocationReset();
                     for (int i = 1; i < LocationMaxCount; i++)
                     {
                         if (string.IsNullOrEmpty(cm.GetCells(1, 1 + i))) continue;
 
                         int locindex = int.Parse(cm.GetCells(1, 1 + i));
                         string locname= cm.GetCells(2, 1 + i);
-                        if (!mapEditor.mapdata.CheckIndexDuplication(locindex))
+                        if (mapEditor.mapdata.IsLocationExist(locindex))
                         {
                             throw new Exception("로케이션 " + locname + ":" + locindex + "가 중복되었습니다.");
                         }
@@ -1155,7 +1205,7 @@ namespace UseMapEditor.FileData
                         locationData.HEIGHT = int.Parse(cm.GetCells(6, 1 + i));
                         locationData.FLAG = ushort.Parse(cm.GetCells(7, 1 + i));
 
-                        mapEditor.mapdata.LocationDatas.Add(locationData);
+                        mapEditor.mapdata.AddLocation(locationData);
                     }
 
                     break;
@@ -1185,20 +1235,20 @@ namespace UseMapEditor.FileData
                     //코드데이터 먼저 읽어오기   9 / 10
                     Dictionary<ushort, DoodadPallet> t = Global.WindowTool.MapViewer.tileSet.DoodadPallets[mapEditor.mapdata.TILETYPE];
                     cm.BeginUpdate();
-                    int index = 0;
+                    int cindex = 0;
                     foreach (var item in t)
                     {
-                        cm.AddCells(10, 3 + index, item.Key.ToString());
-                        cm.AddCells(11, 3 + index, item.Value.tblString + "#" + (index + 1));
-                        index++;
+                        cm.AddCells(10, 3 + cindex, item.Key.ToString());
+                        cm.AddCells(11, 3 + cindex, item.Value.tblString + "#" + (cindex + 1));
+                        cindex++;
                     }
 
-                    index = 0;
+                    cindex = 0;
                     foreach (var item in mapEditor.mapDataBinding.spriteDataBindings)
                     {
-                        cm.AddCells(12, 3 + index, index.ToString());
-                        cm.AddCells(13, 3 + index, item.MainName);
-                        index++;
+                        cm.AddCells(12, 3 + cindex, cindex.ToString());
+                        cm.AddCells(13, 3 + cindex, item.MainName);
+                        cindex++;
                     }
 
 
@@ -1229,13 +1279,25 @@ namespace UseMapEditor.FileData
 
                 GetWorksheetData(ExcelType.Code, template);
 
+                List<string> sheetlist = new List<string>();
+
+
+                foreach (Worksheet sheet in loaded.Sheets)
+                {
+                    sheetlist.Add(sheet.Name);
+                }
+
+
                 if (excelType == ExcelType.All)
                 {
                     foreach (ExcelType item in Enum.GetValues(typeof(ExcelType)))
                     {
                         if (item != ExcelType.All && item != ExcelType.Code)
                         {
-                            GetWorksheetData(item, loaded);
+                            if (sheetlist.Contains(item.ToString()))
+                            {
+                                GetWorksheetData(item, loaded);
+                            }
                         }
                     }
                 }
@@ -1243,9 +1305,6 @@ namespace UseMapEditor.FileData
                 {
                     GetWorksheetData(excelType, loaded);
                 }
-
-
-
 
 
                 //((Worksheet)wb.Worksheets.Item[1]).Delete();
@@ -1260,6 +1319,11 @@ namespace UseMapEditor.FileData
                 loaded.Close(false, misValue, misValue);
                 excelApp.Quit();
             }
+            catch (Exception e)
+            {
+                MsgDialog msgDialog = new MsgDialog("엑셀 불러오기에 실패했습니다.\n" + e.Message, MessageBoxButton.OK, MessageBoxImage.Error);
+                msgDialog.ShowDialog();
+            }
             finally
             {
                 // Clean up
@@ -1267,8 +1331,6 @@ namespace UseMapEditor.FileData
                 ReleaseExcelObject(loaded);
                 ReleaseExcelObject(excelApp);
             }
-
-
 
             return true;
         }
@@ -1281,6 +1343,54 @@ namespace UseMapEditor.FileData
         public CellManager(Worksheet ws)
         {
             this.ws = ws;
+        }
+
+        public int ReadAllCell(int width, int size = 1024)
+        {
+            cells.Clear();
+
+            int currentheight = 1;
+            int maxheight = 1;
+            while (true)
+            {
+                //For populating only a single row with 'n' no. of columns.
+                var startCell = (Range)ws.Cells[currentheight, 1];
+
+                //For 2d data, with 'n' no. of rows and columns.
+                var endCell = (Range)ws.Cells[currentheight + size, width];
+                var writeRange = ws.Range[startCell, endCell];
+
+                object[,] obj = writeRange.Value;
+
+                for (int y = currentheight; y <= currentheight + size; y++)
+                {
+                    for (int x = 1; x <= width; x++)
+                    {
+                        if (obj[y, x] != null)
+                        {
+                            cells.Add(new Vector(x, y), obj[y, x].ToString());
+                            if(y > maxheight)
+                            {
+                                maxheight = y;
+                            }
+                        }
+                    }
+                }
+                currentheight += size;
+
+
+                if(cells.ContainsKey(new Vector(1, currentheight)))
+                {
+                    if (string.IsNullOrEmpty(cells[new Vector(1, currentheight)])) break;
+                }
+                else
+                {
+                    //데이터가 끝남
+                    return maxheight - 1;
+                }
+            }
+
+            return maxheight - 1;
         }
 
         public void ReadCells(int width, int height)

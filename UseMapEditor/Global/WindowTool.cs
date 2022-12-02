@@ -1,14 +1,18 @@
 ﻿using Data;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using UseMapEditor.Control;
 using UseMapEditor.FileData;
 using UseMapEditor.Lua;
@@ -73,12 +77,21 @@ namespace UseMapEditor.Global
             }
             if(MainCount == 0)
             {
+                excelProcessExcute.Close();
+                excelProcessExcute = null;
                 programStart.Close();
+                Application.Current.Shutdown(); 
             }
         }
 
 
 
+
+        public static ExcelProcessExcute excelProcessExcute = new ExcelProcessExcute();
+        public static void NewExcelProcess(MapEditor mapEditor, string fname)
+        {
+            excelProcessExcute.AddProcess(mapEditor, fname);
+        }
 
 
 

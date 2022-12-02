@@ -60,7 +60,6 @@ namespace Data.Map
             TILE = new ushort[Width * Height];
             MTXM = new ushort[Width * Height];
 
-
             IOWN = new byte[12];
             for (int i = 0; i < 12; i++)
             {
@@ -131,8 +130,6 @@ namespace Data.Map
                     PTEx.MAXLEVEL[p][i] = 1;
                 }
             }
-
-
 
 
             return true;

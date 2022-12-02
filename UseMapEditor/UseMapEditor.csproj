@@ -376,6 +376,7 @@
     <Compile Include="FileData\DatFile.cs" />
     <Compile Include="FileData\CImage.cs" />
     <Compile Include="FileData\ExcelData.cs" />
+    <Compile Include="FileData\ExcelProcess.cs" />
     <Compile Include="FileData\Iscript.cs" />
     <Compile Include="FileData\StromLib.cs" />
     <Compile Include="FileData\tblreader.cs" />

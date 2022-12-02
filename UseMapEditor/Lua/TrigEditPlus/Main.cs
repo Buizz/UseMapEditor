@@ -69,9 +69,9 @@ namespace UseMapEditor.Lua.TrigEditPlus
                 unitdic.Add(tunit, i);
             }
 
-            for (int i = 1; i < mapData.LocationDatas.Count; i++)
+            for (int i = 1; i < mapData.GetLocationCount(); i++)
             {
-                locdic.Add(mapData.LocationDatas[i].STRING.String, mapData.LocationDatas[i]);
+                locdic.Add(mapData.GetLocationFromListIndex(i).STRING.String, mapData.GetLocationFromListIndex(i));
             }
 
             for (int i = 0; i < mapData.SWNM.Length; i++)
@@ -92,6 +92,12 @@ namespace UseMapEditor.Lua.TrigEditPlus
         Dictionary<string, int> switchdic = new Dictionary<string, int>();
         public int ParseUnit(string unitname)
         {
+            if (!unitdic.ContainsKey(unitname))
+            {
+                MsgBox("유닛 " + unitname + "은 존재하지 않습니다.");
+                throw new Exception();
+            }
+
             return unitdic[unitname];
         }
         public string ParseString(string str)
@@ -101,10 +107,22 @@ namespace UseMapEditor.Lua.TrigEditPlus
 
         public LocationData ParseLocation(string locname)
         {
+            if (!locdic.ContainsKey(locname))
+            {
+                MsgBox("로케이션 " + locname + "은 존재하지 않습니다.");
+                throw new Exception();
+            }
+
             return locdic[locname];
         }
         public int ParseSwitchName(string swtchname)
         {
+            if (!switchdic.ContainsKey(swtchname))
+            {
+                MsgBox("스위치 " + swtchname + "은 존재하지 않습니다.");
+                throw new Exception();
+            }
+
             return switchdic[swtchname];
         }
 

@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using UseMapEditor.Control;
 using UseMapEditor.Task;
 
@@ -13,18 +15,141 @@ namespace Data.Map
 {
     public partial class MapData
     {
-        public ObservableCollection<LocationData> LocationDatas = new ObservableCollection<LocationData>();
-
-        public bool CheckIndexDuplication(int index)
+        private ObservableCollection<LocationData> LocationDatas = new ObservableCollection<LocationData>();
+        public ObservableCollection<LocationData> GetLocationCollection
         {
-            return LocationDatas.Where(x => x.INDEX == index).Count() == 0;
+            get
+            {
+                return this.LocationDatas;
+            }
         }
+        public LocationData GetLocationFromLocIndex(int index)
+        {
+            return LocationDatas.SingleOrDefault((x) => x.INDEX == index);
+        }
+
+        public string GetNextLocationName(int index)
+        {
+            return "로케이션 " + index;
+        }
+
+        public void AddLocation(LocationData locationData)
+        {
+            LocationData ld = GetLocationFromLocIndex(locationData.INDEX);
+
+            ld.Enable();
+
+            ld.CopyFromLoc(locationData);
+        }
+
+        public void RemoveLocation(LocationData locationData)
+        {
+            LocationData ld = GetLocationFromLocIndex(locationData.INDEX);
+
+            ld.Disable();
+        }
+
+        public LocationData GetLocationFromListIndex(int index)
+        {
+            return LocationDatas[index];
+        }
+
+        public LocationData GetLocation(string name)
+        {
+            return LocationDatas.SingleOrDefault((x) => x.NAME == name);
+        }
+
+        public void LocationInit(MapEditor mapEditor)
+        {
+            LocationDatas.Clear();
+            for (int i = 0; i < 256; i++)
+            {
+                LocationData locationData = new LocationData(mapEditor);
+                locationData.INDEX = i;
+                locationData.Disable();
+                LocationDatas.Add(locationData);
+            }
+            
+        }
+        public void LocationReset()
+        {
+            foreach (var item in LocationDatas)
+            {
+                item.Disable();
+            }
+        }
+
+        public int GetLocationCount()
+        {
+            return LocationDatas.Count();
+        }
+
+
+        public bool IsLocationExist(int index)
+        {
+            LocationData locationData = GetLocationFromLocIndex(index);
+            if (locationData == null) return false;
+
+            if (locationData.IsEnabled)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool IsLocationExist(string name)
+        {
+            return LocationDatas.Where(x => x.NAME == name).Count() != 0;
+        }
+        public bool IsLocationExist(LocationData locationData)
+        {
+            int index = locationData.INDEX;
+            string str = locationData.NAME;
+
+            return IsLocationExist(index) & IsLocationExist(str);
+        }
+
+
 
         public class LocationData : INotifyPropertyChanged
         {
             public MapEditor mapEditor;
 
+            public bool IsEnabled = false;
+            public Visibility VISIBILITY
+            {
+                get
+                {
+                    if (IsEnabled)
+                    {
+                        return Visibility.Visible;
+                    }
+                    else
+                    {
+                        return Visibility.Collapsed;
+                    }
+                }
+                set
+                {
+                    
+                }
+            }
 
+
+            public void Disable()
+            {
+                IsEnabled = false;
+                STRING.UnLoaded();
+                OnPropertyChanged("VISIBILITY");
+            }
+            public void Enable()
+            {
+                IsEnabled = true; 
+                OnPropertyChanged("VISIBILITY");
+            }
             public void PropertyChangeAll()
             {
                 OnPropertyChanged("X");
@@ -39,6 +164,7 @@ namespace Data.Map
                 OnPropertyChanged("LowAir");
                 OnPropertyChanged("MediAir");
                 OnPropertyChanged("HighAir");
+
             }
             public event PropertyChangedEventHandler PropertyChanged;
 
@@ -356,6 +482,18 @@ namespace Data.Map
             }
 
 
+            public void CopyFromLoc(LocationData locationData)
+            {
+                this.L = locationData.L;
+                this.R = locationData.R;
+                this.T = locationData.T;
+                this.B = locationData.B;
+
+                this._flag = locationData._flag;
+
+                this.STRING.String = locationData.STRING.String;
+
+            }
 
 
 

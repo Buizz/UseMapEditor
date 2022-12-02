@@ -27,7 +27,7 @@ namespace Data.Map
             }
 
 
-            for (int i = 0; i < WAV.Length; i++)
+            for (int i = 0; i < WAV.Count; i++)
             {
                 WAV[i].AddToLisT(stringDatas);
             }
@@ -185,6 +185,10 @@ namespace Data.Map
 
                         if(LoadedIndex <= -1 | LoadedIndex >= mapData.LOADSTRx.Length)
                         {
+                            if(LoadedIndex == -1)
+                            {
+                                return "없음";
+                            }
                             return "STRIndex : " + LoadedIndex;
                         }
                         val = mapData.LOADSTRx[LoadedIndex];

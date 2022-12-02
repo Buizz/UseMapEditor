@@ -144,11 +144,13 @@ namespace UseMapEditor.Control.MapEditorControl
                         DefaultPanel.Visibility = Visibility.Visible;
                         SearchBoxDockPanel.Visibility = Visibility.Visible;
                         DefaultArgSelecter.Items.Clear();
-                        for (int i = 1; i < mapEditor.mapdata.LocationDatas.Count; i++)
+                        for (int i = 1; i < mapEditor.mapdata.GetLocationCount(); i++)
                         {
+                            LocationData locationData = mapEditor.mapdata.GetLocationFromListIndex(i);
+
                             ListBoxItem listBoxItem = new ListBoxItem();
-                            listBoxItem.Tag = mapEditor.mapdata.LocationDatas[i];
-                            listBoxItem.Content = mapEditor.mapdata.LocationDatas[i].STRING.String;
+                            listBoxItem.Tag = locationData;
+                            listBoxItem.Content = locationData.STRING.String;
 
 
                             DefaultArgSelecter.Items.Add(listBoxItem);
@@ -159,7 +161,7 @@ namespace UseMapEditor.Control.MapEditorControl
                         DefaultPanel.Visibility = Visibility.Visible;
                         SearchBoxDockPanel.Visibility = Visibility.Visible;
                         DefaultArgSelecter.Items.Clear();
-                        for (int i = 0; i < mapEditor.mapdata.WAV.Length; i++)
+                        for (int i = 0; i < mapEditor.mapdata.WAV.Count; i++)
                         {
                             string d = mapEditor.mapdata.WAV[i].String;
                             if (mapEditor.mapdata.WAV[i].IsLoaded)

@@ -66,6 +66,8 @@ namespace UseMapEditor.Control
                 LocEditList.Visibility = Visibility.Collapsed;
 
                 LocationData selloc = SelectLocation.First();
+                if (!mapdata.IsLocationExist(selloc)) return;
+
 
                 Vector2 m = PosMapToScreen(new Vector2(selloc.X, selloc.Y));
                 LocEditPanel.DataContext = selloc;
@@ -151,11 +153,17 @@ namespace UseMapEditor.Control
             OpenLocEdit();
         }
 
+        public void LocationListSort()
+        {
+            LocationList.Items.SortDescriptions.Clear();
+            LocationList.Items.SortDescriptions.Add(new SortDescription("INDEX", ListSortDirection.Ascending));
+        }
+
         private void LocUp_Click(object sender, RoutedEventArgs e)
         {
             taskManager.TaskStart();
             LocationData loc = (LocationData)LocationList.SelectedItem;
-            if(loc == null)
+            if (loc == null)
             {
                 return;
             }
@@ -166,7 +174,7 @@ namespace UseMapEditor.Control
                 return;
             }
 
-            LocationData uloc = mapdata.LocationDatas.SingleOrDefault((x) => x.INDEX == index);
+            LocationData uloc = mapdata.GetLocationFromLocIndex(index);
             if (uloc == null)
             {
                 loc.INDEX = index;
@@ -179,12 +187,6 @@ namespace UseMapEditor.Control
             LocationListSort();
             taskManager.TaskEnd();
         }
-        public void LocationListSort()
-        {
-            LocationList.Items.SortDescriptions.Clear();
-            LocationList.Items.SortDescriptions.Add(new SortDescription("INDEX", ListSortDirection.Ascending));
-        }
-
         private void LocDown_Click(object sender, RoutedEventArgs e)
         {
             taskManager.TaskStart();
@@ -200,7 +202,7 @@ namespace UseMapEditor.Control
                 return;
             }
 
-            LocationData uloc = mapdata.LocationDatas.SingleOrDefault((x) => x.INDEX == index);
+            LocationData uloc = mapdata.GetLocationFromLocIndex(index);
             if (uloc == null)
             {
                 loc.INDEX = index;
@@ -221,7 +223,7 @@ namespace UseMapEditor.Control
             taskManager.TaskStart();
             taskManager.TaskAdd(new LocationEvent(this, locationData, false));
             taskManager.TaskEnd();
-            mapdata.LocationDatas.Remove(locationData);
+            mapdata.RemoveLocation(locationData);
 
         }
 
