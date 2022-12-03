@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Data;
 using UseMapEditor.Dialog;
 using static UseMapEditor.FileData.TileSet;
 
@@ -488,7 +489,7 @@ namespace Data.Map
                     {
                         LocationData locationData = GetLocationFromLocIndex(i + 1);
                         
-                        if (locationData == null)
+                        if (locationData == null || !locationData.IsEnabled)
                         {
                             bw.Write(new byte[20]);
                         }
@@ -1074,6 +1075,7 @@ namespace Data.Map
                         }
                         locationData.Enable();
                     }
+
                     //LocationDatas.Clear();
                     //LocationDatas.Add(new LocationData(mapEditor));
                     //for (int i = 0; i < 255; i++)

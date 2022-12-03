@@ -23,7 +23,10 @@ namespace Data.Map
 
             for (int i = 1; i < LocationDatas.Count; i++)
             {
-                LocationDatas[i].STRING.AddToLisT(stringDatas);
+                if (LocationDatas[i].IsEnabled)
+                {
+                    LocationDatas[i].STRING.AddToLisT(stringDatas);
+                }
             }
 
 

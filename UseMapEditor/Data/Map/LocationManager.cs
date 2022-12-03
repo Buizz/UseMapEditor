@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Data;
 using UseMapEditor.Control;
 using UseMapEditor.Task;
 
@@ -15,14 +16,10 @@ namespace Data.Map
 {
     public partial class MapData
     {
-        private ObservableCollection<LocationData> LocationDatas = new ObservableCollection<LocationData>();
-        public ObservableCollection<LocationData> GetLocationCollection
-        {
-            get
-            {
-                return this.LocationDatas;
-            }
-        }
+        public ObservableCollection<LocationData> LocationDatas = new ObservableCollection<LocationData>();
+
+
+
         public LocationData GetLocationFromLocIndex(int index)
         {
             return LocationDatas.SingleOrDefault((x) => x.INDEX == index);
@@ -35,18 +32,27 @@ namespace Data.Map
 
         public void AddLocation(LocationData locationData)
         {
+            if (locationData == null) return;
+
             LocationData ld = GetLocationFromLocIndex(locationData.INDEX);
 
             ld.Enable();
 
             ld.CopyFromLoc(locationData);
+
+            mapEditor.refreshLocBox();
         }
 
         public void RemoveLocation(LocationData locationData)
         {
+            if (locationData == null) return;
+            
+
             LocationData ld = GetLocationFromLocIndex(locationData.INDEX);
 
             ld.Disable();
+
+            mapEditor.refreshLocBox();
         }
 
         public LocationData GetLocationFromListIndex(int index)
@@ -142,13 +148,10 @@ namespace Data.Map
             public void Disable()
             {
                 IsEnabled = false;
-                STRING.UnLoaded();
-                OnPropertyChanged("VISIBILITY");
             }
             public void Enable()
             {
                 IsEnabled = true; 
-                OnPropertyChanged("VISIBILITY");
             }
             public void PropertyChangeAll()
             {
@@ -492,7 +495,7 @@ namespace Data.Map
                 this._flag = locationData._flag;
 
                 this.STRING.String = locationData.STRING.String;
-
+                PropertyChangeAll();
             }
 
 

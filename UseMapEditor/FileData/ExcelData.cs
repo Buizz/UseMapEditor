@@ -32,6 +32,7 @@ using UseMapEditor.Global;
 using System.Runtime.CompilerServices;
 using UseMapEditor.Windows;
 using UseMapEditor.Dialog;
+using System.Windows.Data;
 
 namespace UseMapEditor.FileData
 {
@@ -770,6 +771,8 @@ namespace UseMapEditor.FileData
                     for (int i = 1; i < mapEditor.mapdata.GetLocationCount(); i++)
                     {
                         LocationData locationData = mapEditor.mapdata.GetLocationFromListIndex(i);
+
+                        if (!locationData.IsEnabled) continue;
 
                         string X = locationData.X.ToString();
                         string Y = locationData.Y.ToString();

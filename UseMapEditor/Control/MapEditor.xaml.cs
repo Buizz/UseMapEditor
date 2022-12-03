@@ -531,7 +531,7 @@ namespace UseMapEditor.Control
             StyleChange();
 
 
-            LocationList.ItemsSource = mapdata.GetLocationCollection;
+            LocationList.ItemsSource = mapdata.LocationDatas;
             LocationList.Items.SortDescriptions.Add(new SortDescription("INDEX", ListSortDirection.Ascending));
 
             UnitPlaceList.ItemsSource = IndexedUnitList;

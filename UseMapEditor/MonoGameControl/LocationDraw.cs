@@ -644,6 +644,8 @@ namespace UseMapEditor.MonoGameControl
         private long lastsize;
         private void DrawLocation(LocationData location)
         {
+            if (!location.IsEnabled) return;
+
             uint L = location.L;
             uint R = location.R;
             uint T = location.T;

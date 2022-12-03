@@ -71,7 +71,10 @@ namespace UseMapEditor.Lua.TrigEditPlus
 
             for (int i = 1; i < mapData.GetLocationCount(); i++)
             {
-                locdic.Add(mapData.GetLocationFromListIndex(i).STRING.String, mapData.GetLocationFromListIndex(i));
+                LocationData locationData = mapData.GetLocationFromListIndex(i);
+                if (!locationData.IsEnabled) continue;
+
+                locdic.Add(locationData.STRING.String, locationData);
             }
 
             for (int i = 0; i < mapData.SWNM.Length; i++)

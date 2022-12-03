@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using UseMapEditor.Task;
 using static Data.Map.MapData;
@@ -231,13 +232,19 @@ namespace UseMapEditor.Control
         {
             refreshLocBox();
         }
-        private void refreshLocBox()
+        public void refreshLocBox()
         {
             string searchText = SearchBox.Text;
 
+       
             LocationList.Items.Filter = delegate (object obj)
             {
                 LocationData loc = (LocationData)obj;
+                    
+                if (!loc.IsEnabled)
+                {
+                    return false;
+                }
                 if (loc.INDEX == 0)
                 {
                     return false;
@@ -250,6 +257,7 @@ namespace UseMapEditor.Control
                 return (index > -1);
             };
         }
+
 
         private void LocationList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

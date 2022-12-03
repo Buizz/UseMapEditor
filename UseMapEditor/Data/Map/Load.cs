@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Data;
 using UseMapEditor.FileData;
 
 namespace Data.Map
@@ -179,7 +180,6 @@ namespace Data.Map
                     return false;
                 }
             }
-
             return true;
         }
 
