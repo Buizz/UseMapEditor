@@ -216,10 +216,10 @@ namespace UseMapEditor.FileData
                 template.Close(false, misValue, misValue);
                 excelApp.Quit();
             }
-            catch (Exception e){
-                MsgDialog msgDialog = new MsgDialog("엑셀 저장에 실패했습니다.\n" + e.Message, MessageBoxButton.OK, MessageBoxImage.Error);
-                msgDialog.ShowDialog();
-            }
+            //catch (Exception e){
+            //    MsgDialog msgDialog = new MsgDialog("엑셀 저장에 실패했습니다.\n" + e.Message, MessageBoxButton.OK, MessageBoxImage.Error);
+            //    msgDialog.ShowDialog();
+            //}
             finally
             {
                 // Clean up
@@ -838,6 +838,43 @@ namespace UseMapEditor.FileData
                         index++;
                     }
 
+                    for (int i = 0; i < 8; i++)
+                    {
+                        tilesetlist[i] = cm.GetCells(1, 3 + i);
+                    }
+
+                    for (int i = 0; i < 5; i++)
+                    {
+                        ownerlist[i] = cm.GetCells(2, 3 + i);
+                    }
+                    for (int i = 0; i < 5; i++)
+                    {
+                        racelist[i] = cm.GetCells(3, 3 + i);
+                    }
+                    for (int i = 0; i < 4; i++)
+                    {
+                        forcelist[i] = cm.GetCells(4, 3 + i);
+                    }
+                    for (int i = 0; i < 25; i++)
+                    {
+                        colorlist[i] = cm.GetCells(5, 3 + i);
+                    }
+                    for (int i = 0; i < 3; i++)
+                    {
+                        ableflag[i] = cm.GetCells(6, 3 + i);
+                    }
+                    for (int i = 0; i < 2; i++)
+                    {
+                        useflag[i] = cm.GetCells(7, 3 + i);
+                    }
+                    for (int i = 0; i < 2; i++)
+                    {
+                        defualtflag[i] = cm.GetCells(8, 3 + i);
+                    }
+                    for (int i = 0; i < 4; i++)
+                    {
+                        techflag[i] = cm.GetCells(9, 3 + i);
+                    }
 
                     cm.EndUpdate();
                     break;
@@ -1235,27 +1272,54 @@ namespace UseMapEditor.FileData
 
                     break;
                 case ExcelType.Code:
-                    //코드데이터 먼저 읽어오기   9 / 10
-                    Dictionary<ushort, DoodadPallet> t = Global.WindowTool.MapViewer.tileSet.DoodadPallets[mapEditor.mapdata.TILETYPE];
-                    cm.BeginUpdate();
-                    int cindex = 0;
-                    foreach (var item in t)
+                    cm.ReadCells(9, 27);
+                    //tilesetlist//지형
+                    //ownerlist//유저
+                    //racelist//종족
+                    //colorlist//세력
+                    //ableflag//색
+                    //forcelist//생산가능
+                    //useflag//사용여부
+                    //defualtflag//수정여부
+                    //techflag//연구여부
+
+                    for (int i = 0; i < 8; i++)
                     {
-                        cm.AddCells(10, 3 + cindex, item.Key.ToString());
-                        cm.AddCells(11, 3 + cindex, item.Value.tblString + "#" + (cindex + 1));
-                        cindex++;
+                        tilesetlist[i] = cm.GetCells(1 , 3 + i);
                     }
 
-                    cindex = 0;
-                    foreach (var item in mapEditor.mapDataBinding.spriteDataBindings)
+                    for (int i = 0; i < 5; i++)
                     {
-                        cm.AddCells(12, 3 + cindex, cindex.ToString());
-                        cm.AddCells(13, 3 + cindex, item.MainName);
-                        cindex++;
+                        ownerlist[i] = cm.GetCells(2, 3 + i);
                     }
-
-
-                    cm.EndUpdate();
+                    for (int i = 0; i < 5; i++)
+                    {
+                        racelist[i] = cm.GetCells(3, 3 + i);
+                    }
+                    for (int i = 0; i < 4; i++)
+                    {
+                        forcelist[i] = cm.GetCells(4, 3 + i);
+                    }
+                    for (int i = 0; i < 25; i++)
+                    {
+                        colorlist[i] = cm.GetCells(5, 3 + i);
+                    }
+                    for (int i = 0; i < 3; i++)
+                    {
+                        ableflag[i] = cm.GetCells(6, 3 + i);
+                    }
+                    for (int i = 0; i < 2; i++)
+                    {
+                        useflag[i] = cm.GetCells(7, 3 + i);
+                    }
+                    for (int i = 0; i < 2; i++)
+                    {
+                        defualtflag[i] = cm.GetCells(8, 3 + i);
+                    }
+                    for (int i = 0; i < 4; i++)
+                    {
+                        techflag[i] = cm.GetCells(9, 3 + i);
+                    }
                     break;
             }
 

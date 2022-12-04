@@ -69,9 +69,10 @@ namespace Data.Map
             mapEditor.IndexedUnitCancel();
         }
 
-        public void UNITListAdd(CUNIT cUNIT)
+        public bool UNITListAdd(CUNIT cUNIT)
         {
             uint c = 1;
+
 
             if (UNIT.Count != 0)
             {
@@ -82,6 +83,13 @@ namespace Data.Map
                     _cUNIT = UNIT.SingleOrDefault((x) => x.unitclass == ++c);
                 }
             }
+
+            if(UNIT.Count == 1700)
+            {
+                //TODO:유닛제한
+                return false;
+            }
+
 
 
 
@@ -249,6 +257,7 @@ namespace Data.Map
             mapEditor.ChangeMiniMap = true;
 
             mapEditor.IndexedUnitCancel();
+            return true;
         }
 
 

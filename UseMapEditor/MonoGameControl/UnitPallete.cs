@@ -144,10 +144,11 @@ namespace UseMapEditor.MonoGameControl
                                 _cUNIT.Y = (ushort)mappos.Y;
 
                                 cUNIT.ImageReset();
-                                mapeditor.mapdata.UNITListAdd(_cUNIT);
+                                if (mapeditor.mapdata.UNITListAdd(_cUNIT))
+                                {
+                                    mapeditor.taskManager.TaskAdd(new UnitEvent(mapeditor, _cUNIT, true));
+                                }
                                 //mapeditor.mapdata.UNIT.Add(_cUNIT);
-
-                                mapeditor.taskManager.TaskAdd(new UnitEvent(mapeditor, _cUNIT, true));
                             }
                         }
                     }
@@ -222,10 +223,13 @@ namespace UseMapEditor.MonoGameControl
 
 
                             cUNIT.ImageReset();
-                            mapeditor.mapdata.UNITListAdd(cUNIT);
+                            if(mapeditor.mapdata.UNITListAdd(cUNIT))
+                            {
+                                mapeditor.taskManager.TaskAdd(new UnitEvent(mapeditor, cUNIT, true));
+                            }
                             //mapeditor.mapdata.UNIT.Add(cUNIT);
 
-                            mapeditor.taskManager.TaskAdd(new UnitEvent(mapeditor, cUNIT, true));
+                            
                         }
                     }
                 }
