@@ -669,7 +669,7 @@ namespace UseMapEditor.FileData
 
                     case TriggerManger.ArgType.WAV:
                     case TriggerManger.ArgType.STRING:
-                        return "\"" + LOCATION.NAME + "\"";
+                        return "\"" + STRING.String + "\"";
                     case TriggerManger.ArgType.LOCATION:
                         return "\"" + LOCATION.STRING.String + "\"";
                     case TriggerManger.ArgType.OFFSET:

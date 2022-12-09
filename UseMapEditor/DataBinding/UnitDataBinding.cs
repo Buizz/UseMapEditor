@@ -107,7 +107,7 @@ namespace UseMapEditor.DataBinding
                     {
                         using (FileStream fileStream = new FileStream(AppDomain.CurrentDomain.BaseDirectory + @"\CascData\cmdicons\" + ObjectID + ".png", FileMode.Open))
                         {
-                            imageIcon = Global.WindowTool.GetBitmapSource(fileStream);
+                            imageIcon = Global.WindowTool.GetBitmapSourceFromStream(fileStream);
                         }
                     }
 

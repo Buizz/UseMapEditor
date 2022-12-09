@@ -6,12 +6,47 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UseMapEditor.Windows"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        materialDesign:ShadowAssist.CacheMode="{x:Null}"
         WindowTitleBrush="{DynamicResource MaterialDesignPaper}"
         BorderBrush="{DynamicResource MaterialDesignPaper}"
         Background="{DynamicResource MaterialDesignPaper}"
+       
         mc:Ignorable="d"
-        Title="" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="" Height="363" Width="512" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+    <DockPanel>
+        <DockPanel DockPanel.Dock="Top">
+            <Button Content="열기" DockPanel.Dock="Right" Click="Open_Click"/>
+            <TextBox x:Name="imagepathtb" DockPanel.Dock="Left" IsReadOnly="True"/>
+        </DockPanel>
+        <UniformGrid Columns="2" Rows="1" DockPanel.Dock="Bottom">
+            <Button x:Name="OkayBtn" Content="확인" IsEnabled="False" Click="Save_Click"/>
+            <Button Content="취소" Click="Cancel_Click"/>
+        </UniformGrid>
+        <UniformGrid Columns="2" Rows="1">
+            <DockPanel>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                    <TextBlock Text="넓이" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10,0,10,0"/>
+                    <TextBox x:Name="orgWidth" Text="0" Width="60" IsReadOnly="True"/>
+                    <TextBlock Text="높이" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10,0,10,0"/>
+                    <TextBox x:Name="orgHeight" Text="0" Width="60" IsReadOnly="True"/>
+                </StackPanel>
+                <Border Background="Pink" Width="256" Height="256">
+                    <Image x:Name="orgImage" Width="256" Height="256"/>
+                </Border>
+
+            </DockPanel>
+            <DockPanel>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                    <TextBlock Text="넓이" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10,0,10,0"/>
+                    <TextBox x:Name="afterWidth" Text="0" Width="60" TextChanged="afterWidth_TextChanged" IsReadOnly="True"/>
+                    <TextBlock Text="높이" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10,0,10,0"/>
+                    <TextBox x:Name="afterHeight" Text="0" Width="60" TextChanged="afterHeight_TextChanged" IsReadOnly="True"/>
+                </StackPanel>
+                <Border Background="Pink" Width="256" Height="256">
+                    <Image x:Name="afterimage" Width="256" Height="256" Stretch="None"/>
+                </Border>
+            </DockPanel>
+        </UniformGrid>
+    </DockPanel>
 </controls:MetroWindow>

@@ -34,7 +34,7 @@ namespace UseMapEditor.Global
 
         public static string[] soundlist = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + @"\Data\SoundList.txt");
 
-        public static BitmapSource GetBitmapSource(System.IO.Stream stream)
+        public static BitmapSource GetBitmapSourceFromStream(System.IO.Stream stream)
         {
             BitmapImage bitmapImage = new BitmapImage();
             bitmapImage.BeginInit();
@@ -61,6 +61,38 @@ namespace UseMapEditor.Global
 
 
 
+        public static System.Drawing.Bitmap GetBitmapFromBitmapSource(BitmapSource bitmapSource)
+        {
+            System.Drawing.Bitmap bitmap;
+
+
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                BitmapEncoder bitmapEncoder = new BmpBitmapEncoder();
+                bitmapEncoder.Frames.Add(BitmapFrame.Create(bitmapSource));
+                bitmapEncoder.Save(memoryStream);
+
+
+                bitmap = new System.Drawing.Bitmap(memoryStream);
+            }
+
+
+            return bitmap;
+        }
+
+        public static BitmapSource GetBitmapSourceFromBitmap(System.Drawing.Bitmap bitmap)
+        {
+            BitmapSource bitmapSource;
+
+
+            IntPtr hBitmap = bitmap.GetHbitmap();
+            BitmapSizeOptions sizeOptions = BitmapSizeOptions.FromEmptyOptions();
+            bitmapSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty, sizeOptions);
+            bitmapSource.Freeze();
+
+
+            return bitmapSource;
+        }
 
 
         public static Dialog.ProgramStart programStart;
@@ -77,6 +109,19 @@ namespace UseMapEditor.Global
             }
             if(MainCount == 0)
             {
+                string foldername = AppDomain.CurrentDomain.BaseDirectory + @"Data\Excel";
+                foreach (var item in Directory.GetFiles(foldername))
+                {
+                    try
+                    {
+                        File.Delete(item);
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
+
+
                 excelProcessExcute.Close();
                 excelProcessExcute = null;
                 programStart.Close();
@@ -331,6 +376,7 @@ namespace UseMapEditor.Global
                 MapViewer.IsEnabled = true;
             }
         }
+
 
 
 

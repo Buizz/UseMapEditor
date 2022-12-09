@@ -105,22 +105,6 @@ namespace UseMapEditor.FileData
             processlist.Add(new ExcelProcess(mapEditor, fname));
             if(excelTimer == null)
             {
-                string foldername = AppDomain.CurrentDomain.BaseDirectory + @"Data\Excel";
-                foreach (var item in Directory.GetFiles(foldername))
-                {
-                    if(item != fname)
-                    {
-                        try
-                        {
-                            File.Delete(item);
-                        }
-                        catch (Exception)
-                        {
-                        }
-                    }
-                }
-
-
                 InitTimer();
             }
         }

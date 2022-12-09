@@ -429,11 +429,6 @@ namespace UseMapEditor.Lua.TrigEditPlus
             try
             {
                 Lua.DoString(str);
-                //Lua.DoString(Encoding.UTF8.GetBytes(str));
-
-                //Lua.DoString("s=[[hello \\xED\\x95\\x9C\\xEA\\xB8\\x80\\xED\\x85\\x8C\\xEC\\x8A\\xA4\\xED\\x8A\\xB8]]\r\ns=s:gsub(\"\\\\x(%x%x)\",function (x) return string.char(tonumber(x,16)) end)msgbox(s)");
-
-                //Lua.DoString("msgbox(\"안녕하세요\")");
             }
             catch (Exception e)
             {

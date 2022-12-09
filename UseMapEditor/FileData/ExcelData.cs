@@ -33,6 +33,7 @@ using System.Runtime.CompilerServices;
 using UseMapEditor.Windows;
 using UseMapEditor.Dialog;
 using System.Windows.Data;
+using Microsoft.Win32;
 
 namespace UseMapEditor.FileData
 {
@@ -158,9 +159,11 @@ namespace UseMapEditor.FileData
             }
         }
 
-
+        private string savefilename;
         public bool SaveExcel(string filename, ExcelType excelType)
         {
+            savefilename = filename;
+
             Application excelApp = null;
             Workbook template = null;
 
@@ -673,8 +676,38 @@ namespace UseMapEditor.FileData
                     cm.EndUpdate();
                     break;
                 case ExcelType.Trigger:
+                    {
+                        cm.BeginUpdate();
+                        StringBuilder stringBuilder = new StringBuilder();
+                        for (int i = 0; i < mapEditor.mapdata.Triggers.Count; i++)
+                        {
+                            mapEditor.mapdata.Triggers[i].GetTEPText(stringBuilder);
+                        }
+                        string codeText = stringBuilder.ToString();
+                        string trigger = savefilename.Substring(0, savefilename.LastIndexOf('.'));
+
+                        File.WriteAllText(trigger + "Trigger.txt", codeText);
+                        cm.AddCells(2, 1, trigger + "Trigger.txt");
+
+                        cm.EndUpdate();
+                    }
                     break;
                 case ExcelType.MissionBriefing:
+                    {
+                        cm.BeginUpdate();
+                        StringBuilder stringBuilder = new StringBuilder();
+                        for (int i = 0; i < mapEditor.mapdata.Brifings.Count; i++)
+                        {
+                            mapEditor.mapdata.Brifings[i].GetTEPText(stringBuilder);
+                        }
+                        string codeText = stringBuilder.ToString();
+                        string trigger = savefilename.Substring(0, savefilename.LastIndexOf('.'));
+
+                        File.WriteAllText(trigger + "Brifing.txt", codeText);
+                        cm.AddCells(2, 1, trigger + "Brifing.txt");
+
+                        cm.EndUpdate();
+                    }
                     break;
                 case ExcelType.UnitLayout:
                     cm.BeginUpdate();
@@ -840,40 +873,40 @@ namespace UseMapEditor.FileData
 
                     for (int i = 0; i < 8; i++)
                     {
-                        tilesetlist[i] = cm.GetCells(1, 3 + i);
+                        cm.AddCells(1, 3 + i, tilesetlist[i]);
                     }
 
                     for (int i = 0; i < 5; i++)
                     {
-                        ownerlist[i] = cm.GetCells(2, 3 + i);
+                         cm.AddCells(2, 3 + i, ownerlist[i]);
                     }
                     for (int i = 0; i < 5; i++)
                     {
-                        racelist[i] = cm.GetCells(3, 3 + i);
+                        cm.AddCells(3, 3 + i, racelist[i]);
                     }
                     for (int i = 0; i < 4; i++)
                     {
-                        forcelist[i] = cm.GetCells(4, 3 + i);
+                        cm.AddCells(4, 3 + i, forcelist[i]);
                     }
                     for (int i = 0; i < 25; i++)
                     {
-                        colorlist[i] = cm.GetCells(5, 3 + i);
+                        cm.AddCells(5, 3 + i, colorlist[i]);
                     }
                     for (int i = 0; i < 3; i++)
                     {
-                        ableflag[i] = cm.GetCells(6, 3 + i);
+                        cm.AddCells(6, 3 + i, ableflag[i]);
                     }
                     for (int i = 0; i < 2; i++)
                     {
-                        useflag[i] = cm.GetCells(7, 3 + i);
+                        cm.AddCells(7, 3 + i, useflag[i]);
                     }
                     for (int i = 0; i < 2; i++)
                     {
-                        defualtflag[i] = cm.GetCells(8, 3 + i);
+                        cm.AddCells(8, 3 + i, defualtflag[i]);
                     }
                     for (int i = 0; i < 4; i++)
                     {
-                        techflag[i] = cm.GetCells(9, 3 + i);
+                        cm.AddCells(9, 3 + i, techflag[i]);
                     }
 
                     cm.EndUpdate();
@@ -1138,8 +1171,46 @@ namespace UseMapEditor.FileData
                     mapEditor.Scenario.soundSetting.RefreshListBox();
                     break;
                 case ExcelType.Trigger:
+                    {
+                        cm.ReadCells(2, 1);
+
+                        string codeText = File.ReadAllText(cm.GetCells(2, 1));
+
+                        Lua.TrigEditPlus.Main teplua = Global.WindowTool.lua.tepMain;
+                        List<CTrigger> cTriggers = teplua.exec(codeText, mapEditor, true);
+                        if (cTriggers == null)
+                        {
+                            return;
+                        }
+
+                        mapEditor.mapdata.Triggers.Clear();
+                        foreach (var item in cTriggers)
+                        {
+                            mapEditor.mapdata.Triggers.Add(item);
+                        }
+                    }
+                  
                     break;
                 case ExcelType.MissionBriefing:
+                    {
+                        cm.ReadCells(2, 1);
+
+                        string codeText = File.ReadAllText(cm.GetCells(2, 1));
+
+                        Lua.TrigEditPlus.Main teplua = Global.WindowTool.lua.tepMain;
+                        List<CTrigger> cTriggers = teplua.exec(codeText, mapEditor, false);
+                        if (cTriggers == null)
+                        {
+                            return;
+                        }
+
+                        mapEditor.mapdata.Brifings.Clear();
+                        foreach (var item in cTriggers)
+                        {
+                            mapEditor.mapdata.Brifings.Add(item);
+                        }
+                    }
+
                     break;
                 case ExcelType.UnitLayout:
                     cm.ReadCells(17, 2 + UnitMaxCount);

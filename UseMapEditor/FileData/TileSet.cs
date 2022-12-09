@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -237,39 +238,68 @@ namespace UseMapEditor.FileData
             SDTileSetMiniMap = new Dictionary<TileType, List<Color>>();
             HDTileSetMiniMap = new Dictionary<TileType, List<Color>>();
             CBTileSetMiniMap = new Dictionary<TileType, List<Color>>();
+
+            SDTileSetMiniMapPicker = new Dictionary<TileType, Dictionary<Color, ushort>>();
+            HDTileSetMiniMapPicker = new Dictionary<TileType, Dictionary<Color, ushort>>();
+            CBTileSetMiniMapPicker = new Dictionary<TileType, Dictionary<Color, ushort>>();
+
             foreach (TileType settings in Enum.GetValues(typeof(TileType)))
             {
                 {
                     List<Texture2D> texture2Ds = new List<Texture2D>();
                     List<Color> colrlist = new List<Color>();
-
+                    Dictionary<Color, ushort> colordic = new Dictionary<Color, ushort>();
                     //ReadTile(mapDrawer, settings, "SD", texture2Ds, colrlist);
 
                     SDAtlasTileSet.Add(settings, ReadTileAltas(mapDrawer, settings, "SD", colrlist));
+                    for (ushort i = 0; i < colrlist.Count; i++)
+                    {
+                        if (!colordic.ContainsKey(colrlist[i]))
+                        {
+                            colordic.Add(colrlist[i], i);
+                        }
+                    }
 
                     SDTileSetMiniMap.Add(settings, colrlist);
+                    SDTileSetMiniMapPicker.Add(settings, colordic);
                     SDTileSet.Add(settings, texture2Ds);
                 }
                 {
                     List<Texture2D> texture2Ds = new List<Texture2D>();
                     List<Color> colrlist = new List<Color>();
-
+                    Dictionary<Color, ushort> colordic = new Dictionary<Color, ushort>();
                     //ReadTile(mapDrawer, settings, "HD", texture2Ds, colrlist);
 
                     HDtlasTileSet.Add(settings, ReadTileAltas(mapDrawer, settings, "HD", colrlist));
+                    for (ushort i = 0; i < colrlist.Count; i++)
+                    {
+                        if (!colordic.ContainsKey(colrlist[i]))
+                        {
+                            colordic.Add(colrlist[i], i);
+                        }
+                    }
 
                     HDTileSetMiniMap.Add(settings, colrlist);
+                    HDTileSetMiniMapPicker.Add(settings, colordic);
                     HDTileSet.Add(settings, texture2Ds);
                 }
                 {
                     List<Texture2D> texture2Ds = new List<Texture2D>();
                     List<Color> colrlist = new List<Color>();
-
+                    Dictionary<Color, ushort> colordic = new Dictionary<Color, ushort>();
                     //ReadTile(mapDrawer, settings, "CB", texture2Ds, colrlist);
 
                     CBtlasTileSet.Add(settings, ReadTileAltas(mapDrawer, settings, "CB", colrlist));
+                    for (ushort i = 0; i < colrlist.Count; i++)
+                    {
+                        if (!colordic.ContainsKey(colrlist[i]))
+                        {
+                            colordic.Add(colrlist[i], i);
+                        }
+                    }
 
                     CBTileSetMiniMap.Add(settings, colrlist);
+                    CBTileSetMiniMapPicker.Add(settings, colordic);
                     CBTileSet.Add(settings, texture2Ds);
                 }
             }
@@ -768,6 +798,46 @@ namespace UseMapEditor.FileData
             return Color.Black;
         }
 
+
+
+        private Dictionary<FileData.TileSet.TileType, Dictionary<Color,ushort>> SDTileSetMiniMapPicker;
+        private Dictionary<FileData.TileSet.TileType, Dictionary<Color,ushort>> HDTileSetMiniMapPicker;
+        private Dictionary<FileData.TileSet.TileType, Dictionary<Color,ushort>> CBTileSetMiniMapPicker;
+
+        /// <summary>
+        /// 비슷한 색상을 가져옵니다.
+        /// </summary>
+        /// <param name="drawType"></param>
+        /// <param name="tileType"></param>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public System.Drawing.Color GetMiniMapMTXM(Control.MapEditor.DrawType drawType, UseMapEditor.FileData.TileSet.TileType tileType,
+            System.Drawing.Color c, out ushort MTXM)
+        {
+            Dictionary<Color, ushort> tlist;
+
+            switch (drawType)
+            {
+                case Control.MapEditor.DrawType.SD:
+                    tlist = SDTileSetMiniMapPicker[tileType];
+                    break;
+                case Control.MapEditor.DrawType.HD:
+                    tlist = HDTileSetMiniMapPicker[tileType];
+                    break;
+                case Control.MapEditor.DrawType.CB:
+                    tlist = CBTileSetMiniMapPicker[tileType];
+                    break;
+            }
+
+
+
+
+
+
+            MTXM = 10;
+
+            return System.Drawing.Color.FromArgb(10,10,10);
+        }
 
 
         /// <summary>

@@ -201,6 +201,7 @@ namespace UseMapEditor.Control.MapEditorControl
                     SelectTrigitem.args.Add(CopyedSelectTrigitem.args[i].Clone());
                 }
                 SelectTrigitem.type = CopyedSelectTrigitem.type;
+                SelectTrigitem.name = CopyedSelectTrigitem.name;
                 SelectTrigitem.triggerDefine = CopyedSelectTrigitem.triggerDefine;
 
                 SelectTrigitem.PropertyChangeAll();

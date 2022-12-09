@@ -1372,7 +1372,7 @@ namespace UseMapEditor.Control
         private void tileMinimap_Click(object sender, RoutedEventArgs e)
         {
             CloseTileMenu();
-            Windows.MinimapImageWindow minimapImageWindow = new MinimapImageWindow();
+            Windows.MinimapImageWindow minimapImageWindow = new MinimapImageWindow(this);
             minimapImageWindow.ShowDialog();
 
             tile_PasteStart();

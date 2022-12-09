@@ -95,7 +95,7 @@ namespace UseMapEditor.DataBinding
                         int icon = (ushort)Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.upgrades, "Icon", ObjectID).Data;
                         using (FileStream fileStream = new FileStream(AppDomain.CurrentDomain.BaseDirectory + @"\CascData\cmdicons\" + icon + ".png", FileMode.Open))
                         {
-                            imageIcon = Global.WindowTool.GetBitmapSource(fileStream);
+                            imageIcon = Global.WindowTool.GetBitmapSourceFromStream(fileStream);
                         }
                     }
 
