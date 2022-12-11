@@ -224,6 +224,7 @@ namespace UseMapEditor.FileData
         public Dictionary<TileType, Dictionary<ushort, DoodadPallet>> DoodadPallets;
         public Dictionary<TileType, List<DoodadPalletGroup>> DoodadGroups;
 
+        private Dictionary<TileType, Dictionary<ushort, ushort>>  MagaTileToMTXM;
 
         public void TextureLoad(MapDrawer mapDrawer)
         {
@@ -256,7 +257,11 @@ namespace UseMapEditor.FileData
                     {
                         if (!colordic.ContainsKey(colrlist[i]))
                         {
-                            colordic.Add(colrlist[i], i);
+                            //사용가능한 메가타일이면
+                            if (MagaTileToMTXM[settings].ContainsKey(i))
+                            {
+                                colordic.Add(colrlist[i], MagaTileToMTXM[settings][i]);
+                            }
                         }
                     }
 
@@ -275,7 +280,11 @@ namespace UseMapEditor.FileData
                     {
                         if (!colordic.ContainsKey(colrlist[i]))
                         {
-                            colordic.Add(colrlist[i], i);
+                            //사용가능한 메가타일이면
+                            if (MagaTileToMTXM[settings].ContainsKey(i))
+                            {
+                                //colordic.Add(colrlist[i], MagaTileToMTXM[settings][i]);
+                            }
                         }
                     }
 
@@ -294,7 +303,11 @@ namespace UseMapEditor.FileData
                     {
                         if (!colordic.ContainsKey(colrlist[i]))
                         {
-                            colordic.Add(colrlist[i], i);
+                            //사용가능한 메가타일이면
+                            if (MagaTileToMTXM[settings].ContainsKey(i))
+                            {
+                                //colordic.Add(colrlist[i], MagaTileToMTXM[settings][i]);
+                            }
                         }
                     }
 
@@ -307,6 +320,8 @@ namespace UseMapEditor.FileData
 
         public TileSet()
         {
+            MagaTileToMTXM = new Dictionary<TileType, Dictionary<ushort, ushort>>();
+
             cv5data = new Dictionary<TileType, cv5[]>();
             vf4data = new Dictionary<TileType, vf4[]>();
             DoodadPallets = new Dictionary<TileType, Dictionary<ushort, DoodadPallet>>();
@@ -314,6 +329,8 @@ namespace UseMapEditor.FileData
 
             foreach (TileType tileType in Enum.GetValues(typeof(TileType)))
             {
+                MagaTileToMTXM[tileType] = new Dictionary<ushort, ushort>();
+
                 {
                     string fname = AppDomain.CurrentDomain.BaseDirectory + $"Data\\TileSet\\{tileType.ToString()}.cv5";
 
@@ -347,7 +364,12 @@ namespace UseMapEditor.FileData
 
                         for (int p = 0; p < 16; p++)
                         {
-                            _cv5.tiles[p] = br.ReadUInt16();
+                            ushort magaindex = br.ReadUInt16();
+
+                            if (!MagaTileToMTXM[tileType].ContainsKey(magaindex))  MagaTileToMTXM[tileType].Add(magaindex, (ushort)(i * 16 + p));
+                         
+
+                            _cv5.tiles[p] = magaindex;
                         }
 
 
@@ -804,41 +826,62 @@ namespace UseMapEditor.FileData
         private Dictionary<FileData.TileSet.TileType, Dictionary<Color,ushort>> HDTileSetMiniMapPicker;
         private Dictionary<FileData.TileSet.TileType, Dictionary<Color,ushort>> CBTileSetMiniMapPicker;
 
-        /// <summary>
-        /// 비슷한 색상을 가져옵니다.
-        /// </summary>
-        /// <param name="drawType"></param>
-        /// <param name="tileType"></param>
-        /// <param name="c"></param>
-        /// <returns></returns>
-        public System.Drawing.Color GetMiniMapMTXM(Control.MapEditor.DrawType drawType, UseMapEditor.FileData.TileSet.TileType tileType,
-            System.Drawing.Color c, out ushort MTXM)
+
+        public ushort GetTileSetColorToMTXM(Control.MapEditor.DrawType drawType, UseMapEditor.FileData.TileSet.TileType tileType, System.Drawing.Color color )
         {
-            Dictionary<Color, ushort> tlist;
+            Dictionary<Color, ushort> coldic = null;
+
+            Color c = new Color(color.R, color.G, color.B);
 
             switch (drawType)
             {
                 case Control.MapEditor.DrawType.SD:
-                    tlist = SDTileSetMiniMapPicker[tileType];
+                    coldic = SDTileSetMiniMapPicker[tileType];
                     break;
                 case Control.MapEditor.DrawType.HD:
-                    tlist = HDTileSetMiniMapPicker[tileType];
+                    coldic = HDTileSetMiniMapPicker[tileType];
                     break;
                 case Control.MapEditor.DrawType.CB:
-                    tlist = CBTileSetMiniMapPicker[tileType];
+                    coldic = CBTileSetMiniMapPicker[tileType];
                     break;
             }
 
+            if (coldic.ContainsKey(c))
+            {
+                ushort mtxm = coldic[c];
 
+                return mtxm;
+            }
 
-
-
-
-            MTXM = 10;
-
-            return System.Drawing.Color.FromArgb(10,10,10);
+            return 0;
         }
 
+
+        public List<System.Drawing.Color> GetTileSetMiniMapColorList(Control.MapEditor.DrawType drawType, UseMapEditor.FileData.TileSet.TileType tileType)
+        {
+            Dictionary<Color, ushort> coldic = null;
+            List<System.Drawing.Color> rlist = new List<System.Drawing.Color>();
+
+
+            switch (drawType)
+            {
+                case Control.MapEditor.DrawType.SD:
+                    coldic = SDTileSetMiniMapPicker[tileType];
+                    break;
+                case Control.MapEditor.DrawType.HD:
+                    coldic = HDTileSetMiniMapPicker[tileType];
+                    break;
+                case Control.MapEditor.DrawType.CB:
+                    coldic = CBTileSetMiniMapPicker[tileType];
+                    break;
+            }
+            foreach (var item in coldic.Keys)
+            {
+                rlist.Add(System.Drawing.Color.FromArgb(item.R, item.G, item.B));
+            }
+
+            return rlist;
+        }
 
         /// <summary>
         /// 타일을 읽어서 png파일로 만듭니다.

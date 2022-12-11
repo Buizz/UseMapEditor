@@ -10,7 +10,6 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using static UseMapEditor.FileData.ExcelData;
 using UseMapEditor.FileData;
 using Microsoft.Win32;
@@ -19,6 +18,8 @@ using ControlzEx.Standard;
 using System.Runtime.CompilerServices;
 using UseMapEditor.Global;
 using System.Drawing;
+using KGySoft.Drawing.Imaging;
+using KGySoft.Drawing;
 
 namespace UseMapEditor.Windows
 {
@@ -97,9 +98,7 @@ namespace UseMapEditor.Windows
 
             orgImage.Source = orgbitmap;
 
-         
-
-            afterimage.Source = GetminimapImage();
+            afterimage.Source = GetReturnImage();
             IsLodingCmp = true;
         }
 
@@ -108,31 +107,34 @@ namespace UseMapEditor.Windows
         int rwidth;
         int rheight;
 
-
-        private BitmapSource GetminimapImage()
+        Bitmap returnBitmap;
+        private BitmapSource GetReturnImage()
         {
             Bitmap bitmap = WindowTool.GetBitmapFromBitmapSource(orgbitmap);
 
 
-            Bitmap rbmp = new Bitmap(rwidth, rheight);
-            Graphics g = Graphics.FromImage(rbmp);
-            g.DrawImage(bitmap,new RectangleF(0, 0, rwidth, rheight));
+            Bitmap rbmp = new Bitmap(rwidth, rheight, System.Drawing.Imaging.PixelFormat.Format8bppIndexed);
 
-            for (int y = 0; y < rheight; y++)
+            List<System.Drawing.Color> rlist = WindowTool.MapViewer.tileSet.GetTileSetMiniMapColorList(MapEditor.DrawType.SD, mapEditor.mapdata.TILETYPE);
+
+
+            System.Drawing.Imaging.ColorPalette pal = rbmp.Palette;
+
+            for (int i = 0; i < pal.Entries.Length; i++)
             {
-                for (int x = 0; x < rwidth; x++)
-                {
-                    Color color = rbmp.GetPixel(x, y);
-
-                    ushort mtxt;
-                    Color ncolor = WindowTool.MapViewer.tileSet.GetMiniMapMTXM(MapEditor.DrawType.SD, mapEditor.mapdata.TILETYPE, color, out mtxt);
-
-                    
-                    rbmp.SetPixel(x, y, ncolor);
-                }
+                pal.Entries[i] = rlist[i % rlist.Count()];
             }
 
+            rbmp.Palette = pal;
 
+
+            using (IReadWriteBitmapData indexedTarget = rbmp.GetReadWriteBitmapData())
+            using (IReadableBitmapData source = bitmap.GetReadableBitmapData())
+            {
+                source.DrawInto(indexedTarget, new Rectangle(0, 0, rwidth, rheight), OrderedDitherer.Bayer8x8);
+            }
+
+            returnBitmap = rbmp;
             return WindowTool.GetBitmapSourceFromBitmap(rbmp);
         }
 
@@ -165,7 +167,7 @@ namespace UseMapEditor.Windows
                     IsLodingCmp = true;
                     return;
                 }
-                afterimage.Source = GetminimapImage();
+                afterimage.Source = GetReturnImage();
                 IsLodingCmp = true;
             }
 
@@ -192,13 +194,12 @@ namespace UseMapEditor.Windows
                 afterWidth.Text = rwidth.ToString();
 
 
-
                 if (rwidth == 0 || rheight == 0)
                 {
                     IsLodingCmp = true;
                     return;
                 }
-                afterimage.Source = GetminimapImage();
+                afterimage.Source = GetReturnImage();
                 IsLodingCmp = true;
             }
         }
@@ -212,8 +213,18 @@ namespace UseMapEditor.Windows
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            
+            Dictionary<Microsoft.Xna.Framework.Vector2, ushort> copyedlist = new Dictionary<Microsoft.Xna.Framework.Vector2, ushort>();
 
+            for (int y = 0; y < rheight; y++)
+            {
+                for (int x = 0; x < rwidth; x++)
+                {
+                    ushort mtxm = WindowTool.MapViewer.tileSet.GetTileSetColorToMTXM(MapEditor.DrawType.SD, mapEditor.mapdata.TILETYPE, returnBitmap.GetPixel(x, y));
+                    copyedlist.Add(new Microsoft.Xna.Framework.Vector2(x, y), mtxm);
+                }
+            }
+
+            mapEditor.tile_SetCopyedTileFromList(copyedlist);
 
             Close();
         }

@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using UseMapEditor.FileData;
+using UseMapEditor.Lua.TrigEditPlus;
 using UseMapEditor.Task;
 using UseMapEditor.Task.Events;
 using static Data.Map.MapData;
@@ -441,6 +442,25 @@ namespace UseMapEditor.Control
             tile_BrushMode = TileSetBrushMode.PASTE;
             tile_PaintType = TileSetPaintType.PENCIL;
         }
+
+
+        public void tile_SetCopyedTileFromList(Dictionary<Vector2, ushort> copyedlist)
+        {
+            CloseTileMenu();
+            Tile_ResetSelectedTile();
+            tile_CopyedTile.Clear();
+
+            foreach (var item in copyedlist.Keys)
+            {
+                tile_CopyedTile.Add(item, copyedlist[item]);
+            }
+
+
+            //복사 팔레트 On
+            tile_BrushMode = TileSetBrushMode.PASTE;
+            tile_PaintType = TileSetPaintType.PENCIL;
+        }
+
 
     }
 }

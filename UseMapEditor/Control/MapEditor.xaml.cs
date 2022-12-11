@@ -1375,7 +1375,7 @@ namespace UseMapEditor.Control
             Windows.MinimapImageWindow minimapImageWindow = new MinimapImageWindow(this);
             minimapImageWindow.ShowDialog();
 
-            tile_PasteStart();
+            //tile_PasteStart();
         }
 
     }
