@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using UseMapEditor;
 using UseMapEditor.Control;
 using UseMapEditor.FileData;
+using UseMapEditor.Global;
 using static UseMapEditor.FileData.TileSet;
 
 namespace Data.Map
@@ -369,15 +370,17 @@ namespace Data.Map
         {
             if (CheckTILERange(x, y))
             {
-                int tileindex = x + y * mapEditor.mapdata.WIDTH;
+                int tileindex = x + y * WIDTH;
 
-                mapEditor.mapdata.TILE[tileindex] = mtxm;
+                TILE[tileindex] = mtxm;
+                WindowTool.MapViewer.miniTileUpdate(x, y);
+                mapEditor.MinimapRefresh();
             }
         }
         public bool CheckTILERange(int x, int y)
         {
-            if (0 <= x && x < mapEditor.mapdata.WIDTH &&
-                0 <= y && y < mapEditor.mapdata.HEIGHT)
+            if (0 <= x && x < WIDTH &&
+                0 <= y && y < HEIGHT)
             {
                 return true;
             }

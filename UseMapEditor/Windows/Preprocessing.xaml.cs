@@ -341,7 +341,7 @@ namespace UseMapEditor.Windows
                     string fname = $"SD/TileSet/{tile}.dds.vr4";
                     //SaveToFile(data.ReadFileCascStorage(fname), fname);
                     SaveFromTile(data.ReadFileCascStorage(fname), fname + ".png");
-                    BMP.ImageSizeChange(fname + ".png", fname + "s.png", TileSet.miniScale);
+                    BMP.ImageSizeChange(fname + ".png", fname + "s.png", TileSet.miniBlockSize);
                     percent += 20;
                     worker.ReportProgress(percent);
                 }
@@ -351,7 +351,7 @@ namespace UseMapEditor.Windows
                     //SaveToFile(data.ReadFileCascStorage(fname), tname);
                     SaveFromTile(data.ReadFileCascStorage(fname), tname + "b.png");
                     BMP.ImageSizeChange(tname + "b.png", tname + ".png", 0.5);
-                    BMP.ImageSizeChange(tname + ".png", tname + "s.png", TileSet.miniScale);
+                    BMP.ImageSizeChange(tname + ".png", tname + "s.png", TileSet.miniBlockSize);
                     percent += 20;
                     worker.ReportProgress(percent);
                 }
@@ -361,7 +361,7 @@ namespace UseMapEditor.Windows
                     //SaveToFile(data.ReadFileCascStorage(fname), tname);
                     SaveFromTile(data.ReadFileCascStorage(fname), tname + "b.png");
                     BMP.ImageSizeChange(tname + "b.png", tname + ".png", 0.5);
-                    BMP.ImageSizeChange(tname + ".png", tname + "s.png", TileSet.miniScale);
+                    BMP.ImageSizeChange(tname + ".png", tname + "s.png", TileSet.miniBlockSize);
                     percent += 20;
                     worker.ReportProgress(percent);
                 }

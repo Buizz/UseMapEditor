@@ -22,8 +22,8 @@ namespace UseMapEditor.FileData
 {
     public class TileSet
     {
-        public static double compScale = 0.5;
-        public static double miniScale = 0.125;
+        public static double smallScale = 0.5;
+        public static double miniBlockSize = 0.125;
 
 
         private Dictionary<FileData.TileSet.TileType, List<Texture2D>> SDTileSet;
@@ -67,7 +67,7 @@ namespace UseMapEditor.FileData
 
             public Texture2D GetTexture(double scale)
             {
-                if(compScale > scale)
+                if(smallScale > scale)
                 {
                     return smalltexture2D;
                 }
@@ -79,9 +79,9 @@ namespace UseMapEditor.FileData
 
             public double GetCompScale(double scale)
             {
-                if (compScale > scale)
+                if (smallScale > scale)
                 {
-                    return 1/ miniScale;
+                    return 1/ miniBlockSize;
                 }
                 else
                 {
@@ -104,9 +104,9 @@ namespace UseMapEditor.FileData
                 int y = c / length;
                 int tframesize = framesize;
 
-                if (compScale > scale)
+                if (smallScale > scale)
                 {
-                    tframesize = (int)(tframesize * miniScale);
+                    tframesize = (int)(tframesize * miniBlockSize);
                 }
 
                 return new Rectangle(x * tframesize, y * tframesize, tframesize, tframesize);
