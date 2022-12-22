@@ -34,5 +34,9 @@ namespace UseMapEditor.Task.Events
         {
             mapEditor.mapdata.MASK[tileindex] = oldvalue;
         }
+
+        public override void Complete()
+        {
+        }
     }
 }

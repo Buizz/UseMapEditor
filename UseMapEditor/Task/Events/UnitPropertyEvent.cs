@@ -124,5 +124,9 @@ namespace UseMapEditor.Task.Events
             OldCUNIT.SetData(cUNIT);
             mapEditor.MinimapRefresh();
         }
+
+        public override void Complete()
+        {
+        }
     }
 }

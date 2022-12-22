@@ -29,6 +29,7 @@ using UseMapEditor.Task;
 using UseMapEditor.Tools;
 using UseMapEditor.Windows;
 using static Data.Map.MapData;
+using static UseMapEditor.FileData.TileSet;
 
 namespace UseMapEditor.Control
 {
@@ -261,12 +262,17 @@ namespace UseMapEditor.Control
         /// </summary>
         /// <param name="pos"></param>
         /// <returns></returns>
-        public Vector2 PosMapToScreen(Vector2 pos)
+        public Vector2 PosMapToScreen(Vector2 pos, double scale = -1)
         {
+            if(scale == -1)
+            {
+                scale = opt_scalepercent;
+            }
+
             //맵의 좌표를 화면의 좌표로 반환한다.
             //현재 모서리 좌표와 맵의 좌표간의 사이의 거리를 구한다.
             //
-            return new Vector2((float)((pos.X - opt_xpos) * opt_scalepercent), (float)((pos.Y - opt_ypos) * opt_scalepercent));
+            return new Vector2((float)((pos.X - opt_xpos) * scale), (float)((pos.Y - opt_ypos) * scale));
         }
 
         
@@ -450,6 +456,25 @@ namespace UseMapEditor.Control
             }
             IsMinimapUnitRefresh = false;
         }
+        public void TileMapReDraw()
+        {
+            Global.WindowTool.MapViewer.tileSet.GetAtlasTileSetTexture(DrawType.SD, mapdata.TILETYPE).tileAtlasBuffer.RefreshTileSet(this);
+            Global.WindowTool.MapViewer.tileSet.GetAtlasTileSetTexture(DrawType.HD, mapdata.TILETYPE).tileAtlasBuffer.RefreshTileSet(this);
+            Global.WindowTool.MapViewer.tileSet.GetAtlasTileSetTexture(DrawType.CB, mapdata.TILETYPE).tileAtlasBuffer.RefreshTileSet(this);
+        }
+        public void TileUpdate(int x, int y, ushort MTXM)
+        {
+            Global.WindowTool.MapViewer.tileSet.GetAtlasTileSetTexture(DrawType.SD, mapdata.TILETYPE).tileAtlasBuffer.SetTIleFromMTXM(this, x, y, MTXM);
+            Global.WindowTool.MapViewer.tileSet.GetAtlasTileSetTexture(DrawType.HD, mapdata.TILETYPE).tileAtlasBuffer.SetTIleFromMTXM(this, x, y, MTXM);
+            Global.WindowTool.MapViewer.tileSet.GetAtlasTileSetTexture(DrawType.CB, mapdata.TILETYPE).tileAtlasBuffer.SetTIleFromMTXM(this, x, y, MTXM);
+        }
+        public void TileMapRefresh()
+        {
+            Global.WindowTool.MapViewer.tileSet.GetAtlasTileSetTexture(DrawType.SD, mapdata.TILETYPE).tileAtlasBuffer.SetData();
+            Global.WindowTool.MapViewer.tileSet.GetAtlasTileSetTexture(DrawType.HD, mapdata.TILETYPE).tileAtlasBuffer.SetData();
+            Global.WindowTool.MapViewer.tileSet.GetAtlasTileSetTexture(DrawType.CB, mapdata.TILETYPE).tileAtlasBuffer.SetData();
+        }
+
 
 
         public void SettingWindowOpen()
@@ -564,6 +589,8 @@ namespace UseMapEditor.Control
             SpritePallete.SelectIndex = 0;
             SpritePallete_Unit.SelectIndex = 0;
             TileSetUIRefresh();
+
+            TileMapReDraw();
         }
 
 

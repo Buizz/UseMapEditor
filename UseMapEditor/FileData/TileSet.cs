@@ -16,14 +16,18 @@ using System.Windows.Markup;
 using UseMapEditor.Casc;
 using UseMapEditor.Control;
 using UseMapEditor.MonoGameControl;
+using static UseMapEditor.FileData.DatFile.CDatFile.CParamater;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace UseMapEditor.FileData
 {
     public class TileSet
     {
+        public static double tinyScale = 0.20;
         public static double smallScale = 0.5;
         public static double miniBlockSize = 0.125;
+
+
 
 
         private Dictionary<FileData.TileSet.TileType, List<Texture2D>> SDTileSet;
@@ -49,21 +53,41 @@ namespace UseMapEditor.FileData
                 case Control.MapEditor.DrawType.SD:
                     return SDAtlasTileSet;
                 case Control.MapEditor.DrawType.HD:
-                    return HDtlasTileSet;
+                    return HDAtlasTileSet;
                 case Control.MapEditor.DrawType.CB:
-                    return CBtlasTileSet;
+                    return CBAtlasTileSet;
             }
             return null;
         }
 
 
         private Dictionary<FileData.TileSet.TileType, AtlasTileSet> SDAtlasTileSet;
-        private Dictionary<FileData.TileSet.TileType, AtlasTileSet> HDtlasTileSet;
-        private Dictionary<FileData.TileSet.TileType, AtlasTileSet> CBtlasTileSet;
+        private Dictionary<FileData.TileSet.TileType, AtlasTileSet> HDAtlasTileSet;
+        private Dictionary<FileData.TileSet.TileType, AtlasTileSet> CBAtlasTileSet;
         public class AtlasTileSet
         {
+            private GraphicsDevice graphicsDevice;
+            public TileAtlasBuffer tileAtlasBuffer;
+            public AtlasTileSet(GraphicsDevice graphicsDevice)
+            {
+                this.graphicsDevice = graphicsDevice;;
+            }
+
             public Texture2D texture2D;
             public Texture2D smalltexture2D;
+
+            public void TileAtlasBufferReset()
+            {
+                if(framesize == 64)
+                {
+                    tileAtlasBuffer = new TileAtlasBuffer(texture2D, graphicsDevice, true);
+                }
+                else
+                {
+                    tileAtlasBuffer = new TileAtlasBuffer(texture2D, graphicsDevice, false);
+                }
+            }
+
 
             public Texture2D GetTexture(double scale)
             {
@@ -233,8 +257,8 @@ namespace UseMapEditor.FileData
             CBTileSet = new Dictionary<TileType, List<Texture2D>>();
 
             SDAtlasTileSet = new Dictionary<TileType, AtlasTileSet>();
-            HDtlasTileSet = new Dictionary<TileType, AtlasTileSet>();
-            CBtlasTileSet = new Dictionary<TileType, AtlasTileSet>();
+            HDAtlasTileSet = new Dictionary<TileType, AtlasTileSet>();
+            CBAtlasTileSet = new Dictionary<TileType, AtlasTileSet>();
 
             SDTileSetMiniMap = new Dictionary<TileType, List<Color>>();
             HDTileSetMiniMap = new Dictionary<TileType, List<Color>>();
@@ -275,7 +299,7 @@ namespace UseMapEditor.FileData
                     Dictionary<Color, ushort> colordic = new Dictionary<Color, ushort>();
                     //ReadTile(mapDrawer, settings, "HD", texture2Ds, colrlist);
 
-                    HDtlasTileSet.Add(settings, ReadTileAltas(mapDrawer, settings, "HD", colrlist));
+                    HDAtlasTileSet.Add(settings, ReadTileAltas(mapDrawer, settings, "HD", colrlist));
                     for (ushort i = 0; i < colrlist.Count; i++)
                     {
                         if (!colordic.ContainsKey(colrlist[i]))
@@ -298,7 +322,7 @@ namespace UseMapEditor.FileData
                     Dictionary<Color, ushort> colordic = new Dictionary<Color, ushort>();
                     //ReadTile(mapDrawer, settings, "CB", texture2Ds, colrlist);
 
-                    CBtlasTileSet.Add(settings, ReadTileAltas(mapDrawer, settings, "CB", colrlist));
+                    CBAtlasTileSet.Add(settings, ReadTileAltas(mapDrawer, settings, "CB", colrlist));
                     for (ushort i = 0; i < colrlist.Count; i++)
                     {
                         if (!colordic.ContainsKey(colrlist[i]))
@@ -898,7 +922,7 @@ namespace UseMapEditor.FileData
             ushort unknown = br.ReadUInt16();// (file version ?); -- value appears to always be 0x1001 in the files I've seen.
 
 
-            AtlasTileSet atlasTileSet = new AtlasTileSet();
+            AtlasTileSet atlasTileSet = new AtlasTileSet(null);
 
             atlasTileSet.SetSize(frame);
             if (unknown == 0x1011)
@@ -1062,13 +1086,12 @@ namespace UseMapEditor.FileData
 
         private AtlasTileSet ReadTileAltas(MapDrawer mapDrawer, TileType tileType, string _fname, List<Color> MiniMapColor)
         {
-            AtlasTileSet atlasTileSet = new AtlasTileSet();
+            AtlasTileSet atlasTileSet = new AtlasTileSet(mapDrawer.GraphicsDevice);
 
             {
                 string fname = AppDomain.CurrentDomain.BaseDirectory + $"CascData\\{_fname}\\TileSet\\{tileType.ToString()}.dds.vr4.png";
 
                 Texture2D texture = mapDrawer.LoadFromFile(fname);
-                atlasTileSet.texture2D = texture;
 
                 if (_fname == "SD")
                 {
@@ -1078,6 +1101,8 @@ namespace UseMapEditor.FileData
                 {
                     atlasTileSet.framesize = 64;
                 }
+                atlasTileSet.texture2D = texture;
+                atlasTileSet.TileAtlasBufferReset();
 
                 atlasTileSet.length = texture.Width / atlasTileSet.framesize;
 

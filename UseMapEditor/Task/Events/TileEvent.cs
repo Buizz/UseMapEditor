@@ -37,5 +37,10 @@ namespace UseMapEditor.Task.Events
         {
             mapEditor.mapdata.TILEChange(X, Y, oldMTXM);
         }
+
+        public override void Complete()
+        {
+            mapEditor.mapdata.TILEChangeComplete();
+        }
     }
 }

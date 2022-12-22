@@ -58,5 +58,9 @@ namespace UseMapEditor.Task.Events
                 }
             }
         }
+
+        public override void Complete()
+        {
+        }
     }
 }

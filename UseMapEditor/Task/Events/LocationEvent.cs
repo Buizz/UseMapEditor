@@ -140,5 +140,9 @@ namespace UseMapEditor.Task
                     break;
             }
         }
+
+        public override void Complete()
+        {
+        }
     }
 }

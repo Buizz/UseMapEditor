@@ -14,5 +14,6 @@ namespace UseMapEditor.Task
         //작업 전 값과 작업 후 값을 저장.
         public abstract void Redo();
         public abstract void Undo();
+        public abstract void Complete();
     }
 }

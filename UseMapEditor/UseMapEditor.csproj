@@ -406,6 +406,7 @@
     <Compile Include="MonoGameControl\PalletUI.cs" />
     <Compile Include="MonoGameControl\SpritePallete.cs" />
     <Compile Include="MonoGameControl\TileDraw.cs" />
+    <Compile Include="MonoGameControl\TileAtlasBuffer.cs" />
     <Compile Include="MonoGameControl\TilePallete.cs" />
     <Compile Include="MonoGameControl\UnitDraw.cs" />
     <Compile Include="MonoGameControl\UnitPallete.cs" />

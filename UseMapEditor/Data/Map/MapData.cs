@@ -373,10 +373,28 @@ namespace Data.Map
                 int tileindex = x + y * WIDTH;
 
                 TILE[tileindex] = mtxm;
+                mapEditor.TileUpdate(x, y, mtxm);
+
                 WindowTool.MapViewer.miniTileUpdate(x, y);
-                mapEditor.MinimapRefresh();
             }
         }
+        public ushort GetTILE(int x, int y)
+        {
+            if (CheckTILERange(x, y))
+            {
+                int tileindex = x + y * WIDTH;
+
+                return TILE[tileindex];
+            }
+
+            return 0;
+        }
+        public void TILEChangeComplete()
+        {
+            mapEditor.TileMapRefresh();
+            mapEditor.MinimapRefresh();
+        }
+
         public bool CheckTILERange(int x, int y)
         {
             if (0 <= x && x < WIDTH &&

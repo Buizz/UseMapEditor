@@ -441,6 +441,7 @@ namespace UseMapEditor.MonoGameControl
                     mapeditor.taskManager.TaskAdd(new TileEvent(mapeditor, newMTXM, oldMTXM, mapx, mapy));
                 }
             }
+            mapeditor.mapdata.TILEChangeComplete();
         }
 
 
@@ -568,6 +569,8 @@ namespace UseMapEditor.MonoGameControl
 
                         }
                     }
+
+                    mapeditor.mapdata.TILEChangeComplete();
                 }
                 else if (mapeditor.tile_PaintType == MapEditor.TileSetPaintType.RECT)
                 {

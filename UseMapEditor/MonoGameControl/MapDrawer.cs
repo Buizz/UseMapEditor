@@ -67,7 +67,6 @@ namespace UseMapEditor.MonoGameControl
 
 
 
-
             string gridcolorstr = Global.Setting.Vals[Global.Setting.Settings.Program_GridColor];
             uint gridcolorcode;
             if (uint.TryParse(gridcolorstr, out gridcolorcode))
@@ -156,38 +155,10 @@ namespace UseMapEditor.MonoGameControl
         public TileSet tileSet;
         private void GrpLoad()
         {
-            //texture = Content.Load<Texture2D>("Test");
-
-
-            //byte[] textureData = File.ReadAllBytes(AppDomain.CurrentDomain.BaseDirectory + @"\Content\main_000-000-diffuse.dds");
-
-            //int dxtHeaderOffset = 0x80;
-            //texture = new Texture2D(GraphicsDevice, 1024, 888, false, SurfaceFormat.Dxt5);
-            //texture.SetData(textureData, dxtHeaderOffset, textureData.Length - dxtHeaderOffset);
-
-
-            //texture = Texture2D.FromFile(GraphicsDevice, "Content\\AnyConv.com__main_000-000-diffuse.png");
-
-
             minimap = new Texture2D(GraphicsDevice, 256, 256);
             minimapUnit = new Texture2D(GraphicsDevice, 256, 256);
 
-            //Anim anim = new Anim(this);
-
-            //FileData.TileSet.ReadTileSet(this);
-
             tileSet.TextureLoad(this);
-
-
-
-            //SD_GRP = new List<Texture2D>();
-            //SD_Color = new List<Texture2D>();
-            //HD_GRP = new List<Texture2D>();
-            //HD_Color = new List<Texture2D>();
-            //CB_GRP = new List<Texture2D>();
-            //CB_Color = new List<Texture2D>();
-
-
 
             GRPDATA = new Dictionary<Control.MapEditor.DrawType, GRP[]>();
 
@@ -597,10 +568,7 @@ namespace UseMapEditor.MonoGameControl
             DrawConnect();
 
 
-
-
             DrawPallet(IsDrawGrp);
-
 
 
             _liveFrames++;

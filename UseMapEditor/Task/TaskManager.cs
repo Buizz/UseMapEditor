@@ -129,12 +129,20 @@ namespace UseMapEditor.Task
                 {
                     events[i].Redo();
                 }
+                if(events.Count > 0)
+                {
+                    events[0].Complete();
+                }
             }
             public void Undo()
             {
                 for (int i = events.Count - 1; i >= 0; i--)
                 {
                     events[i].Undo();
+                }
+                if (events.Count > 0)
+                {
+                    events[0].Complete();
                 }
             }
         }

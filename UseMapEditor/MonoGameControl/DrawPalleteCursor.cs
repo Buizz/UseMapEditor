@@ -534,7 +534,8 @@ namespace UseMapEditor.MonoGameControl
 
 
                                     if (!mapeditor.mapdata.CheckTILERange(mapx, mapy)) continue;
-                                    DrawRect(_spriteBatch, screen, screenm, Color.Lime, 3);
+
+                                    DrawRect(_spriteBatch, screen, screenm, Color.Lime, 2, true);
 
 
                                     //_spriteBatch.Draw(gridtexture, new Rectangle((int)screen.X - 2, (int)screen.Y - 2, (int)(32* mapeditor.opt_scalepercent) + 4, (int)(32 * mapeditor.opt_scalepercent) + 4), null, Color.Red, 0, new Vector2(), SpriteEffects.None, 0);
@@ -545,25 +546,32 @@ namespace UseMapEditor.MonoGameControl
 
 
 
-                            _spriteBatch.Begin(blendState: BlendState.NonPremultiplied, samplerState: SamplerState.PointClamp);
+                            _spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, blendState: BlendState.NonPremultiplied, samplerState: SamplerState.PointClamp);
                             for (int y = 0; y < height; y++)
                             {
                                 for (int x = 0; x < width; x++)
                                 {
-                                    int megaindex = 0;
+                                    ushort MTXM = 0;
 
 
 
                                     if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.ALLTILE)
                                     {
-                                        if (IsOneTile)
+                                        int group, index;
+                                        group = (int)mapeditor.tile_PalleteSelectStart.Y;
+                                        index = (int)mapeditor.tile_PalleteSelectStart.X;
+
+
+
+                                        //megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, (ushort)(mapeditor.tile_PalleteSelectStart.Y), (ushort)(mapeditor.tile_PalleteSelectStart.X));
+                                        //megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, (ushort)(mapeditor.tile_PalleteSelectStart.Y + y), (ushort)(mapeditor.tile_PalleteSelectStart.X + x));
+
+                                        if (!IsOneTile)
                                         {
-                                            megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, (ushort)(mapeditor.tile_PalleteSelectStart.Y), (ushort)(mapeditor.tile_PalleteSelectStart.X));
+                                            group += y;
+                                            index += x;
                                         }
-                                        else
-                                        {
-                                            megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, (ushort)(mapeditor.tile_PalleteSelectStart.Y + y), (ushort)(mapeditor.tile_PalleteSelectStart.X + x));
-                                        }
+                                        MTXM = (ushort)(group * 16 + index);
                                     }
                                     else if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.PASTE)
                                     {
@@ -571,17 +579,18 @@ namespace UseMapEditor.MonoGameControl
                                         {
                                             ushort newMtxm = mapeditor.Tile_GetCopyedTile(0, 0);
                                             if (newMtxm == ushort.MaxValue) continue;
-                                            megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, newMtxm);
+                                            MTXM = newMtxm;
+                                            //megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, newMtxm);
                                         }
                                         else
                                         {
                                             ushort newMtxm = mapeditor.Tile_GetCopyedTile(x, y);
                                             if (newMtxm == ushort.MaxValue) continue;
-                                            megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, newMtxm);
+                                            MTXM = newMtxm;
+                                            //megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, newMtxm);
                                         }
                                     }
 
-                                    if (mapeditor.TilePalleteTransparentBlack && megaindex == 0) continue;
 
                                     int mapx = (int)(mappos.X + (x - sx));
                                     int mapy = (int)(mappos.Y + (y - sy));
@@ -590,8 +599,7 @@ namespace UseMapEditor.MonoGameControl
                                     if (0 <= mapx && mapx < mapeditor.mapdata.WIDTH &&
                                         0 <= mapy && mapy < mapeditor.mapdata.HEIGHT)
                                     {
-
-                                        DrawTilePreview(atlasTileSet, mapx * 32, mapy * 32, megaindex);
+                                        DrawTileBlockPreview(atlasTileSet, mapx * 32, mapy * 32, MTXM);
                                         //DrawRect(_spriteBatch, new Vector2(mapx * 32, mapy * 32), new Vector2(32, 32), Color.Red, 3);
                                     }
 
