@@ -342,6 +342,7 @@
     <Compile Include="Control\MapEditorControl\ValueSelecter.xaml.cs">
       <DependentUpon>ValueSelecter.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Control\MapEditorData\EditorTextureData.cs" />
     <Compile Include="Control\ShortCutEditControl.xaml.cs">
       <DependentUpon>ShortCutEditControl.xaml</DependentUpon>
     </Compile>

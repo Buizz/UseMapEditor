@@ -201,6 +201,7 @@ namespace UseMapEditor.Control.MapEditorControl
             SizeChangePopupBox.IsPopupOpen = false;
             mapEditor.taskManager.TaskReset();
             mapEditor.SetDirty();
+            mapEditor.TileMapReDraw();
         }
 
 

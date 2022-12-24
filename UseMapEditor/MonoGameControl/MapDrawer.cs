@@ -155,9 +155,6 @@ namespace UseMapEditor.MonoGameControl
         public TileSet tileSet;
         private void GrpLoad()
         {
-            minimap = new Texture2D(GraphicsDevice, 256, 256);
-            minimapUnit = new Texture2D(GraphicsDevice, 256, 256);
-
             tileSet.TextureLoad(this);
 
             GRPDATA = new Dictionary<Control.MapEditor.DrawType, GRP[]>();

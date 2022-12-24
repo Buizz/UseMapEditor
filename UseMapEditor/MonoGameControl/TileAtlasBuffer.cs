@@ -7,7 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UseMapEditor.Control;
+using UseMapEditor.Control.MapEditorData;
 using UseMapEditor.FileData;
+using static UseMapEditor.Control.MapEditorData.EditorTextureData;
 
 namespace UseMapEditor.MonoGameControl
 {
@@ -15,11 +17,10 @@ namespace UseMapEditor.MonoGameControl
     {
   
         public Texture2D texture;
-        public VertexBuffer vertexBuffer;
-        public IndexBuffer indexBuffer;
+ 
 
-        private VertexPositionTexture[] vertices;
-        private int[] indices;
+
+
         private BasicEffect basicEffect;
         private bool IsHD;
         private GraphicsDevice GraphicsDevice;
@@ -45,22 +46,12 @@ namespace UseMapEditor.MonoGameControl
             textureheight = texture.Height / blockSize;
 
 
-
             this.GraphicsDevice = GraphicsDevice;
             this.texture = texture;
-            vertexBuffer = new VertexBuffer(GraphicsDevice, typeof(VertexPositionTexture), tiles * 4,
-                BufferUsage.WriteOnly);
-            indexBuffer = new IndexBuffer(GraphicsDevice, typeof(int), tiles * 6, BufferUsage.WriteOnly);
-            vertices = new VertexPositionTexture[tiles * 4];
-            indices = new int[tiles * 6];
-
-
-
 
             basicEffect = new BasicEffect(GraphicsDevice);
             basicEffect.TextureEnabled = true;
             basicEffect.Texture = texture;
-
 
             //if (texture != null)
             //{
@@ -88,17 +79,6 @@ namespace UseMapEditor.MonoGameControl
             //}
         }
 
-
-
-
-
-
-
-        public void SetData()
-        {
-            vertexBuffer.SetData(vertices);
-            indexBuffer.SetData(indices);
-        }
         public  Vector3 camera2DScrollPosition = new Vector3(0, 0, -1);
         public  Vector3 camera2DScrollLookAt = new Vector3(0, 0, 0);
 
@@ -111,25 +91,18 @@ namespace UseMapEditor.MonoGameControl
             camera2DScrollLookAt.Y = y;
             camera2DScrollLookAt.Z = 0;
         }
-        public void Draw(MapEditor mapeditor)
+        public void Draw(MapEditor mapeditor, TileMap tileMap)
         {
             float scale = (float)mapeditor.opt_scalepercent;
             Vector2 mapPos;
-            if (IsHD)
-            {
-                scale /= 2;
-                mapPos = mapeditor.PosMapToScreen(new Vector2(0, 0), 2);
-            }
-            else
-            {
-                mapPos = mapeditor.PosMapToScreen(new Vector2(0, 0), 1);
-            }
+            scale /= 2;
+            mapPos = mapeditor.PosMapToScreen(new Vector2(0, 0), 2);
 
 
             SetCameraPosition2D(-(int)mapPos.X, -(int)mapPos.Y);
 
-            GraphicsDevice.SetVertexBuffer(vertexBuffer);
-            GraphicsDevice.Indices = indexBuffer;
+            GraphicsDevice.SetVertexBuffer(tileMap.vertexBuffer);
+            GraphicsDevice.Indices = tileMap.indexBuffer;
             GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
             // set up our matrix to match basic effect.
@@ -166,7 +139,7 @@ namespace UseMapEditor.MonoGameControl
             //        SetTIleFromMTXM(mapeditor, x, 1, mapeditor.mapdata.GetTILE(x, y));
             //    }
             //}
-            SetData();
+            //SetData(mapeditor);
         }
 
         public void SetTIleFromMTXM(MapEditor mapeditor, int x, int y, ushort MTXM)
@@ -177,11 +150,11 @@ namespace UseMapEditor.MonoGameControl
             int magax = magatile % texturewidth;
             int magay = magatile / textureheight;
 
-            _settile(tileindex, x * blockSize, y * blockSize, new Rectangle(blockSize * magax, blockSize * magay, blockSize, blockSize), false, false);
+            _settile(mapeditor, tileindex, x * blockSize, y * blockSize, new Rectangle(blockSize * magax, blockSize * magay, blockSize, blockSize), false, false);
         }
 
 
-        private void _settile(int tileindex, int tx, int ty, Rectangle rect, bool flippedHorizontally, bool flippedVertically)
+        private void _settile(MapEditor mapeditor,int tileindex, int tx, int ty, Rectangle rect, bool flippedHorizontally, bool flippedVertically)
         {
             float textureSizeX = 1f / texture.Width;
             float textureSizeY = 1f / texture.Height;
@@ -207,19 +180,19 @@ namespace UseMapEditor.MonoGameControl
 
 
             int vertexCount = tileindex * 4;
-            vertices[vertexCount] = new VertexPositionTexture(new Vector3(tx, ty + rect.Height, 0), new Vector2(left, bottom));
-            vertices[vertexCount + 1] = new VertexPositionTexture(new Vector3(tx, ty, 0), new Vector2(left, top));
-            vertices[vertexCount + 2] = new VertexPositionTexture(new Vector3(tx + rect.Width, ty + rect.Height, 0), new Vector2(right, bottom));
-            vertices[vertexCount + 3] = new VertexPositionTexture(new Vector3(tx + rect.Width, ty, 0), new Vector2(right, top));
+            mapeditor.editorTextureData.GetTileMap().vertices[vertexCount] = new VertexPositionTexture(new Vector3(tx, ty + rect.Height, 0), new Vector2(left, bottom));
+            mapeditor.editorTextureData.GetTileMap().vertices[vertexCount + 1] = new VertexPositionTexture(new Vector3(tx, ty, 0), new Vector2(left, top));
+            mapeditor.editorTextureData.GetTileMap().vertices[vertexCount + 2] = new VertexPositionTexture(new Vector3(tx + rect.Width, ty + rect.Height, 0), new Vector2(right, bottom));
+            mapeditor.editorTextureData.GetTileMap().vertices[vertexCount + 3] = new VertexPositionTexture(new Vector3(tx + rect.Width, ty, 0), new Vector2(right, top));
 
             int indexCount = tileindex * 6;
-            indices[indexCount] = (int)vertexCount;
-            indices[indexCount + 1] = (int)(vertexCount + 1);
-            indices[indexCount + 2] = (int)(vertexCount + 2);
+            mapeditor.editorTextureData.GetTileMap().indices[indexCount] = (int)vertexCount;
+            mapeditor.editorTextureData.GetTileMap().indices[indexCount + 1] = (int)(vertexCount + 1);
+            mapeditor.editorTextureData.GetTileMap().indices[indexCount + 2] = (int)(vertexCount + 2);
 
-            indices[indexCount + 3] = (int)(vertexCount + 2);
-            indices[indexCount + 4] = (int)(vertexCount + 1);
-            indices[indexCount + 5] = (int)(vertexCount + 3);
+            mapeditor.editorTextureData.GetTileMap().indices[indexCount + 3] = (int)(vertexCount + 2);
+            mapeditor.editorTextureData.GetTileMap().indices[indexCount + 4] = (int)(vertexCount + 1);
+            mapeditor.editorTextureData.GetTileMap().indices[indexCount + 5] = (int)(vertexCount + 3);
 
             //tileCount++;
         }

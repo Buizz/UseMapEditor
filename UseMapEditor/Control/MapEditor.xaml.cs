@@ -1,6 +1,7 @@
 ﻿using Data.Map;
 using Dragablz;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -21,6 +22,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using UseMapEditor.Control.MapEditorControl;
+using UseMapEditor.Control.MapEditorData;
 using UseMapEditor.DataBinding;
 using UseMapEditor.Dialog;
 using UseMapEditor.FileData;
@@ -287,7 +289,8 @@ namespace UseMapEditor.Control
         {
             SD,
             HD,
-            CB
+            CB,
+            NOTHING
         }
 
         private int _opt_scale = 100;
@@ -441,9 +444,13 @@ namespace UseMapEditor.Control
         public bool IsMinimapLoad = false;
         public bool ChangeMiniMap = false;
         public bool IsMinimapUnitRefresh = false;
+
+        public EditorTextureData editorTextureData;
+
+       
         public void MinimapRefresh()
         {
-            IsMinimapLoad = false;
+            ChangeMiniMap = true;
         }
         public void MinimapUnitInitRefresh()
         {
@@ -456,23 +463,72 @@ namespace UseMapEditor.Control
             }
             IsMinimapUnitRefresh = false;
         }
+        public void miniTileUpdate(int x, int y)
+        {
+            int tileindex = x + y * mapdata.WIDTH;
+            ushort MTXM = mapdata.TILE[tileindex];
+
+            minimapcolor[x + y * 256] = Global.WindowTool.MapViewer.tileSet.GetTileColor(opt_drawType, mapdata.TILETYPE, MTXM);
+            //mapeditor.miniampUnit[x + y * 256] = Color.Transparent;
+        }
+        public void miniUnitUpdate(CUNIT cUNIT, bool IsDelete = false)
+        {
+            int w = cUNIT.BoxWidth;
+            int h = cUNIT.BoxHeight;
+
+            for (int x = -w / 2; x < w / 2; x++)
+            {
+                for (int y = -h / 2; y < h / 2; y++)
+                {
+                    int mx = ((cUNIT.X + x) / 32);
+                    int my = ((cUNIT.Y + y) / 32);
+
+
+                    mx = Math.Max(0, mx);
+                    my = Math.Max(0, my);
+
+                    mx = Math.Min(255, mx);
+                    my = Math.Min(255, my);
+
+                    if (IsDelete)
+                    {
+                        miniampUnit[mx + my * 256] = new Microsoft.Xna.Framework.Color();
+                    }
+                    else
+                    {
+                        miniampUnit[mx + my * 256] = mapdata.UnitColor(cUNIT.player);
+
+                    }
+                }
+            }
+        }
+
+
+
+
         public void TileMapReDraw()
         {
+            //if (!Global.WindowTool.IsEnabledMapEditor(this)) return;
             Global.WindowTool.MapViewer.tileSet.GetAtlasTileSetTexture(DrawType.SD, mapdata.TILETYPE).tileAtlasBuffer.RefreshTileSet(this);
             Global.WindowTool.MapViewer.tileSet.GetAtlasTileSetTexture(DrawType.HD, mapdata.TILETYPE).tileAtlasBuffer.RefreshTileSet(this);
             Global.WindowTool.MapViewer.tileSet.GetAtlasTileSetTexture(DrawType.CB, mapdata.TILETYPE).tileAtlasBuffer.RefreshTileSet(this);
+            editorTextureData.SDTileMap.SetData();
+            editorTextureData.HDTileMap.SetData();
+            editorTextureData.CBTileMap.SetData();
         }
         public void TileUpdate(int x, int y, ushort MTXM)
         {
+            //if (!Global.WindowTool.IsEnabledMapEditor(this)) return;
             Global.WindowTool.MapViewer.tileSet.GetAtlasTileSetTexture(DrawType.SD, mapdata.TILETYPE).tileAtlasBuffer.SetTIleFromMTXM(this, x, y, MTXM);
             Global.WindowTool.MapViewer.tileSet.GetAtlasTileSetTexture(DrawType.HD, mapdata.TILETYPE).tileAtlasBuffer.SetTIleFromMTXM(this, x, y, MTXM);
             Global.WindowTool.MapViewer.tileSet.GetAtlasTileSetTexture(DrawType.CB, mapdata.TILETYPE).tileAtlasBuffer.SetTIleFromMTXM(this, x, y, MTXM);
         }
         public void TileMapRefresh()
         {
-            Global.WindowTool.MapViewer.tileSet.GetAtlasTileSetTexture(DrawType.SD, mapdata.TILETYPE).tileAtlasBuffer.SetData();
-            Global.WindowTool.MapViewer.tileSet.GetAtlasTileSetTexture(DrawType.HD, mapdata.TILETYPE).tileAtlasBuffer.SetData();
-            Global.WindowTool.MapViewer.tileSet.GetAtlasTileSetTexture(DrawType.CB, mapdata.TILETYPE).tileAtlasBuffer.SetData();
+            if (!Global.WindowTool.IsEnabledMapEditor(this)) return;
+            editorTextureData.SDTileMap.SetData();
+            editorTextureData.HDTileMap.SetData();
+            editorTextureData.CBTileMap.SetData();
         }
 
 
@@ -514,6 +570,8 @@ namespace UseMapEditor.Control
             PalletSizeRefresh();
 
 
+
+
             taskManager = new TaskManager(this);
             shortCutManager = new ShortCutManager(this);
             
@@ -521,6 +579,9 @@ namespace UseMapEditor.Control
             minimapcolor = new Microsoft.Xna.Framework.Color[256 * 256];
             miniampUnit = new Microsoft.Xna.Framework.Color[256 * 256];
 
+            editorTextureData = new EditorTextureData();
+            editorTextureData.Init(Global.WindowTool.MapViewer, this);
+   
 
 
             TileBack = Microsoft.Xna.Framework.Color.Black;

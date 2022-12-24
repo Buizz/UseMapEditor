@@ -140,16 +140,14 @@ namespace UseMapEditor.MonoGameControl
 
 
 
-        private Texture2D minimap;
-        private Texture2D minimapUnit;
 
         private void DrawMiniMap()
         {
             if (!mapeditor.IsMinimapLoad)
             {
                 CreateMiniMap();
-                minimapUnit.SetData(mapeditor.miniampUnit);
-                minimap.SetData(mapeditor.minimapcolor);
+                mapeditor.editorTextureData.minimapUnit.SetData(mapeditor.miniampUnit);
+                mapeditor.editorTextureData.minimap.SetData(mapeditor.minimapcolor);
                 mapeditor.IsMinimapLoad = true;
                 mapeditor.IsMinimapUnitRefresh = true;
             }
@@ -157,8 +155,8 @@ namespace UseMapEditor.MonoGameControl
             {
                 if (mapeditor.ChangeMiniMap)
                 {
-                    minimapUnit.SetData(mapeditor.miniampUnit);
-                    minimap.SetData(mapeditor.minimapcolor);
+                    mapeditor.editorTextureData.minimapUnit.SetData(mapeditor.miniampUnit);
+                    mapeditor.editorTextureData.minimap.SetData(mapeditor.minimapcolor);
                     mapeditor.ChangeMiniMap = false;
                 }
             }
@@ -168,7 +166,7 @@ namespace UseMapEditor.MonoGameControl
 
                 CreateMiniMapUnit();
 
-                minimapUnit.SetData(mapeditor.miniampUnit);
+                mapeditor.editorTextureData.minimapUnit.SetData(mapeditor.miniampUnit);
                 mapeditor.IsMinimapUnitRefresh = true;
             }
 
@@ -190,8 +188,8 @@ namespace UseMapEditor.MonoGameControl
 
             StartX += (128 - MapW) / 2;
             StartY += (128 - MapH) / 2;
-            _spriteBatch.Draw(minimap, new Rectangle(StartX, StartY, MapW, MapH), new Rectangle(0, 0, mapeditor.mapdata.WIDTH, mapeditor.mapdata.HEIGHT), Color.White);
-            _spriteBatch.Draw(minimapUnit, new Rectangle(StartX, StartY, MapW, MapH), new Rectangle(0, 0, mapeditor.mapdata.WIDTH, mapeditor.mapdata.HEIGHT), Color.White);
+            _spriteBatch.Draw(mapeditor.editorTextureData.minimap, new Rectangle(StartX, StartY, MapW, MapH), new Rectangle(0, 0, mapeditor.mapdata.WIDTH, mapeditor.mapdata.HEIGHT), Color.White);
+            _spriteBatch.Draw(mapeditor.editorTextureData.minimapUnit, new Rectangle(StartX, StartY, MapW, MapH), new Rectangle(0, 0, mapeditor.mapdata.WIDTH, mapeditor.mapdata.HEIGHT), Color.White);
             _spriteBatch.End();
 
 
@@ -249,45 +247,7 @@ namespace UseMapEditor.MonoGameControl
             _spriteBatch.End();
         }
 
-        public void miniTileUpdate(int x, int y)
-        {
-            int tileindex = x + y * mapeditor.mapdata.WIDTH;
-            ushort MTXM = mapeditor.mapdata.TILE[tileindex];
-
-            mapeditor.minimapcolor[x + y * 256] = tileSet.GetTileColor(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, MTXM);
-            //mapeditor.miniampUnit[x + y * 256] = Color.Transparent;
-        }
-        public void miniUnitUpdate(CUNIT cUNIT, bool IsDelete = false)
-        {
-            int w = cUNIT.BoxWidth;
-            int h = cUNIT.BoxHeight;
-
-            for (int x = -w / 2; x < w / 2; x++)
-            {
-                for (int y = -h / 2; y < h / 2; y++)
-                {
-                    int mx = ((cUNIT.X + x) / 32);
-                    int my = ((cUNIT.Y + y) / 32);
-
-
-                    mx = Math.Max(0, mx);
-                    my = Math.Max(0, my);
-
-                    mx = Math.Min(255, mx);
-                    my = Math.Min(255, my);
-
-                    if (IsDelete)
-                    {
-                        mapeditor.miniampUnit[mx + my * 256] = new Microsoft.Xna.Framework.Color();
-                    }
-                    else
-                    {
-                        mapeditor.miniampUnit[mx + my * 256] = mapeditor.mapdata.UnitColor(cUNIT.player);
-
-                    }
-                }
-            }
-        }
+      
         private void CreateMiniMap()
         {
             CreateMiniMapTile();
@@ -299,7 +259,7 @@ namespace UseMapEditor.MonoGameControl
             {
                 for (int x = 0; x < mapeditor.mapdata.WIDTH; x++)
                 {
-                    miniTileUpdate(x, y);
+                    mapeditor.miniTileUpdate(x, y);
                 }
             }
         }
@@ -312,7 +272,7 @@ namespace UseMapEditor.MonoGameControl
                     //스타트로케이션
                     if (mapeditor.view_Unit_StartLoc)
                     {
-                        miniUnitUpdate(mapeditor.mapdata.UNIT[i]);
+                        mapeditor.miniUnitUpdate(mapeditor.mapdata.UNIT[i]);
                     }
                 }
                 else if (mapeditor.mapdata.UNIT[i].unitID == 101)
@@ -320,12 +280,12 @@ namespace UseMapEditor.MonoGameControl
                     //맵리빌러
                     if (mapeditor.view_Unit_Maprevealer)
                     {
-                        miniUnitUpdate(mapeditor.mapdata.UNIT[i]);
+                        mapeditor.miniUnitUpdate(mapeditor.mapdata.UNIT[i]);
                     }
                 }
                 else
                 {
-                    miniUnitUpdate(mapeditor.mapdata.UNIT[i]);
+                    mapeditor.miniUnitUpdate(mapeditor.mapdata.UNIT[i]);
                 }
             }
         }

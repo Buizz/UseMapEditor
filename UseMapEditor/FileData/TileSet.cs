@@ -67,7 +67,6 @@ namespace UseMapEditor.FileData
         public class AtlasTileSet
         {
             private GraphicsDevice graphicsDevice;
-            public TileAtlasBuffer tileAtlasBuffer;
             public AtlasTileSet(GraphicsDevice graphicsDevice)
             {
                 this.graphicsDevice = graphicsDevice;;
@@ -76,6 +75,7 @@ namespace UseMapEditor.FileData
             public Texture2D texture2D;
             public Texture2D smalltexture2D;
 
+            public TileAtlasBuffer tileAtlasBuffer;
             public void TileAtlasBufferReset()
             {
                 if(framesize == 64)

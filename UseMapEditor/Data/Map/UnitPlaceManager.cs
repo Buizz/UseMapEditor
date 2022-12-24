@@ -62,7 +62,7 @@ namespace Data.Map
 
             UNIT.Remove(cUNIT);
 
-            WindowTool.MapViewer.miniUnitUpdate(cUNIT, true);
+            mapEditor.miniUnitUpdate(cUNIT, true);
             mapEditor.ChangeMiniMap = true;
 
             mapEditor.MinimapUnitInitRefresh();
@@ -253,7 +253,7 @@ namespace Data.Map
             UNIT.Add(cUNIT);
             //mapEditor.MinimapUnitRefresh();
 
-            WindowTool.MapViewer.miniUnitUpdate(cUNIT);
+            mapEditor.miniUnitUpdate(cUNIT);
             mapEditor.ChangeMiniMap = true;
 
             mapEditor.IndexedUnitCancel();

@@ -197,6 +197,12 @@ namespace UseMapEditor.Global
         public static MonoGameControl.MapDrawer MapViewer;
         public static bool GrpLoadCmp = false;
 
+        public static bool IsEnabledMapEditor(MapEditor mapEditor)
+        {
+            return currentMapEditor == mapEditor;
+        }
+
+
 
         public static string OpenedFilePath;
 
@@ -358,11 +364,12 @@ namespace UseMapEditor.Global
 
                 currentMapEditor = mapEditor;
                 currentView = MapGrid;
-                
+                mapEditor.TileMapRefresh();
+
                 //배경 지우기
                 //currentMapEditor.MapTrace.Source = null;
 
-                if(MapViewer.Parent != null)
+                if (MapViewer.Parent != null)
                 {
                     Grid pgrid = (Grid)MapViewer.Parent;
                     pgrid.Children.Clear();

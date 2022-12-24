@@ -375,7 +375,7 @@ namespace Data.Map
                 TILE[tileindex] = mtxm;
                 mapEditor.TileUpdate(x, y, mtxm);
 
-                WindowTool.MapViewer.miniTileUpdate(x, y);
+                mapEditor.miniTileUpdate(x, y);
             }
         }
         public ushort GetTILE(int x, int y)
