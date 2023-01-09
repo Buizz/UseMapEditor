@@ -22,16 +22,20 @@ namespace UseMapEditor.MonoGameControl
     {
         public void DrawRect(SpriteBatch spriteBatch, Vector2 p1, Vector2 p2, Color color, float thickness = 1f, bool IsFill = false)
         {
+            Vector2 min = new Vector2(Math.Min(p1.X, p2.X), Math.Min(p1.Y, p2.Y));
+            Vector2 max = new Vector2(Math.Max(p1.X, p2.X), Math.Max(p1.Y, p2.Y));
+
             if (IsFill)
             {
-                spriteBatch.Draw(gridtexture, new Rectangle((p1 - new Vector2(thickness / 2)).ToPoint(), (p2 - p1 + new Vector2(thickness)).ToPoint()), null, color);
+                //spriteBatch.Draw(gridtexture, new Rectangle(min.ToPoint(), ( max - min ).ToPoint()), null, color);
+                spriteBatch.Draw(gridtexture, new Rectangle((min - new Vector2(thickness / 2)).ToPoint(), (max - min + new Vector2(thickness)).ToPoint()), null, color);
             }
             else
             {
-                DrawLine(spriteBatch, new Vector2(p1.X, p1.Y), new Vector2(p2.X, p1.Y), color, thickness);
-                DrawLine(spriteBatch, new Vector2(p1.X, p1.Y), new Vector2(p1.X, p2.Y), color, thickness);
-                DrawLine(spriteBatch, new Vector2(p2.X, p1.Y), new Vector2(p2.X, p2.Y), color, thickness);
-                DrawLine(spriteBatch, new Vector2(p2.X, p2.Y), new Vector2(p1.X, p2.Y), color, thickness);
+                DrawLine(spriteBatch, new Vector2(min.X, min.Y), new Vector2(max.X, min.Y), color, thickness);
+                DrawLine(spriteBatch, new Vector2(min.X, min.Y), new Vector2(min.X, max.Y), color, thickness);
+                DrawLine(spriteBatch, new Vector2(max.X, min.Y), new Vector2(max.X, max.Y), color, thickness);
+                DrawLine(spriteBatch, new Vector2(max.X, max.Y), new Vector2(min.X, max.Y), color, thickness);
             }
     
         }
@@ -408,10 +412,11 @@ namespace UseMapEditor.MonoGameControl
             int cxti = startxti;
             int cyti = startyti;
 
+            Vector2 mapPos;
+            mapPos = mapeditor.PosMapToScreen(new Vector2(0, 0), 2);
+            tileSet.tileAtlasPainter.Draw(mapPos, mapeditor, mapeditor.editorTextureData.tileMap);
 
-            AtlasTileSet atlasTileSet = tileSet.GetAtlasTileSetTexture(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE);
-            //atlasTileSet.tileAtlasBuffer.SetData();
-            atlasTileSet.tileAtlasBuffer.Draw(mapeditor, mapeditor.editorTextureData.GetTileMap(mapeditor.opt_drawType));
+            
             //_spriteBatch.Begin(sortMode:SpriteSortMode.Deferred, blendState: BlendState.NonPremultiplied, samplerState: SamplerState.PointClamp);
             //for (float yi = starty; yi < screenheight; yi += mag)
             //{
@@ -487,14 +492,14 @@ namespace UseMapEditor.MonoGameControl
                 case Control.MapEditor.DrawType.SD:
                     {
                         //_spriteBatch.Draw(texture2D, new Vector2(xi, yi), null, Color.White, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent, SpriteEffects.None, 0);
-                        _spriteBatch.Draw(atlasTileSet.GetTexture(mapeditor.opt_scalepercent), screen, atlasTileSet.GetRect(megaindex, mapeditor.opt_scalepercent), new Color(0.8f, 0.8f, 1f, opacity / 100), 0, Vector2.Zero, (float)(mapeditor.opt_scalepercent * atlasTileSet.GetCompScale(mapeditor.opt_scalepercent)), SpriteEffects.None, 0);
+                        _spriteBatch.Draw(atlasTileSet.GetTexture(), screen, atlasTileSet.GetRect(megaindex, mapeditor.opt_scalepercent), new Color(0.8f, 0.8f, 1f, opacity / 100), 0, Vector2.Zero, (float)(mapeditor.opt_scalepercent ), SpriteEffects.None, 0);
                     }
                     break;
                 case Control.MapEditor.DrawType.HD:
                 case Control.MapEditor.DrawType.CB:
                     {
                         //_spriteBatch.Draw(texture2D, new Vector2(xi, yi), null, Color.White, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent / 2, SpriteEffects.None, 0);
-                        _spriteBatch.Draw(atlasTileSet.GetTexture(mapeditor.opt_scalepercent), screen, atlasTileSet.GetRect(megaindex, mapeditor.opt_scalepercent), new Color(0.8f, 0.8f, 1f, opacity / 100), 0, Vector2.Zero, (float)(mapeditor.opt_scalepercent / 2 * atlasTileSet.GetCompScale(mapeditor.opt_scalepercent)), SpriteEffects.None, 0);
+                        _spriteBatch.Draw(atlasTileSet.GetTexture(), screen, atlasTileSet.GetRect(megaindex, mapeditor.opt_scalepercent), new Color(0.8f, 0.8f, 1f, opacity / 100), 0, Vector2.Zero, (float)(mapeditor.opt_scalepercent / 2), SpriteEffects.None, 0);
                     }
                     break;
             }

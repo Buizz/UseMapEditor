@@ -149,7 +149,7 @@ namespace UseMapEditor.MonoGameControl
                 case Control.MapEditor.Layer.Tile:
                     if (EnterKey(keyboardState, Keys.D1))
                     {
-                        if (mapeditor.mapDataBinding.TILE_PAINTTYPE == MapEditor.TileSetPaintType.RECT)
+                        if (mapeditor.mapDataBinding.TILE_PAINTTYPE == MapEditor.TileSetPaintType.CIRCLE)
                         {
                             mapeditor.mapDataBinding.TILE_PAINTTYPE = 0;
                         }

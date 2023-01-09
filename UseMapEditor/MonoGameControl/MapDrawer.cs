@@ -116,8 +116,11 @@ namespace UseMapEditor.MonoGameControl
             }
 
             br.Close();
-        }
 
+
+            //shader = new Effect(GraphicsDevice, File.ReadAllBytes("Content\\effect"));
+        }
+        public Effect shader;
         private Texture2D gridtexture;
         protected override void LoadContent()
         {

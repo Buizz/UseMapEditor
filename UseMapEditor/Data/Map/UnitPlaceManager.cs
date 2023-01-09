@@ -420,7 +420,7 @@ namespace Data.Map
                     Dir = -1;
                 }
 
-                CImage.DrawType drawType = CImage.DrawType.Normal;
+                CImage.ImageDrawType drawType = CImage.ImageDrawType.Normal;
 
                 int startanim = 0;
                 if ((stateFlag & 0b1) > 0)
@@ -428,7 +428,7 @@ namespace Data.Map
                     //Unit is cloaked
                     if (cloakvalid)
                     {
-                        drawType = CImage.DrawType.Clock;
+                        drawType = CImage.ImageDrawType.Clock;
                     }
                 }
                 if ((stateFlag & 0b10) > 0)
@@ -452,7 +452,7 @@ namespace Data.Map
                     //Unit is hallucinated
                     if (hallvalid)
                     {
-                        drawType = CImage.DrawType.Hallaction;
+                        drawType = CImage.ImageDrawType.Hallaction;
                     }
                 }
 

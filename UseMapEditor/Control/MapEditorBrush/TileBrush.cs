@@ -47,7 +47,8 @@ namespace UseMapEditor.Control
         {
             SELECTION,
             PENCIL,
-            RECT
+            RECT,
+            CIRCLE
         }
 
         public enum TileSetBrushMode
@@ -124,6 +125,7 @@ namespace UseMapEditor.Control
             {
                 tile_CopyedTile.Add(tmp, mtxt);
             }
+            editorTextureData.TilePaletteRefresh();
         }
 
         public ushort Tile_GetCopyedTile(int x, int y)
@@ -141,6 +143,7 @@ namespace UseMapEditor.Control
         public void Tile_ResetSelectedTile()
         {
             tile_SelectedTile.Clear();
+            editorTextureData.TilePaletteRefresh();
         }
         public void Tile_SetSelectedTile(int x, int y, ushort mtxt)
         {
@@ -189,6 +192,7 @@ namespace UseMapEditor.Control
             tile_SelectPalleteALLTILEStartYIndex = -1;
             tile_SelectPalleteALLTILEEndXIndex = -1;
             tile_SelectPalleteALLTILEEndYIndex = -1;
+            editorTextureData.TilePaletteRefresh();
         }
 
         public bool TilePalleteISOMMouseDown;
@@ -255,6 +259,7 @@ namespace UseMapEditor.Control
             //mapDataBinding.TILE_BRUSHMODE = true;
             //tile_PasteMode = false;
 
+            editorTextureData.TilePaletteRefresh();
             TilePalleteAllMouseDown = false;
         }
         private void Tile_All_Pallet_PreviewMouseUp(object sender, MouseButtonEventArgs e)
@@ -373,9 +378,11 @@ namespace UseMapEditor.Control
                 return;
             }
 
+            List<Vector2> keys = tile_SelectedTile.Keys.ToList();
+
             for (int i = 0; i < tile_SelectedTile.Count; i++)
             {
-                Vector2 key = tile_SelectedTile.Keys.ToList()[i];
+                Vector2 key = keys[i];
 
                 int tileindex = (int)(key.X + key.Y * mapdata.WIDTH);
 
@@ -440,7 +447,12 @@ namespace UseMapEditor.Control
 
             //복사 팔레트 On
             tile_BrushMode = TileSetBrushMode.PASTE;
-            tile_PaintType = TileSetPaintType.PENCIL;
+            if(tile_PaintType == TileSetPaintType.SELECTION)
+            {
+                mapDataBinding.TILE_PAINTTYPE= TileSetPaintType.PENCIL;
+            }
+
+            editorTextureData.TilePaletteRefresh();
         }
 
 
@@ -458,7 +470,10 @@ namespace UseMapEditor.Control
 
             //복사 팔레트 On
             tile_BrushMode = TileSetBrushMode.PASTE;
-            tile_PaintType = TileSetPaintType.PENCIL;
+            if (tile_PaintType == TileSetPaintType.SELECTION)
+            {
+                mapDataBinding.TILE_PAINTTYPE = TileSetPaintType.PENCIL;
+            }
         }
 
 

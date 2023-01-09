@@ -31,7 +31,7 @@
                     <TextBlock Text="높이" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10,0,10,0"/>
                     <TextBox x:Name="orgHeight" Text="0" Width="60" IsReadOnly="True"/>
                 </StackPanel>
-                <Border Background="Pink" Width="256" Height="256">
+                <Border Background="CornflowerBlue" Width="256" Height="256">
                     <Image x:Name="orgImage" Width="256" Height="256"/>
                 </Border>
 
@@ -43,7 +43,7 @@
                     <TextBlock Text="높이" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10,0,10,0"/>
                     <TextBox x:Name="afterHeight" Text="0" Width="60" TextChanged="afterHeight_TextChanged" IsReadOnly="True"/>
                 </StackPanel>
-                <Border Background="Pink" Width="256" Height="256">
+                <Border Background="CornflowerBlue" Width="256" Height="256">
                     <Image x:Name="afterimage" Width="256" Height="256" Stretch="None"/>
                 </Border>
             </DockPanel>

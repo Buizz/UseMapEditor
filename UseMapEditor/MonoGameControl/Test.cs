@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Microsoft.Office.Interop.Excel;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Framework.WpfInterop;
 using MonoGame.Framework.WpfInterop.Input;
@@ -14,7 +15,6 @@ namespace MonoGame.Forms.Tests
 
         private SpriteBatch _spriteBatch;
         private SpriteFont _font;
-
 
         protected override void Initialize()
         {
@@ -36,6 +36,7 @@ namespace MonoGame.Forms.Tests
 
             // content loading now possible
             _font = Content.Load<SpriteFont>("DefaultFont");
+            
             _spriteBatch = new SpriteBatch(GraphicsDevice);
         }
 

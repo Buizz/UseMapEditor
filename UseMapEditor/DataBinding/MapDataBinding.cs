@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UseMapEditor.Control;
+using UseMapEditor.Control.MapEditorData;
 
 namespace UseMapEditor.DataBinding
 {
@@ -107,6 +108,8 @@ namespace UseMapEditor.DataBinding
                         return PackIconKind.Pencil;
                     case MapEditor.TileSetPaintType.RECT:
                         return PackIconKind.VectorRectangle;
+                    case MapEditor.TileSetPaintType.CIRCLE:
+                        return PackIconKind.VectorCircle;
                 }
 
                 return PackIconKind.HandRight;
@@ -138,6 +141,7 @@ namespace UseMapEditor.DataBinding
             set
             {
                 mapEditor.TilePalleteTransparentBlack = value;
+                mapEditor.editorTextureData.TilePaletteRefresh();
                 OnPropertyChanged("TILE_TRANSPARENTBLACK");
             }
         }

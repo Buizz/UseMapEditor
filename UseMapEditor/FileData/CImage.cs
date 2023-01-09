@@ -29,8 +29,8 @@ namespace UseMapEditor.FileData
 
 
         public int Level;
-        public DrawType drawType;
-        public enum DrawType
+        public ImageDrawType drawType;
+        public enum ImageDrawType
         {
             Normal,
             Clock,
@@ -153,7 +153,7 @@ namespace UseMapEditor.FileData
         public CImage parentImage;
 
 
-        public CImage(int _sortvalue, List<CImage> _Parent, int imagenum, int _startAngle, int _color, DrawType _drawType = DrawType.Normal, int _StartAnim = 0, CImage _parentImage = null, int level = 0, int x = 0, int y = 0, int flag = -1)
+        public CImage(int _sortvalue, List<CImage> _Parent, int imagenum, int _startAngle, int _color, ImageDrawType _drawType = ImageDrawType.Normal, int _StartAnim = 0, CImage _parentImage = null, int level = 0, int x = 0, int y = 0, int flag = -1)
         {
             sortvalue = _sortvalue;
             Parent = _Parent;
@@ -177,7 +177,7 @@ namespace UseMapEditor.FileData
             int drawTypev = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.images, "Draw Function", imageID).Data;
             if (drawTypev == 10)
             {
-                drawType = CImage.DrawType.Shadow;
+                drawType = CImage.ImageDrawType.Shadow;
             }
 
 

@@ -446,7 +446,7 @@ namespace Data.Map
                     //0x1000 = Sprites.dat Reference
                     int ImageID = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.sprites, "Image File", pallete.dddOverlayID).Data;
 
-                    CImage p = new CImage(alpha, Images, ImageID, 0, 0, _drawType: CImage.DrawType.Doodad, level: 8);
+                    CImage p = new CImage(alpha, Images, ImageID, 0, 0, _drawType: CImage.ImageDrawType.Doodad, level: 8);
                     Images.Add(p);
                 }
                 if ((pallete.dddFlags & 0x2000) > 0)
@@ -456,7 +456,7 @@ namespace Data.Map
                     int Sprite = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.flingy, "Sprite", Graphics).Data;
                     int ImageID = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.sprites, "Image File", Sprite).Data;
 
-                    CImage p = new CImage(alpha, Images, ImageID, 0, 0, _drawType: CImage.DrawType.Doodad, level: 8);
+                    CImage p = new CImage(alpha, Images, ImageID, 0, 0, _drawType: CImage.ImageDrawType.Doodad, level: 8);
                     Images.Add(p);
                 }
             }
@@ -866,7 +866,7 @@ namespace Data.Map
                     BoxWidth = 256;
                     BoxHeight = 256;
 
-                    CImage p = new CImage(alpha, Images, ImageID, 0, PLAYER, _drawType: CImage.DrawType.PureSprite, level: 8);
+                    CImage p = new CImage(alpha, Images, ImageID, 0, PLAYER, _drawType: CImage.ImageDrawType.PureSprite, level: 8);
                     Images.Add(p);
                 }
 
@@ -888,7 +888,7 @@ namespace Data.Map
                         Dir = -1;
                     }
 
-                    CImage p = new CImage(alpha, Images, ImageID, Dir, PLAYER, _drawType: CImage.DrawType.UnitSprite, level: Level);
+                    CImage p = new CImage(alpha, Images, ImageID, Dir, PLAYER, _drawType: CImage.ImageDrawType.UnitSprite, level: Level);
                     Images.Add(p);
 
                     int Subunit = (int)UseMapEditor.Global.WindowTool.scdata.datFile.Values(DatFile.DatFiles.units, "Subunit 1", ID).Data;
@@ -903,7 +903,7 @@ namespace Data.Map
                         {
                             Dir += 16;
                         }
-                        Images.Add(new CImage(alpha, Images, ImageID, Dir, PLAYER, _drawType: CImage.DrawType.UnitSprite,  _parentImage: p, level: Level + 1));
+                        Images.Add(new CImage(alpha, Images, ImageID, Dir, PLAYER, _drawType: CImage.ImageDrawType.UnitSprite,  _parentImage: p, level: Level + 1));
                     }
                 }
             }

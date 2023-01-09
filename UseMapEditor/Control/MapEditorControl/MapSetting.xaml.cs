@@ -202,6 +202,7 @@ namespace UseMapEditor.Control.MapEditorControl
             mapEditor.taskManager.TaskReset();
             mapEditor.SetDirty();
             mapEditor.TileMapReDraw();
+            mapEditor.TileMapRefresh();
         }
 
 

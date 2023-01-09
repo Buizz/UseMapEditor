@@ -174,7 +174,7 @@ namespace UseMapEditor.MonoGameControl
 
 
             //drawMinimap
-            _spriteBatch.Begin();
+            _spriteBatch.Begin(samplerState:SamplerState.PointClamp);
             int StartX = (int)(screenwidth) - 128;
             int StartY = 0;
             int MapW = mapeditor.mapdata.WIDTH;

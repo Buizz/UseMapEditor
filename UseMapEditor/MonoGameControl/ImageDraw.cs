@@ -250,20 +250,20 @@ namespace UseMapEditor.MonoGameControl
             bool nonecolor = false;
             switch (cImage.drawType)
             {
-                case CImage.DrawType.Shadow:
+                case CImage.ImageDrawType.Shadow:
                     color = new Color(0, 0, 0, 128);
                     _spriteBatch.Begin(SpriteSortMode.FrontToBack, blendState: BlendState.NonPremultiplied, samplerState: SamplerState.PointClamp);
                     _spriteBatch.Draw(gRP.MainGRP, p, new Rectangle(fd.x, fd.y, fd.fwidth, fd.fheight), color, 0, Vector2.Zero, scale / grpscale, spriteEffects, 1 - cImage.Level / 30f);
                     _spriteBatch.End();
                     return;
-                case CImage.DrawType.Clock:
+                case CImage.ImageDrawType.Clock:
                     color = new Color(255, 255, 255, 64);
                     break;
-                case CImage.DrawType.Hallaction:
+                case CImage.ImageDrawType.Hallaction:
                     color = new Color(64, 64, 255, 255);
                     nonecolor = true;
                     break;
-                case CImage.DrawType.UnitSprite:
+                case CImage.ImageDrawType.UnitSprite:
                     color = Color.White;
                     if (mapeditor.view_SpriteColor)
                     {
@@ -271,14 +271,14 @@ namespace UseMapEditor.MonoGameControl
                     }
                     //color = new Color(255, 0, 0, 255);
                     break;
-                case CImage.DrawType.PureSprite:
+                case CImage.ImageDrawType.PureSprite:
                     if (mapeditor.view_SpriteColor)
                     {
                         color = mapeditor.SpriteOverlay;
                     }
                     //color = new Color(0, 255, 0, 255);
                     break;
-                case CImage.DrawType.Doodad:
+                case CImage.ImageDrawType.Doodad:
                     if (mapeditor.view_DoodadColor)
                     {
                         color = mapeditor.DoodadOverlay;
@@ -302,7 +302,7 @@ namespace UseMapEditor.MonoGameControl
                     {
                         Color unitColor = mapeditor.mapdata.UnitColor(cImage.color);
 
-                        if (cImage.drawType == CImage.DrawType.Clock)
+                        if (cImage.drawType == CImage.ImageDrawType.Clock)
                         {
                             unitColor.A = 64;
                         }

@@ -658,6 +658,9 @@
                                                 <Button Click="TileSquare_Click">
                                                     <materialDesign:PackIcon Kind="VectorSquare" />
                                                 </Button>
+                                                <Button Click="TileCircle_Click">
+                                                    <materialDesign:PackIcon Kind="VectorCircle" />
+                                                </Button>
                                                 <Button Click="TileHand_Click">
                                                     <materialDesign:PackIcon Kind="HandRight" />
                                                 </Button>

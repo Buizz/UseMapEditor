@@ -509,26 +509,18 @@ namespace UseMapEditor.Control
         public void TileMapReDraw()
         {
             //if (!Global.WindowTool.IsEnabledMapEditor(this)) return;
-            Global.WindowTool.MapViewer.tileSet.GetAtlasTileSetTexture(DrawType.SD, mapdata.TILETYPE).tileAtlasBuffer.RefreshTileSet(this);
-            Global.WindowTool.MapViewer.tileSet.GetAtlasTileSetTexture(DrawType.HD, mapdata.TILETYPE).tileAtlasBuffer.RefreshTileSet(this);
-            Global.WindowTool.MapViewer.tileSet.GetAtlasTileSetTexture(DrawType.CB, mapdata.TILETYPE).tileAtlasBuffer.RefreshTileSet(this);
-            editorTextureData.SDTileMap.SetData();
-            editorTextureData.HDTileMap.SetData();
-            editorTextureData.CBTileMap.SetData();
+            editorTextureData.tileMap.AllTileDraw(this);
+            editorTextureData.tileMap.Apply();
         }
         public void TileUpdate(int x, int y, ushort MTXM)
         {
             //if (!Global.WindowTool.IsEnabledMapEditor(this)) return;
-            Global.WindowTool.MapViewer.tileSet.GetAtlasTileSetTexture(DrawType.SD, mapdata.TILETYPE).tileAtlasBuffer.SetTIleFromMTXM(this, x, y, MTXM);
-            Global.WindowTool.MapViewer.tileSet.GetAtlasTileSetTexture(DrawType.HD, mapdata.TILETYPE).tileAtlasBuffer.SetTIleFromMTXM(this, x, y, MTXM);
-            Global.WindowTool.MapViewer.tileSet.GetAtlasTileSetTexture(DrawType.CB, mapdata.TILETYPE).tileAtlasBuffer.SetTIleFromMTXM(this, x, y, MTXM);
+            editorTextureData.tileMap.SetTIleFromMTXM(mapdata.TILETYPE, x, y, MTXM);
         }
         public void TileMapRefresh()
         {
             if (!Global.WindowTool.IsEnabledMapEditor(this)) return;
-            editorTextureData.SDTileMap.SetData();
-            editorTextureData.HDTileMap.SetData();
-            editorTextureData.CBTileMap.SetData();
+            editorTextureData.tileMap.Apply();
         }
 
 
@@ -652,6 +644,7 @@ namespace UseMapEditor.Control
             TileSetUIRefresh();
 
             TileMapReDraw();
+            TileMapRefresh();
         }
 
 
@@ -1442,6 +1435,10 @@ namespace UseMapEditor.Control
             mapDataBinding.TILE_PAINTTYPE = TileSetPaintType.PENCIL;
         }
 
+        private void TileCircle_Click(object sender, RoutedEventArgs e)
+        {
+            mapDataBinding.TILE_PAINTTYPE = TileSetPaintType.CIRCLE;
+        }
         private void TileSquare_Click(object sender, RoutedEventArgs e)
         {
             mapDataBinding.TILE_PAINTTYPE = TileSetPaintType.RECT;
@@ -1462,7 +1459,7 @@ namespace UseMapEditor.Control
             CloseTileMenu();
             Windows.MinimapImageWindow minimapImageWindow = new MinimapImageWindow(this);
             minimapImageWindow.ShowDialog();
-
+            editorTextureData.TilePaletteRefresh();
             //tile_PasteStart();
         }
 
