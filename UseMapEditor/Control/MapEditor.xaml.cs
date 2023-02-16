@@ -391,14 +391,33 @@ namespace UseMapEditor.Control
         }
 
 
-
         public void MouseCursorChange(Cursor cursors)
         {
             MapViewer.Cursor = cursors;
         }
 
 
+        public void MosuePosChange()
+        {
+            ToolTipChange();
+        }
 
+
+        public void ToolTipChange()
+        {
+            var pos = Global.WindowTool.MapViewer.MouseMapPos;
+            Vector2 mappos = pos;
+
+            mappos.X /= 32;
+            mappos.Y /= 32;
+
+            pos.Ceiling();
+            mappos.Ceiling();
+
+            MouseToolTip.Content = pos.X + ", " + pos.Y + "(" + mappos.X + ", " + mappos.Y + ")";
+            PaletteToolTip.Content = "";
+            InformationToolTip.Content = "";
+        }
 
 
         public bool IsToolBarOpen()
@@ -508,6 +527,9 @@ namespace UseMapEditor.Control
 
         public void TileMapReDraw()
         {
+            if (Global.Setting.Vals[Global.Setting.Settings.Program_GRPLoad] != "true") return;
+  
+
             //if (!Global.WindowTool.IsEnabledMapEditor(this)) return;
             editorTextureData.tileMap.AllTileDraw(this);
             editorTextureData.tileMap.Apply();

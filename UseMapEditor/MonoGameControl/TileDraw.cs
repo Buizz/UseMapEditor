@@ -414,9 +414,16 @@ namespace UseMapEditor.MonoGameControl
 
             Vector2 mapPos;
             mapPos = mapeditor.PosMapToScreen(new Vector2(0, 0), 2);
-            tileSet.tileAtlasPainter.Draw(mapPos, mapeditor, mapeditor.editorTextureData.tileMap);
+            if (IsDrawGrp)
+            {
+                tileSet.tileAtlasPainter.Draw(mapPos, mapeditor, mapeditor.editorTextureData.tileMap);
+            }
+            else
+            {
 
-            
+            }
+
+
             //_spriteBatch.Begin(sortMode:SpriteSortMode.Deferred, blendState: BlendState.NonPremultiplied, samplerState: SamplerState.PointClamp);
             //for (float yi = starty; yi < screenheight; yi += mag)
             //{

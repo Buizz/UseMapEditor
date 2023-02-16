@@ -113,10 +113,10 @@ namespace Data.Map
             UPUS = new byte[64];
 
             WAV.Clear();
-            //for (int i = 0; i < 512; i++)
-            //{
-            //    WAV[i] = new StringData(this);
-            //}
+            for (int i = 0; i < 512; i++)
+            {
+                WAV.Add(new StringData(this));
+            }
             SWNM = new StringData[256];
             for (int i = 0; i < 256; i++)
             {

@@ -202,7 +202,15 @@
                 </ToolBar>
             </ToolBarTray>
 
-
+            <ToolBarTray DockPanel.Dock="Bottom" IsLocked="True" Background="{DynamicResource MaterialDesignToolBarBackground}">
+                <ToolBar Style="{DynamicResource MaterialDesignToolBar}">
+                    <Label x:Name="MouseToolTip" Content="{Binding Path=HEIGHT, UpdateSourceTrigger=PropertyChanged}"/>
+                    <Separator Margin="6,2,6,2" />
+                    <Label x:Name="PaletteToolTip" Content="{Binding Path=HEIGHT, UpdateSourceTrigger=PropertyChanged}"/>
+                    <Separator Margin="6,2,6,2" />
+                    <Label x:Name="InformationToolTip" Content="{Binding Path=HEIGHT, UpdateSourceTrigger=PropertyChanged}"/>
+                </ToolBar>
+            </ToolBarTray>
             <Expander x:Name="BottomExpander" DockPanel.Dock="Bottom" ExpandDirection="Up" Header="콘솔">
                 <DockPanel>
                     <TextBox MinHeight="100" AcceptsReturn="True"/>

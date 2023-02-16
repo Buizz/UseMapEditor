@@ -110,17 +110,20 @@ namespace UseMapEditor.Global
             if(MainCount == 0)
             {
                 string foldername = AppDomain.CurrentDomain.BaseDirectory + @"Data\Excel";
-                foreach (var item in Directory.GetFiles(foldername))
+                if(Directory.Exists(foldername))
                 {
-                    try
+                    foreach (var item in Directory.GetFiles(foldername))
                     {
-                        File.Delete(item);
-                    }
-                    catch (Exception)
-                    {
+                        try
+                        {
+                            File.Delete(item);
+                        }
+                        catch (Exception)
+                        {
+                        }
                     }
                 }
-
+             
 
                 excelProcessExcute.Close();
                 excelProcessExcute = null;

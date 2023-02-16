@@ -261,6 +261,8 @@ namespace UseMapEditor.MonoGameControl
 
                 mouse_LeftDown = false;
             }
+
+            mapeditor.MosuePosChange();
         }
 
         public void RightClickStart()
