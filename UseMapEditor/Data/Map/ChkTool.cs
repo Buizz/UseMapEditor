@@ -488,7 +488,7 @@ namespace Data.Map
                     for (int i = 0; i < 255; i++)
                     {
                         LocationData locationData = GetLocationFromLocIndex(i + 1);
-                        
+
                         if (locationData == null || !locationData.IsEnabled)
                         {
                             bw.Write(new byte[20]);
@@ -776,6 +776,12 @@ namespace Data.Map
             if (IOWN == null)
             {
                 //IOWN = (byte[])OWNR.Clone();
+                throw new Exception("");
+            }
+
+            if (MASK.Length != WIDTH * HEIGHT)
+            {
+                //MASK = new byte[WIDTH * HEIGHT];
                 throw new Exception("");
             }
 
