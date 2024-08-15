@@ -22,6 +22,7 @@ using System.Windows.Threading;
 using UseMapEditor.Windows;
 using System.ComponentModel;
 using UseMapEditor.Dialog;
+using UseMapEditor.Tools;
 
 namespace UseMapEditor
 {
@@ -275,6 +276,9 @@ namespace UseMapEditor
                 mapeditor.Scenario.AllWindowClose();
             }
             SetWindowName();
+
+            mapeditor.shortCutManager = new ShortCutManager(mapeditor);
+
             return result;
         }
 

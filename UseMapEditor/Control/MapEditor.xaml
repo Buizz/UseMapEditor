@@ -23,6 +23,8 @@
         <DockPanel x:Name="MainPanel">
             <ToolBarTray x:Name="Toolbar" DockPanel.Dock="Top" IsLocked="False" >
                 <ToolBar Style="{DynamicResource MaterialDesignToolBar}" ClipToBounds="False">
+                    <Button x:Name="EmptyButton" Padding="0" Click="EmptyButton_Click">
+                    </Button>
                     <Button ToolTip="새 맵(Ctrl N)" Click="NewBtn_Click" Padding="4">
                         <materialDesign:PackIcon Kind="FileDocument" />
                     </Button>
@@ -235,9 +237,9 @@
                     <ColumnDefinition Width="48"/>
                 </Grid.ColumnDefinitions>
 
-                <Grid MouseMove="Grid_MouseMove">
+                <Grid MouseMove="Grid_MouseMove" >
                     <Image x:Name="MapTrace" Stretch="None"/>
-                    <Grid x:Name="MapViewer" Background="#33000000" >
+                    <Grid x:Name="MapViewer" Background="#33000000">
 
                     </Grid>
                 </Grid>
@@ -691,8 +693,8 @@
                                         </RadioButton>-->
 
                                         <TextBlock Text="펜 크기:" VerticalAlignment="Center"/>
-                                        <TextBox Width="20" Text="{Binding BRUSHX, UpdateSourceTrigger=PropertyChanged}"/>
-                                        <TextBox Width="20" Text="{Binding BRUSHY, UpdateSourceTrigger=PropertyChanged}"/>
+                                        <TextBox Width="30" Text="{Binding BRUSHX, UpdateSourceTrigger=PropertyChanged}"/>
+                                        <TextBox Width="30" Text="{Binding BRUSHY, UpdateSourceTrigger=PropertyChanged}"/>
 
 
                                         <Separator/>

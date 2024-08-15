@@ -791,12 +791,9 @@ namespace UseMapEditor.MonoGameControl
                                 width = mapeditor.brush_x;
                                 height = mapeditor.brush_y;
                             }
-                            else
-                            {
-                                mappos -= new Vector2(width / 2, height / 2);
-                            }
 
 
+                            mappos -= new Vector2(width / 2, height / 2);
 
 
                             mappos = mapeditor.PosMapToScreen(mappos * 32, 2);
@@ -805,7 +802,6 @@ namespace UseMapEditor.MonoGameControl
                             tileSet.tileAtlasPainter.Draw(mappos + new Vector2(2, -2), mapeditor, mapeditor.editorTextureData.tilePaletteMap, true);
                             tileSet.tileAtlasPainter.Draw(mappos + new Vector2(-2, 2), mapeditor, mapeditor.editorTextureData.tilePaletteMap, true);
                             tileSet.tileAtlasPainter.Draw(mappos, mapeditor, mapeditor.editorTextureData.tilePaletteMap, false, 0.8f);
-
                         }
 
 

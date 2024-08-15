@@ -171,6 +171,16 @@ namespace UseMapEditor.Control
             return 0;
         }
 
+        public void Tile_SetPalletFromMtxm(ushort mtxm, bool isscroll)
+        {
+            tile_SelectPalleteALLTILEStartXIndex = mtxm % 16;
+            tile_SelectPalleteALLTILEStartYIndex = mtxm / 16;
+            tile_SelectPalleteALLTILEEndXIndex = mtxm % 16;
+            tile_SelectPalleteALLTILEEndYIndex = mtxm / 16;
+
+            brush_tilescroll = (mtxm / 16) * 30;
+        }
+
 
 
 
@@ -397,8 +407,15 @@ namespace UseMapEditor.Control
 
 
             //jsonString = JsonConvert.SerializeObject(templist);
-
-            Clipboard.SetText(jsonString);
+            try
+            {
+                Clipboard.SetDataObject(jsonString);
+            }
+            catch (Exception)
+            {
+                
+            }
+            
         }
 
 

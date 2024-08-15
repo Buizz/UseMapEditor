@@ -6,10 +6,12 @@ using MonoGame.Framework.WpfInterop.Input;
 using SpriteFontPlus;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 using UseMapEditor.Control;
 using UseMapEditor.FileData;
 using UseMapEditor.Tools;
@@ -30,7 +32,7 @@ namespace UseMapEditor.MonoGameControl
 
         private IGraphicsDeviceService _graphicsDeviceManager;
         private WpfKeyboard _keyboard;
-        private WpfMouse _mouse;
+        private CustomWpfMouse _mouse;
 
         private SpriteBatch _spriteBatch;
         private SpriteBatch _colorBatch;
@@ -51,9 +53,9 @@ namespace UseMapEditor.MonoGameControl
             // wpf and keyboard need reference to the host control in order to receive input
             // this means every WpfGame control will have it's own keyboard & mouse manager which will only react if the mouse is in the control
             _keyboard = new WpfKeyboard(this);
-            _mouse = new WpfMouse(this);
+            _mouse = new CustomWpfMouse(this);
 
-
+            //WpfMouse
 
             //Components.Add(new FpsComponent(this));
 
@@ -221,12 +223,13 @@ namespace UseMapEditor.MonoGameControl
             return texture2D;
         }
 
-
         public Vector2 MouseOuter = new Vector2();
         public Vector2 MousePos;
         public Vector2 MouseMapPos;
         public Vector2 MouseTilePos;
         private int LastScroll;
+
+        private bool refresh = false;
         protected override void Update(GameTime time)
         {
             // every update we can now query the keyboard & mouse for our WpfGame
@@ -326,10 +329,25 @@ namespace UseMapEditor.MonoGameControl
                         //    this.IsEnabled = true;
                         //}), System.Windows.Threading.DispatcherPriority.Normal);
                     }
-
-
                 }
             }
+
+
+
+            if (keyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Y))
+            {
+                mapeditor.Dispatcher.Invoke(new Action(() =>
+                {
+                    mapeditor.Tile_All_Pallet.Focus();
+                }), System.Windows.Threading.DispatcherPriority.Normal);
+            }
+
+            if (MousePos.X <= screenwidth && MousePos.Y > 0 && MousePos.X > 0)
+            {
+                mapeditor.EmptyButton.Focus();
+            }
+
+
 
             _timeElapsed += time.ElapsedGameTime;
             if (_timeElapsed >= TimeSpan.FromSeconds(1))
@@ -579,6 +597,9 @@ namespace UseMapEditor.MonoGameControl
             base.Draw(time);
         }
 
+
+
+
         private void SystemDraw()
         {
             _spriteBatch.Begin();
@@ -592,10 +613,17 @@ namespace UseMapEditor.MonoGameControl
             status += mapeditor.mapdata.WIDTH + "," + mapeditor.mapdata.HEIGHT + "\n";
 
 
+
+
             Vector2 MapMouse = mapeditor.PosScreenToMap(MousePos);
             status += "(" + (int)MapMouse.X + "," + (int)MapMouse.X + ")" + "(" + (int)(MapMouse.X / 32) + "," + (int)(MapMouse.Y / 32) + ")";
 
 
+            IInputElement focusedElement = FocusManager.GetFocusedElement(mapeditor);
+            if (focusedElement != null)
+            {
+                status += "\n" + focusedElement.ToString();
+            }
 
 
             //_spriteBatch.Draw(HD_GRP[3], new Vector2(20, 20), new Rectangle(0, 0, 300, 300), Color.White, 0.5f, Vector2.Zero, 0.5f, SpriteEffects.FlipVertically, 0);

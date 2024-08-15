@@ -26,6 +26,7 @@ using UseMapEditor.Control.MapEditorData;
 using UseMapEditor.DataBinding;
 using UseMapEditor.Dialog;
 using UseMapEditor.FileData;
+using UseMapEditor.Global;
 using UseMapEditor.MonoGameControl;
 using UseMapEditor.Task;
 using UseMapEditor.Tools;
@@ -101,6 +102,10 @@ namespace UseMapEditor.Control
             get
             {
                 return (int)TileScroll.Value;
+            }
+            set
+            {
+                TileScroll.Value = value;
             }
         }
 
@@ -1440,8 +1445,6 @@ namespace UseMapEditor.Control
             //Tile_Custom_Pallet.Height = columns * TileSize;
         }
 
-
-
         private void PalletSize_LostMouseCapture(object sender, MouseEventArgs e)
         {
             PalletSizeBorder.Visibility = Visibility.Collapsed;
@@ -1483,6 +1486,11 @@ namespace UseMapEditor.Control
             minimapImageWindow.ShowDialog();
             editorTextureData.TilePaletteRefresh();
             //tile_PasteStart();
+        }
+
+        private void EmptyButton_Click(object sender, RoutedEventArgs e)
+        {
+            EditCommand();
         }
 
     }

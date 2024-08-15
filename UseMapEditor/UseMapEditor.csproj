@@ -396,6 +396,7 @@
     <Compile Include="FileData\TriggerManger.cs" />
     <Compile Include="Lua\LuaManager.cs" />
     <Compile Include="Lua\TrigEditPlus\Main.cs" />
+    <Compile Include="MonoGameControl\CustomWpfMouse.cs" />
     <Compile Include="MonoGameControl\DoodadPallete.cs" />
     <Compile Include="MonoGameControl\Dxt1.cs" />
     <Compile Include="MonoGameControl\FogOfWarDraw.cs" />

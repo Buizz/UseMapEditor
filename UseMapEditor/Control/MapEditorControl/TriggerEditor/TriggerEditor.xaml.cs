@@ -288,7 +288,7 @@ namespace UseMapEditor.Control.MapEditorControl
                 item.GetTEPText(sb);
             }
 
-            Clipboard.SetText(sb.ToString());
+            Clipboard.SetDataObject(sb.ToString());
         }
 
 

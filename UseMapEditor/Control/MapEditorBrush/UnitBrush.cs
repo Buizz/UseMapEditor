@@ -734,7 +734,7 @@ namespace UseMapEditor.Control
 
             jsonString = JsonConvert.SerializeObject(templist);
 
-            Clipboard.SetText(jsonString);
+            Clipboard.SetDataObject(jsonString);
 
         }
 

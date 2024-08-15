@@ -47,7 +47,7 @@ namespace Data.Map
                 case 134:
                     //나이더스 카날
                     uint linkedunit = cUNIT.linkedUnit;
-                    CUNIT _cUNIT = UNIT.SingleOrDefault((x) => x.unitclass == linkedunit);
+                    CUNIT _cUNIT = UNIT.FirstOrDefault((x) => x.unitclass == linkedunit);
 
                     if (_cUNIT != null)
                     {
@@ -77,10 +77,10 @@ namespace Data.Map
             if (UNIT.Count != 0)
             {
                 c = UNIT.Last().unitclass + 1;
-                CUNIT _cUNIT = UNIT.SingleOrDefault((x) => x.unitclass == c);
+                CUNIT _cUNIT = UNIT.FirstOrDefault((x) => x.unitclass == c);
                 while (_cUNIT != null)
                 {
-                    _cUNIT = UNIT.SingleOrDefault((x) => x.unitclass == ++c);
+                    _cUNIT = UNIT.FirstOrDefault((x) => x.unitclass == ++c);
                 }
             }
 
@@ -100,7 +100,7 @@ namespace Data.Map
                 case 106:
                     //커맨드 센터
                     {
-                        CUNIT addon = UNIT.SingleOrDefault((x) => (x.X == cUNIT.X + 96) & (x.Y == cUNIT.Y + 16) & ((x.unitID == 107) | (x.unitID == 108)));
+                        CUNIT addon = UNIT.FirstOrDefault((x) => (x.X == cUNIT.X + 96) & (x.Y == cUNIT.Y + 16) & ((x.unitID == 107) | (x.unitID == 108)));
                         if (addon != null)
                         {
                             addon.linkFlag = 0b1 << 10;
@@ -116,7 +116,7 @@ namespace Data.Map
                 case 113:
                     //팩토리
                     {
-                        CUNIT addon = UNIT.SingleOrDefault((x) => (x.X == cUNIT.X + 96) & (x.Y == cUNIT.Y + 16) & (x.unitID == 120));
+                        CUNIT addon = UNIT.FirstOrDefault((x) => (x.X == cUNIT.X + 96) & (x.Y == cUNIT.Y + 16) & (x.unitID == 120));
                         if (addon != null)
                         {
                             addon.linkFlag = 0b1 << 10;
@@ -132,7 +132,7 @@ namespace Data.Map
                 case 114:
                     //스타포트
                     {
-                        CUNIT addon = UNIT.SingleOrDefault((x) => (x.X == cUNIT.X + 96) & (x.Y == cUNIT.Y + 16) & (x.unitID == 115));
+                        CUNIT addon = UNIT.FirstOrDefault((x) => (x.X == cUNIT.X + 96) & (x.Y == cUNIT.Y + 16) & (x.unitID == 115));
                         if (addon != null)
                         {
                             addon.linkFlag = 0b1 << 10;
@@ -148,7 +148,7 @@ namespace Data.Map
                 case 116:
                     //사이언스
                     {
-                        CUNIT addon = UNIT.SingleOrDefault((x) => (x.X == cUNIT.X + 96) & (x.Y == cUNIT.Y + 16) & ((x.unitID == 117) | (x.unitID == 118)));
+                        CUNIT addon = UNIT.FirstOrDefault((x) => (x.X == cUNIT.X + 96) & (x.Y == cUNIT.Y + 16) & ((x.unitID == 117) | (x.unitID == 118)));
                         if (addon != null)
                         {
                             addon.linkFlag = 0b1 << 10;
@@ -166,7 +166,7 @@ namespace Data.Map
                 case 108:
                     //사일로
                     {
-                        CUNIT addon = UNIT.SingleOrDefault((x) => (x.X == cUNIT.X - 96) & (x.Y == cUNIT.Y - 16) & (x.unitID == 106));
+                        CUNIT addon = UNIT.FirstOrDefault((x) => (x.X == cUNIT.X - 96) & (x.Y == cUNIT.Y - 16) & (x.unitID == 106));
                         if (addon != null)
                         {
                             addon.linkFlag = 0b1 << 10;
@@ -182,7 +182,7 @@ namespace Data.Map
                 case 115:
                     //컨트롤타워
                     {
-                        CUNIT addon = UNIT.SingleOrDefault((x) => (x.X == cUNIT.X - 96) & (x.Y == cUNIT.Y - 16) & (x.unitID == 114));
+                        CUNIT addon = UNIT.FirstOrDefault((x) => (x.X == cUNIT.X - 96) & (x.Y == cUNIT.Y - 16) & (x.unitID == 114));
                         if (addon != null)
                         {
                             addon.linkFlag = 0b1 << 10;
@@ -200,7 +200,7 @@ namespace Data.Map
                 case 118:
                     //피직스랩
                     {
-                        CUNIT addon = UNIT.SingleOrDefault((x) => (x.X == cUNIT.X - 96) & (x.Y == cUNIT.Y - 16) & (x.unitID == 116));
+                        CUNIT addon = UNIT.FirstOrDefault((x) => (x.X == cUNIT.X - 96) & (x.Y == cUNIT.Y - 16) & (x.unitID == 116));
                         if (addon != null)
                         {
                             addon.linkFlag = 0b1 << 10;
@@ -216,7 +216,7 @@ namespace Data.Map
                 case 120:
                     //머신샵
                     {
-                        CUNIT addon = UNIT.SingleOrDefault((x) => (x.X == cUNIT.X - 96) & (x.Y == cUNIT.Y - 16) & (x.unitID == 113));
+                        CUNIT addon = UNIT.FirstOrDefault((x) => (x.X == cUNIT.X - 96) & (x.Y == cUNIT.Y - 16) & (x.unitID == 113));
                         if (addon != null)
                         {
                             addon.linkFlag = 0b1 << 10;
@@ -233,7 +233,7 @@ namespace Data.Map
                     //나이더스 카날
                     if (UNIT.Count != 0)
                     {
-                        CUNIT lastunit = UNIT.SingleOrDefault((x) => (x.linkedUnit == 0) & (x.unitID == 134));
+                        CUNIT lastunit = UNIT.FirstOrDefault((x) => (x.linkedUnit == 0) & (x.unitID == 134));
 
                         if (lastunit != null)
                         {

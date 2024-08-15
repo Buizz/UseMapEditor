@@ -390,7 +390,7 @@ namespace UseMapEditor.Global
 
 
 
-        private static ImageSource SaveControlImage(FrameworkElement control)
+        public static ImageSource SaveControlImage(FrameworkElement control)
         {
             // Make a bitmap and draw on it.
             int width = (int)control.ActualWidth;

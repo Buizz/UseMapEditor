@@ -857,123 +857,147 @@ namespace UseMapEditor.MonoGameControl
 
             if (mouse_LeftDown)
             {
-                if (mapeditor.tile_PaintType == MapEditor.TileSetPaintType.PENCIL)
+                if (key_QDown)
                 {
                     Vector2 mappos = MouseTilePos;
 
+                    mapeditor.tile_BrushMode = Control.MapEditor.TileSetBrushMode.ALLTILE;
+                    mapeditor.tile_PaintType = MapEditor.TileSetPaintType.PENCIL;
 
-                    int width = 0;
-                    int height = 0;
+                    int mapx = (ushort)mappos.X;
+                    int mapy = (ushort)mappos.Y;
+                    int tileindex = mapx + mapy * mapeditor.mapdata.WIDTH;
 
-                    if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.ALLTILE)
+                    ushort oldMTXM = mapeditor.mapdata.TILE[tileindex];
+
+
+                    mapeditor.Tile_SetPalletFromMtxm(oldMTXM, true);
+                    mapeditor.editorTextureData.TilePaletteRefresh();
+                }
+                else
+                {
+                    if (mapeditor.tile_PaintType == MapEditor.TileSetPaintType.PENCIL)
                     {
-                        //붙여넣기
-                        width = (int)(mapeditor.tile_PalleteSelectEnd.X - mapeditor.tile_PalleteSelectStart.X) + 1;
-                        height = (int)(mapeditor.tile_PalleteSelectEnd.Y - mapeditor.tile_PalleteSelectStart.Y) + 1;
-                    }
-                    else if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.PASTE)
-                    {
-                        if(mapeditor.tile_CopyedTile.Count > 0)
+                        Vector2 mappos = MouseTilePos;
+
+
+                        int width = 0;
+                        int height = 0;
+
+                        if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.ALLTILE)
                         {
-                            width = (int)mapeditor.tile_CopyedTileSize.X;
-                            height = (int)mapeditor.tile_CopyedTileSize.Y;
+                            //붙여넣기
+                            width = (int)(mapeditor.tile_PalleteSelectEnd.X - mapeditor.tile_PalleteSelectStart.X) + 1;
+                            height = (int)(mapeditor.tile_PalleteSelectEnd.Y - mapeditor.tile_PalleteSelectStart.Y) + 1;
                         }
-                    }
-                    else if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.ISOM)
-                    {
-
-                    }
-
-                    int sx = (int)Math.Floor(width / 2.0);
-                    int sy = (int)Math.Floor(height / 2.0);
-
-                    bool IsOneTile = false;
-                    if (width == 1 && height == 1)
-                    {
-                        IsOneTile = true;
-                        width = mapeditor.brush_x;
-                        height = mapeditor.brush_y;
-                    }
-
-                    for (int y = 0; y < height; y++)
-                    {
-                        for (int x = 0; x < width; x++)
+                        else if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.PASTE)
                         {
-                            int megaindex = 0;
-
-
-                            ushort newMTXM = 0;
-
-                            if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.ALLTILE)
+                            if (mapeditor.tile_CopyedTile.Count > 0)
                             {
-                                if (IsOneTile)
-                                {
-                                    newMTXM = (ushort)((ushort)(mapeditor.tile_PalleteSelectStart.X) + ((ushort)(mapeditor.tile_PalleteSelectStart.Y) << 4));
-                                    megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, newMTXM);
-                                }
-                                else
-                                {
-                                    newMTXM = (ushort)((ushort)(mapeditor.tile_PalleteSelectStart.X + x) + ((ushort)(mapeditor.tile_PalleteSelectStart.Y + y) << 4));
-                                    megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, newMTXM);
-                                }
+                                width = (int)mapeditor.tile_CopyedTileSize.X;
+                                height = (int)mapeditor.tile_CopyedTileSize.Y;
                             }
-                            else if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.PASTE)
-                            {
-                                if (IsOneTile)
-                                {
-                                    newMTXM = mapeditor.Tile_GetCopyedTile(0, 0);
-                                    if (newMTXM == ushort.MaxValue) continue;
-                                    megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, newMTXM);
-                                }
-                                else
-                                {
-                                    newMTXM = mapeditor.Tile_GetCopyedTile(x, y);
-                                    if (newMTXM == ushort.MaxValue) continue;
-                                    megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, newMTXM);
-                                }
-                            }
-
-
-
-                            //if (IsOneTile)
-                            //{
-                            //    group = (ushort)(mapeditor.tile_PalleteSelectStart.Y);
-                            //    index = (ushort)(mapeditor.tile_PalleteSelectStart.X);
-
-                            //    megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, group, index);
-                            //}
-                            //else
-                            //{
-                            //    megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, group, index);
-                            //}
-
-
-
-
-
-                            if (mapeditor.TilePalleteTransparentBlack && megaindex == 0) continue;
-
-
-                            int mapx = (ushort)mappos.X + (x - sx);
-                            int mapy = (ushort)mappos.Y + (y - sy);
-
-
-                            int tileindex = mapx + mapy * mapeditor.mapdata.WIDTH;
-
-
-                            if (mapeditor.mapdata.CheckTILERange(mapx, mapy))
-                            {
-                                ushort oldMTXM = mapeditor.mapdata.TILE[tileindex];
-
-                                mapeditor.mapdata.TILEChange(mapx, mapy, newMTXM);
-                                mapeditor.taskManager.TaskAdd(new TileEvent(mapeditor, newMTXM, oldMTXM, mapx, mapy));
-                            }
+                        }
+                        else if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.ISOM)
+                        {
 
                         }
+
+
+                        bool IsOneTile = false;
+                        if (width == 1 && height == 1)
+                        {
+                            IsOneTile = true;
+                            width = mapeditor.brush_x;
+                            height = mapeditor.brush_y;
+                        }
+
+                        int sx = (int)Math.Floor(width / 2.0);
+                        int sy = (int)Math.Floor(height / 2.0);
+
+                        for (int y = 0; y < height; y++)
+                        {
+                            for (int x = 0; x < width; x++)
+                            {
+                                int megaindex = 0;
+
+
+                                ushort newMTXM = 0;
+
+                                if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.ALLTILE)
+                                {
+                                    if (IsOneTile)
+                                    {
+                                        newMTXM = (ushort)((ushort)(mapeditor.tile_PalleteSelectStart.X) + ((ushort)(mapeditor.tile_PalleteSelectStart.Y) << 4));
+                                        megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, newMTXM);
+                                    }
+                                    else
+                                    {
+                                        newMTXM = (ushort)((ushort)(mapeditor.tile_PalleteSelectStart.X + x) + ((ushort)(mapeditor.tile_PalleteSelectStart.Y + y) << 4));
+                                        megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, newMTXM);
+                                    }
+                                }
+                                else if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.PASTE)
+                                {
+                                    if (IsOneTile)
+                                    {
+                                        newMTXM = mapeditor.Tile_GetCopyedTile(0, 0);
+                                        if (newMTXM == ushort.MaxValue) continue;
+                                        megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, newMTXM);
+                                    }
+                                    else
+                                    {
+                                        newMTXM = mapeditor.Tile_GetCopyedTile(x, y);
+                                        if (newMTXM == ushort.MaxValue) continue;
+                                        megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, newMTXM);
+                                    }
+                                }
+
+
+
+                                //if (IsOneTile)
+                                //{
+                                //    group = (ushort)(mapeditor.tile_PalleteSelectStart.Y);
+                                //    index = (ushort)(mapeditor.tile_PalleteSelectStart.X);
+
+                                //    megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, group, index);
+                                //}
+                                //else
+                                //{
+                                //    megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, group, index);
+                                //}
+
+
+
+
+
+                                if (mapeditor.TilePalleteTransparentBlack && megaindex == 0) continue;
+
+
+                                int mapx = (ushort)mappos.X + (x - sx);
+                                int mapy = (ushort)mappos.Y + (y - sy);
+
+
+                                int tileindex = mapx + mapy * mapeditor.mapdata.WIDTH;
+
+
+                                if (mapeditor.mapdata.CheckTILERange(mapx, mapy))
+                                {
+                                    ushort oldMTXM = mapeditor.mapdata.TILE[tileindex];
+
+                                    mapeditor.mapdata.TILEChange(mapx, mapy, newMTXM);
+                                    mapeditor.taskManager.TaskAdd(new TileEvent(mapeditor, newMTXM, oldMTXM, mapx, mapy));
+                                }
+
+                            }
+                        }
+
+                        mapeditor.mapdata.TILEChangeComplete();
                     }
 
-                    mapeditor.mapdata.TILEChangeComplete();
-                }        
+                }
+
+
             }
         }
 

@@ -390,7 +390,7 @@ namespace UseMapEditor.Control.MapEditorControl
                 item.CodeText(sb);
                 sb.AppendLine(";");
             }
-            Clipboard.SetText(sb.ToString());
+            Clipboard.SetDataObject(sb.ToString());
         }
 
         private void ItemPaste()

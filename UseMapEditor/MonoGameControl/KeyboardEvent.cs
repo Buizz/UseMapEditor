@@ -25,6 +25,7 @@ namespace UseMapEditor.MonoGameControl
         private bool key_LeftShiftDown;
         private bool key_QDown;
 
+        private bool key_LeftAlt;
 
         //private bool key_WDown;
         //private bool key_ADown;
@@ -64,12 +65,10 @@ namespace UseMapEditor.MonoGameControl
             }
 
 
-
+            key_LeftAlt = keyboardState.IsKeyDown(Keys.LeftAlt);
             key_LeftCtrl = keyboardState.IsKeyDown(Keys.LeftControl);
             key_LeftShiftDown = keyboardState.IsKeyDown(Keys.LeftShift);
             key_QDown = keyboardState.IsKeyDown(Keys.Q);
-
-
 
 
 

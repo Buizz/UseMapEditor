@@ -417,6 +417,7 @@ namespace UseMapEditor.DataBinding
                 {
                     mapEditor.brush_x = value;
                 }
+                mapEditor.editorTextureData.TilePaletteRefresh();
             }
         }
         public byte BRUSHY
@@ -435,6 +436,7 @@ namespace UseMapEditor.DataBinding
                 {
                     mapEditor.brush_y = value;
                 }
+                mapEditor.editorTextureData.TilePaletteRefresh();
             }
         }
 
