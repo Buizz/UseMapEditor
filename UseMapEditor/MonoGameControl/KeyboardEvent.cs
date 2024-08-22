@@ -11,6 +11,7 @@ using System.IO;
 using System.Windows;
 using UseMapEditor.Control;
 using UseMapEditor.FileData;
+using UseMapEditor.Global;
 using WpfTest.Components;
 
 namespace UseMapEditor.MonoGameControl
@@ -20,12 +21,6 @@ namespace UseMapEditor.MonoGameControl
         private List<Keys> DownKeys;
         private List<Keys> UpKeys;
 
-
-        private bool key_LeftCtrl;
-        private bool key_LeftShiftDown;
-        private bool key_QDown;
-
-        private bool key_LeftAlt;
 
         //private bool key_WDown;
         //private bool key_ADown;
@@ -65,10 +60,10 @@ namespace UseMapEditor.MonoGameControl
             }
 
 
-            key_LeftAlt = keyboardState.IsKeyDown(Keys.LeftAlt);
-            key_LeftCtrl = keyboardState.IsKeyDown(Keys.LeftControl);
-            key_LeftShiftDown = keyboardState.IsKeyDown(Keys.LeftShift);
-            key_QDown = keyboardState.IsKeyDown(Keys.Q);
+            GlobalVariable.key_LeftAlt = keyboardState.IsKeyDown(Keys.LeftAlt);
+            GlobalVariable.key_LeftCtrl = keyboardState.IsKeyDown(Keys.LeftControl);
+            GlobalVariable.key_LeftShiftDown = keyboardState.IsKeyDown(Keys.LeftShift);
+            GlobalVariable.key_QDown = keyboardState.IsKeyDown(Keys.Q);
 
 
 
@@ -200,7 +195,7 @@ namespace UseMapEditor.MonoGameControl
             //}
 
 
-            if (key_LeftCtrl)
+            if (GlobalVariable.key_LeftCtrl)
             {
                 return;
             }
@@ -235,7 +230,7 @@ namespace UseMapEditor.MonoGameControl
                 if (!DownKeys.Contains(keys))
                 {
                     DownKeys.Add(keys);
-                    if (key_LeftCtrl)
+                    if (GlobalVariable.key_LeftCtrl)
                     {
                         return false;
                     }
@@ -253,7 +248,7 @@ namespace UseMapEditor.MonoGameControl
                 if (!UpKeys.Contains(keys))
                 {
                     UpKeys.Add(keys);
-                    if (key_LeftCtrl)
+                    if (GlobalVariable.key_LeftCtrl)
                     {
                         return false;
                     }

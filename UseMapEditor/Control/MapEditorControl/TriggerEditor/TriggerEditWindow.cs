@@ -8,6 +8,7 @@ using System.Windows;
 using UseMapEditor.FileData;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using UseMapEditor.Tools;
 
 namespace UseMapEditor.Control.MapEditorControl
 {
@@ -390,7 +391,8 @@ namespace UseMapEditor.Control.MapEditorControl
                 item.CodeText(sb);
                 sb.AppendLine(";");
             }
-            Clipboard.SetDataObject(sb.ToString());
+
+            StringTool.SafeCopy(sb.ToString());
         }
 
         private void ItemPaste()

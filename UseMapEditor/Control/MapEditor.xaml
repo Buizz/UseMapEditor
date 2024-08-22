@@ -51,7 +51,7 @@
                 </ToolBar>
                 <ToolBar Style="{DynamicResource MaterialDesignToolBar}">
 
-                    <materialDesign:PopupBox StaysOpen="True" Style="{StaticResource MaterialDesignToolPopupBox}" Padding="4" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Center">
+                    <materialDesign:PopupBox x:Name="visibilityPopupbox" StaysOpen="True" Style="{StaticResource MaterialDesignToolPopupBox}" Padding="4" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Center">
                         <materialDesign:PopupBox.ToggleContent>
                             <materialDesign:PackIcon Kind="Visibility" Margin="4"/>
                         </materialDesign:PopupBox.ToggleContent>
@@ -213,37 +213,28 @@
                     <Label x:Name="InformationToolTip" Content="{Binding Path=HEIGHT, UpdateSourceTrigger=PropertyChanged}"/>
                 </ToolBar>
             </ToolBarTray>
-            <Expander x:Name="BottomExpander" DockPanel.Dock="Bottom" ExpandDirection="Up" Header="콘솔">
-                <DockPanel>
-                    <TextBox MinHeight="100" AcceptsReturn="True"/>
-                </DockPanel>
-            </Expander>
-            <Expander x:Name="LeftExpander" DockPanel.Dock="Left" ExpandDirection="Right" >
-                <Expander.Header>
-                    <TextBlock Text="시나리오설정" RenderTransformOrigin=".5,.5" >
-                        <TextBlock.LayoutTransform>
-                            <RotateTransform Angle="90" />
-                        </TextBlock.LayoutTransform>
-                    </TextBlock>
-                </Expander.Header>
-                <Border x:Name="ScenarioPanel">
-                </Border>
-            </Expander>
+
 
 
             <Grid>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="48"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="48"/>
                 </Grid.ColumnDefinitions>
 
-                <Grid MouseMove="Grid_MouseMove" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="48"/>
+                </Grid.RowDefinitions>
+
+                <Grid MouseMove="Grid_MouseMove" Grid.Column="1">
                     <Image x:Name="MapTrace" Stretch="None"/>
                     <Grid x:Name="MapViewer" Background="#33000000">
 
                     </Grid>
                 </Grid>
-                <Grid x:Name="PopupGrid" PreviewMouseDown="Grid_MouseDown" Background="#33000000" Visibility="Collapsed" IsVisibleChanged="PopupGrid_IsVisibleChanged">
+                <Grid x:Name="PopupGrid" Grid.Column="1" PreviewMouseDown="Grid_MouseDown" Background="#33000000" Visibility="Collapsed" IsVisibleChanged="PopupGrid_IsVisibleChanged">
                     <Grid x:Name="PopupInnerGrid" HorizontalAlignment="Left" VerticalAlignment="Top">
                         <materialDesign:Card x:Name="MulitLocSelecter" Width="100" MaxHeight="240" Visibility="Collapsed">
                             <ListBox x:Name="LocList" MouseUp="LocList_MouseUp">
@@ -616,9 +607,19 @@
                     </Grid>
                 </Grid>
 
+                <Expander x:Name="LeftExpander" Grid.ColumnSpan="2" DockPanel.Dock="Left" ExpandDirection="Right" HorizontalAlignment="Left"  MinWidth="48"  Background="Transparent">
+                    <Expander.Header>
+                        <TextBlock Text="시나리오설정" RenderTransformOrigin=".5,.5" >
+                            <TextBlock.LayoutTransform>
+                                <RotateTransform Angle="90" />
+                            </TextBlock.LayoutTransform>
+                        </TextBlock>
+                    </Expander.Header>
+                    <Border x:Name="ScenarioPanel">
+                    </Border>
+                </Expander>
 
-
-                <Expander x:Name="RightExpander" Grid.ColumnSpan="2" DockPanel.Dock="Right" ExpandDirection="Left" Background="Transparent" HorizontalAlignment="Right" MinWidth="48">
+                <Expander x:Name="RightExpander" Grid.Column="1" Grid.ColumnSpan="2" DockPanel.Dock="Right" ExpandDirection="Left" Background="Transparent" HorizontalAlignment="Right" MinWidth="48">
                     <Expander.Header >
                         <TextBlock Text="팔레트" RenderTransformOrigin=".5,.5" >
                             <TextBlock.LayoutTransform>
@@ -1092,6 +1093,13 @@
                         </Grid>
                     </DockPanel>
                 </Expander>
+
+                <Expander x:Name="BottomExpander" Grid.RowSpan="2" DockPanel.Dock="Bottom" Grid.ColumnSpan="3" ExpandDirection="Up" Header="콘솔" VerticalAlignment="Bottom">
+                    <DockPanel>
+                        <TextBox MinHeight="100" AcceptsReturn="True"/>
+                    </DockPanel>
+                </Expander>
+
 
                 <Border x:Name="PalletSizeBorder" Background="#667D7D7D" Height="42" VerticalAlignment="Top" Width="512" HorizontalAlignment="Right" Visibility="Collapsed">
                     <Slider x:Name="PalletSize" TickFrequency="5" Orientation="Horizontal" Minimum="1" Maximum="512" Value="400" FlowDirection="RightToLeft"  TickPlacement="Both" VerticalAlignment="Center"

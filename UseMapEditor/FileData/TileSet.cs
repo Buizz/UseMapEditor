@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NAudio.SoundFont;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Pfim;
 using SharpDX.Direct2D1;
 using System;
@@ -13,10 +15,12 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Markup;
+using System.Windows.Shapes;
 using UseMapEditor.Casc;
 using UseMapEditor.Control;
 using UseMapEditor.MonoGameControl;
 using static UseMapEditor.FileData.DatFile.CDatFile.CParamater;
+using static UseMapEditor.FileData.TileSet;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace UseMapEditor.FileData
@@ -512,14 +516,14 @@ namespace UseMapEditor.FileData
 
 
 
-            foreach (var item in cv5data)
+            foreach (var cv in cv5data)
             {
-                cv5[] cv5s = item.Value;
+                cv5[] cv5s = cv.Value;
 
                 if (IsTestDataCreate)
                 {
 
-                    string filepath = AppDomain.CurrentDomain.BaseDirectory + "TEST\\" + item.Key.ToString() + "_TerrainInfor.xlsx";
+                    string filepath = AppDomain.CurrentDomain.BaseDirectory + "TEST\\" + cv.Key.ToString() + "_TerrainInfor.xlsx";
                     if (File.Exists(filepath))
                     {
                         File.Delete(filepath);
@@ -619,52 +623,69 @@ namespace UseMapEditor.FileData
                     ReleaseExcelObject(application);
                 }
 
-                List<ISOMTIle> isoms = new List<ISOMTIle>();
 
+                string fname = AppDomain.CurrentDomain.BaseDirectory + $"Data\\TileSet\\ISOM\\{cv.Key.ToString()}.json";
+
+
+                // Json 파일 읽기
+                if (File.Exists(fname))
                 {
-                    ISOMTIle isom = new ISOMTIle();
+                    using (StreamReader file = File.OpenText(fname))
+                    {
+                        using (JsonTextReader reader = new JsonTextReader(file))
+                        {
+                            JArray json = (JArray)JToken.ReadFrom(reader);
 
-                    isom.group1 = 2;
-                    isom.group2 = 3;
+
+                            List<ISOMTIle> isoms = new List<ISOMTIle>();
+
+                            foreach (JObject jobject in json)
+                            {
+                                ISOMTIle isom = new ISOMTIle(jobject, this, cv.Key);
+                                isoms.Add(isom);
+
+                            }
+
+                            //ISOM 돌면서 타일 관계 다시 정리하기.
+                            foreach (var isomitem in isoms)
+                            {
+                                foreach (var ctile in isomitem.connectedtilenamelist)
+                                {
+                                    ISOMTIle cisom = isoms.Find(x => x.name == ctile);
+
+                                    if (isomitem.elevation == cisom.elevation + 1)
+                                    {
+                                        //더 낮은 지형
+                                        isomitem.connectlowtile = cisom;
+                                    }
+                                    else if (isomitem.elevation == cisom.elevation - 1)
+                                    {
+                                        //더 낮은 지형
+                                        isomitem.connecthightile = cisom;
+                                    }else if (isomitem.elevation == cisom.elevation)
+                                    {
+                                        isomitem.connectedtile.Add(cisom);
+                                    }
+                                }
+                            }
 
 
-                    isoms.Add(isom);
+                            foreach (var isomitem in isoms)
+                            {
+                                if(isomitem.connectlowtile != null)
+                                {
+                                    isomitem.AddTipToFlat(isomitem.connectlowtile);
+                                }
+                            }
+
+                            ISOMdata.Add(cv.Key, isoms);
+                        }
+                    }
                 }
-
-                {
-                    ISOMTIle isom = new ISOMTIle();
-
-                    isom.group1 = 4;
-                    isom.group2 = 5;
-
-
-                    isoms.Add(isom);
-                }
-                //for (int i = 0; i < 10; i++)
-                //{
-
-                //    isoms.Add(new ISOM());
-                //}
-
-
-
-                ISOMdata.Add(item.Key, isoms);
             }
         }
 
-        
-        public class ISOMTIle
-        {
-            public bool IsCustomISOM;
 
-            #region 기본 ISOM
-            public ushort group1;
-            public ushort group2;
-
-            //대각선 정보는 나중에
-
-            #endregion
-        }
 
 
         public List<ISOMTIle> GetISOMData(MapEditor mapEditor)
@@ -685,11 +706,11 @@ namespace UseMapEditor.FileData
 
 
 
-        public vf4 GetVf4(Control.MapEditor.DrawType drawType, TileType tileType, ushort megatileindex)
+        public vf4 GetVf4(TileType tileType, ushort megatileindex)
         {
             return vf4data[tileType][megatileindex];
         }
-        public ushort GetMegaTileIndex(Control.MapEditor.DrawType drawType, TileType tileType, ushort MTXM)
+        public ushort GetMegaTileIndex(TileType tileType, ushort MTXM)
         {
             int group = (MTXM >> 4);
             int index = (MTXM & 0xf);
@@ -708,7 +729,7 @@ namespace UseMapEditor.FileData
         }
 
 
-        public int GetMegaTileIndex(Control.MapEditor.DrawType drawType, TileType tileType, ushort group, ushort index)
+        public int GetMegaTileIndex(TileType tileType, ushort group, ushort index)
         {
             var t = cv5data[tileType];
             if (t.Length <= group)
@@ -734,7 +755,7 @@ namespace UseMapEditor.FileData
         }
 
 
-        public cv5 GetCV5(Control.MapEditor.DrawType drawType, TileType tileType, ushort MTXM)
+        public cv5 GetCV5(TileType tileType, ushort MTXM)
         {
             int group = (MTXM >> 4);
             int index = (MTXM & 0xf);

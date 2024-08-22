@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using UseMapEditor.FileData;
+using UseMapEditor.Global;
 using UseMapEditor.Task.Events;
 using WpfTest.Components;
 using static Data.Map.MapData;
@@ -23,7 +24,7 @@ namespace UseMapEditor.MonoGameControl
         private void UnitTaskStart()
         {
             mapeditor.taskManager.TaskStart();
-            if (!key_LeftShiftDown)
+            if (!GlobalVariable.key_LeftShiftDown)
             {
                 mapeditor.SelectUnit.Clear();
             }
@@ -44,7 +45,7 @@ namespace UseMapEditor.MonoGameControl
             else
             {
                 //선택모드
-                if (!key_LeftShiftDown)
+                if (!GlobalVariable.key_LeftShiftDown)
                 {
                     mapeditor.SelectUnit.Clear();
                 }
@@ -304,9 +305,9 @@ namespace UseMapEditor.MonoGameControl
                         ushort MTXM = mapeditor.mapdata.MTXM[tileindex];
 
 
-                        ushort megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, MTXM);
-                        vf4 vf4 = tileSet.GetVf4(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, megaindex);
-                        cv5 cv5 = tileSet.GetCV5(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, MTXM);
+                        ushort megaindex = tileSet.GetMegaTileIndex(mapeditor.mapdata.TILETYPE, MTXM);
+                        vf4 vf4 = tileSet.GetVf4(mapeditor.mapdata.TILETYPE, megaindex);
+                        cv5 cv5 = tileSet.GetCV5(mapeditor.mapdata.TILETYPE, MTXM);
 
                         if (mapeditor.UnitPalleteBuildingFix & IsBuilding)
                         {

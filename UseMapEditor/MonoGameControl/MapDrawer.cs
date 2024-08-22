@@ -9,11 +9,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.IO.Pipes;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using UseMapEditor.Control;
 using UseMapEditor.FileData;
+using UseMapEditor.Global;
 using UseMapEditor.Tools;
 using WpfTest.Components;
 
@@ -124,6 +126,7 @@ namespace UseMapEditor.MonoGameControl
         }
         public Effect shader;
         private Texture2D gridtexture;
+        private Texture2D isomtexture;
         protected override void LoadContent()
         {
             base.LoadContent();
@@ -143,7 +146,7 @@ namespace UseMapEditor.MonoGameControl
             gridtexture = new Texture2D(GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
             gridtexture.SetData(new[] { Color.White });
 
-
+            isomtexture = Texture2D.FromFile(GraphicsDevice, AppDomain.CurrentDomain.BaseDirectory + "\\Data\\Image\\isomtexture.png");
 
             tileSet = new TileSet();
 
@@ -252,11 +255,34 @@ namespace UseMapEditor.MonoGameControl
             {
                 if ((LastScroll - mouseState.ScrollWheelValue) > 0)
                 {
-                    mapeditor.ScaleDown(MousePos);
+                    if (GlobalVariable.key_LeftShiftDown)
+                    {
+                        if(mapeditor.mapDataBinding.BRUSHX > 1)
+                        {
+                            mapeditor.mapDataBinding.BRUSHX -= 1;
+                        }
+
+                        if (mapeditor.mapDataBinding.BRUSHY > 1)
+                        {
+                            mapeditor.mapDataBinding.BRUSHY -= 1;
+                        }
+                    }
+                    else
+                    {
+                        mapeditor.ScaleDown(MousePos);
+                    }
                 }
                 else
                 {
-                    mapeditor.ScaleUp(MousePos);
+                    if (GlobalVariable.key_LeftShiftDown)
+                    {
+                        mapeditor.mapDataBinding.BRUSHX += 1;
+                        mapeditor.mapDataBinding.BRUSHY += 1;
+                    }
+                    else
+                    {
+                        mapeditor.ScaleUp(MousePos);
+                    }
                 }
                 LastScroll = mouseState.ScrollWheelValue;
             }
@@ -315,7 +341,7 @@ namespace UseMapEditor.MonoGameControl
                 this.IsEnabled = false;
             }
 
-            if (mapeditor.IsToolBarOpen())
+            if (mapeditor.IsRightToolBarOpen())
             {
                 if (MousePos.X > screenwidth)
                 {
@@ -332,8 +358,41 @@ namespace UseMapEditor.MonoGameControl
                 }
             }
 
+            if (mapeditor.IsLeftToolBarOpen())
+            {
+                if (MousePos.X < LeftToolBarStreachValue)
+                {
+                    if (this.IsFocused)
+                    {
+                        this.IsEnabled = false;
+                        //mapeditor.Dispatcher.Invoke(new Action(() => {
+                        //    System.Threading.Thread.Sleep(100);
+                        //    this.mapeditor.Focus();
+                        //    System.Threading.Thread.Sleep(100);
+                        //    this.IsEnabled = true;
+                        //}), System.Windows.Threading.DispatcherPriority.Normal);
+                    }
+                }
+            }
 
+            if (mapeditor.IsBottomToolBarOpen())
+            {
+                if (MousePos.Y > screenheight - BottomToolBarStreachValue)
+                {
+                    if (this.IsFocused)
+                    {
+                        this.IsEnabled = false;
+                        //mapeditor.Dispatcher.Invoke(new Action(() => {
+                        //    System.Threading.Thread.Sleep(100);
+                        //    this.mapeditor.Focus();
+                        //    System.Threading.Thread.Sleep(100);
+                        //    this.IsEnabled = true;
+                        //}), System.Windows.Threading.DispatcherPriority.Normal);
+                    }
+                }
+            }
 
+            
             if (keyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Y))
             {
                 mapeditor.Dispatcher.Invoke(new Action(() =>
@@ -342,11 +401,17 @@ namespace UseMapEditor.MonoGameControl
                 }), System.Windows.Threading.DispatcherPriority.Normal);
             }
 
-            if (MousePos.X <= screenwidth && MousePos.Y > 0 && MousePos.X > 0)
+            //마우스 들어왔을 경우
+            if (MousePos.X <= screenwidth && MousePos.Y > 0 && MousePos.X > LeftToolBarStreachValue
+                && !mapeditor.GridCB.IsDropDownOpen && !mapeditor.LayerCB.IsDropDownOpen && !mapeditor.visibilityPopupbox.IsPopupOpen
+                && !mapeditor.Scenario.IsHaveFocusWindow()
+                )
             {
-                mapeditor.EmptyButton.Focus();
+                if (this.IsFocused)
+                {
+                    mapeditor.EmptyButton.Focus();
+                }
             }
-
 
 
             _timeElapsed += time.ElapsedGameTime;
@@ -534,8 +599,12 @@ namespace UseMapEditor.MonoGameControl
             }
 
 
-            ToolBaStreachValue = (int)(mapeditor.GetRightToolBarWidth());
-            screenwidth = (float)this.ActualWidth - ToolBaStreachValue;
+            RightToolBarStreachValue = (int)(mapeditor.GetRightToolBarWidth());
+            LeftToolBarStreachValue = (int)(mapeditor.GetLeftToolBarWidth());
+            BottomToolBarStreachValue = (int)(mapeditor.GetBottomToolBarWidth());
+
+
+            screenwidth = (float)this.ActualWidth - RightToolBarStreachValue;
             screenheight = (float)this.ActualHeight;
 
 

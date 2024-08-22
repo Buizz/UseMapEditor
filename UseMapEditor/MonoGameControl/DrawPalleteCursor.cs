@@ -21,6 +21,10 @@ using WpfTest.Components;
 using static Data.Map.MapData;
 using static UseMapEditor.FileData.TileSet;
 using Point = System.Windows.Point;
+using System.Linq;
+using System.Web.UI.WebControls;
+using UseMapEditor.Global;
+using UseMapEditor.Tools;
 
 namespace UseMapEditor.MonoGameControl
 {
@@ -159,9 +163,6 @@ namespace UseMapEditor.MonoGameControl
                                     _spriteBatch.End();
                                 }
 
-
-
-
                                 double _l = uleft * mapeditor.opt_scalepercent;
                                 double _u = uup * mapeditor.opt_scalepercent;
                                 double _r = uright * mapeditor.opt_scalepercent;
@@ -177,6 +178,17 @@ namespace UseMapEditor.MonoGameControl
                                 {
                                     DrawRect(_spriteBatch, new Vector2(mousepos.X - (float)_l, mousepos.Y - (float)_u), new Vector2(mousepos.X + (float)_r, mousepos.Y + (float)_d), Color.Red, 1);
                                 }
+
+
+                                if (mapeditor.CopyedUnit.Count == 1 && cUNIT.unitID == 134 && mapeditor.mapdata.lastAddUnit != null && mapeditor.mapdata.lastAddUnit.unitID == 134 && mapeditor.mapdata.lastAddUnit.linkFlag == 0
+                                    && !GlobalVariable.key_QDown)
+                                {
+                                    Vector2 _1 = mapeditor.PosMapToScreen(new Vector2(mapeditor.mapdata.lastAddUnit.X, mapeditor.mapdata.lastAddUnit.Y));
+
+                                    DrawLine(_spriteBatch, _1, mousepos, Color.Lime, 2);
+                                }
+
+
                                 _spriteBatch.End();
                                 templist.Clear();
                             }
@@ -263,7 +275,7 @@ namespace UseMapEditor.MonoGameControl
 
                             DrawUnit(UnitPalleteCursor, templist, AlwaysDraw: true);
                             DrawImageList(templist);
-                            if(MousePos.X > screenwidth)
+                            if (MousePos.X > screenwidth)
                             {
                                 //밖으로 나갔을 경우 미리보기 그리기
                                 DrawImageListPreview(templist, new Vector2(screenwidth - 128, 256));
@@ -273,11 +285,9 @@ namespace UseMapEditor.MonoGameControl
                                 double _w = bwidth * mapeditor.opt_scalepercent;
                                 double _h = bheight * mapeditor.opt_scalepercent;
                                 _spriteBatch.Begin(blendState: BlendState.NonPremultiplied);
-                                _spriteBatch.Draw(gridtexture, new Rectangle((int)(mousepos.X - _w/2), (int)(mousepos.Y - _h / 2), (int)_w, (int)_h), null, new Color(128, 255, 128, 64), 0, new Vector2(), SpriteEffects.None, 0);
+                                _spriteBatch.Draw(gridtexture, new Rectangle((int)(mousepos.X - _w / 2), (int)(mousepos.Y - _h / 2), (int)_w, (int)_h), null, new Color(128, 255, 128, 64), 0, new Vector2(), SpriteEffects.None, 0);
                                 _spriteBatch.End();
                             }
-
-
 
 
                             double _l = uleft * mapeditor.opt_scalepercent;
@@ -295,10 +305,21 @@ namespace UseMapEditor.MonoGameControl
                             {
                                 DrawRect(_spriteBatch, new Vector2(mousepos.X - (float)_l, mousepos.Y - (float)_u), new Vector2(mousepos.X + (float)_r, mousepos.Y + (float)_d), Color.Red, 1);
                             }
+
+
+                            if (unitid == 134 && mapeditor.mapdata.lastAddUnit != null && mapeditor.mapdata.lastAddUnit.unitID == 134 && mapeditor.mapdata.lastAddUnit.linkFlag == 0
+                                && !GlobalVariable.key_QDown)
+                            {
+                                Vector2 _1 = mapeditor.PosMapToScreen(new Vector2(mapeditor.mapdata.lastAddUnit.X, mapeditor.mapdata.lastAddUnit.Y));
+                                Vector2 _2 = mapeditor.PosMapToScreen(new Vector2(UnitPalleteCursor.X, UnitPalleteCursor.Y));
+
+                                DrawLine(_spriteBatch, _1, _2, Color.Lime, 2);
+                            }
+
                             _spriteBatch.End();
                         }
                     }
-                    
+
                     break;
                 case Control.MapEditor.Layer.Sprite:
                     {
@@ -441,9 +462,9 @@ namespace UseMapEditor.MonoGameControl
                         }
                     }
                     break;
-
                 case Control.MapEditor.Layer.Tile:
-                    if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.ALLTILE || mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.PASTE)
+                    if ((mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.ALLTILE || mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.PASTE)
+                        )
                     {
                         if (mapeditor.tile_PaintType == MapEditor.TileSetPaintType.CIRCLE)
                         {
@@ -493,6 +514,14 @@ namespace UseMapEditor.MonoGameControl
                                 DragStart.X = (float)Math.Floor(DragStart.X / 32);
                                 DragStart.Y = (float)Math.Floor(DragStart.Y / 32);
 
+                                if (DragStart.X > DragEndtemp.X)
+                                {
+                                    DragStart.X += 1;
+                                }
+                                if (DragStart.Y > DragEndtemp.Y)
+                                {
+                                    DragStart.Y += 1;
+                                }
 
                                 if (DragStart.X > DragEndtemp.X)
                                 {
@@ -504,7 +533,7 @@ namespace UseMapEditor.MonoGameControl
                                 }
 
                                 Vector2 DragEnd;
-                                if (key_LeftShiftDown)
+                                if (GlobalVariable.key_LeftShiftDown)
                                 {
                                     Vector2 differ = DragEndtemp - DragStart;
                                     double DragLen = Math.Max(Math.Abs(differ.X), Math.Abs(differ.Y));
@@ -537,7 +566,7 @@ namespace UseMapEditor.MonoGameControl
                                 }
 
 
-                    
+
 
 
                                 Vector2 Size = DragEnd - DragStart;
@@ -558,7 +587,7 @@ namespace UseMapEditor.MonoGameControl
                                 Vector2 DragMin = new Vector2(Math.Min(DragStart.X, DragEnd.X), Math.Min(DragStart.Y, DragEnd.Y));
 
 
-                                _spriteBatch.Begin(blendState:BlendState.NonPremultiplied);
+                                _spriteBatch.Begin(blendState: BlendState.NonPremultiplied);
                                 for (int y = 0; y < Dragheight + 1; y++)
                                 {
                                     int minx = -1;
@@ -566,11 +595,11 @@ namespace UseMapEditor.MonoGameControl
 
                                     for (int x = 0; x < Dragwidth + 1; x++)
                                     {
-                                        double tx = (center.X - x) * heightscale ;
-                                        double ty = (center.Y - y) * widthscale ;
+                                        double tx = (center.X - x) * heightscale;
+                                        double ty = (center.Y - y) * widthscale;
 
                                         double d = Math.Sqrt(Math.Pow(tx, 2) + Math.Pow(ty, 2));
-                                        if(Math.Max(Dragwidth, Dragheight) % 2 == 1)
+                                        if (Math.Max(Dragwidth, Dragheight) % 2 == 1)
                                         {
                                             d -= 1;
                                         }
@@ -590,11 +619,11 @@ namespace UseMapEditor.MonoGameControl
 
                                             //DrawRect(_spriteBatch, mapeditor.PosMapToScreen(32 * (DragMin + new Vector2(x,y))), mapeditor.PosMapToScreen(32 * (DragMin + new Vector2(x + 1, y + 1))), new Color(138, 43, 226, 128), 3, true);
 
-                                            maxx = x;                                        
+                                            maxx = x;
                                         }
-                                        
+
                                     }
-                                    if((minx != -1 || maxx != -1) && maxx >= minx)
+                                    if ((minx != -1 || maxx != -1) && maxx >= minx)
                                     {
                                         DrawRect(_spriteBatch, mapeditor.PosMapToScreen(32 * (DragMin + new Vector2(minx, y))), mapeditor.PosMapToScreen(32 * (DragMin + new Vector2(maxx + 1, y + 1))), new Color(138, 43, 226, 128), 1, true);
                                     }
@@ -657,20 +686,15 @@ namespace UseMapEditor.MonoGameControl
                                 }
                                 else if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.PASTE)
                                 {
-                                    if(mapeditor.tile_CopyedTile.Count != 0)
+                                    if (mapeditor.tile_CopyedTile.Count != 0)
                                     {
                                         width = (int)mapeditor.tile_CopyedTileSize.X;
                                         height = (int)mapeditor.tile_CopyedTileSize.Y;
                                     }
                                 }
 
-                                int sx = (int)Math.Floor(width / 2.0);
-                                int sy = (int)Math.Floor(height / 2.0);
-
-                                bool IsOneTile = false;
                                 if (width == 1 && height == 1)
                                 {
-                                    IsOneTile = true;
                                     width = mapeditor.brush_x;
                                     height = mapeditor.brush_y;
                                 }
@@ -680,15 +704,20 @@ namespace UseMapEditor.MonoGameControl
                                     return;
                                 }
 
-
-
-
                                 Vector2 DragStart = mouse_DragMapStart;
                                 Vector2 DragEndtemp = MouseTilePos;
-                               
-                                DragStart.X = (float)Math.Round(DragStart.X / 32);
-                                DragStart.Y = (float)Math.Round(DragStart.Y / 32);
 
+                                DragStart.X = (float)Math.Floor(DragStart.X / 32);
+                                DragStart.Y = (float)Math.Floor(DragStart.Y / 32);
+
+                                if (DragStart.X > DragEndtemp.X)
+                                {
+                                    DragStart.X += 1;
+                                }
+                                if (DragStart.Y > DragEndtemp.Y)
+                                {
+                                    DragStart.Y += 1;
+                                }
 
                                 if (DragStart.X <= DragEndtemp.X)
                                 {
@@ -700,7 +729,7 @@ namespace UseMapEditor.MonoGameControl
                                 }
 
                                 Vector2 DragEnd;
-                                if (key_LeftShiftDown)
+                                if (GlobalVariable.key_LeftShiftDown)
                                 {
                                     Vector2 differ = DragEndtemp - DragStart;
                                     double DragLen = Math.Max(Math.Abs(differ.X), Math.Abs(differ.Y));
@@ -743,7 +772,7 @@ namespace UseMapEditor.MonoGameControl
 
                                 _spriteBatch.Begin(blendState: BlendState.NonPremultiplied);
                                 DrawRect(_spriteBatch, DragStart, DragEnd, Color.BlueViolet, 4);
-                                DrawRect(_spriteBatch, DragStart, DragEnd, new Color(138,43,226,128), 3, true);
+                                DrawRect(_spriteBatch, DragStart, DragEnd, new Color(138, 43, 226, 128), 3, true);
 
                                 Vector2 Center = (DragStart + DragEnd) / 2;
                                 Center.X -= 30;
@@ -803,171 +832,735 @@ namespace UseMapEditor.MonoGameControl
                             tileSet.tileAtlasPainter.Draw(mappos + new Vector2(-2, 2), mapeditor, mapeditor.editorTextureData.tilePaletteMap, true);
                             tileSet.tileAtlasPainter.Draw(mappos, mapeditor, mapeditor.editorTextureData.tilePaletteMap, false, 0.8f);
                         }
-
-
-                        if (mapeditor.mapDataBinding.TILE_PAINTTYPE == Control.MapEditor.TileSetPaintType.SELECTION)
+                    }
+                    else if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.ISOM && mapeditor.brush_useRect)
+                    {
+                        if (mapeditor.tile_PaintType == MapEditor.TileSetPaintType.CIRCLE)
                         {
                             if (mouse_IsDrag)
                             {
+                                //드래그 하면 미리보기 그려짐
+                                //TODO:드래그시 미리보기 그리기
 
-                                float minx = Math.Min(mouse_DragMapStart.X, MouseMapPos.X);
-                                float miny = Math.Min(mouse_DragMapStart.Y, MouseMapPos.Y);
-                                float maxx = Math.Max(mouse_DragMapStart.X, MouseMapPos.X);
-                                float maxy = Math.Max(mouse_DragMapStart.Y, MouseMapPos.Y);
-
-                                minx = (float)(Math.Floor(minx / 32) * 32);
-                                miny = (float)(Math.Floor(miny / 32) * 32);
-                                maxx = (float)(Math.Ceiling(maxx / 32) * 32);
-                                maxy = (float)(Math.Ceiling(maxy / 32) * 32);
-
-                                //선택모드
-                                Vector2 min = new Vector2(minx, miny);
-                                Vector2 max = new Vector2(maxx, maxy);
+                                Vector2 DragStart = mouse_DragMapStart;
+                                Vector2 DragEndtemp = MouseTilePos;
 
 
+                                DragStart.X = (float)Math.Floor(DragStart.X / 32);
+                                DragStart.Y = (float)Math.Floor(DragStart.Y / 32);
 
-                                _spriteBatch.Begin();
-                                DrawRect(_spriteBatch, mapeditor.PosMapToScreen(min), mapeditor.PosMapToScreen(max), Color.Lime, 3);
+                                if (DragStart.X > DragEndtemp.X)
+                                {
+                                    DragStart.X += 1;
+                                }
+                                if (DragStart.Y > DragEndtemp.Y)
+                                {
+                                    DragStart.Y += 1;
+                                }
+
+                                if (DragStart.X > DragEndtemp.X)
+                                {
+                                    DragStart.X -= 1;
+                                }
+                                if (DragStart.Y > DragEndtemp.Y)
+                                {
+                                    DragStart.Y -= 1;
+                                }
+
+                                Vector2 DragEnd;
+                                if (GlobalVariable.key_LeftShiftDown)
+                                {
+                                    Vector2 differ = DragEndtemp - DragStart;
+                                    double DragLen = Math.Max(Math.Abs(differ.X), Math.Abs(differ.Y));
+
+                                    if (differ.X >= 0)
+                                    {
+                                        //양수 일 경우
+                                        DragEnd.X = (float)(DragStart.X + DragLen);
+                                    }
+                                    else
+                                    {
+                                        //음수 일 경우
+                                        DragEnd.X = (float)(DragStart.X - DragLen);
+                                    }
+
+                                    if (differ.Y >= 0)
+                                    {
+                                        //양수 일 경우
+                                        DragEnd.Y = (float)(DragStart.Y + DragLen);
+                                    }
+                                    else
+                                    {
+                                        //음수 일 경우
+                                        DragEnd.Y = (float)(DragStart.Y - DragLen);
+                                    }
+                                }
+                                else
+                                {
+                                    DragEnd = DragEndtemp;
+                                }
+
+
+
+
+
+                                Vector2 Size = DragEnd - DragStart;
+
+                                int Dragwidth = (int)Math.Abs(Size.X);
+                                int Dragheight = (int)Math.Abs(Size.Y);
+
+                                Vector2 center = new Vector2(Dragwidth, Dragheight) / 2;
+
+                                bool[,] flag = new bool[Dragwidth + 1, Dragheight + 1];
+
+                                double radius = Math.Max(Dragwidth / 2, Dragheight / 2);
+
+                                double widthscale = radius / (Dragheight / 2);
+                                double heightscale = radius / (Dragwidth / 2);
+
+
+                                Vector2 DragMin = new Vector2(Math.Min(DragStart.X, DragEnd.X), Math.Min(DragStart.Y, DragEnd.Y));
+
+
+                                _spriteBatch.Begin(blendState: BlendState.NonPremultiplied);
+                                for (int y = 0; y < Dragheight + 1; y++)
+                                {
+                                    int minx = -1;
+                                    int maxx = -1;
+
+                                    for (int x = 0; x < Dragwidth + 1; x++)
+                                    {
+                                        double tx = (center.X - x) * heightscale;
+                                        double ty = (center.Y - y) * widthscale;
+
+                                        double d = Math.Sqrt(Math.Pow(tx, 2) + Math.Pow(ty, 2));
+                                        if (Math.Max(Dragwidth, Dragheight) % 2 == 1)
+                                        {
+                                            d -= 1;
+                                        }
+                                        else
+                                        {
+                                            d -= 0.4;
+                                        }
+
+                                        if (maxx == -1)
+                                        {
+                                            minx = x;
+                                        }
+
+                                        if (radius >= d)
+                                        {
+                                            flag[x, y] = true;
+
+                                            //DrawRect(_spriteBatch, mapeditor.PosMapToScreen(32 * (DragMin + new Vector2(x,y))), mapeditor.PosMapToScreen(32 * (DragMin + new Vector2(x + 1, y + 1))), new Color(138, 43, 226, 128), 3, true);
+
+                                            maxx = x;
+                                        }
+
+                                    }
+                                    if ((minx != -1 || maxx != -1) && maxx >= minx)
+                                    {
+                                        DrawRect(_spriteBatch, mapeditor.PosMapToScreen(32 * (DragMin + new Vector2(minx, y))), mapeditor.PosMapToScreen(32 * (DragMin + new Vector2(maxx + 1, y + 1))), new Color(138, 43, 226, 128), 1, true);
+                                    }
+
+
+                                }
+
+
+
+                                DragEnd.X += 1;
+                                DragEnd.Y += 1;
+
+                                if (DragStart.X >= DragEnd.X)
+                                {
+                                    DragStart.X += 1;
+                                    DragEnd.X -= 1;
+                                }
+                                if (DragStart.Y >= DragEnd.Y)
+                                {
+                                    DragStart.Y += 1;
+                                    DragEnd.Y -= 1;
+                                }
+
+                                DragStart *= 32;
+                                DragStart = mapeditor.PosMapToScreen(DragStart);
+                                DragEnd = mapeditor.PosMapToScreen(DragEnd * 32);
+
+                                //_spriteBatch.Begin();
+
+                                Vector2 stringCenter = (DragStart + DragEnd) / 2;
+
+                                stringCenter.X -= 30;
+                                stringCenter.Y -= 10;
+
+
+                                //DrawRect(_spriteBatch, DragStart, DragEnd, Color.BlueViolet, 4);
+                                DrawRect(_spriteBatch, DragStart, DragEnd, Color.BlueViolet, 4);
+                                //DrawRect(_spriteBatch, DragStart, DragEnd, new Color(138, 43, 226, 64), 3, true);
+
+                                _spriteBatch.DrawString(_font, (Dragwidth + 1) + " X " + (Dragheight + 1), stringCenter, Color.White, 0, new Vector2(), 1.5f, SpriteEffects.None, 0);
 
                                 _spriteBatch.End();
-
-                                //_spriteBatch.Draw(gridtexture, new Rectangle((int)MapMin.X, (int)MapMin.Y, (int)MapSize.X, (int)MapSize.Y), null, mapeditor.TileBack, 0, new Vector2(), SpriteEffects.None, 0);
                             }
-
-                            #region 타일 선택시 그리기
-                            //_spriteBatch.Begin();
-                            //AtlasTileSet atlasTileSet = tileSet.GetAtlasTileSetTexture(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE);
-                            //foreach (var item in mapeditor.tile_SelectedTile)
-                            //{
-                            //    int mapx = (int)(item.Key.X);
-                            //    int mapy = (int)(item.Key.Y);
-                            //    Vector2 screen = mapeditor.PosMapToScreen(new Vector2(mapx * 32, mapy * 32));
-                            //    Vector2 screenm = mapeditor.PosMapToScreen(new Vector2((mapx + 1) * 32, (mapy + 1) * 32));
+                        }
+                        else if (mapeditor.tile_PaintType == MapEditor.TileSetPaintType.RECT)
+                        {
+                            if (mouse_IsDrag)
+                            {
+                                //드래그 하면 미리보기 그려짐
+                                //TODO:드래그시 미리보기 그리기
 
 
-                            //    int tileindex = (int)(mapx + mapy * mapeditor.mapdata.WIDTH);
+                                Vector2 DragStart = mouse_DragMapStart;
+                                Vector2 DragEndtemp = MouseTilePos;
 
-                            //    if (!mapeditor.mapdata.CheckTILERange(mapx, mapy)) continue;
-                            //    int megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, mapeditor.mapdata.TILE[tileindex]);
+                                DragStart.X = (float)Math.Floor(DragStart.X / 32);
+                                DragStart.Y = (float)Math.Floor(DragStart.Y / 32);
 
-                            //    if (mapeditor.TilePalleteTransparentBlack && megaindex == 0) continue;
+                                if (DragStart.X > DragEndtemp.X)
+                                {
+                                    DragStart.X += 1;
+                                }
+                                if (DragStart.Y > DragEndtemp.Y)
+                                {
+                                    DragStart.Y += 1;
+                                }
 
-                            //    DrawRect(_spriteBatch, screen, screenm, Color.Lime, 3);
-                            //}
-                            //_spriteBatch.End();
+                                if (DragStart.X <= DragEndtemp.X)
+                                {
+                                    DragEndtemp.X += 1;
+                                }
+                                if (DragStart.Y <= DragEndtemp.Y)
+                                {
+                                    DragEndtemp.Y += 1;
+                                }
+
+                                Vector2 DragEnd;
+                                if (GlobalVariable.key_LeftShiftDown)
+                                {
+                                    Vector2 differ = DragEndtemp - DragStart;
+                                    double DragLen = Math.Max(Math.Abs(differ.X), Math.Abs(differ.Y));
+
+                                    if (differ.X >= 0)
+                                    {
+                                        //양수 일 경우
+                                        DragEnd.X = (float)(DragStart.X + DragLen);
+                                    }
+                                    else
+                                    {
+                                        //음수 일 경우
+                                        DragEnd.X = (float)(DragStart.X - DragLen);
+                                    }
+
+                                    if (differ.Y >= 0)
+                                    {
+                                        //양수 일 경우
+                                        DragEnd.Y = (float)(DragStart.Y + DragLen);
+                                    }
+                                    else
+                                    {
+                                        //음수 일 경우
+                                        DragEnd.Y = (float)(DragStart.Y - DragLen);
+                                    }
+                                }
+                                else
+                                {
+                                    DragEnd = DragEndtemp;
+                                }
+
+
+
+                                Vector2 DragSize = DragEnd - DragStart;
+
+                                DragStart *= 32;
+
+                                DragStart = mapeditor.PosMapToScreen(DragStart);
+                                DragEnd = mapeditor.PosMapToScreen(DragEnd * 32);
+
+                                _spriteBatch.Begin(blendState: BlendState.NonPremultiplied);
+                                DrawRect(_spriteBatch, DragStart, DragEnd, Color.BlueViolet, 4);
+                                DrawRect(_spriteBatch, DragStart, DragEnd, new Color(138, 43, 226, 128), 3, true);
+
+                                Vector2 Center = (DragStart + DragEnd) / 2;
+                                Center.X -= 30;
+                                Center.Y -= 10;
+
+
+                                _spriteBatch.DrawString(_font, Math.Abs(DragSize.X) + " X " + Math.Abs(DragSize.Y), Center, Color.White, 0, new Vector2(), 1.5f, SpriteEffects.None, 0);
+
+                                _spriteBatch.End();
+                            }
+                        }
+                        else if (mapeditor.tile_PaintType == MapEditor.TileSetPaintType.PENCIL)
+                        {
+                            Vector2 mappos = MouseTilePos;
+
+                            //mappos.X = (float)(mappos.X * 32);
+                            //mappos.Y = (float)(mappos.Y * 32);
+
+                            int width = mapeditor.brush_x;
+                            int height = mapeditor.brush_y;
+
+
+                            Vector2 startrect = mappos - new Vector2(width / 2, height / 2);
+                            Vector2 endrect = startrect + new Vector2(width, height);
+
+                            startrect = mapeditor.PosMapToScreen(startrect * 32);
+                            endrect = mapeditor.PosMapToScreen(endrect * 32);
+
+                            _spriteBatch.Begin(blendState: BlendState.NonPremultiplied, samplerState: SamplerState.PointClamp);
+                            
+                            DrawRect(_spriteBatch, startrect, endrect, Color.BlueViolet, 4);
+                            DrawRect(_spriteBatch, startrect, endrect, new Color(138, 43, 226, 128), 3, true);
+                            _spriteBatch.End();
+                        }
+                    }
+                    else if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.ISOM && !mapeditor.brush_useRect)
+                    {
+                        if (mapeditor.tile_PaintType == MapEditor.TileSetPaintType.CIRCLE)
+                        {
+                            if (mouse_IsDrag)
+                            {
+                                //드래그 하면 미리보기 그려짐
+                                //TODO:드래그시 미리보기 그리기
+
+                                Vector2 DragStart = mouse_DragMapStart;
+
+                                DragStart.X = (float)Math.Floor(DragStart.X / 32);
+                                DragStart.Y = (float)Math.Floor(DragStart.Y / 32);
+
+                                DragStart = ISOMTool.GetMtxmRectCenter(DragStart, mouse_DragMapStart);
+                                Vector2 DragEndtemp = ISOMTool.GetMtxmRectCenter(MouseTilePos, MouseMapPos);
+
+
+                                Vector2 DragEnd;
+                                if (GlobalVariable.key_LeftShiftDown)
+                                {
+                                    Vector2 differ = DragEndtemp - DragStart;
+                                    double DragLen = Math.Max(Math.Abs(differ.X), Math.Abs(differ.Y));
+
+                                    if (differ.X >= 0)
+                                    {
+                                        //양수 일 경우
+                                        DragEnd.X = (float)(DragStart.X + DragLen);
+                                    }
+                                    else
+                                    {
+                                        //음수 일 경우
+                                        DragEnd.X = (float)(DragStart.X - DragLen);
+                                    }
+
+                                    if (differ.Y >= 0)
+                                    {
+                                        //양수 일 경우
+                                        DragEnd.Y = (float)(DragStart.Y + DragLen);
+                                    }
+                                    else
+                                    {
+                                        //음수 일 경우
+                                        DragEnd.Y = (float)(DragStart.Y - DragLen);
+                                    }
+                                }
+                                else
+                                {
+                                    DragEnd = DragEndtemp;
+                                }
+
+
+                                Vector2 Size = DragEnd - DragStart;
+
+                                int Dragwidth = (int)Math.Abs(Size.X);
+                                int Dragheight = (int)Math.Abs(Size.Y);
+
+                                Vector2 center = new Vector2(Dragwidth, Dragheight) / 2;
+
+                                double radius = Math.Max(Dragwidth / 2, Dragheight / 2);
+
+                                double widthscale = radius / (Dragheight / 2);
+                                double heightscale = radius / (Dragwidth / 2);
+
+
+                                Vector2 DragMin = new Vector2(Math.Min(DragStart.X, DragEnd.X), Math.Min(DragStart.Y, DragEnd.Y));
+
+                                Vector2 centertilepos = DragMin + center;
+
+                                _spriteBatch.Begin(blendState: BlendState.NonPremultiplied);
+                                for (int y = 0; y < Dragheight; y += 1)
+                                {
+                                    if (Dragheight <= 1) break;
+
+                                    if(Size.X * Size.Y < 0)
+                                    {
+                                        //음수일 경우 작동한다
+                                        if(Dragheight % 2 == 0)
+                                        {
+                                            if (y == 0)
+                                            {
+                                                y = 1;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (y == Dragheight - 1)
+                                            {
+                                                continue;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (y == 0)
+                                        {
+                                            y = 1;
+                                        }
+                                    }
+
+                                    if (Dragwidth == 4 && y % 2 == 0) continue;
+
+                                    for (int x = 2; x < Dragwidth; x += 4)
+                                    {
+                                        if (y % 2 == 0 && x == 2 && Dragwidth != 4) x += 2;
+
+
+                                        Vector2 tilepos = DragMin + new Vector2(x, y);
+
+                                        if (Size.X * Size.Y < 0 && Dragheight % 2 == 1)
+                                        {
+                                            //음수일 경우 작동한다
+                                            tilepos.Y += 1;
+                                        }
+
+                                        double tx = (centertilepos.X - tilepos.X) * heightscale;
+                                        double ty = (centertilepos.Y - tilepos.Y) * widthscale;
+
+                                        double d = Math.Sqrt(Math.Pow(tx, 2) + Math.Pow(ty, 2));
+   
+                                        if (radius >= d + 2)
+                                        {
+
+                                            tilepos += new Vector2(-2, -1);
+
+                                            _spriteBatch.Draw(isomtexture, mapeditor.PosMapToScreen(32 * tilepos), null, new Color(138, 43, 226, 128), 0, Vector2.Zero, (float)mapeditor.opt_scalepercent, SpriteEffects.None, 0);
+                                        }
+
+                                    }
+                                }
+
+                                DragStart *= 32;
+                                DragStart = mapeditor.PosMapToScreen(DragStart);
+                                DragEnd = mapeditor.PosMapToScreen(DragEnd * 32);
+
+                                //_spriteBatch.Begin();
+
+                                Vector2 stringCenter = (DragStart + DragEnd) / 2;
+
+                                stringCenter.X -= 30;
+                                stringCenter.Y -= 10;
+
+
+                                //DrawRect(_spriteBatch, DragStart, DragEnd, Color.BlueViolet, 4);
+                                DrawRect(_spriteBatch, DragStart, DragEnd, Color.BlueViolet, 4);
+                                //DrawRect(_spriteBatch, DragStart, DragEnd, new Color(138, 43, 226, 64), 3, true);
+
+                                _spriteBatch.DrawString(_font, (Dragwidth) + " X " + (Dragheight), stringCenter, Color.White, 0, new Vector2(), 1.5f, SpriteEffects.None, 0);
+
+                                _spriteBatch.End();
+                            }
+                        }
+                        else if (mapeditor.tile_PaintType == MapEditor.TileSetPaintType.RECT)
+                        {
+                            if (mouse_IsDrag)
+                            {
+                                Vector2 DragStartMap = mouse_DragMapStart;
+                                Vector2 DragStartTile;
+
+                                DragStartTile.X = (float)Math.Floor(DragStartMap.X / 32);
+                                DragStartTile.Y = (float)Math.Floor(DragStartMap.Y / 32);
+
+                                Vector2 spoint = ISOMTool.GetMtxmRectCenter(MouseTilePos, MouseMapPos);
+                                Vector2 epoint = ISOMTool.GetMtxmRectCenter(DragStartTile, DragStartMap);
+
+                                Vector2 lpoint1;
+                                Vector2 lpoint2;
+
+                                ISOMTool.GetIntersectionPoint(spoint, epoint, out lpoint1, out lpoint2);
+
+
+                                int topx = 0, leftx = 0;
+                                int bottomy = 0, lefty = 0;
+
+                                bool sp = true, ep = true, lp1 = true, lp2 = true;
+                                if (Math.Max(Math.Max(spoint.X, epoint.X), Math.Max(lpoint1.X, lpoint2.X)) == spoint.X && sp)
+                                {
+                                    //가장 오른쪽에 있는 경우.
+                                    spoint.X += 2;
+                                    sp = false;
+                                }
+                                if (Math.Max(Math.Max(spoint.X, epoint.X), Math.Max(lpoint1.X, lpoint2.X)) == epoint.X && ep)
+                                {
+                                    //가장 오른쪽에 있는 경우.
+                                    epoint.X += 2;
+                                    ep = false;
+                                }
+                                if (Math.Max(Math.Max(spoint.X, epoint.X), Math.Max(lpoint1.X, lpoint2.X)) == lpoint1.X && lp1)
+                                {
+                                    //가장 오른쪽에 있는 경우.
+                                    lpoint1.X += 2;
+                                    lp1 = false;
+                                }
+                                if (Math.Max(Math.Max(spoint.X, epoint.X), Math.Max(lpoint1.X, lpoint2.X)) == lpoint2.X && lp2)
+                                {
+                                    //가장 오른쪽에 있는 경우.
+                                    lpoint2.X += 2;
+                                    lp2 = false;
+                                }
+
+                                if (Math.Max(Math.Max(spoint.Y, epoint.Y), Math.Max(lpoint1.Y, lpoint2.Y)) == lpoint2.Y && lp2)
+                                {
+                                    //가장 위에 있는 경우.
+                                    lpoint2.Y += 1;
+                                    bottomy = (int)lpoint2.Y;
+                                    lp2 = false;
+                                }
+                                if (Math.Max(Math.Max(spoint.Y, epoint.Y), Math.Max(lpoint1.Y, lpoint2.Y)) == lpoint1.Y && lp1)
+                                {
+                                    //가장 위에 있는 경우.
+                                    lpoint1.Y += 1;
+                                    bottomy = (int)lpoint1.Y;
+                                    lp1 = false;
+                                }
+                                if (Math.Max(Math.Max(spoint.Y, epoint.Y), Math.Max(lpoint1.Y, lpoint2.Y)) == epoint.Y && ep)
+                                {
+                                    //가장 위에 있는 경우.
+                                    epoint.Y += 1;
+                                    bottomy = (int)epoint.Y;
+                                    ep = false;
+                                }
+                                if (Math.Max(Math.Max(spoint.Y, epoint.Y), Math.Max(lpoint1.Y, lpoint2.Y)) == spoint.Y && sp)
+                                {
+                                    //가장 위에 있는 경우.
+                                    spoint.Y += 1;
+                                    bottomy = (int)spoint.Y;
+                                    sp = false;
+                                }
+
+                                if (Math.Min(Math.Min(spoint.X, epoint.X), Math.Min(lpoint1.X, lpoint2.X)) == spoint.X && sp)
+                                {
+                                    //가장 왼쪽에 있는 경우.
+                                    spoint.X -= 2;
+                                    leftx = (int)spoint.X;
+                                    lefty = (int)spoint.Y;
+                                    sp = false;
+                                }
+                                if (Math.Min(Math.Min(spoint.X, epoint.X), Math.Min(lpoint1.X, lpoint2.X)) == epoint.X && ep)
+                                {
+                                    //가장 왼쪽에 있는 경우.
+                                    epoint.X -= 2;
+                                    leftx = (int)epoint.X;
+                                    lefty = (int)epoint.Y;
+                                    ep = false;
+                                }
+                                if (Math.Min(Math.Min(spoint.X, epoint.X), Math.Min(lpoint1.X, lpoint2.X)) == lpoint1.X && lp1)
+                                {
+                                    //가장 왼쪽에 있는 경우.
+                                    lpoint1.X -= 2;
+                                    leftx = (int)lpoint1.X;
+                                    lefty = (int)lpoint1.Y;
+                                    lp1 = false;
+                                }
+                                if (Math.Min(Math.Min(spoint.X, epoint.X), Math.Min(lpoint1.X, lpoint2.X)) == lpoint2.X && lp2)
+                                {
+                                    //가장 왼쪽에 있는 경우.
+                                    lpoint2.X -= 2;
+                                    leftx = (int)lpoint2.X;
+                                    lefty = (int)lpoint2.Y;
+                                    lp2 = false;
+                                }
+
+                                if (Math.Min(Math.Min(spoint.Y, epoint.Y), Math.Min(lpoint1.Y, lpoint2.Y)) == lpoint2.Y && lp2)
+                                {
+                                    //가장 아래에 있는 경우.
+                                    lpoint2.Y -= 1;
+                                    topx = (int)lpoint2.X;
+                                    lp2 = false;
+                                }
+                                if (Math.Min(Math.Min(spoint.Y, epoint.Y), Math.Min(lpoint1.Y, lpoint2.Y)) == lpoint1.Y && lp1)
+                                {
+                                    //가장 아래에 있는 경우.
+                                    lpoint1.Y -= 1;
+                                    topx = (int)lpoint1.X;
+                                    lp1 = false;
+                                }
+                                if (Math.Min(Math.Min(spoint.Y, epoint.Y), Math.Min(lpoint1.Y, lpoint2.Y)) == epoint.Y && ep)
+                                {
+                                    //가장 아래에 있는 경우.
+                                    epoint.Y -= 1;
+                                    topx = (int)epoint.X;
+                                    ep = false;
+                                }
+                                if (Math.Min(Math.Min(spoint.Y, epoint.Y), Math.Min(lpoint1.Y, lpoint2.Y)) == spoint.Y && sp)
+                                {
+                                    //가장 아래에 있는 경우.
+                                    spoint.Y -= 1;
+                                    topx = (int)spoint.X;
+                                    sp = false;
+                                }
+
+                                int xcount = (topx - leftx) / 2;
+                                int ycount = bottomy - lefty;
+
+                                Vector2 startpoint = new Vector2(leftx, lefty);
+                                startpoint.Y -= 1;
+
+
+                                spoint = mapeditor.PosMapToScreen(spoint * 32);
+                                epoint = mapeditor.PosMapToScreen(epoint * 32);
+                                lpoint1 = mapeditor.PosMapToScreen(lpoint1 * 32);
+                                lpoint2 = mapeditor.PosMapToScreen(lpoint2 * 32);
+
+                                _spriteBatch.Begin(blendState: BlendState.NonPremultiplied, samplerState: SamplerState.PointClamp);
+
+                                for (int y = 0; y < ycount; y++)
+                                {
+                                    Vector2 t = startpoint;
+                                    t.X += y * 2;
+                                    t.Y += y * 1;
+                                    for (int x = 0; x < xcount; x++)
+                                    {
+                                        _spriteBatch.Draw(isomtexture, mapeditor.PosMapToScreen(t * 32), null, new Color(138, 43, 226, 128), 0, Vector2.Zero, (float)mapeditor.opt_scalepercent, SpriteEffects.None, 0);
+
+                                        t.X += 2;
+                                        t.Y -= 1;
+                                    }
+                                }
+
+                                DrawLine(_spriteBatch, spoint, lpoint1, Color.BlueViolet, 4);
+                                DrawLine(_spriteBatch, lpoint1, epoint, Color.BlueViolet, 4);
+                                DrawLine(_spriteBatch, epoint, lpoint2, Color.BlueViolet, 4);
+                                DrawLine(_spriteBatch, lpoint2, spoint, Color.BlueViolet, 4);
+
+                                _spriteBatch.End();
+                            }
+                        }
+                        else if (mapeditor.tile_PaintType == MapEditor.TileSetPaintType.PENCIL)
+                        {
+                            int brush_x = mapeditor.brush_x - 1;
+                            int brush_y = mapeditor.brush_y - 1;
+
+                            Vector2 startpoint = ISOMTool.GetMtxmRectBrush(MouseTilePos, MouseMapPos, brush_x, brush_y);
+
+
+
+                            startpoint.X += -brush_x / 2 * 2 - brush_y / 2 * 2;
+                            startpoint.Y += brush_x / 2 - brush_y / 2;
 
 
                             _spriteBatch.Begin(blendState: BlendState.NonPremultiplied, samplerState: SamplerState.PointClamp);
 
-                            foreach (var item in mapeditor.tile_SelectedTile)
+
+                            for (int y = 0; y < mapeditor.brush_y - 1; y++)
                             {
-                                int mapx = (int)(item.Key.X);
-                                int mapy = (int)(item.Key.Y);
-
-
-                                int tileindex = (int)(mapx + mapy * mapeditor.mapdata.WIDTH);
-
-                                if (!mapeditor.mapdata.CheckTILERange(mapx, mapy)) continue;
-
-
-                                int megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, mapeditor.mapdata.TILE[tileindex]);
-
-                                if (mapeditor.TilePalleteTransparentBlack && megaindex == 0) continue;
-
-                                Vector2 screen = mapeditor.PosMapToScreen(new Vector2(mapx * 32, mapy * 32));
-                                if (0 <= mapx && mapx < mapeditor.mapdata.WIDTH &&
-                                0 <= mapy && mapy < mapeditor.mapdata.HEIGHT)
+                                Vector2 t = startpoint + new Vector2(-2, -1);
+                                t.X += y * 2;
+                                t.Y += y * 1;
+                                for (int x = 0; x < mapeditor.brush_x - 1; x++)
                                 {
+                                    _spriteBatch.Draw(isomtexture, mapeditor.PosMapToScreen(t * 32), null, new Color(138, 43, 226, 128), 0, Vector2.Zero, (float)mapeditor.opt_scalepercent, SpriteEffects.None, 0);
 
-                                    _spriteBatch.Draw(gridtexture, screen, null, new Color(0.4f, 0.4f, 7f, 0.35f), 0, new Vector2(), (float)(32 * mapeditor.opt_scalepercent), SpriteEffects.None, 0);
-
-                                  
-
-                                    //DrawTilePreview(atlasTileSet, mapx * 32, mapy * 32, megaindex);
-
-                                    //DrawRect(_spriteBatch, new Vector2(mapx * 32, mapy * 32), new Vector2(32, 32), Color.Red, 3);
+                                    t.X += 2;
+                                    t.Y -= 1;
                                 }
-
                             }
+                            startpoint += new Vector2(-2, 0);
+
+                            Vector2 left, top, right, bottom;
+
+                            left = mapeditor.PosMapToScreen(startpoint * 32);
+                            top = mapeditor.PosMapToScreen((startpoint + new Vector2(brush_x * 2, -brush_x)) * 32);
+                            right = mapeditor.PosMapToScreen((startpoint + new Vector2(brush_x * 2 + brush_y * 2, -brush_x + brush_y)) * 32);
+                            bottom = mapeditor.PosMapToScreen((startpoint + new Vector2(brush_y * 2, brush_y)) * 32);
+
+                            if (brush_x == 0 && brush_y == 0)
+                            {
+                                DrawRect(_spriteBatch, left + new Vector2((float)(-32 * mapeditor.opt_scalepercent), (float)(-32 * mapeditor.opt_scalepercent))
+                                    , left + new Vector2((float)(32 * mapeditor.opt_scalepercent), (float)(64 * mapeditor.opt_scalepercent)), Color.BlueViolet, 4);
+                            }
+                            else
+                            {
+                                DrawLine(_spriteBatch, left, top, Color.BlueViolet, 4);
+                                DrawLine(_spriteBatch, top, right, Color.BlueViolet, 4);
+                                DrawLine(_spriteBatch, right, bottom, Color.BlueViolet, 4);
+                                DrawLine(_spriteBatch, bottom, left, Color.BlueViolet, 4);
+                            }
+
+ 
+
+
                             _spriteBatch.End();
-                            #endregion
+                        }
+                    }
+
+                if (mapeditor.mapDataBinding.TILE_PAINTTYPE == Control.MapEditor.TileSetPaintType.SELECTION)
+                    {
+                        if (mouse_IsDrag)
+                        {
+
+                            float minx = Math.Min(mouse_DragMapStart.X, MouseMapPos.X);
+                            float miny = Math.Min(mouse_DragMapStart.Y, MouseMapPos.Y);
+                            float maxx = Math.Max(mouse_DragMapStart.X, MouseMapPos.X);
+                            float maxy = Math.Max(mouse_DragMapStart.Y, MouseMapPos.Y);
+
+                            minx = (float)(Math.Floor(minx / 32) * 32);
+                            miny = (float)(Math.Floor(miny / 32) * 32);
+                            maxx = (float)(Math.Ceiling(maxx / 32) * 32);
+                            maxy = (float)(Math.Ceiling(maxy / 32) * 32);
+
+                            //선택모드
+                            Vector2 min = new Vector2(minx, miny);
+                            Vector2 max = new Vector2(maxx, maxy);
 
 
 
+                            _spriteBatch.Begin();
+                            DrawRect(_spriteBatch, mapeditor.PosMapToScreen(min), mapeditor.PosMapToScreen(max), Color.Lime, 3);
+
+                            _spriteBatch.End();
+
+                            //_spriteBatch.Draw(gridtexture, new Rectangle((int)MapMin.X, (int)MapMin.Y, (int)MapSize.X, (int)MapSize.Y), null, mapeditor.TileBack, 0, new Vector2(), SpriteEffects.None, 0);
                         }
 
+                        #region 타일 선택시 그리기
+
+                        _spriteBatch.Begin(blendState: BlendState.NonPremultiplied, samplerState: SamplerState.PointClamp);
+
+                        foreach (var item in mapeditor.tile_SelectedTile)
+                        {
+                            int mapx = (int)(item.Key.X);
+                            int mapy = (int)(item.Key.Y);
+
+
+                            int tileindex = (int)(mapx + mapy * mapeditor.mapdata.WIDTH);
+
+                            if (!mapeditor.mapdata.CheckTILERange(mapx, mapy)) continue;
+
+
+                            int megaindex = tileSet.GetMegaTileIndex(mapeditor.mapdata.TILETYPE, mapeditor.mapdata.TILE[tileindex]);
+
+                            if (mapeditor.TilePalleteTransparentBlack && megaindex == 0) continue;
+
+                            Vector2 screen = mapeditor.PosMapToScreen(new Vector2(mapx * 32, mapy * 32));
+                            if (0 <= mapx && mapx < mapeditor.mapdata.WIDTH &&
+                            0 <= mapy && mapy < mapeditor.mapdata.HEIGHT)
+                            {
+
+                                _spriteBatch.Draw(gridtexture, screen, null, new Color(0.4f, 0.4f, 7f, 0.35f), 0, new Vector2(), (float)(32 * mapeditor.opt_scalepercent), SpriteEffects.None, 0);
+                            }
+
+                        }
+                        _spriteBatch.End();
+                        #endregion
+
                     }
-                    else if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.ISOM)
-                    {
-                        //TODO:ISOM
-                    }
-                    //else if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.PASTE)
-                    //{
-                    //    if (mapeditor.tile_PaintType == MapEditor.TileSetPaintType.RECT)
-                    //    {
-
-                    //    }
-                    //    else if (mapeditor.tile_PaintType == MapEditor.TileSetPaintType.PENCIL)
-                    //    {
-                    //        _spriteBatch.Begin(blendState: BlendState.NonPremultiplied, samplerState: SamplerState.PointClamp);
-                    //        AtlasTileSet atlasTileSet = tileSet.GetAtlasTileSetTexture(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE);
-                    //        Vector2 mappos = MouseTilePos;
-
-                    //        //mappos.X = (float)(mappos.X * 32);
-                    //        //mappos.Y = (float)(mappos.Y * 32);
-
-
-                    //        int width = (int)mapeditor.tile_CopyedTileSize.X;
-                    //        int height = (int)mapeditor.tile_CopyedTileSize.Y;
-
-                    //        int sx = (int)Math.Floor(width / 2.0);
-                    //        int sy = (int)Math.Floor(height / 2.0);
-
-                    //        bool IsOneTile = false;
-                    //        if (width == 1 && height == 1)
-                    //        {
-                    //            IsOneTile = true;
-                    //            width = mapeditor.brush_x;
-                    //            height = mapeditor.brush_y;
-                    //        }
-
-                    //        for (int y = 0; y < height; y++)
-                    //        {
-                    //            for (int x = 0; x < width; x++)
-                    //            {
-                    //                int megaindex;
-
-                    //                if (IsOneTile)
-                    //                {
-                    //                    megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, mapeditor.Tile_GetCopyedTile(0, 0));
-                    //                }
-                    //                else
-                    //                {
-                    //                    megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, mapeditor.Tile_GetCopyedTile(x, y));
-                    //                }
-
-
-                    //                if (mapeditor.TilePalleteTransparentBlack && megaindex == 0) continue;
-
-                    //                int mapx = (int)(mappos.X + (x - sx));
-                    //                int mapy = (int)(mappos.Y + (y - sy));
-
-
-                    //                if (0 <= mapx && mapx < mapeditor.mapdata.WIDTH &&
-                    //                    0 <= mapy && mapy < mapeditor.mapdata.HEIGHT)
-                    //                {
-
-                    //                    DrawTilePreview(atlasTileSet, mapx * 32, mapy * 32, megaindex);
-                    //                }
-
-                    //            }
-                    //        }
-
-
-                    //        _spriteBatch.End();
-                    //    }
-                        
-                    //}
                     break;
                 case Control.MapEditor.Layer.Doodad:
                     {

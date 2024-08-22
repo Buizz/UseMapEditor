@@ -388,12 +388,14 @@
     <Compile Include="FileData\ExcelData.cs" />
     <Compile Include="FileData\ExcelProcess.cs" />
     <Compile Include="FileData\Iscript.cs" />
+    <Compile Include="FileData\ISOMTIle.cs" />
     <Compile Include="FileData\StromLib.cs" />
     <Compile Include="FileData\tblreader.cs" />
     <Compile Include="FileData\TileSet.cs" />
     <Compile Include="Data\Map\MapData.cs" />
     <Compile Include="Data\StarCraft\StarCraftData.cs" />
     <Compile Include="FileData\TriggerManger.cs" />
+    <Compile Include="Global\GlobalVariable.cs" />
     <Compile Include="Lua\LuaManager.cs" />
     <Compile Include="Lua\TrigEditPlus\Main.cs" />
     <Compile Include="MonoGameControl\CustomWpfMouse.cs" />
@@ -422,6 +424,7 @@
     <Compile Include="Tools\KalmanFilter.cs" />
     <Compile Include="Tools\MemoryFunc.cs" />
     <Compile Include="Tools\ShortCutManager.cs" />
+    <Compile Include="Tools\ISOMTool.cs" />
     <Compile Include="Tools\StringTool.cs" />
     <Compile Include="Task\TaskManager.cs" />
     <Compile Include="Task\TaskEvent.cs" />
@@ -735,6 +738,9 @@
     <None Include="Data\TileSet\install.vf4">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Data\TileSet\ISOM\badlands.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Data\TileSet\Jungle.cv5">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -964,6 +970,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\effect1.fx" />
+    <None Include="Data\Image\isomtexture.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

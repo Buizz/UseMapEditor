@@ -13,6 +13,7 @@ using UseMapEditor.FileData;
 using UseMapEditor.Lua.TrigEditPlus;
 using UseMapEditor.Task;
 using UseMapEditor.Task.Events;
+using UseMapEditor.Tools;
 using static Data.Map.MapData;
 
 namespace UseMapEditor.Control
@@ -407,15 +408,8 @@ namespace UseMapEditor.Control
 
 
             //jsonString = JsonConvert.SerializeObject(templist);
-            try
-            {
-                Clipboard.SetDataObject(jsonString);
-            }
-            catch (Exception)
-            {
-                
-            }
-            
+
+            StringTool.SafeCopy(jsonString);
         }
 
 

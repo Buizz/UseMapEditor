@@ -53,6 +53,19 @@ namespace UseMapEditor.Control.MapEditorControl
 
         List<DialogableControlPanel> dialogableControlPanels = new List<DialogableControlPanel>();
 
+        public bool IsHaveFocusWindow()
+        {
+            foreach (var panel in dialogableControlPanels)
+            {
+                if (panel.IsPopup && panel.IsActive())
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public void SwitchTab(int index)
         {
             scenTabControl.SelectedIndex = index;

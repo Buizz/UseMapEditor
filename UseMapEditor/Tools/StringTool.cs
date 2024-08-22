@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace UseMapEditor.Tools
 {
@@ -62,5 +64,25 @@ namespace UseMapEditor.Tools
             return str;
         }
 
+        public static void SafeCopy(string text)
+        {
+            try
+            {
+                Clipboard.Clear();
+                Clipboard.SetText(text);
+            }
+            catch (COMException e1)
+            {
+                try
+                {
+                    Clipboard.SetDataObject(text);
+                }
+                catch (COMException e2)
+                {
+
+                }
+            }
+
+        }
     }
 }

@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Input;
 using UseMapEditor.Control;
 using UseMapEditor.FileData;
+using UseMapEditor.Global;
 using WpfTest.Components;
 
 namespace UseMapEditor.MonoGameControl
@@ -112,7 +113,7 @@ namespace UseMapEditor.MonoGameControl
             {
                 if (mapeditor.PalleteLayer == Control.MapEditor.Layer.Location)
                 {
-                    if (key_QDown)
+                    if (GlobalVariable.key_QDown)
                     {
                         mapeditor.MouseCursorChange(Cursors.Cross);
                     }

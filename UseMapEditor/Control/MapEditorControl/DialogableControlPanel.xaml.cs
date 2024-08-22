@@ -35,6 +35,16 @@ namespace UseMapEditor.Control.MapEditorControl
 
         private PopupWindow popupWindow;
 
+        public bool IsActive()
+        {
+            if(popupWindow != null && popupWindow.IsActive)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public Rect GetRect()
         {
             Rect rect = new Rect(popupWindow.Left, popupWindow.Top, popupWindow.ActualWidth, popupWindow.ActualHeight);
@@ -47,15 +57,23 @@ namespace UseMapEditor.Control.MapEditorControl
         public bool IsPopup;
         public void PopupWindowOpen()
         {
-            this.MinWidth = MainContent.ActualWidth;
+            if (MainGrid.Child != null)
+            {
+                this.MinWidth = MainContent.ActualWidth;
 
-            PopupBackground.Visibility = Visibility.Visible;
+                PopupBackground.Visibility = Visibility.Visible;
 
-            MainGrid.Child = null;
-            popupWindow = new PopupWindow(MainContent, this);
+                MainGrid.Child = null;
+                popupWindow = new PopupWindow(MainContent, this);
 
-            IsPopup = true;
-            popupWindow.Show();
+                IsPopup = true;
+                popupWindow.Show();
+            }
+            else
+            {
+                PopupWindowClose();
+            }
+
         }
         public void PopupWindowClose()
         {

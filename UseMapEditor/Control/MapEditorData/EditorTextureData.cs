@@ -97,7 +97,7 @@ namespace UseMapEditor.Control.MapEditorData
                             MTXM = newMtxm;
                         }
                     }
-                    int megaindex = mapDrawer.tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, MTXM);
+                    int megaindex = mapDrawer.tileSet.GetMegaTileIndex(mapeditor.mapdata.TILETYPE, MTXM);
 
                     if (mapeditor.TilePalleteTransparentBlack && megaindex == 0) continue;
                     mapeditor.editorTextureData.tilePaletteMap.SetTIleFromMTXM(mapeditor.mapdata.TILETYPE, x, y, MTXM);
@@ -180,7 +180,7 @@ namespace UseMapEditor.Control.MapEditorData
                 int tileindex = x + y * 256;
 
                 {
-                    ushort magatile = mapDrawer.tileSet.GetMegaTileIndex(DrawType.SD, tileType, MTXM);
+                    ushort magatile = mapDrawer.tileSet.GetMegaTileIndex(tileType, MTXM);
                     Texture2D texture2D = mapDrawer.tileSet.GetAtlasTileSetTexture(DrawType.SD, tileType).GetTexture();
                     int magax = magatile % (texture2D.Width / 32);
                     int magay = magatile / (texture2D.Height / 32);
@@ -188,7 +188,7 @@ namespace UseMapEditor.Control.MapEditorData
                 }
 
                 {
-                    ushort magatile = mapDrawer.tileSet.GetMegaTileIndex(DrawType.HD, tileType, MTXM);
+                    ushort magatile = mapDrawer.tileSet.GetMegaTileIndex(tileType, MTXM);
                     Texture2D texture2D = mapDrawer.tileSet.GetAtlasTileSetTexture(DrawType.HD, tileType).GetTexture();
                     int magax = magatile % (texture2D.Width / 64);
                     int magay = magatile / (texture2D.Height / 64);

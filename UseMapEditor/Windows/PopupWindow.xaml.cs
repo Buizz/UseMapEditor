@@ -30,7 +30,6 @@ namespace UseMapEditor.Windows
 
             this.dialogableControlPanel = dialogableControlPanel;
 
-
             MainGrid.Child = control;
         }
 

@@ -14,6 +14,7 @@ using System.Windows.Input;
 using UseMapEditor.FileData;
 using UseMapEditor.Task;
 using UseMapEditor.Task.Events;
+using UseMapEditor.Tools;
 using static Data.Map.MapData;
 
 namespace UseMapEditor.Control
@@ -734,8 +735,9 @@ namespace UseMapEditor.Control
 
             jsonString = JsonConvert.SerializeObject(templist);
 
-            Clipboard.SetDataObject(jsonString);
+            //Clipboard.SetDataObject(jsonString);
 
+            StringTool.SafeCopy(jsonString);
         }
 
 

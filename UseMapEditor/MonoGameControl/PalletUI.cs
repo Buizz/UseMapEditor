@@ -18,7 +18,9 @@ namespace UseMapEditor.MonoGameControl
 {
     public partial class MapDrawer : WpfGame
     {
-        int ToolBaStreachValue = 0;
+        int RightToolBarStreachValue = 0;
+        int LeftToolBarStreachValue = 0;
+        int BottomToolBarStreachValue = 0;
 
         private void DrawPallet(bool IsDrawGrp)
         {
@@ -26,10 +28,10 @@ namespace UseMapEditor.MonoGameControl
 
 
 
-            if (mapeditor.IsToolBarOpen())
+            if (mapeditor.IsRightToolBarOpen())
             {
                 //열려 있을 경우
-                if(ToolBaStreachValue >= mapeditor.opt_palletSize)
+                if(RightToolBarStreachValue >= mapeditor.opt_palletSize)
                 {
                     //열림 상태
                     IsOpen = true;
@@ -40,8 +42,8 @@ namespace UseMapEditor.MonoGameControl
 
 
 
-            ToolBaStreachValue = Math.Min(512, ToolBaStreachValue);
-            ToolBaStreachValue = Math.Max(0, ToolBaStreachValue);
+            RightToolBarStreachValue = Math.Min(512, RightToolBarStreachValue);
+            RightToolBarStreachValue = Math.Max(0, RightToolBarStreachValue);
 
 
             Color Back = Color.Black;
@@ -56,7 +58,7 @@ namespace UseMapEditor.MonoGameControl
             //}
 
             _spriteBatch.Begin();
-            _spriteBatch.Draw(gridtexture, new Rectangle((int)(screenwidth), 0, ToolBaStreachValue, (int)screenheight), Back);
+            _spriteBatch.Draw(gridtexture, new Rectangle((int)(screenwidth), 0, RightToolBarStreachValue, (int)screenheight), Back);
             _spriteBatch.End();
 
 
@@ -74,7 +76,7 @@ namespace UseMapEditor.MonoGameControl
             {
                 return;
             }
-            if (ToolBaStreachValue == 0)
+            if (RightToolBarStreachValue == 0)
             {
                 return;
             }

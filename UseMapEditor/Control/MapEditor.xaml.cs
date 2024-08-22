@@ -141,22 +141,49 @@ namespace UseMapEditor.Control
 
         public int opt_xpos
         {
+            //get
+            //{
+            //    return _opt_xpos + (int)(GetLeftToolBarWidth() / opt_scalepercent);
+            //}
+            //set
+            //{
+            //    _opt_xpos = value - (int)(GetLeftToolBarWidth() / opt_scalepercent);
+
+
+            //    int MapLeft = -(int)((MapViewer.ActualWidth + GetLeftToolBarWidth()) / opt_scalepercent / 2);
+            //    int MapRight = mapdata.WIDTH * 32 + MapLeft;
+
+            //    Vector2 MapMin = PosMapToScreen(new Vector2(0, 0));
+            //    Vector2 MapMax = PosMapToScreen(new Vector2(mapdata.WIDTH, mapdata.HEIGHT) * 32);
+            //    Vector2 MapSize = MapMax - MapMin;
+            //    if (!((MapSize.X < (MapViewer.ActualWidth - GetLeftToolBarWidth())) & (MapSize.Y < MapViewer.ActualHeight)))
+            //    {
+            //        if (_opt_xpos < MapLeft)
+            //        {
+            //            _opt_xpos = MapLeft;
+            //        }
+            //        if (_opt_xpos > MapRight)
+            //        {
+            //            _opt_xpos = MapRight;
+            //        }
+            //    }
+            //}
             get
             {
-                return _opt_xpos + (int)(GetLeftToolBarWidth() / opt_scalepercent);
+                return _opt_xpos;
             }
             set
             {
-                _opt_xpos = value - (int)(GetLeftToolBarWidth() / opt_scalepercent);
+                _opt_xpos = value;
 
 
-                int MapLeft = -(int)((MapViewer.ActualWidth + GetLeftToolBarWidth()) / opt_scalepercent / 2);
+                int MapLeft = -(int)((MapViewer.ActualWidth) / opt_scalepercent / 2);
                 int MapRight = mapdata.WIDTH * 32 + MapLeft;
 
                 Vector2 MapMin = PosMapToScreen(new Vector2(0, 0));
                 Vector2 MapMax = PosMapToScreen(new Vector2(mapdata.WIDTH, mapdata.HEIGHT) * 32);
                 Vector2 MapSize = MapMax - MapMin;
-                if (!((MapSize.X < (MapViewer.ActualWidth - GetLeftToolBarWidth())) & (MapSize.Y < MapViewer.ActualHeight)))
+                if (!((MapSize.X < (MapViewer.ActualWidth)) & (MapSize.Y < MapViewer.ActualHeight)))
                 {
                     if (_opt_xpos < MapLeft)
                     {
@@ -425,11 +452,20 @@ namespace UseMapEditor.Control
         }
 
 
-        public bool IsToolBarOpen()
+        public bool IsRightToolBarOpen()
         {
             return RightExpander.IsExpanded;
         }
 
+        public bool IsLeftToolBarOpen()
+        {
+            return LeftExpander.IsExpanded;
+        }
+
+        public bool IsBottomToolBarOpen()
+        {
+            return BottomExpander.IsExpanded;
+        }
 
         public double GetRightToolBarWidth()
         {
@@ -439,6 +475,10 @@ namespace UseMapEditor.Control
         public double GetLeftToolBarWidth()
         {
             return Math.Floor( LeftExpander.ActualWidth);
+        }
+        public double GetBottomToolBarWidth()
+        {
+            return Math.Floor(BottomExpander.ActualWidth);
         }
 
         internal void DisableWindow()
@@ -1129,7 +1169,7 @@ namespace UseMapEditor.Control
 
         private void Grid_MouseMove(object sender, MouseEventArgs e)
         {
-            if (IsToolBarOpen())
+            if (IsRightToolBarOpen())
             {
                 if (e.GetPosition(MapViewer).X < (MapViewer.ActualWidth - 256))
                 {
@@ -1435,7 +1475,7 @@ namespace UseMapEditor.Control
         }
         private void PalletSizeRefresh()
         {
-            List<TileSet.ISOMTIle> iSOMs = Global.WindowTool.MapViewer.tileSet.GetISOMData(this);
+            List<ISOMTIle> iSOMs = Global.WindowTool.MapViewer.tileSet.GetISOMData(this);
 
             int columns = iSOMs.Count / 8 + 1;
 

@@ -417,6 +417,7 @@ namespace UseMapEditor.DataBinding
                 {
                     mapEditor.brush_x = value;
                 }
+                OnPropertyChanged("BRUSHX");
                 mapEditor.editorTextureData.TilePaletteRefresh();
             }
         }
@@ -436,6 +437,7 @@ namespace UseMapEditor.DataBinding
                 {
                     mapEditor.brush_y = value;
                 }
+                OnPropertyChanged("BRUSHY");
                 mapEditor.editorTextureData.TilePaletteRefresh();
             }
         }

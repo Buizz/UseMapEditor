@@ -11,6 +11,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows;
 using UseMapEditor.FileData;
+using UseMapEditor.Global;
 using UseMapEditor.Task.Events;
 using WpfTest.Components;
 using static Data.Map.MapData;
@@ -24,7 +25,7 @@ namespace UseMapEditor.MonoGameControl
         private void DoodadTaskStart()
         {
             mapeditor.taskManager.TaskStart();
-            if (!key_LeftShiftDown)
+            if (!GlobalVariable.key_LeftShiftDown)
             {
                 mapeditor.SelectDoodad.Clear();
             }
@@ -45,7 +46,7 @@ namespace UseMapEditor.MonoGameControl
             else
             {
                 //선택모드
-                if (!key_LeftShiftDown)
+                if (!GlobalVariable.key_LeftShiftDown)
                 {
                     mapeditor.SelectDoodad.Clear();
                 }
@@ -93,7 +94,7 @@ namespace UseMapEditor.MonoGameControl
             {
                 case Control.MapEditor.DrawType.SD:
                     {
-                        int magaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, (ushort)g, (ushort)i);
+                        int magaindex = tileSet.GetMegaTileIndex(mapeditor.mapdata.TILETYPE, (ushort)g, (ushort)i);
                         if (atlasTileSet != null && atlasTileSet.texture2D != null)
                         {
                             _spriteBatch.Draw(atlasTileSet.texture2D, start, atlasTileSet.GetRect(magaindex), Color.White, 0, Vector2.Zero, (float)(doodadindex / 32), SpriteEffects.None, 0);
@@ -103,7 +104,7 @@ namespace UseMapEditor.MonoGameControl
                 case Control.MapEditor.DrawType.HD:
                 case Control.MapEditor.DrawType.CB:
                     {
-                        int magaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, (ushort)g, (ushort)i);
+                        int magaindex = tileSet.GetMegaTileIndex(mapeditor.mapdata.TILETYPE, (ushort)g, (ushort)i);
                         if (atlasTileSet != null && atlasTileSet.texture2D != null)
                         {
                             _spriteBatch.Draw(atlasTileSet.texture2D, start, atlasTileSet.GetRect(magaindex), Color.White, 0, Vector2.Zero, (float)(doodadindex / 64), SpriteEffects.None, 0);

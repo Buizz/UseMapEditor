@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using UseMapEditor.Global;
 using UseMapEditor.Task;
 using UseMapEditor.Tools;
 using static Data.Map.MapData;
@@ -340,7 +341,7 @@ namespace UseMapEditor.MonoGameControl
 
         private void LocationDragStart()
         {
-            locIsmulitSelect = !key_QDown;
+            locIsmulitSelect = !GlobalVariable.key_QDown;
             if (locIsmulitSelect)
             {
                 if (hoverLoc.Count >= 1)
@@ -586,7 +587,7 @@ namespace UseMapEditor.MonoGameControl
 
         private void LocationCreate()
         {
-            if (mouse_IsDrag & !key_LeftShiftDown & mapeditor.SelectLocation.Count == 0)
+            if (mouse_IsDrag & !GlobalVariable.key_LeftShiftDown & mapeditor.SelectLocation.Count == 0)
             {
 
                 if (temp_locCreatesize.X <= 0 | temp_locCreatesize.Y <= 0)

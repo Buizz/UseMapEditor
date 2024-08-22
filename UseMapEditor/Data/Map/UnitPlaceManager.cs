@@ -13,6 +13,7 @@ using UseMapEditor.FileData;
 using UseMapEditor.Global;
 using UseMapEditor.MonoGameControl;
 using UseMapEditor.Task;
+using static Data.Map.MapData;
 
 namespace Data.Map
 {
@@ -20,6 +21,7 @@ namespace Data.Map
     {
 
 
+        public CUNIT lastAddUnit;
         public void UNITListRemove(CUNIT cUNIT)
         {
             switch (cUNIT.unitID)
@@ -61,6 +63,8 @@ namespace Data.Map
 
 
             UNIT.Remove(cUNIT);
+
+            lastAddUnit = null;
 
             mapEditor.miniUnitUpdate(cUNIT, true);
             mapEditor.ChangeMiniMap = true;
@@ -231,9 +235,12 @@ namespace Data.Map
                     break;
                 case 134:
                     //나이더스 카날
-                    if (UNIT.Count != 0)
+                    if (UNIT.Count != 0 && lastAddUnit != null && lastAddUnit.unitID == 134 && lastAddUnit.linkedUnit == 0 && cUNIT.linkedUnit == 0
+                         && !GlobalVariable.key_QDown &&
+                         ((mapEditor.CopyedUnit.Count == 1 && mapEditor.unit_PasteMode) ||
+                         !mapEditor.unit_PasteMode))
                     {
-                        CUNIT lastunit = UNIT.FirstOrDefault((x) => (x.linkedUnit == 0) & (x.unitID == 134));
+                        CUNIT lastunit = lastAddUnit;// UNIT.FirstOrDefault((x) => (x.linkedUnit == 0) & (x.unitID == 134));
 
                         if (lastunit != null)
                         {
@@ -247,7 +254,7 @@ namespace Data.Map
                     break;
             }
 
-
+            lastAddUnit = cUNIT;
 
 
             UNIT.Add(cUNIT);

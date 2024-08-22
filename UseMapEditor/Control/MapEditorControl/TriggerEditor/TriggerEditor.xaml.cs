@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using UseMapEditor.FileData;
+using UseMapEditor.Tools;
 using UseMapEditor.Windows;
 
 namespace UseMapEditor.Control.MapEditorControl
@@ -288,7 +289,7 @@ namespace UseMapEditor.Control.MapEditorControl
                 item.GetTEPText(sb);
             }
 
-            Clipboard.SetDataObject(sb.ToString());
+            StringTool.SafeCopy(sb.ToString());
         }
 
 

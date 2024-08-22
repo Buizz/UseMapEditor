@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using UseMapEditor.FileData;
+using UseMapEditor.Global;
 using UseMapEditor.Task.Events;
 using WpfTest.Components;
 using static Data.Map.MapData;
@@ -23,7 +24,7 @@ namespace UseMapEditor.MonoGameControl
         private void SpriteTaskStart()
         {
             mapeditor.taskManager.TaskStart();
-            if (!key_LeftShiftDown)
+            if (!GlobalVariable.key_LeftShiftDown)
             {
                 mapeditor.SelectSprite.Clear();
             }
@@ -44,7 +45,7 @@ namespace UseMapEditor.MonoGameControl
             else
             {
                 //선택모드
-                if (!key_LeftShiftDown)
+                if (!GlobalVariable.key_LeftShiftDown)
                 {
                     mapeditor.SelectSprite.Clear();
                 }

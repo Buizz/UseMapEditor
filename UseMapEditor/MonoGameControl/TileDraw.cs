@@ -128,7 +128,7 @@ namespace UseMapEditor.MonoGameControl
                     }
 
 
-                    DrawLine(_spriteBatch, new Vector2(x1, y1), new Vector2(x2, y2), GridColor, 1);
+                    DrawLine(_spriteBatch, new Vector2(x1, y1), new Vector2(x2, y2), GridColor, 2);
                 }
 
                 for (float i = 0; i < grdcount + 2; i++)
@@ -164,7 +164,7 @@ namespace UseMapEditor.MonoGameControl
                     }
 
 
-                    DrawLine(_spriteBatch, new Vector2(x1, y1), new Vector2(x2, y2), GridColor, 1);
+                    DrawLine(_spriteBatch, new Vector2(x1, y1), new Vector2(x2, y2), GridColor, 2);
                 }
 
 
@@ -181,11 +181,11 @@ namespace UseMapEditor.MonoGameControl
                 Vector2 EndPoint = new Vector2(Math.Min(screenwidth, MapMax.X), Math.Min(screenheight, MapMax.Y));
                 for (float xi = StartPoint.X; xi < EndPoint.X; xi += mag)
                 {
-                    DrawLine(_spriteBatch, new Vector2(xi, StartPoint.Y), new Vector2(xi, EndPoint.Y), GridColor, 1);
+                    DrawLine(_spriteBatch, new Vector2(xi, StartPoint.Y), new Vector2(xi, EndPoint.Y), GridColor, 2);
                 }
                 for (float yi = StartPoint.Y; yi < EndPoint.Y; yi += mag)
                 {
-                    DrawLine(_spriteBatch, new Vector2(StartPoint.X, yi), new Vector2(EndPoint.X, yi), GridColor, 1);
+                    DrawLine(_spriteBatch, new Vector2(StartPoint.X, yi), new Vector2(EndPoint.X, yi), GridColor, 2);
                 }
             }
 
@@ -286,11 +286,11 @@ namespace UseMapEditor.MonoGameControl
                     ushort MTXM = mapeditor.mapdata.TILE[tileindex];
                     if (IsDrawGrp)
                     {
-                        ushort megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, MTXM);
+                        ushort megaindex = tileSet.GetMegaTileIndex(mapeditor.mapdata.TILETYPE, MTXM);
 
                         if (WalkableOverlay)
                         {
-                            vf4 vf4 = tileSet.GetVf4(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, megaindex);
+                            vf4 vf4 = tileSet.GetVf4(mapeditor.mapdata.TILETYPE, megaindex);
                             if (!vf4.IsGround)
                             {
                                 if (vf4.IsWall)
@@ -319,7 +319,7 @@ namespace UseMapEditor.MonoGameControl
                         }
                         if (BulidingOverlay)
                         {
-                            cv5 cv5 = tileSet.GetCV5(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, MTXM);
+                            cv5 cv5 = tileSet.GetCV5(mapeditor.mapdata.TILETYPE, MTXM);
                             //_spriteBatch.DrawString(_font, cv5.Flags.ToString("X"), new Vector2(xi, yi), Color.Red);
                             if (((cv5.Flags & 0x0040) > 0) | ((cv5.Flags & 0x0080) > 0))
                             {
@@ -329,13 +329,56 @@ namespace UseMapEditor.MonoGameControl
                             }
                         }
 
+                        if (mapeditor.opt_sysdraw)
+                        {
+                            ISOMTIle t = tileSet.ISOMdata[mapeditor.mapdata.TILETYPE][1];
+
+
+                            int colorr = 0;
+                            ushort mtxmgroup = (ushort)(MTXM / 16);
+                            if (mtxmgroup != 2 && mtxmgroup != 3)
+                            {
+                                foreach (var item in t.groups)
+                                {
+                                    colorr += 20;
+                                    colorr = colorr % 256;
+
+                                    foreach (var parts in item.left_tiles)
+                                    {
+                                        ushort group = (ushort)(parts[0] / 16);
+
+                                        if (group == mtxmgroup)
+                                        {
+                                            _spriteBatch.Draw(gridtexture, new Vector2(xi, yi), null, new Color(colorr, 0, 128, 32), 0, Vector2.Zero, (float)mapeditor.opt_scalepercent * 32, SpriteEffects.None, 0);
+                                            break;
+                                        }
+                                    }
+
+                                    foreach (var parts in item.right_tiles)
+                                    {
+                                        ushort group = (ushort)(parts[0] / 16);
+
+                                        if (group == mtxmgroup)
+                                        {
+                                            _spriteBatch.Draw(gridtexture, new Vector2(xi, yi), null, new Color(colorr, 128, 0, 32), 0, Vector2.Zero, (float)mapeditor.opt_scalepercent * 32, SpriteEffects.None, 0);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            _spriteBatch.DrawString(_font, (MTXM / 16).ToString() + "." + (MTXM % 16).ToString(), new Vector2(xi, yi), Color.Red, 0, Vector2.Zero, (float)(mapeditor.opt_scalepercent * 0.5), SpriteEffects.None, 0);
+
+                        }
 
 
                     }
                     else
                     {
-                        _spriteBatch.DrawString(_font, MTXM.ToString(), new Vector2(xi, yi), Color.Red);
+                        _spriteBatch.Draw(gridtexture, new Vector2(xi, yi), null, new Color(((MTXM / 16) * 20) % 256, ((MTXM / 16) * 22) % 256, (MTXM % 16) * 16), 0, Vector2.Zero, (float)mapeditor.opt_scalepercent * 32, SpriteEffects.None, 0);
+                        _spriteBatch.DrawString(_font, (MTXM / 16).ToString() + "." + (MTXM % 16).ToString(), new Vector2(xi, yi), Color.Red, 0, Vector2.Zero, (float)(mapeditor.opt_scalepercent * 0.5), SpriteEffects.None, 0);
                     }
+
+
                     cxti++;
                 }
                 cyti++;
@@ -356,40 +399,6 @@ namespace UseMapEditor.MonoGameControl
             Vector2 MapSize = MapMax - MapMin;
 
 
-            //_spriteBatch.Begin();
-            //_spriteBatch.Draw(gridtexture, new Rectangle((int)MapMin.X, (int)MapMin.Y, (int)MapSize.X, (int)MapSize.Y), null, mapeditor.TileBack, 0, new Vector2(), SpriteEffects.None, 0);
-            //_spriteBatch.End();
-
-
-            ////화면에서 보이는 맵의 좌표
-            //Vector2 sourceMapMin = mapeditor.PosScreenToMap(new Vector2(0, 0));
-            //Vector2 sourceMapMax = mapeditor.PosScreenToMap(new Vector2(screenwidth, screenheight));
-            //Vector2 sourceMapSize = sourceMapMax - sourceMapMin;
-
-            //Vector2 screenMapMin = mapeditor.PosMapToScreen(new Vector2(0, 0));
-            //Vector2 screenMapMax = mapeditor.PosMapToScreen(new Vector2(mapeditor.mapdata.WIDTH, mapeditor.mapdata.HEIGHT) * 32);
-
-            //screenMapMin.X = Math.Max(screenMapMin.X, 0);
-            //screenMapMin.Y = Math.Max(screenMapMin.Y, 0);
-            //screenMapMin.X = Math.Min(screenMapMin.X, screenwidth);
-            //screenMapMin.Y = Math.Min(screenMapMin.Y, screenheight);
-
-            //screenMapMax.X = Math.Max(screenMapMax.X, 0);
-            //screenMapMax.Y = Math.Max(screenMapMax.Y, 0);
-            //screenMapMax.X = Math.Min(screenMapMax.X, screenwidth);
-            //screenMapMax.Y = Math.Min(screenMapMax.Y, screenheight);
-
-            //Vector2 screenMapSize = screenMapMax - screenMapMin;
-
-            //_spriteBatch.Begin();
-            //_spriteBatch.Draw(tiletexture
-            //    , new Rectangle((int)screenMapMin.X, (int)screenMapMin.Y, (int)screenMapSize.X, (int)screenMapSize.Y)
-            //    , new Rectangle((int)sourceMapMin.X, (int)sourceMapMin.Y, (int)sourceMapSize.X, (int)sourceMapSize.Y)
-            //    , Color.White, 0, new Vector2(), SpriteEffects.None, 0);
-            //_spriteBatch.End();
-
-
-
             if (!mapeditor.view_Tile)
             {
                 return;
@@ -402,11 +411,8 @@ namespace UseMapEditor.MonoGameControl
             float mag = (float)(32 * mapeditor.opt_scalepercent);
 
 
-
-
             float startx = (float)-((mapeditor.opt_xpos % 32) * mapeditor.opt_scalepercent);
             float starty = (float)-((mapeditor.opt_ypos % 32) * mapeditor.opt_scalepercent);
-
 
 
             int cxti = startxti;
@@ -422,63 +428,6 @@ namespace UseMapEditor.MonoGameControl
             {
 
             }
-
-
-            //_spriteBatch.Begin(sortMode:SpriteSortMode.Deferred, blendState: BlendState.NonPremultiplied, samplerState: SamplerState.PointClamp);
-            //for (float yi = starty; yi < screenheight; yi += mag)
-            //{
-            //    cxti = startxti;
-            //    for (float xi = startx; xi < screenwidth; xi += mag)
-            //    {
-            //        if (cxti < 0 || cyti < 0)
-            //        {
-            //            cxti++;
-            //            continue;
-            //        }
-            //        if (cxti >= mapeditor.mapdata.WIDTH || cyti >= mapeditor.mapdata.HEIGHT)
-            //        {
-            //            cxti++;
-            //            continue;
-            //        }
-
-            //        int tileindex = cxti + cyti * mapeditor.mapdata.WIDTH;
-            //        ushort MTXM = mapeditor.mapdata.TILE[tileindex];
-            //        if (IsDrawGrp)
-            //        {
-            //            ushort megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, MTXM);
-
-            //            if (tinyScale >= mapeditor.opt_scalepercent)
-            //            {
-            //                _spriteBatch.Draw(gridtexture, new Vector2(xi, yi), null, tileSet.GetTileColor(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, MTXM), 0, Vector2.Zero, (float)(mapeditor.opt_scalepercent * 32), SpriteEffects.None, 0);
-            //            }
-            //            else
-            //            {
-            //                switch (mapeditor.opt_drawType)
-            //                {
-            //                    case Control.MapEditor.DrawType.SD:
-            //                        {
-            //                            _spriteBatch.Draw(atlasTileSet.GetTexture(mapeditor.opt_scalepercent), new Vector2(xi, yi), atlasTileSet.GetRect(megaindex, mapeditor.opt_scalepercent), Color.White, 0, Vector2.Zero, (float)(mapeditor.opt_scalepercent * atlasTileSet.GetCompScale(mapeditor.opt_scalepercent)), SpriteEffects.None, 0);
-            //                        }
-            //                        break;
-            //                    case Control.MapEditor.DrawType.HD:
-            //                    case Control.MapEditor.DrawType.CB:
-            //                        {
-            //                            _spriteBatch.Draw(atlasTileSet.GetTexture(mapeditor.opt_scalepercent), new Vector2(xi, yi), atlasTileSet.GetRect(megaindex, mapeditor.opt_scalepercent), Color.White, 0, Vector2.Zero, (float)(mapeditor.opt_scalepercent / 2 * atlasTileSet.GetCompScale(mapeditor.opt_scalepercent)), SpriteEffects.None, 0);
-            //                        }
-            //                        break;
-            //                }
-            //            }
-
-            //        }
-            //        else
-            //        {
-            //            _spriteBatch.DrawString(_font, MTXM.ToString(), new Vector2(xi, yi), Color.Red);
-            //        }
-            //        cxti++;
-            //    }
-            //    cyti++;
-            //}
-            //_spriteBatch.End();
         }
 
 
@@ -488,7 +437,7 @@ namespace UseMapEditor.MonoGameControl
 
             Vector2 screen = mapeditor.PosMapToScreen(new Vector2(x, y));
 
-            int megaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, MTXM);
+            int megaindex = tileSet.GetMegaTileIndex(mapeditor.mapdata.TILETYPE, MTXM);
             string stropacity = Global.Setting.Vals[Global.Setting.Settings.TIlePreviewOpacity];
 
             float opacity = 100;
@@ -664,14 +613,14 @@ namespace UseMapEditor.MonoGameControl
                             {
                                 case Control.MapEditor.DrawType.SD:
                                     {
-                                        int magaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, group, index);
+                                        int magaindex = tileSet.GetMegaTileIndex(mapeditor.mapdata.TILETYPE, group, index);
                                         _spriteBatch.Draw(atlasTileSet.texture2D, StartPoint, atlasTileSet.GetRect(magaindex), color, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent, SpriteEffects.None, 0);
                                     }
                                     break;
                                 case Control.MapEditor.DrawType.HD:
                                 case Control.MapEditor.DrawType.CB:
                                     {
-                                        int magaindex = tileSet.GetMegaTileIndex(mapeditor.opt_drawType, mapeditor.mapdata.TILETYPE, group, index);
+                                        int magaindex = tileSet.GetMegaTileIndex(mapeditor.mapdata.TILETYPE, group, index);
                                         _spriteBatch.Draw(atlasTileSet.texture2D, StartPoint, atlasTileSet.GetRect(magaindex), color, 0, Vector2.Zero, (float)mapeditor.opt_scalepercent / 2, SpriteEffects.None, 0);
                                     }
                                     break;
