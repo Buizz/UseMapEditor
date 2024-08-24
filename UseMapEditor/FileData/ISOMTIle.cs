@@ -29,6 +29,15 @@ namespace UseMapEditor.FileData
 
         public double elevation;
 
+        public enum ISOMGroupType
+        {
+            tip,
+            cliff,
+            edge,
+            corner,
+            flat
+        }
+
         public ISOMGroup tip_default;
         public ISOMGroup tip_top;
         public ISOMGroup tip_bottom;
