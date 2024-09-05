@@ -41,10 +41,10 @@
                         <materialDesign:PackIcon Kind="Close" />
                     </Button>
                     <Separator/>
-                    <Button x:Name="UndoBtn" ToolTip="실행 취소(Ctrl Z)" Click="UndoBtn_Click" IsEnabled="False" Padding="4">
+                    <Button x:Name="UndoBtn" ToolTip="실행 취소(Ctrl+Z)" Click="UndoBtn_Click" IsEnabled="False" Padding="4">
                         <materialDesign:PackIcon Kind="Undo" />
                     </Button>
-                    <Button x:Name="RedoBtn" ToolTip="다시 실행(Ctrl U)" Click="RedoBtn_Click" IsEnabled="False" Padding="4">
+                    <Button x:Name="RedoBtn" ToolTip="다시 실행(Ctrl+Y)" Click="RedoBtn_Click" IsEnabled="False" Padding="4">
                         <materialDesign:PackIcon Kind="Redo" />
                     </Button>
 

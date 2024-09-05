@@ -1,0 +1,337 @@
+[
+
+  {
+    "name": "Water",
+    "is_no_edge": false,
+    "is_custom": false,
+    "flattile": [6],
+    "connectedtile": [ "Dirt" ],
+    "elevation": -1
+  },
+  {
+    "name": "Dirt",
+    "is_no_edge": false,
+    "is_custom": false,
+    "flattile": [2],
+    "connectedtile": [ "Water", "Mud", "Jungle", "Rocky Ground", "High Dirt" ],
+    "elevation": 0,
+    "tip_default": [[128,130,132],[134,136,138]],
+    "tip_top": [[160,130,132],[162,136,138]],
+    "tip_bottom": [[128,130,160],[134,136,162]],
+    "tip_double": [[160,130,160],[162,136,162]],
+    "tip_toplong": [[156,130,132],[158,136,138]],
+    "tip_bottomlong": [[128,130,152],[134,136,154]],
+    "tip_doublelong": [[156,130,152],[158,136,154]],
+    "tip_doubletoplong": [[156,130,160],[158,136,162]],
+    "tip_doublebottomlong": [[160,130,152],[162,136,154]],
+    
+    "cliff_default": [[116,118,120],[122,124,126]],
+    "cliff_slimtop": [[168,118,120],[170,124,126]],
+    "cliff_slim": [[164,118,120],[166,124,126]],
+    
+    "edgetop_default": [[110],[114]],
+    "edgetop_top": [[152],[154]],
+    "edgetop_toplong": [[148],[150]],
+    "edgetop_corner": [[140],[144]],
+    "edgetop_cornerslim": [[174],[172]],
+    "edgetop_cornerslimtop": [[176],[178]],
+    
+    "edgebottom_default": [[108],[112]],
+    "edgebottom_slim": [[166],[164]],
+    "edgebottom_slimbottom": [[172],[174]],
+    "edgebottom_corner": [[142],[146]],
+    "edgebottom_cornerslim": [[170],[168]],
+    "edgebottom_cornerslimbottom": [[178],[176]],
+
+
+    "cliff_down": [[560],[562]],
+    "tip_down": [[564],[566]],
+    "tip_downedge": [[568],[570]],
+    "cliff_downedge": [[572],[574]]
+  },
+  {
+    "name": "Mud",
+    "is_no_edge": false,
+    "is_custom": false,
+    "flattile": [26],
+    "connectedtile": ["Dirt"],
+    "elevation": 0.1,
+    "tip_default": [[592,594],[596,598]],
+    
+    "cliff_default": [[588,590],[584,586]],
+    "cliff_slimtop": [[616,590],[618,586]],
+    "cliff_slim": [[610,590],[608,586]],
+    
+    "edgetop_default": [[576],[580]],
+    "edgetop_corner": [[604],[600]],
+    "edgetop_cornerslim": [[614],[612]],
+    "edgetop_cornerslimtop": [[620],[622]],
+    
+    "edgebottom_default": [[578],[582]],
+    "edgebottom_slim": [[608],[610]],
+    "edgebottom_slimbottom": [[612],[614]],
+    "edgebottom_corner": [[606],[602]],
+    "edgebottom_cornerslim": [[618],[616]],
+    "edgebottom_cornerslimbottom": [[622],[620]]
+  },
+  {
+    "name": "Jungle",
+    "is_no_edge": false,
+    "is_custom": false,
+    "flattile": [8],
+    "connectedtile": [ "Dirt", "Ruins", "Raised Jungle", "Temple" ],
+    "elevation": 0.1,
+    "tip_default": [[196,198],[200,202]],
+    
+    "cliff_default": [[192,194],[188,190]],
+    "cliff_slimtop": [[220,194],[222,190]],
+    "cliff_slim": [[214,194],[212,190]],
+    
+    "edgetop_default": [[180],[184]],
+    "edgetop_corner": [[208],[204]],
+    "edgetop_cornerslim": [[218],[216]],
+    "edgetop_cornerslimtop": [[224],[226]],
+    
+    "edgebottom_default": [[182],[186]],
+    "edgebottom_slim": [[212],[214]],
+    "edgebottom_slimbottom": [[216],[218]],
+    "edgebottom_corner": [[210],[206]],
+    "edgebottom_cornerslim": [[222],[220]],
+    "edgebottom_cornerslimbottom": [[226],[224]]
+  },
+  {
+    "name": "Rocky Ground",
+    "is_no_edge": true,
+    "is_custom": false,
+    "flattile": [10],
+    "connectedtile": ["Dirt"],
+    "elevation": 0.1,
+    "tip_default": [[292,294],[296,298]],
+    
+    "cliff_default": [[288, 290], [284, 286]],
+    "cliff_slimtop": [[288, 290], [284, 286]],
+    "cliff_slim": [[302, 290], [300, 286]],
+    
+    "edgetop_default": [[276], [280]],
+    "edgetop_cornerslim": [[282],[278]],
+    "edgetop_cornerslimtop": [[282],[278]],
+    
+    "edgebottom_default": [[278], [282]],
+    "edgebottom_slim": [[300], [302]],
+    "edgebottom_cornerslimbottom": [[288],[284]]
+  },
+  {
+    "name": "Ruins",
+    "is_no_edge": true,
+    "is_custom": false,
+    "flattile": [14],
+    "connectedtile": ["Jungle"],
+    "elevation": 0.2,
+    "tip_default": [[320,322],[324,326]],
+    
+    "cliff_default": [[316, 318], [312, 314]],
+    "cliff_slimtop": [[316, 318], [312, 314]],
+    "cliff_slim": [[330, 318], [328, 314]],
+    
+    "edgetop_default": [[304], [308]],
+    "edgetop_cornerslim": [[310],[306]],
+    "edgetop_cornerslimtop": [[310],[306]],
+    
+    "edgebottom_default": [[306], [310]],
+    "edgebottom_slim": [[328], [330]],
+    "edgebottom_cornerslimbottom": [[316],[312]]
+  },
+  {
+    "name": "Raised Jungle",
+    "is_no_edge": true,
+    "is_custom": false,
+    "flattile": [12],
+    "connectedtile": ["Jungle"],
+    "elevation": 0.2,
+    "tip_default": [[376,378],[380,382]],
+    
+    "cliff_default": [[372, 374], [368, 370]],
+    "cliff_slimtop": [[372 ,374],[368,370]],
+    "cliff_slim": [[386, 374], [384, 370]],
+    
+    "edgetop_default": [[360], [364]],
+    "edgetop_cornerslim": [[366],[362]],
+    "edgetop_cornerslimtop": [[366],[362]],
+    
+    "edgebottom_default": [[362], [366]],
+    "edgebottom_slim": [[384], [386]],
+    "edgebottom_cornerslimbottom": [[372],[368]]
+  },
+  {
+    "name": "Temple",
+    "is_no_edge": false,
+    "is_custom": false,
+    "flattile": [16],
+    "connectedtile": ["Jungle"],
+    "elevation": 1,
+    "tip_default": [[436,438,440],[442,444,446]],
+    "tip_top": [[470, 438, 440], [468, 444, 446]],
+    "tip_bottom": [[436, 438, 470], [442, 444, 468]],
+    "tip_double": [[470, 438, 470], [468, 444, 468]],
+    "tip_toplong": [[466, 438, 440], [464, 444, 446]],
+    "tip_bottomlong": [[436, 438, 462], [442, 444, 460]],
+    "tip_doublelong": [[466, 438, 462], [464, 444, 460]],
+    "tip_doubletoplong": [[466, 438, 470], [464, 444, 468]],
+    "tip_doublebottomlong": [[470, 438, 462], [468, 444, 460]],
+    
+    "cliff_default": [[430, 432, 434], [424, 426, 428]],
+    "cliff_slimtop": [[480, 432, 434], [482, 426, 428]],
+    "cliff_slim": [[474, 432, 434], [472, 426, 428]],
+    
+    "edgetop_default": [[416], [420]],
+    "edgetop_top": [[462], [460]],
+    "edgetop_toplong": [[458], [456]],
+    "edgetop_corner": [[452], [448]],
+    "edgetop_cornerslim": [[478], [476]],
+    "edgetop_cornerslimtop": [[484], [486]],
+    
+    "edgebottom_default": [[418], [422]],
+    "edgebottom_slim": [[472], [474]],
+    "edgebottom_slimbottom": [[476], [478]],
+    "edgebottom_corner": [[454], [450]],
+    "edgebottom_cornerslim": [[482], [480]],
+    "edgebottom_cornerslimbottom": [[486], [484]]
+  },
+  {
+    "name": "High Dirt",
+    "is_no_edge": false,
+    "is_custom": false,
+    "flattile": [4],
+    "connectedtile": ["Dirt", "High Jungle"],
+    "elevation": 1,
+    "tip_default": [[56,58,60],[62,64,66]],
+    "tip_top": [[88,58,60],[90,64,66]],
+    "tip_bottom": [[56,58,88],[62,64,90]],
+    "tip_double": [[88,58,88],[90,64,90]],
+    "tip_toplong": [[84,58,60],[86,64,66]],
+    "tip_bottomlong": [[56,58,80],[62,64,82]],
+    "tip_doublelong": [[84,58,80],[86,64,82]],
+    "tip_doubletoplong": [[84,58,88],[86,64,90]],
+    "tip_doublebottomlong": [[88,58,80],[90,64,82]],
+    
+    "cliff_default": [[44,46,48],[50,52,54]],
+    "cliff_slimtop": [[96,46,48],[98,52,54]],
+    "cliff_slim": [[92,46,48],[94,52,54]],
+    
+    "edgetop_default": [[38],[42]],
+    "edgetop_top": [[80],[82]],
+    "edgetop_toplong": [[76],[78]],
+    "edgetop_corner": [[68],[72]],
+    "edgetop_cornerslim": [[102],[100]],
+    "edgetop_cornerslimtop": [[104],[106]],
+    
+    "edgebottom_default": [[36],[40]],
+    "edgebottom_slim": [[94],[92]],
+    "edgebottom_slimbottom": [[100],[102]],
+    "edgebottom_corner": [[70],[74]],
+    "edgebottom_cornerslim": [[98],[96]],
+    "edgebottom_cornerslimbottom": [[106],[104]]
+  },
+  {
+    "name": "High Jungle",
+    "is_no_edge": false,
+    "is_custom": false,
+    "flattile": [18],
+    "connectedtile": ["High Dirt", "High Ruins", "High Raised Jungle", "High Temple"],
+    "elevation": 1.1,
+    "tip_default": [[244,246],[248,250]],
+    
+    "cliff_default": [[240, 242], [236, 238]],
+    "cliff_slimtop": [[268, 242], [270, 238]],
+    "cliff_slim": [[262, 242], [260, 238]],
+    
+    "edgetop_default": [[228], [232]],
+    "edgetop_corner": [[256], [252]],
+    "edgetop_cornerslim": [[266], [264]],
+    "edgetop_cornerslimtop": [[272], [274]],
+    
+    "edgebottom_default": [[230], [234]],
+    "edgebottom_slim": [[260], [262]],
+    "edgebottom_slimbottom": [[264], [266]],
+    "edgebottom_corner": [[258], [254]],
+    "edgebottom_cornerslim": [[270], [268]],
+    "edgebottom_cornerslimbottom": [[274], [272]]
+  },
+  {
+    "name": "High Ruins",
+    "is_no_edge": true,
+    "is_custom": false,
+    "flattile": [20],
+    "connectedtile": ["High Jungle"],
+    "elevation": 1.2,
+    "tip_default": [[348,350],[352,354]],
+    
+    "cliff_default": [[344, 346], [340, 342]],
+    "cliff_slimtop": [[344, 346], [340, 342]],
+    "cliff_slim": [[358, 346], [356, 342]],
+    
+    "edgetop_default": [[332], [336]],
+    "edgetop_cornerslim": [[338], [334]],
+    "edgetop_cornerslimtop": [[338], [334]],
+    
+    "edgebottom_default": [[334], [338]],
+    "edgebottom_slim": [[356], [358]],
+    "edgebottom_cornerslimbottom": [[344], [340]]
+  },
+  {
+    "name": "High Raised Jungle",
+    "is_no_edge": true,
+    "is_custom": false,
+    "flattile": [22],
+    "connectedtile": ["High Jungle"],
+    "elevation": 1.2,
+    "tip_default": [[404, 406], [408, 410]],
+    
+    "cliff_default": [[400, 402], [396, 398]],
+    "cliff_slimtop": [[400, 402], [396, 398]],
+    "cliff_slim": [[414, 402], [412, 398]],
+    
+    "edgetop_default": [[388], [392]],
+    "edgetop_cornerslim": [[394], [390]],
+    "edgetop_cornerslimtop": [[394], [390]],
+    
+    "edgebottom_default": [[390], [394]],
+    "edgebottom_slim": [[412], [414]],
+    "edgebottom_cornerslimbottom": [[400], [396]]
+  },
+  {
+    "name": "High Temple",
+    "is_no_edge": false,
+    "is_custom": false,
+    "flattile": [24],
+    "connectedtile": ["High Jungle"],
+    "elevation": 2,
+    "tip_default": [[508, 510, 512], [514, 516, 518]],
+    "tip_top": [[542, 510, 512], [540, 516, 518]],
+    "tip_bottom": [[508, 510, 542], [514, 516, 540]],
+    "tip_double": [[542, 510, 542], [540, 516, 540]],
+    "tip_toplong": [[538, 510, 512], [536, 516, 518]],
+    "tip_bottomlong": [[508, 510, 534], [514, 516, 532]],
+    "tip_doublelong": [[538, 510, 534], [536, 516, 532]],
+    "tip_doubletoplong": [[538, 510, 542], [536, 516, 540]],
+    "tip_doublebottomlong": [[542, 510, 534], [540, 516, 532]],
+    
+    "cliff_default": [[502, 504, 506], [496, 498, 500]],
+    "cliff_slimtop": [[552, 504, 506], [554, 498, 500]],
+    "cliff_slim": [[546, 504, 506], [544, 498, 500]],
+    
+    "edgetop_default": [[488], [492]],
+    "edgetop_top": [[534], [532]],
+    "edgetop_toplong": [[530], [528]],
+    "edgetop_corner": [[524], [520]],
+    "edgetop_cornerslim": [[550], [548]],
+    "edgetop_cornerslimtop": [[556], [558]],
+    
+    "edgebottom_default": [[490], [494]],
+    "edgebottom_slim": [[544], [546]],
+    "edgebottom_slimbottom": [[548], [550]],
+    "edgebottom_corner": [[526], [522]],
+    "edgebottom_cornerslim": [[554], [552]],
+    "edgebottom_cornerslimbottom": [[558], [556]]
+  }
+]

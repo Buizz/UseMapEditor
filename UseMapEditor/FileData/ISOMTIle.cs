@@ -14,18 +14,30 @@ using static UseMapEditor.FileData.TileSet;
 
 namespace UseMapEditor.FileData
 {
-    public class ISOMTIle
+    public class ISOMTile
     {
+        public override string ToString()
+        {
+            return name;
+        }
+
+
+
         public string name;
         public JArray flattile;
         public List<string> connectedtilenamelist;
 
         //바로 연결된 낮은 타일
-        public ISOMTIle connectlowtile;
+        public ISOMTile ConnectLowTile;
         //바로 연결된 높은 타일
-        public ISOMTIle connecthightile;
+        public ISOMTile ConnectHighTile;
         //같은 높이로 연결된 타일
-        public List<ISOMTIle> connectedtile;
+        public List<ISOMTile> ConnectedEqualTile;
+
+
+        //같은 높이로 연결된 타일
+        public List<ISOMTile> ConnectedAllTile;
+
 
         public double elevation;
 
@@ -34,9 +46,11 @@ namespace UseMapEditor.FileData
             tip,
             cliff,
             edge,
-            corner,
             flat
         }
+
+        public bool IsMiniISOM = false;
+
 
         public ISOMGroup tip_default;
         public ISOMGroup tip_top;
@@ -52,20 +66,26 @@ namespace UseMapEditor.FileData
         public ISOMGroup cliff_slimtop;
         public ISOMGroup cliff_slim;
 
-        public ISOMGroup edge_default;
-        public ISOMGroup edge_top;
-        public ISOMGroup edge_toplong;
-        public ISOMGroup edge_slim;
-        public ISOMGroup edge_slimtop;
-        public ISOMGroup edge_slimtoplong;
 
-        public ISOMGroup corner_default;
-        public ISOMGroup corner_thickktop;
-        public ISOMGroup corner_thickbottom;
-        public ISOMGroup corner_slimdefault;
-        public ISOMGroup corner_slimtop;
-        public ISOMGroup corner_slimbottom;
-        public ISOMGroup corner_slimdouble;
+        public ISOMGroup edgetop_default;
+        public ISOMGroup edgetop_top;
+        public ISOMGroup edgetop_toplong;
+        public ISOMGroup edgetop_corner;
+        public ISOMGroup edgetop_cornerslim;
+        public ISOMGroup edgetop_cornerslimtop;
+
+        public ISOMGroup edgebottom_default;
+        public ISOMGroup edgebottom_slim;
+        public ISOMGroup edgebottom_slimbottom;
+        public ISOMGroup edgebottom_corner;
+        public ISOMGroup edgebottom_cornerslim;
+        public ISOMGroup edgebottom_cornerslimbottom;
+
+        public ISOMGroup cliff_down;
+        public ISOMGroup tip_down;
+        public ISOMGroup tip_downedge;
+        public ISOMGroup cliff_downedge;
+
         public List<ISOMGroup> groups = new List<ISOMGroup>();
 
         public ISOMPart group1list;
@@ -79,6 +99,7 @@ namespace UseMapEditor.FileData
         public Dictionary<ushort, bool> tip_left_mtxmlist;
 
 
+        public Dictionary<ushort, bool> topdonwlist;
 
         public static Random rd = new Random();
         public static int GetRdindex(ISOMGroup isomGroup)
@@ -88,14 +109,19 @@ namespace UseMapEditor.FileData
         public int lastindex = 0;
 
 
-        public bool IsCustomISOM;
+        public bool IsCustom;
+        public bool IsNoEdge;
+        public bool IsHasCliffDown;
 
 
 
         //그룹으로 부터 시작
-        public ISOMTIle(JObject jobject, TileSet tileSet, TileType tileType)
+        public ISOMTile(JObject jobject, TileSet tileSet, TileType tileType)
         {
             name = jobject["name"].ToString();
+
+            IsCustom = (bool)jobject["is_custom"];
+            IsNoEdge = (bool)jobject["is_no_edge"];
 
             cliff_flat_right_mtxmlist = new Dictionary<ushort, bool>();
             cliff_flat_left_mtxmlist = new Dictionary<ushort, bool>();
@@ -104,8 +130,11 @@ namespace UseMapEditor.FileData
             tip_right_mtxmlist = new Dictionary<ushort, bool>();
             tip_left_mtxmlist = new Dictionary<ushort, bool>();
 
-            connectedtile = new List<ISOMTIle>();
+            topdonwlist = new Dictionary<ushort, bool>();
+
+            ConnectedEqualTile = new List<ISOMTile>();
             connectedtilenamelist = new List<string>();
+            ConnectedAllTile = new List<ISOMTile>();
             foreach (var item in (JArray)jobject["connectedtile"])
             {
                 connectedtilenamelist.Add(item.ToString());
@@ -150,39 +179,54 @@ namespace UseMapEditor.FileData
             cliff_slimtop = new ISOMGroup("cliff_slimtop", jobject, tileType, tileSet);
             cliff_slim = new ISOMGroup("cliff_slim", jobject, tileType, tileSet);
 
-            edge_default = new ISOMGroup("edge_default", jobject, tileType, tileSet);
-            edge_top = new ISOMGroup("edge_top", jobject, tileType, tileSet);
-            edge_toplong = new ISOMGroup("edge_toplong", jobject, tileType, tileSet);
-            edge_slim = new ISOMGroup("edge_slim", jobject, tileType, tileSet);
-            edge_slimtop = new ISOMGroup("edge_slimtop", jobject, tileType, tileSet);
-            edge_slimtoplong = new ISOMGroup("edge_slimtoplong", jobject, tileType, tileSet);
+            edgetop_default = new ISOMGroup("edgetop_default", jobject, tileType, tileSet);
+            edgetop_top = new ISOMGroup("edgetop_top", jobject, tileType, tileSet);
+            edgetop_toplong = new ISOMGroup("edgetop_toplong", jobject, tileType, tileSet);
+            edgetop_corner = new ISOMGroup("edgetop_corner", jobject, tileType, tileSet);
+            edgetop_cornerslim = new ISOMGroup("edgetop_cornerslim", jobject, tileType, tileSet);
+            edgetop_cornerslimtop = new ISOMGroup("edgetop_cornerslimtop", jobject, tileType, tileSet);
 
-            corner_default = new ISOMGroup("corner_default", jobject, tileType, tileSet);
-            corner_thickktop = new ISOMGroup("corner_thickktop", jobject, tileType, tileSet);
-            corner_thickbottom = new ISOMGroup("corner_thickbottom", jobject, tileType, tileSet);
-            corner_slimdefault = new ISOMGroup("corner_slimdefault", jobject, tileType, tileSet);
-            corner_slimtop = new ISOMGroup("corner_slimtop", jobject, tileType, tileSet);
-            corner_slimbottom = new ISOMGroup("corner_slimbottom", jobject, tileType, tileSet);
-            corner_slimdouble = new ISOMGroup("corner_slimdouble", jobject, tileType, tileSet);
+            edgebottom_default = new ISOMGroup("edgebottom_default", jobject, tileType, tileSet);
+            edgebottom_slim = new ISOMGroup("edgebottom_slim", jobject, tileType, tileSet);
+            edgebottom_slimbottom = new ISOMGroup("edgebottom_slimbottom", jobject, tileType, tileSet);
+            edgebottom_corner = new ISOMGroup("edgebottom_corner", jobject, tileType, tileSet);
+            edgebottom_cornerslim = new ISOMGroup("edgebottom_cornerslim", jobject, tileType, tileSet);
+            edgebottom_cornerslimbottom = new ISOMGroup("edgebottom_cornerslimbottom", jobject, tileType, tileSet);
 
+            cliff_down = new ISOMGroup("cliff_down", jobject, tileType, tileSet);
+            tip_down = new ISOMGroup("tip_down", jobject, tileType, tileSet);
+            tip_downedge = new ISOMGroup("tip_downedge", jobject, tileType, tileSet);
+            cliff_downedge = new ISOMGroup("cliff_downedge", jobject, tileType, tileSet);
+
+            cliff_down.AddToDict(topdonwlist);
+            tip_down.AddToDict(topdonwlist);
+            tip_downedge.AddToDict(topdonwlist);
+            cliff_downedge.AddToDict(topdonwlist);
+
+            IsHasCliffDown = (topdonwlist.Count != 0);
+
+
+            if (tip_default.PartLength == 4) IsMiniISOM = true;
 
 
             groups.Add(cliff_default);
             groups.Add(cliff_slimtop);
             groups.Add(cliff_slim);
-            groups.Add(edge_default);
-            groups.Add(edge_top);
-            groups.Add(edge_toplong);
-            groups.Add(edge_slim);
-            groups.Add(edge_slimtop);
-            groups.Add(edge_slimtoplong);
-            groups.Add(corner_default);
-            groups.Add(corner_thickktop);
-            groups.Add(corner_thickbottom);
-            groups.Add(corner_slimdefault);
-            groups.Add(corner_slimtop);
-            groups.Add(corner_slimbottom);
-            groups.Add(corner_slimdouble);
+
+            groups.Add(edgetop_default);
+            groups.Add(edgetop_top);
+            groups.Add(edgetop_toplong);
+            groups.Add(edgetop_corner);
+            groups.Add(edgetop_cornerslim);
+            groups.Add(edgetop_cornerslimtop);
+
+            groups.Add(edgebottom_default);
+            groups.Add(edgebottom_slim);
+            groups.Add(edgebottom_slimbottom);
+            groups.Add(edgebottom_corner);
+            groups.Add(edgebottom_cornerslim);
+            groups.Add(edgebottom_cornerslimbottom);
+
             groups.Add(tip_default);
             groups.Add(tip_top);
             groups.Add(tip_bottom);
@@ -192,7 +236,6 @@ namespace UseMapEditor.FileData
             groups.Add(tip_doublelong);
             groups.Add(tip_doubletoplong);
             groups.Add(tip_doublebottomlong);
-
 
 
             tip_default.AddToDict(tip_right_mtxmlist, false);
@@ -243,12 +286,10 @@ namespace UseMapEditor.FileData
                     }
                 }
             }
-
-
         }
 
 
-        public void AddTipToFlat(ISOMTIle groupISOM)
+        public void AddTipToFlat(ISOMTile groupISOM)
         {
             tip_default.AddToDictOneLine(groupISOM.flat_mtxmlist, true);
             tip_top.AddToDictOneLine(groupISOM.flat_mtxmlist, true);
@@ -260,12 +301,13 @@ namespace UseMapEditor.FileData
             tip_doubletoplong.AddToDictOneLine(groupISOM.flat_mtxmlist, true);
             tip_doublebottomlong.AddToDictOneLine(groupISOM.flat_mtxmlist, true);
 
-            edge_default.AddToDictLeftTop(groupISOM.flat_mtxmlist);
-            edge_top.AddToDictLeftTop(groupISOM.flat_mtxmlist);
-            edge_toplong.AddToDictLeftTop(groupISOM.flat_mtxmlist);
-            edge_slim.AddToDictLeftTop(groupISOM.flat_mtxmlist);
-            edge_slimtop.AddToDictLeftTop(groupISOM.flat_mtxmlist);
-            edge_slimtoplong.AddToDictLeftTop(groupISOM.flat_mtxmlist);
+            edgetop_default.AddToDictLeftTop(groupISOM.flat_mtxmlist);
+            edgetop_top.AddToDictLeftTop(groupISOM.flat_mtxmlist);
+            edgetop_toplong.AddToDictLeftTop(groupISOM.flat_mtxmlist);
+
+            cliff_default.AddToDictLeftBottom(groupISOM.flat_mtxmlist);
+            cliff_slim.AddToDictLeftBottom(groupISOM.flat_mtxmlist);
+            cliff_slimtop.AddToDictLeftBottom(groupISOM.flat_mtxmlist);
         }
 
 
@@ -273,7 +315,7 @@ namespace UseMapEditor.FileData
         {
             Flat,
             DownBorder,
-            UpBorder,
+            FlatDownBorder,
             None
         }
         public TileBorder CheckTile(ushort LT, ushort RT, ushort LB, ushort RB)
@@ -287,6 +329,25 @@ namespace UseMapEditor.FileData
             bool isEdgeRT = edge_mtxmlist.ContainsKey(RT);
             bool isEdgeLB = edge_mtxmlist.ContainsKey(LB);
             bool isEdgeRB = edge_mtxmlist.ContainsKey(RB);
+
+
+
+            if (topdonwlist.ContainsKey(LT)) return TileBorder.DownBorder;
+            else if (topdonwlist.ContainsKey(RT)) return TileBorder.DownBorder;
+            else if (topdonwlist.ContainsKey(LB)) return TileBorder.DownBorder;
+            else if (topdonwlist.ContainsKey(RB)) return TileBorder.DownBorder;
+
+            if (ConnectHighTile != null && !ConnectHighTile.IsMiniISOM)
+            {
+                if (isEdgeLB && isEdgeRB
+                    && (ConnectHighTile.tip_right_mtxmlist.ContainsKey(RT) || ConnectHighTile.cliff_flat_right_mtxmlist.ContainsKey(RT))
+                    && (ConnectHighTile.tip_left_mtxmlist.ContainsKey(LT) || ConnectHighTile.cliff_flat_left_mtxmlist.ContainsKey(LT)))
+                {
+                    return TileBorder.DownBorder;
+                }
+            }
+
+
 
             //4개가 전부 플랫 타일일 경우 (무조건 플랫타일)
             if (isFlatLT && isFlatRT && isFlatLB && isFlatRB) return TileBorder.Flat;
@@ -308,18 +369,30 @@ namespace UseMapEditor.FileData
                 }
 
                 //2. 나머지 타일이 전부 HighTile의 Edge일 경우 -> 플랫타일
-                if(connecthightile != null)
+                if(ConnectHighTile != null)
                 {
                     alledge = true;
-                    if (!isFlatLT) alledge &= connecthightile.edge_mtxmlist.ContainsKey(LT);
-                    if (!isFlatRT) alledge &= connecthightile.edge_mtxmlist.ContainsKey(RT);
-                    if (!isFlatLB) alledge &= connecthightile.edge_mtxmlist.ContainsKey(LB);
-                    if (!isFlatRB) alledge &= connecthightile.edge_mtxmlist.ContainsKey(RB);
+                    if (!isFlatLT) alledge &= ConnectHighTile.edge_mtxmlist.ContainsKey(LT);
+                    if (!isFlatRT) alledge &= ConnectHighTile.edge_mtxmlist.ContainsKey(RT);
+                    if (!isFlatLB) alledge &= ConnectHighTile.edge_mtxmlist.ContainsKey(LB);
+                    if (!isFlatRB) alledge &= ConnectHighTile.edge_mtxmlist.ContainsKey(RB);
 
                     if (alledge)
                     {
                         return TileBorder.Flat;
                     }
+                
+                    if(ConnectHighTile.edge_mtxmlist.ContainsKey(LT) && ConnectHighTile.edge_mtxmlist.ContainsKey(RT))
+                    {
+                        if (isFlatLB && isEdgeRB)
+                        {
+                            return TileBorder.DownBorder;
+                        }else if (isFlatRB && isEdgeLB)
+                        {
+                            return TileBorder.DownBorder;
+                        }
+                    }
+                
                 }
             }
 
@@ -327,12 +400,12 @@ namespace UseMapEditor.FileData
 
             //하나라도 플랫 타일이 없을 경우
             //1. 4개가 LT,LB는 HighTile의 Cliff, RT,RB가 HighTile의 Cliff일 경우 플랫타일
-            if (connecthightile != null)
+            if (ConnectHighTile != null)
             {
-                if(connecthightile.cliff_flat_left_mtxmlist.ContainsKey(RT)
-                    && connecthightile.cliff_flat_right_mtxmlist.ContainsKey(LT)
-                    && connecthightile.edge_mtxmlist.ContainsKey(RB)
-                    && connecthightile.edge_mtxmlist.ContainsKey(LB)
+                if(ConnectHighTile.cliff_flat_left_mtxmlist.ContainsKey(RT)
+                    && ConnectHighTile.cliff_flat_right_mtxmlist.ContainsKey(LT)
+                    && ConnectHighTile.edge_mtxmlist.ContainsKey(RB)
+                    && ConnectHighTile.edge_mtxmlist.ContainsKey(LB)
                     //&& connecthightile.cliff_flat_left_mtxmlist.ContainsKey(RB)
                     //&& connecthightile.cliff_flat_right_mtxmlist.ContainsKey(LB)
                     )
@@ -555,10 +628,28 @@ namespace UseMapEditor.FileData
 
             public void AddToDictLeftTop(Dictionary<ushort, bool> dic)
             {
-                left_tiles[0].AddToDict(dic);
-                right_tiles[1].AddToDict(dic);
-            
+                if (left_tiles.Count > 0)
+                {
+                    left_tiles[0].AddToDict(dic);
+                }
+                if (right_tiles.Count > 1)
+                {
+                    right_tiles[1].AddToDict(dic);
+                }
             }
+
+            public void AddToDictLeftBottom(Dictionary<ushort, bool> dic)
+            {
+                if (left_tiles.Count > 0)
+                {
+                    left_tiles[left_tiles.Count - 2].AddToDict(dic);
+                }
+                if (right_tiles.Count > 1)
+                {
+                    right_tiles.Last().AddToDict(dic);
+                }
+            }
+
 
             public void AddToDict(Dictionary<ushort, bool> dic)
             {
@@ -587,9 +678,9 @@ namespace UseMapEditor.FileData
                 JArray left = (JArray)array.First();
                 JArray right = (JArray)array.Last();
 
-                if (left.Count == 2 || left.Count == 3)
+                if (left.Count <= 3)
                 {
-                    //2개 or 3개 그보다 많은 
+                    //1개 or 2개 or 3개 그보다 많은 
                     foreach (var item in left)
                     {
                         ushort lmtxm = (ushort)item;
@@ -616,7 +707,7 @@ namespace UseMapEditor.FileData
                 }
 
 
-                if (right.Count == 2 || right.Count == 3)
+                if (right.Count <= 3)
                 {
                     //2개 or 3개 그보다 많은 
                     foreach (var item in right)

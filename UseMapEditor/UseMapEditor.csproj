@@ -388,7 +388,7 @@
     <Compile Include="FileData\ExcelData.cs" />
     <Compile Include="FileData\ExcelProcess.cs" />
     <Compile Include="FileData\Iscript.cs" />
-    <Compile Include="FileData\ISOMTIle.cs" />
+    <Compile Include="FileData\ISOMTile.cs" />
     <Compile Include="FileData\StromLib.cs" />
     <Compile Include="FileData\tblreader.cs" />
     <Compile Include="FileData\TileSet.cs" />
@@ -421,10 +421,12 @@
     <Compile Include="Task\Events\TileEvent.cs" />
     <Compile Include="Task\Events\UnitEvent.cs" />
     <Compile Include="Task\Events\UnitPropertyEvent.cs" />
+    <Compile Include="Tools\ISOM\DrawISOMGroup.cs" />
+    <Compile Include="Tools\ISOM\ISOMPaint.cs" />
     <Compile Include="Tools\KalmanFilter.cs" />
     <Compile Include="Tools\MemoryFunc.cs" />
     <Compile Include="Tools\ShortCutManager.cs" />
-    <Compile Include="Tools\ISOMTool.cs" />
+    <Compile Include="Tools\ISOM\ISOMTool.cs" />
     <Compile Include="Tools\StringTool.cs" />
     <Compile Include="Task\TaskManager.cs" />
     <Compile Include="Task\TaskEvent.cs" />
@@ -736,6 +738,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Data\TileSet\install.vf4">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\TileSet\ISOM\Jungle.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Data\TileSet\ISOM\badlands.json">

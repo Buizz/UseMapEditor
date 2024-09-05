@@ -209,8 +209,8 @@ namespace UseMapEditor.FileData
             //Rest unknown/unused.;
         }
 
-        public Dictionary<TileType, List<ISOMTIle>> ISOMdata;
-        public Dictionary<TileType, List<ISOMTIle>> CustomISOMdata;
+        public Dictionary<TileType, List<ISOMTile>> ISOMdata;
+        public Dictionary<TileType, List<ISOMTile>> CustomISOMdata;
 
 
         public Dictionary<TileType, cv5[]> cv5data;
@@ -512,7 +512,7 @@ namespace UseMapEditor.FileData
         private bool IsTestDataCreate = false;
         private void LoadPalletData()
         {
-            ISOMdata = new Dictionary<TileType, List<ISOMTIle>>();
+            ISOMdata = new Dictionary<TileType, List<ISOMTile>>();
 
 
 
@@ -637,11 +637,11 @@ namespace UseMapEditor.FileData
                             JArray json = (JArray)JToken.ReadFrom(reader);
 
 
-                            List<ISOMTIle> isoms = new List<ISOMTIle>();
+                            List<ISOMTile> isoms = new List<ISOMTile>();
 
                             foreach (JObject jobject in json)
                             {
-                                ISOMTIle isom = new ISOMTIle(jobject, this, cv.Key);
+                                ISOMTile isom = new ISOMTile(jobject, this, cv.Key);
                                 isoms.Add(isom);
 
                             }
@@ -651,20 +651,28 @@ namespace UseMapEditor.FileData
                             {
                                 foreach (var ctile in isomitem.connectedtilenamelist)
                                 {
-                                    ISOMTIle cisom = isoms.Find(x => x.name == ctile);
-
-                                    if (isomitem.elevation == cisom.elevation + 1)
+                                    ISOMTile cisom = isoms.Find(x => x.name == ctile);
+                                    isomitem.ConnectedAllTile.Add(cisom);
+                                    if (Math.Floor(isomitem.elevation) == Math.Floor(cisom.elevation + 1))
                                     {
                                         //더 낮은 지형
-                                        isomitem.connectlowtile = cisom;
+                                        isomitem.ConnectLowTile = cisom;
                                     }
-                                    else if (isomitem.elevation == cisom.elevation - 1)
+                                    else if (Math.Floor(isomitem.elevation) == Math.Floor(cisom.elevation - 1))
                                     {
                                         //더 낮은 지형
-                                        isomitem.connecthightile = cisom;
-                                    }else if (isomitem.elevation == cisom.elevation)
+                                        isomitem.ConnectHighTile = cisom;
+                                    }else if (Math.Floor(isomitem.elevation) == Math.Floor(cisom.elevation))
                                     {
-                                        isomitem.connectedtile.Add(cisom);
+                                        isomitem.ConnectedEqualTile.Add(cisom);
+                                        if(isomitem.elevation > cisom.elevation)
+                                        {
+                                            if(isomitem.ConnectLowTile != null)
+                                            {
+
+                                            }
+                                            isomitem.ConnectLowTile = cisom;
+                                        }
                                     }
                                 }
                             }
@@ -672,9 +680,18 @@ namespace UseMapEditor.FileData
 
                             foreach (var isomitem in isoms)
                             {
-                                if(isomitem.connectlowtile != null)
+                                if(isomitem.ConnectLowTile != null)
                                 {
-                                    isomitem.AddTipToFlat(isomitem.connectlowtile);
+                                    isomitem.AddTipToFlat(isomitem.ConnectLowTile);
+                                }
+
+                                foreach (var item in isomitem.ConnectedEqualTile)
+                                {
+                                    if(isomitem.elevation > item.elevation)
+                                    {
+                                        //현재 타일의 로우타일에다가 넣어준다..
+                                        isomitem.AddTipToFlat(item);
+                                    }
                                 }
                             }
 
@@ -688,11 +705,11 @@ namespace UseMapEditor.FileData
 
 
 
-        public List<ISOMTIle> GetISOMData(MapEditor mapEditor)
+        public List<ISOMTile> GetISOMData(MapEditor mapEditor)
         {
             if(mapEditor.mapdata == null)
             {
-                return new List<ISOMTIle>();
+                return new List<ISOMTile>();
             }
 
             MapEditor.DrawType drawType = mapEditor.opt_drawType;

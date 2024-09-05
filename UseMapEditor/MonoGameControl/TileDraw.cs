@@ -331,7 +331,7 @@ namespace UseMapEditor.MonoGameControl
 
                         if (mapeditor.opt_sysdraw)
                         {
-                            ISOMTIle t = tileSet.ISOMdata[mapeditor.mapdata.TILETYPE][1];
+                            ISOMTile t = tileSet.ISOMdata[mapeditor.mapdata.TILETYPE][1];
 
 
                             int colorr = 0;

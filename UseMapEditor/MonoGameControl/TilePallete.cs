@@ -200,7 +200,7 @@ namespace UseMapEditor.MonoGameControl
             int startY = (int)relativePoint.Y;
 
 
-            List<ISOMTIle> iSOMs = tileSet.GetISOMData(mapeditor);
+            List<ISOMTile> iSOMs = tileSet.GetISOMData(mapeditor);
 
             int columns = iSOMs.Count / 8 + 1;
 
@@ -220,7 +220,7 @@ namespace UseMapEditor.MonoGameControl
                         break;
                     }
 
-                    ISOMTIle iSOM = iSOMs[isomindex];
+                    ISOMTile iSOM = iSOMs[isomindex];
 
                     int megaindex1 = tileSet.GetMegaTileIndex(mapeditor.mapdata.TILETYPE, (ushort)(iSOM.group1list[0] / 16), (ushort)(iSOM.group1list[0] % 16));
                     int megaindex2 = tileSet.GetMegaTileIndex(mapeditor.mapdata.TILETYPE, (ushort)(iSOM.group2list[0] / 16), (ushort)(iSOM.group2list[0] % 16));
@@ -619,9 +619,9 @@ namespace UseMapEditor.MonoGameControl
                             t.Y += _y * 1;
                             for (int _x = 0; _x < xcount + 1; _x++)
                             {
-                                List<ISOMTIle> iSOMs = tileSet.GetISOMData(mapeditor);
+                                List<ISOMTile> iSOMs = tileSet.GetISOMData(mapeditor);
 
-                                ISOMTIle isom = iSOMs[mapeditor.SelectISOMIndex];
+                                ISOMTile isom = iSOMs[mapeditor.SelectISOMIndex];
                                 ISOMTool.ISOMExecute(mapeditor, tileSet, isom, (int)t.X, (int)t.Y);
 
                                 t.X += 2;
@@ -795,7 +795,7 @@ namespace UseMapEditor.MonoGameControl
                         }
                         else if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.ISOM)
                         {
-                            List<ISOMTIle> iSOMs = tileSet.GetISOMData(mapeditor);
+                            List<ISOMTile> iSOMs = tileSet.GetISOMData(mapeditor);
 
                             newMTXM = iSOMs[mapeditor.SelectISOMIndex].GetFlatTile(mapx, mapy, mapeditor.mapdata);
                         }
@@ -901,8 +901,8 @@ namespace UseMapEditor.MonoGameControl
 
                             Vector2 DragMin = new Vector2(Math.Min(DragStart.X, DragEnd.X), Math.Min(DragStart.Y, DragEnd.Y));
                             Vector2 centertilepos = DragMin + center;
-                            List<ISOMTIle> iSOMs = tileSet.GetISOMData(mapeditor);
-                            ISOMTIle isom = iSOMs[mapeditor.SelectISOMIndex];
+                            List<ISOMTile> iSOMs = tileSet.GetISOMData(mapeditor);
+                            ISOMTile isom = iSOMs[mapeditor.SelectISOMIndex];
                             for (int y = 0; y < Dragheight; y += 1)
                             {
                                 if (Dragheight <= 1) break;
@@ -1174,7 +1174,7 @@ namespace UseMapEditor.MonoGameControl
                                 }
                                 else if (mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.ISOM)
                                 {
-                                    List<ISOMTIle> iSOMs = tileSet.GetISOMData(mapeditor);
+                                    List<ISOMTile> iSOMs = tileSet.GetISOMData(mapeditor);
 
                                     newMTXM = iSOMs[mapeditor.SelectISOMIndex].GetFlatTile(mapx, mapy, mapeditor.mapdata);
                                 }
@@ -1281,7 +1281,7 @@ namespace UseMapEditor.MonoGameControl
                                 return;
                             }
 
-                            List<ISOMTIle> iSOMs = tileSet.GetISOMData(mapeditor);
+                            List<ISOMTile> iSOMs = tileSet.GetISOMData(mapeditor);
                             ////TODO:ISOM 미리그리기
                             ///
                             int brush_x = mapeditor.brush_x - 1;
@@ -1292,6 +1292,7 @@ namespace UseMapEditor.MonoGameControl
                             startpoint.X += -brush_x / 2 * 2 - brush_y / 2 * 2;
                             startpoint.Y += brush_x / 2 - brush_y / 2;
 
+                            ISOMTool.glovar = 0;
                             for (int y = 0; y < mapeditor.brush_y; y++)
                             {
                                 Vector2 t = startpoint;
@@ -1299,7 +1300,7 @@ namespace UseMapEditor.MonoGameControl
                                 t.Y += y * 1;
                                 for (int x = 0; x < mapeditor.brush_x; x++)
                                 {
-                                    ISOMTIle isom = iSOMs[mapeditor.SelectISOMIndex];
+                                    ISOMTile isom = iSOMs[mapeditor.SelectISOMIndex];
                                     ISOMTool.ISOMExecute(mapeditor, tileSet, isom, (int)t.X, (int)t.Y);
 
                                     t.X += 2;
@@ -1375,7 +1376,7 @@ namespace UseMapEditor.MonoGameControl
                                             return;
                                         }
 
-                                        List<ISOMTIle> iSOMs = tileSet.GetISOMData(mapeditor);
+                                        List<ISOMTile> iSOMs = tileSet.GetISOMData(mapeditor);
 
                                         newMTXM = iSOMs[mapeditor.SelectISOMIndex].GetFlatTile(mapx, mapy, mapeditor.mapdata);
                                         if (newMTXM == ushort.MaxValue) continue;

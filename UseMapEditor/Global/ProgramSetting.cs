@@ -44,7 +44,7 @@ namespace UseMapEditor.Global
             ShortCutKeys.Add("Open", new ShortCutKey(ModifierKeys.Control, Keys.O));
             ShortCutKeys.Add("Save", new ShortCutKey(ModifierKeys.Control, Keys.S));
             ShortCutKeys.Add("Undo", new ShortCutKey(ModifierKeys.Control, Keys.Z));
-            ShortCutKeys.Add("Redo", new ShortCutKey(ModifierKeys.Control, Keys.U));
+            ShortCutKeys.Add("Redo", new ShortCutKey(ModifierKeys.Control, Keys.Y));
 
             ShortCutKeys.Add("SystemDraw", new ShortCutKey(ModifierKeys.Control, Keys.F));
 

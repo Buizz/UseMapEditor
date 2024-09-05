@@ -1475,7 +1475,7 @@ namespace UseMapEditor.Control
         }
         private void PalletSizeRefresh()
         {
-            List<ISOMTIle> iSOMs = Global.WindowTool.MapViewer.tileSet.GetISOMData(this);
+            List<ISOMTile> iSOMs = Global.WindowTool.MapViewer.tileSet.GetISOMData(this);
 
             int columns = iSOMs.Count / 8 + 1;
 
