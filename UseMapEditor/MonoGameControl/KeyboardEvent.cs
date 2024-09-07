@@ -162,36 +162,36 @@ namespace UseMapEditor.MonoGameControl
 
             //if (EnterKey(keyboardState, Keys.W))
             //{
-            //    key_WDown = true;
+            //    mapeditor.key_WDown = true;
             //}
             //if (EnterKey(keyboardState, Keys.A))
             //{
-            //    key_ADown = true;
+            //    mapeditor.key_ADown = true;
             //}
             //if (EnterKey(keyboardState, Keys.S))
             //{
-            //    key_SDown = true;
+            //    mapeditor.key_SDown = true;
             //}
             //if (EnterKey(keyboardState, Keys.D))
             //{
-            //    key_DDown = true;
+            //    mapeditor.key_DDown = true;
             //}
 
             //if (UpKey(keyboardState, Keys.W))
             //{
-            //    key_WDown = false;
+            //    mapeditor.key_WDown = false;
             //}
             //if (UpKey(keyboardState, Keys.A))
             //{
-            //    key_ADown = false;
+            //    mapeditor.key_ADown = false;
             //}
             //if (UpKey(keyboardState, Keys.S))
             //{
-            //    key_SDown = false;
+            //    mapeditor.key_SDown = false;
             //}
             //if (UpKey(keyboardState, Keys.D))
             //{
-            //    key_DDown = false;
+            //    mapeditor.key_DDown = false;
             //}
 
 
@@ -200,26 +200,47 @@ namespace UseMapEditor.MonoGameControl
                 return;
             }
 
-
-            if (mapeditor.key_WDown)
+            if (IsKeyDown(keyboardState, Keys.W))
             {
                 mapeditor.ScrollUp();
             }
-            if (mapeditor.key_SDown)
-            {
-                mapeditor.ScrollDown();
-            }
-            if (mapeditor.key_ADown)
+            if (IsKeyDown(keyboardState, Keys.A))
             {
                 mapeditor.ScrollLeft();
             }
-            if (mapeditor.key_DDown)
+            if (IsKeyDown(keyboardState, Keys.S))
+            {
+                mapeditor.ScrollDown();
+            }
+            if (IsKeyDown(keyboardState, Keys.D))
             {
                 mapeditor.ScrollRight();
             }
+            //if (mapeditor.key_WDown)
+            //{
+            //    mapeditor.ScrollUp();
+            //}
+            //if (mapeditor.key_SDown)
+            //{
+            //    mapeditor.ScrollDown();
+            //}
+            //if (mapeditor.key_ADown)
+            //{
+            //    mapeditor.ScrollLeft();
+            //}
+            //if (mapeditor.key_DDown)
+            //{
+            //    mapeditor.ScrollRight();
+            //}
         }
 
 
+
+
+        private bool IsKeyDown(KeyboardState keyboardState, Keys keys)
+        {
+            return keyboardState.IsKeyDown(keys);
+        }
 
 
 

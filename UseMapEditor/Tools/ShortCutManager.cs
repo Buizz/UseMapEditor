@@ -112,62 +112,62 @@ namespace UseMapEditor.Tools
                 case "classTriggerEditor":
                 case "brinfingTriggerEditor":
                     { mapEditor.ScenOpenCommand(e.HotKey.Name); break; }
-                case "W":
-                    {
-                        if(Whoykey.WhenToRaise == RaiseLocalEvent.OnKeyDown)
-                        {
-                            mapEditor.key_WDown = true;
-                            Whoykey.WhenToRaise = RaiseLocalEvent.OnKeyUp;
-                        }
-                        else
-                        {
-                            mapEditor.key_WDown = false;
-                            Whoykey.WhenToRaise = RaiseLocalEvent.OnKeyDown;
-                        }
-                        break;
-                    }
-                case "A":
-                    {
-                        if (Ahoykey.WhenToRaise == RaiseLocalEvent.OnKeyDown)
-                        {
-                            mapEditor.key_ADown = true;
-                            Ahoykey.WhenToRaise = RaiseLocalEvent.OnKeyUp;
-                        }
-                        else
-                        {
-                            mapEditor.key_ADown = false;
-                            Ahoykey.WhenToRaise = RaiseLocalEvent.OnKeyDown;
-                        }
-                        break;
-                    }
-                case "S":
-                    {
-                        if (Shoykey.WhenToRaise == RaiseLocalEvent.OnKeyDown)
-                        {
-                            mapEditor.key_SDown = true;
-                            Shoykey.WhenToRaise = RaiseLocalEvent.OnKeyUp;
-                        }
-                        else
-                        {
-                            mapEditor.key_SDown = false;
-                            Shoykey.WhenToRaise = RaiseLocalEvent.OnKeyDown;
-                        }
-                        break;
-                    }
-                case "D":
-                    {
-                        if (Dhoykey.WhenToRaise == RaiseLocalEvent.OnKeyDown)
-                        {
-                            mapEditor.key_DDown = true;
-                            Dhoykey.WhenToRaise = RaiseLocalEvent.OnKeyUp;
-                        }
-                        else
-                        {
-                            mapEditor.key_DDown = false;
-                            Dhoykey.WhenToRaise = RaiseLocalEvent.OnKeyDown;
-                        }
-                        break;
-                    }
+                //case "W":
+                //    {
+                //        if(Whoykey.WhenToRaise == RaiseLocalEvent.OnKeyDown)
+                //        {
+                //            mapEditor.key_WDown = true;
+                //            Whoykey.WhenToRaise = RaiseLocalEvent.OnKeyUp;
+                //        }
+                //        else
+                //        {
+                //            mapEditor.key_WDown = false;
+                //            Whoykey.WhenToRaise = RaiseLocalEvent.OnKeyDown;
+                //        }
+                //        break;
+                //    }
+                //case "A":
+                //    {
+                //        if (Ahoykey.WhenToRaise == RaiseLocalEvent.OnKeyDown)
+                //        {
+                //            mapEditor.key_ADown = true;
+                //            Ahoykey.WhenToRaise = RaiseLocalEvent.OnKeyUp;
+                //        }
+                //        else
+                //        {
+                //            mapEditor.key_ADown = false;
+                //            Ahoykey.WhenToRaise = RaiseLocalEvent.OnKeyDown;
+                //        }
+                //        break;
+                //    }
+                //case "S":
+                //    {
+                //        if (Shoykey.WhenToRaise == RaiseLocalEvent.OnKeyDown)
+                //        {
+                //            mapEditor.key_SDown = true;
+                //            Shoykey.WhenToRaise = RaiseLocalEvent.OnKeyUp;
+                //        }
+                //        else
+                //        {
+                //            mapEditor.key_SDown = false;
+                //            Shoykey.WhenToRaise = RaiseLocalEvent.OnKeyDown;
+                //        }
+                //        break;
+                //    }
+                //case "D":
+                //    {
+                //        if (Dhoykey.WhenToRaise == RaiseLocalEvent.OnKeyDown)
+                //        {
+                //            mapEditor.key_DDown = true;
+                //            Dhoykey.WhenToRaise = RaiseLocalEvent.OnKeyUp;
+                //        }
+                //        else
+                //        {
+                //            mapEditor.key_DDown = false;
+                //            Dhoykey.WhenToRaise = RaiseLocalEvent.OnKeyDown;
+                //        }
+                //        break;
+                //    }
             }
         }
 

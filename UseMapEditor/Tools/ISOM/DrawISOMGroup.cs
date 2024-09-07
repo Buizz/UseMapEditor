@@ -40,7 +40,9 @@ namespace UseMapEditor.Tools
 
             if (R.IsNull() || L.IsNull() || T.IsNull() || B.IsNull()
              || LT.IsNull() || RT.IsNull() || LB.IsNull() || RB.IsNull()
-             || RBB.IsNull() || LBB.IsNull() || RTT.IsNull() || LTT.IsNull() || BB.IsNull() || LLBB.IsNull() || RRBB.IsNull()) return;
+             || RBB.IsNull() || LBB.IsNull() || RTT.IsNull() || LTT.IsNull()
+             || BB.IsNull() || TT.IsNull() || LLBB.IsNull() || RRBB.IsNull()
+             ) return;
 
             if (R.Tile != isomtile && R.Tile != lowtile && (isomtile.ConnectedEqualTile.Contains(R.Tile) || (isomtile.ConnectHighTile == R.Tile)) && isomtile.elevation < R.Tile.elevation) R.Tile = isomtile;
             if (L.Tile != isomtile && L.Tile != lowtile && (isomtile.ConnectedEqualTile.Contains(L.Tile) || (isomtile.ConnectHighTile == L.Tile)) && isomtile.elevation < L.Tile.elevation) L.Tile = isomtile;
@@ -878,7 +880,7 @@ namespace UseMapEditor.Tools
                                 else if ((B.Check(lowtile, TileBorder.FlatDownBorder) || B.Check(isomtile, TileBorder.DownBorder))
                                     && LB.Check(lowtile, TileBorder.FlatDownBorder)
                                     && checker.TileCheck(IWay.T, tx, ty).Check(isomtile.ConnectHighTile, TileBorder.DownBorder)
-                                    && LT.Check(isomtile, TileBorder.DownBorder)
+                                    && LT.Check(isomtile, TileBorder.FlatDownBorder)
                                     && checker.TileCheck(IWay.LTT, tx, ty).Check(isomtile, TileBorder.FlatDownBorder))
                                 {
                                     DrawISOMGroup(mapeditor, isomtile.ConnectHighTile, isomtile, checker, ISOMGroupType.tip, direction, tx, ty - 2, gindex);
@@ -899,7 +901,7 @@ namespace UseMapEditor.Tools
                                 else if ((B.Check(lowtile, TileBorder.FlatDownBorder) || B.Check(isomtile, TileBorder.DownBorder))
                                     && RB.Check(lowtile, TileBorder.FlatDownBorder)
                                     && checker.TileCheck(IWay.T, tx, ty).Check(isomtile.ConnectHighTile, TileBorder.DownBorder)
-                                    && RT.Check(isomtile, TileBorder.DownBorder)
+                                    && RT.Check(isomtile, TileBorder.FlatDownBorder)
                                     && checker.TileCheck(IWay.RTT, tx, ty).Check(isomtile, TileBorder.FlatDownBorder))
                                 {
                                     DrawISOMGroup(mapeditor, isomtile.ConnectHighTile, isomtile, checker, ISOMGroupType.tip, direction, tx, ty - 2, gindex);

@@ -622,6 +622,7 @@ namespace UseMapEditor.MonoGameControl
                                 List<ISOMTile> iSOMs = tileSet.GetISOMData(mapeditor);
 
                                 ISOMTile isom = iSOMs[mapeditor.SelectISOMIndex];
+                                ISOMTool.DrawISOMlist.Clear();
                                 ISOMTool.ISOMExecute(mapeditor, tileSet, isom, (int)t.X, (int)t.Y);
 
                                 t.X += 2;
@@ -957,21 +958,26 @@ namespace UseMapEditor.MonoGameControl
                                     {
                                         if (!map.ContainsKey((tilepos.X - 2).ToString() + (tilepos.Y).ToString()))
                                         {
+                                            ISOMTool.DrawISOMlist.Clear();
                                             ISOMTool.ISOMExecute(mapeditor, tileSet, isom, (int)tilepos.X - 2, (int)tilepos.Y);
                                             map.Add((tilepos.X - 2).ToString() + (tilepos.Y).ToString(), true);
                                         }
                                         if (!map.ContainsKey((tilepos.X + 2).ToString() + (tilepos.Y).ToString()))
                                         {
+                                            ISOMTool.DrawISOMlist.Clear();
                                             ISOMTool.ISOMExecute(mapeditor, tileSet, isom, (int)tilepos.X + 2, (int)tilepos.Y);
                                             map.Add((tilepos.X + 2).ToString() + (tilepos.Y).ToString(), true);
                                         }
+                                        ISOMTool.DrawISOMlist.Clear();
                                         if (!map.ContainsKey((tilepos.X).ToString() + (tilepos.Y + 1).ToString()))
                                         {
+                                            ISOMTool.DrawISOMlist.Clear();
                                             ISOMTool.ISOMExecute(mapeditor, tileSet, isom, (int)tilepos.X, (int)tilepos.Y + 1);
                                             map.Add((tilepos.X).ToString() + (tilepos.Y + 1).ToString(), true);
                                         }
                                         if (!map.ContainsKey((tilepos.X).ToString() + (tilepos.Y - 1).ToString()))
                                         {
+                                            ISOMTool.DrawISOMlist.Clear();
                                             ISOMTool.ISOMExecute(mapeditor, tileSet, isom, (int)tilepos.X, (int)tilepos.Y - 1);
                                             map.Add((tilepos.X).ToString() + (tilepos.Y -1).ToString(), true);
                                         }
@@ -1301,6 +1307,7 @@ namespace UseMapEditor.MonoGameControl
                                 for (int x = 0; x < mapeditor.brush_x; x++)
                                 {
                                     ISOMTile isom = iSOMs[mapeditor.SelectISOMIndex];
+                                    ISOMTool.DrawISOMlist.Clear();
                                     ISOMTool.ISOMExecute(mapeditor, tileSet, isom, (int)t.X, (int)t.Y);
 
                                     t.X += 2;

@@ -11,6 +11,7 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using UseMapEditor.FileData;
+using UseMapEditor.Global;
 using WpfTest.Components;
 using static Data.Map.MapData;
 using static UseMapEditor.FileData.TileSet;
@@ -79,7 +80,9 @@ namespace UseMapEditor.MonoGameControl
             _spriteBatch.Begin();
 
 
-            if (mapeditor.PalleteLayer == Control.MapEditor.Layer.Tile && ((mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.ISOM && !mapeditor.brush_useRect)))
+            if (mapeditor.PalleteLayer == Control.MapEditor.Layer.Tile
+                && ((mapeditor.tile_BrushMode == Control.MapEditor.TileSetBrushMode.ISOM && !mapeditor.brush_useRect) || GlobalVariable.key_LeftShiftDown)
+                )
             {
 
                 // 128, 64

@@ -11,6 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using UseMapEditor.FileData;
 using UseMapEditor.Lua.TrigEditPlus;
+using UseMapEditor.MonoGameControl;
 using UseMapEditor.Task;
 using UseMapEditor.Task.Events;
 using UseMapEditor.Tools;
@@ -373,12 +374,17 @@ namespace UseMapEditor.Control
             tile_PasteStart();
         }
 
+        private void tileReverse_Click(object sender, RoutedEventArgs e)
+        {
+            tile_Filp();
+        }
 
         public void tile_Deselect()
         {
             Tile_ResetSelectedTile();
             CloseTileMenu();
         }
+
 
 
         public void tile_Copy()
@@ -412,6 +418,68 @@ namespace UseMapEditor.Control
             StringTool.SafeCopy(jsonString);
         }
 
+        public void tile_Filp()
+        {
+            CloseTileMenu();
+            List<Vector2> keys = tile_SelectedTile.Keys.ToList();
+
+            int minX = int.MaxValue;
+            int maxX = -1;
+            int minY = int.MaxValue;
+            int maxY = -1;
+
+            for (int i = 0; i < tile_SelectedTile.Count; i++)
+            {
+                Vector2 key = keys[i];
+
+                if (!mapdata.CheckTILERange((int)key.X, (int)key.Y)) continue;
+
+                if (key.X < minX)
+                {
+                    minX = (int)key.X;
+                }
+                if (key.X > maxX)
+                {
+                    maxX = (int)key.X;
+                }
+
+                if (key.Y < minY)
+                {
+                    minY = (int)key.Y;
+                }
+                if (key.Y > maxY)
+                {
+                    maxY = (int)key.Y;
+                }
+            }
+
+            if(minX == int.MaxValue || minY == int.MaxValue
+                || maxX == -1 || maxY == -1)
+            {
+                return;
+            }
+
+            for (int y = minY; y <= maxY; y++)
+            {
+                for (int x = minX; x <= maxX; x++)
+                {
+                    int nx = minX + maxX - x;
+
+
+                    if (!mapdata.CheckTILERange(nx, y)) continue;
+                    int tileindex = (int)(nx + y * mapdata.WIDTH);
+
+                    tile_SelectedTile[new Vector2(x, y)] = Global.WindowTool.MapViewer.tileSet.TileFlip(mapdata.TILETYPE, mapdata.TILE[tileindex]);
+                }
+            }
+         
+
+
+            string jsonString = JsonConvert.SerializeObject(tile_SelectedTile);
+
+            StringTool.SafeCopy(jsonString);
+            tile_PasteStart();
+        }
 
         public void tile_PasteStart()
         {

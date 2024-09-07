@@ -616,11 +616,11 @@ namespace UseMapEditor.MonoGameControl
             ImageList.Clear();
 
             RenderTile(IsDrawGrp);
+            GridDraw();
             if (mapeditor.view_Doodad)
             {
                 RenderDoodad(IsDrawGrp);
             }
-            GridDraw();
 
             if (IsDrawGrp)
             {

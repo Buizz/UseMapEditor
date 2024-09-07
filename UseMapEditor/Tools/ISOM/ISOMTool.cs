@@ -1,4 +1,5 @@
-﻿using Dragablz;
+﻿using Data.Map;
+using Dragablz;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,8 @@ namespace UseMapEditor.Tools
 {
     public partial class ISOMTool
     {
+
+        public static Dictionary<string, bool> DrawISOMlist = new Dictionary<string, bool>();
 
         public static Vector2 GetMtxmRectCenter(Vector2 tilepos, Vector2 mappos)
         {
@@ -131,17 +134,20 @@ namespace UseMapEditor.Tools
         }
 
 
-        public static ushort GetMapTile(MapEditor mapeditor, int tilex, int tiley)
+        public static ushort GetMapTile(MapEditor mapeditor, TileSet tileSet, int tilex, int tiley)
         {
             ushort rval = 0;
 
+            bool IsTileXFlip = false;
             if (tilex < 0)
             {
                 tilex = -(tilex + 1);
+                IsTileXFlip = true;
             }
             else if (tilex >= mapeditor.mapdata.WIDTH)
             {
                 tilex = (mapeditor.mapdata.WIDTH) - (tilex - (mapeditor.mapdata.WIDTH - 1));
+                IsTileXFlip = true;
             }
             if (tiley < 0)
             {
@@ -152,19 +158,25 @@ namespace UseMapEditor.Tools
                 tiley = (mapeditor.mapdata.HEIGHT) - (tiley - (mapeditor.mapdata.HEIGHT - 1));
             }
 
-
             rval = mapeditor.mapdata.TILE[tilex + (tiley) * mapeditor.mapdata.WIDTH];
+            if (IsTileXFlip)
+            {
+                rval =  tileSet.TileFlip(mapeditor.mapdata.TILETYPE, rval);
+            }
+
+
 
             return rval;
         }
+
         public static TileType ISOMCheckTile(MapEditor mapeditor, TileSet tileSet, int tilex, int tiley)
         {
             List<ISOMTile> iSOMTIles = tileSet.GetISOMData(mapeditor);
 
-            ushort LT = GetMapTile(mapeditor, tilex - 1, tiley - 1);
-            ushort RT = GetMapTile(mapeditor, tilex, tiley - 1);
-            ushort LB = GetMapTile(mapeditor, tilex - 1, tiley);
-            ushort RB = GetMapTile(mapeditor, tilex, tiley);
+            ushort LT = GetMapTile(mapeditor, tileSet, tilex - 1, tiley - 1);
+            ushort RT = GetMapTile(mapeditor, tileSet, tilex, tiley - 1);
+            ushort LB = GetMapTile(mapeditor, tileSet, tilex - 1, tiley);
+            ushort RB = GetMapTile(mapeditor, tileSet, tilex, tiley);
 
 
             //if (mapeditor.mapdata.CheckTILERange(tilex - 1, tiley - 1)) LT = mapeditor.mapdata.TILE[tilex - 1 + (tiley - 1) * mapeditor.mapdata.WIDTH];
@@ -465,6 +477,16 @@ namespace UseMapEditor.Tools
 
         public static bool ISOMExecute(MapEditor mapeditor, TileSet tileSet, ISOMTile isomtile, int tx, int ty)
         {
+            if (tx < 0 || tx > mapeditor.mapdata.WIDTH)
+            {
+                return false;
+            }
+            if (ty < 0 || ty > mapeditor.mapdata.HEIGHT)
+            {
+                return false;
+            }
+
+
             ISOMChecker checker = new ISOMChecker(mapeditor, tileSet);
 
             List<ISOMTile> tileList = new List<ISOMTile>();
@@ -553,7 +575,8 @@ namespace UseMapEditor.Tools
             if (R.IsNull() || L.IsNull() || T.IsNull() || B.IsNull()
              || LT.IsNull() || RT.IsNull() || LB.IsNull() || RB.IsNull()
              || RBB.IsNull() || LBB.IsNull() || RTT.IsNull() || LBB.IsNull()
-             || LLBB.IsNull() || RRBB.IsNull() ) return false;
+             || LLBB.IsNull() || RRBB.IsNull() || LLTT.IsNull() || RRTT.IsNull()
+             ) return false;
 
             if (!tileList.Contains(C.Tile)) tileList.Add(C.Tile);
             if (!tileList.Contains(LT.Tile)) tileList.Add(LT.Tile);
@@ -572,23 +595,24 @@ namespace UseMapEditor.Tools
             if(isomtile.ConnectLowTile != null && !isomtile.ConnectLowTile.IsHasCliffDown && !isomtile.IsMiniISOM)
             {
                 //절벽일 경우
-                if (LLBB.Tile != isomtile.ConnectLowTile)
+                if (LLBB.Tile != isomtile.ConnectLowTile && LLBB.Tile.elevation < isomtile.ConnectLowTile.elevation)
                 {
                     if (!tileList.Contains(LLBB.Tile)) tileList.Add(LLBB.Tile);
                 }
-                if (LBB.Tile != isomtile.ConnectLowTile)
+                if (LBB.Tile != isomtile.ConnectLowTile && LBB.Tile.elevation < isomtile.ConnectLowTile.elevation)
                 {
                     if (!tileList.Contains(LBB.Tile)) tileList.Add(LBB.Tile);
                 }
 
-                if (RRBB.Tile != isomtile.ConnectLowTile)
+                if (RRBB.Tile != isomtile.ConnectLowTile && RRBB.Tile.elevation < isomtile.ConnectLowTile.elevation)
                 {
                     if (!tileList.Contains(RRBB.Tile)) tileList.Add(RRBB.Tile);
                 }
-                if (RBB.Tile != isomtile.ConnectLowTile)
+                if (RBB.Tile != isomtile.ConnectLowTile && RBB.Tile.elevation < isomtile.ConnectLowTile.elevation)
                 {
                     if (!tileList.Contains(RBB.Tile)) tileList.Add(RBB.Tile);
                 }
+                
             }
 
 
@@ -626,6 +650,22 @@ namespace UseMapEditor.Tools
 
             C.Tile = isomtile;
             C.Border = TileBorder.DownBorder;
+
+            if (L.Point.X == -2)
+            {
+                checker.TileCheck(IWay.L, tx, ty, false).Tile = isomtile;
+                checker.TileCheck(IWay.L, tx, ty, false).Border = TileBorder.DownBorder;
+                L.Tile = isomtile;
+                L.Border = TileBorder.DownBorder;
+            }
+
+            if (R.Point.X > mapeditor.mapdata.WIDTH)
+            {
+                checker.TileCheck(IWay.R, tx, ty, false).Tile = isomtile;
+                checker.TileCheck(IWay.R, tx, ty, false).Border = TileBorder.DownBorder;
+                R.Tile = isomtile;
+                R.Border = TileBorder.DownBorder;
+            }
 
 
             bool IsIsomRefresh = false;
@@ -679,8 +719,22 @@ namespace UseMapEditor.Tools
                         //tiles를 돌면서 해당 isom에 연결 명령을 내린다.
                         if(tileitem.Value.Tile == target)
                         {
+                            string tagname = tileitem.Value.Point.ToString() + connectedTile.name;
+
+                            if (DrawISOMlist.ContainsKey(tagname))
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                DrawISOMlist.Add(tagname, true);
+                            }
+
                             bool issucess = ISOMExecute(mapeditor, tileSet, connectedTile, (int)tileitem.Value.Point.X, (int)tileitem.Value.Point.Y);
-                    
+
+
+                         
+                  
                             IsIsomRefresh = true;
                         }
                     }
@@ -688,18 +742,16 @@ namespace UseMapEditor.Tools
                 }
             }
 
-            if(glovar > 200)
-            {
-                return true;
-            }
+            //if(glovar > 100)
+            //{
+            //    return true;
+            //}
 
             //ISOM을 다시 깔면 목록을 리프레쉬해야하므로 다시 시작
             if (IsIsomRefresh)
             {
-                glovar += 1;
                 return ISOMExecute(mapeditor, tileSet, isomtile, tx, ty);
             }
-
 
             foreach (var target in tileList)
             {
@@ -717,11 +769,17 @@ namespace UseMapEditor.Tools
                     //    }
                     //}
 
-                    ISOMPaint(mapeditor, tileSet, isomtile, target, checker, tx, ty, true, IsTileChange);
+                    if(!ISOMPaint(mapeditor, tileSet, isomtile, target, checker, tx, ty, true, IsTileChange))
+                    {
+                        return false;
+                    }
                 }
                 else
                 {
-                    ISOMPaint(mapeditor, tileSet, target, isomtile, checker, tx, ty, false, IsTileChange);
+                    if(!ISOMPaint(mapeditor, tileSet, target, isomtile, checker, tx, ty, false, IsTileChange))
+                    {
+                        return false;
+                    }
                 }
 
 

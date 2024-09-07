@@ -14,8 +14,23 @@ namespace UseMapEditor.Tools
 {
     public partial class ISOMTool
     {
-        public static void ISOMLeftFill(MapEditor mapeditor, ISOMTile uptile, ISOMTile lowtile, ISOMChecker checker, TileType LLT, TileType LLTT, TileType LLB, TileType LLBB, int tx, int ty)
+        public static void ISOMLeftFill(MapEditor mapeditor, ISOMTile uptile, ISOMTile lowtile, ISOMChecker checker, TileType L, TileType LLT, TileType LLTT, TileType LLB, TileType LLBB, int tx, int ty)
         {
+            if(!L.Check(uptile, TileBorder.DownBorder))
+            {
+                return;
+            }
+            //else
+            //{
+            //    if (tx == 2)
+            //    {
+            //        //왼쪽이나 끝쪽일경우
+            //    }
+            //    else
+            //    {
+            //        return;
+            //    }
+            //}
 
             if (LLT.Check(uptile, TileBorder.FlatDownBorder) && LLTT.Check(uptile, TileBorder.FlatDownBorder))
             {
@@ -54,7 +69,8 @@ namespace UseMapEditor.Tools
                 {
                     DrawISOMGroup(mapeditor, uptile.ConnectHighTile, uptile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx - 4, ty - 2);
                 }
-                else if (checker.TileCheck(IWay.LTT, tx, ty).Check(uptile.ConnectHighTile, TileBorder.DownBorder))
+                else if (checker.TileCheck(IWay.LTT, tx, ty).Check(uptile.ConnectHighTile, TileBorder.DownBorder)
+                    && checker.TileCheck(IWay.LTT, tx - 2, ty - 1).Check(uptile.ConnectHighTile, TileBorder.DownBorder))
                 {
                     DrawISOMGroup(mapeditor, uptile.ConnectHighTile, uptile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx - 2, ty - 3);
                 }
@@ -65,8 +81,12 @@ namespace UseMapEditor.Tools
             }
         }
 
-        public static void ISOMRightFill(MapEditor mapeditor, ISOMTile uptile, ISOMTile lowtile, ISOMChecker checker, TileType RRT, TileType RRTT, TileType RRB, TileType RRBB, int tx, int ty)
+        public static void ISOMRightFill(MapEditor mapeditor, ISOMTile uptile, ISOMTile lowtile, ISOMChecker checker, TileType R, TileType RRT, TileType RRTT, TileType RRB, TileType RRBB, int tx, int ty)
         {
+            if (!R.Check(uptile, TileBorder.DownBorder))
+            {
+                return;
+            }
 
             if (RRT.Check(uptile, TileBorder.FlatDownBorder) && RRTT.Check(uptile, TileBorder.FlatDownBorder))
             {
@@ -99,7 +119,8 @@ namespace UseMapEditor.Tools
                 {
                     DrawISOMGroup(mapeditor, uptile.ConnectHighTile, uptile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx + 4, ty - 2);
                 }
-                else if (checker.TileCheck(IWay.RTT, tx, ty).Check(uptile.ConnectHighTile, TileBorder.DownBorder))
+                else if (checker.TileCheck(IWay.RTT, tx, ty).Check(uptile.ConnectHighTile, TileBorder.DownBorder)
+                    && checker.TileCheck(IWay.RTT, tx + 2, ty - 1).Check(uptile.ConnectHighTile, TileBorder.DownBorder))
                 {
                     DrawISOMGroup(mapeditor, uptile.ConnectHighTile, uptile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx + 2, ty - 3);
                 }
@@ -230,7 +251,7 @@ namespace UseMapEditor.Tools
         /// 실질적으로 ISOM작업을 수행하는 함수
         /// </summary>
         /// 
-        public static void ISOMPaint(MapEditor mapeditor, TileSet tileSet, ISOMTile uptile, ISOMTile lowtile, ISOMChecker checker, int tx, int ty, bool IsTileStack, bool IsTileChange)
+        public static bool ISOMPaint(MapEditor mapeditor, TileSet tileSet, ISOMTile uptile, ISOMTile lowtile, ISOMChecker checker, int tx, int ty, bool IsTileStack, bool IsTileChange)
         {
             TileType C = checker.TileCheck(IWay.C, tx, ty);
             TileType L = checker.TileCheck(IWay.L, tx, ty);
@@ -360,7 +381,7 @@ namespace UseMapEditor.Tools
                     {
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty);
                     }
-                    return;
+                    return true;
                 }
                 #endregion
 
@@ -375,7 +396,7 @@ namespace UseMapEditor.Tools
                 {
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx, ty);
-                    return;
+                    return true;
                 }
 
                 if (LT.Check(lowtile, TileBorder.FlatDownBorder)
@@ -388,7 +409,7 @@ namespace UseMapEditor.Tools
                 {
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx, ty);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx, ty);
-                    return;
+                    return true;
                 }
 
                 if (LT.Check(lowtile, TileBorder.FlatDownBorder)
@@ -401,7 +422,7 @@ namespace UseMapEditor.Tools
                 {
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx, ty);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx + 2, ty + 1);
-                    return;
+                    return true;
                 }
 
                 if (LT.Check(lowtile, TileBorder.FlatDownBorder)
@@ -414,7 +435,7 @@ namespace UseMapEditor.Tools
                 {
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx - 2, ty + 1);
-                    return;
+                    return true;
                 }
                 #endregion
 
@@ -430,7 +451,7 @@ namespace UseMapEditor.Tools
                 {
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx, ty);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx, ty);
-                    return;
+                    return true;
                 }
 
                 if (LT.Check(lowtile, TileBorder.FlatDownBorder)
@@ -443,7 +464,7 @@ namespace UseMapEditor.Tools
                 {
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx - 2, ty + 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx + 2, ty + 1);
-                    return;
+                    return true;
                 }
                 //=====================================왼쪽 오른쪽 절벽=====================================
 
@@ -462,12 +483,14 @@ namespace UseMapEditor.Tools
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx - 2, ty + 1, gindex);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty, gindex);
 
-                    if (L.Check(uptile, TileBorder.DownBorder) && IsTileChange)
+                    if (IsTileChange)
                     {
-                        ISOMLeftFill(mapeditor, uptile, lowtile, checker, LLT, LLTT, LLB, LLBB, tx, ty);
+                        ISOMLeftFill(mapeditor, uptile, lowtile, checker, L, LLT, LLTT, LLB, LLBB, tx, ty);
                         //ISOMExecute(mapeditor, tileSet, uptile, tx - 4, ty);
                     }
-                    return;
+
+
+                    return true;
                 }
 
                 if (LT.Check(lowtile, TileBorder.FlatDownBorder)
@@ -484,11 +507,11 @@ namespace UseMapEditor.Tools
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx + 2, ty + 1, gindex);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx, ty, gindex);
 
-                    if (R.Check(uptile, TileBorder.DownBorder) && IsTileChange)
+                    if (IsTileChange)
                     {
-                        ISOMRightFill(mapeditor, uptile, lowtile, checker, RRT, RRTT, RRB, RRBB, tx, ty);
+                        ISOMRightFill(mapeditor, uptile, lowtile, checker, R, RRT, RRTT, RRB, RRBB, tx, ty);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================위 아래 절벽=====================================
 
@@ -505,7 +528,7 @@ namespace UseMapEditor.Tools
                     int gindex = GetRdindex(uptile.cliff_default);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Right, tx, ty, gindex);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx, ty, gindex);
-                    return;
+                    return true;
                 }
 
 
@@ -520,7 +543,7 @@ namespace UseMapEditor.Tools
                     int gindex = GetRdindex(uptile.cliff_default);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx, ty, gindex);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty, gindex);
-                    return;
+                    return true;
                 }
                 //=====================================오른쪽 아래 붙은 절벽=====================================
 
@@ -537,7 +560,7 @@ namespace UseMapEditor.Tools
                     int gindex = GetRdindex(uptile.cliff_default);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Left, tx, ty, gindex);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty, gindex);
-                    return;
+                    return true;
                 }
 
 
@@ -552,7 +575,7 @@ namespace UseMapEditor.Tools
                     int gindex = GetRdindex(uptile.cliff_default);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx, ty, gindex);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx, ty, gindex);
-                    return;
+                    return true;
                 }
                 //=====================================왼쪽 아래 붙은 절벽=====================================
 
@@ -567,7 +590,7 @@ namespace UseMapEditor.Tools
                 {
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx, ty);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx - 2, ty + 1);
-                    return;
+                    return true;
                 }
                 //=====================================오른쪽 위 왼쪽 아래 절벽=====================================
 
@@ -582,7 +605,7 @@ namespace UseMapEditor.Tools
                 {
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx, ty);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx + 2, ty + 1);
-                    return;
+                    return true;
                 }
                 //=====================================왼쪽 위 오른쪽 아래 절벽=====================================
 
@@ -597,7 +620,7 @@ namespace UseMapEditor.Tools
                 {
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx - 2, ty + 1);
-                    return;
+                    return true;
                 }
                 //=====================================위 왼쪽 아래 절벽=====================================
 
@@ -612,7 +635,7 @@ namespace UseMapEditor.Tools
                 {
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx, ty);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx + 2, ty + 1);
-                    return;
+                    return true;
                 }
                 //=====================================위 오른쪽 아래 절벽=====================================
 
@@ -627,7 +650,7 @@ namespace UseMapEditor.Tools
                 {
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx, ty);
-                    return;
+                    return true;
                 }
                 //=====================================왼쪽 위 아래 절벽=====================================
 
@@ -642,7 +665,7 @@ namespace UseMapEditor.Tools
                 {
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx, ty);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx, ty);
-                    return;
+                    return true;
                 }
                 //=====================================오른쪽 위 아래 절벽=====================================
 
@@ -664,7 +687,7 @@ namespace UseMapEditor.Tools
                     {
                         ISOMUpFill(mapeditor, uptile, lowtile, checker, LTT, LLTT, RTT, RRTT, tx, ty);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠁⠁⠁=====================================
 
@@ -683,7 +706,7 @@ namespace UseMapEditor.Tools
                     {
                         ISOMDownFill(mapeditor, uptile, lowtile, checker, LBB, LLBB, RBB, RRBB, tx, ty);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠄⠄⠄=====================================
 
@@ -698,7 +721,7 @@ namespace UseMapEditor.Tools
                 {
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx, ty);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx, ty);
-                    return;
+                    return true;
                 }
                 //=====================================⠁⠄⠁=====================================
 
@@ -713,7 +736,7 @@ namespace UseMapEditor.Tools
                 {
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx - 2, ty + 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx + 2, ty + 1);
-                    return;
+                    return true;
                 }
                 //=====================================⠄⠁⠄=====================================
 
@@ -729,11 +752,11 @@ namespace UseMapEditor.Tools
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx - 2, ty + 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx + 2, ty + 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Right, tx - 2, ty - 1);
-                    if (L.Check(uptile, TileBorder.DownBorder) && IsTileChange)
+                    if (IsTileChange)
                     {
-                        ISOMLeftFill(mapeditor, uptile, lowtile, checker, LLT, LLTT, LLB, LLBB, tx, ty);
+                        ISOMLeftFill(mapeditor, uptile, lowtile, checker, L, LLT, LLTT, LLB, LLBB, tx, ty);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠅⠀⠄=====================================
 
@@ -749,11 +772,11 @@ namespace UseMapEditor.Tools
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx - 2, ty + 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx + 2, ty + 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Left, tx + 2, ty - 1);
-                    if (R.Check(uptile, TileBorder.DownBorder) && IsTileChange)
+                    if (IsTileChange)
                     {
-                        ISOMRightFill(mapeditor, uptile, lowtile, checker, RRT, RRTT, RRB, RRBB, tx, ty);
+                        ISOMRightFill(mapeditor, uptile, lowtile, checker, R, RRT, RRTT, RRB, RRBB, tx, ty);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠄⠀⠅=====================================
 
@@ -769,11 +792,11 @@ namespace UseMapEditor.Tools
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx - 2, ty + 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx, ty);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Right, tx - 2, ty - 1);
-                    if (L.Check(uptile, TileBorder.DownBorder) && IsTileChange)
+                    if (IsTileChange)
                     {
-                        ISOMLeftFill(mapeditor, uptile, lowtile, checker, LLT, LLTT, LLB, LLBB, tx, ty);
+                        ISOMLeftFill(mapeditor, uptile, lowtile, checker, L, LLT, LLTT, LLB, LLBB, tx, ty);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠅⠀⠁=====================================
 
@@ -789,11 +812,11 @@ namespace UseMapEditor.Tools
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx + 2, ty + 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx, ty);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Left, tx + 2, ty - 1);
-                    if (R.Check(uptile, TileBorder.DownBorder) && IsTileChange)
+                    if (IsTileChange)
                     {
-                        ISOMRightFill(mapeditor, uptile, lowtile, checker, RRT, RRTT, RRB, RRBB, tx, ty);
+                        ISOMRightFill(mapeditor, uptile, lowtile, checker, R, RRT, RRTT, RRB, RRBB, tx, ty);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠁⠀⠅=====================================
 
@@ -810,11 +833,11 @@ namespace UseMapEditor.Tools
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx - 2, ty + 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Right, tx - 2, ty - 1);
-                    if (L.Check(uptile, TileBorder.DownBorder) && IsTileChange)
+                    if (IsTileChange)
                     {
-                        ISOMLeftFill(mapeditor, uptile, lowtile, checker, LLT, LLTT, LLB, LLBB, tx, ty);
+                        ISOMLeftFill(mapeditor, uptile, lowtile, checker, L, LLT, LLTT, LLB, LLBB, tx, ty);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠅⠁⠀=====================================
 
@@ -829,7 +852,7 @@ namespace UseMapEditor.Tools
                 {
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx, ty);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty);
-                    return;
+                    return true;
                 }
                 //=====================================⠁⠅⠀=====================================
 
@@ -844,7 +867,7 @@ namespace UseMapEditor.Tools
                 {
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx + 2, ty + 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx, ty);
-                    return;
+                    return true;
                 }
                 //=====================================⠁⠁⠄=====================================
 
@@ -861,11 +884,11 @@ namespace UseMapEditor.Tools
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Right, tx - 2, ty - 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Right, tx - 2, ty + 1);
-                    if (L.Check(uptile, TileBorder.DownBorder) && IsTileChange)
+                    if (IsTileChange)
                     {
-                        ISOMLeftFill(mapeditor, uptile, lowtile, checker, LLT, LLTT, LLB, LLBB, tx, ty);
+                        ISOMLeftFill(mapeditor, uptile, lowtile, checker, L, LLT, LLTT, LLB, LLBB, tx, ty);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠅⠄⠀=====================================
 
@@ -880,7 +903,7 @@ namespace UseMapEditor.Tools
                 {
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Left, tx, ty);
-                    return;
+                    return true;
                 }
                 //=====================================⠄⠅⠀=====================================
 
@@ -895,7 +918,7 @@ namespace UseMapEditor.Tools
                 {
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Left, tx, ty);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx, ty);
-                    return;
+                    return true;
                 }
                 //=====================================⠄⠄⠁=====================================
 
@@ -912,11 +935,11 @@ namespace UseMapEditor.Tools
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx + 2, ty + 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx, ty);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Left, tx + 2, ty - 1);
-                    if (R.Check(uptile, TileBorder.DownBorder) && IsTileChange)
+                    if (IsTileChange)
                     {
-                        ISOMRightFill(mapeditor, uptile, lowtile, checker, RRT, RRTT, RRB, RRBB, tx, ty);
+                        ISOMRightFill(mapeditor, uptile, lowtile, checker, R, RRT, RRTT, RRB, RRBB, tx, ty);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠀⠁⠅=====================================
 
@@ -931,7 +954,7 @@ namespace UseMapEditor.Tools
                 {
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx, ty);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx, ty);
-                    return;
+                    return true;
                 }
                 //=====================================⠀⠅⠁=====================================
 
@@ -946,7 +969,7 @@ namespace UseMapEditor.Tools
                 {
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx - 2, ty + 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx, ty);
-                    return;
+                    return true;
                 }
                 //=====================================⠄⠁⠁=====================================
 
@@ -963,11 +986,11 @@ namespace UseMapEditor.Tools
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Left, tx + 2, ty - 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx, ty);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Left, tx + 2, ty + 1);
-                    if (R.Check(uptile, TileBorder.DownBorder) && IsTileChange)
+                    if (IsTileChange)
                     {
-                        ISOMRightFill(mapeditor, uptile, lowtile, checker, RRT, RRTT, RRB, RRBB, tx, ty);
+                        ISOMRightFill(mapeditor, uptile, lowtile, checker, R, RRT, RRTT, RRB, RRBB, tx, ty);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠀⠄⠅=====================================
 
@@ -982,7 +1005,7 @@ namespace UseMapEditor.Tools
                 {
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx, ty);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Right, tx, ty);
-                    return;
+                    return true;
                 }
                 //=====================================⠀⠅⠄=====================================
 
@@ -997,7 +1020,7 @@ namespace UseMapEditor.Tools
                 {
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Right, tx, ty);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx, ty);
-                    return;
+                    return true;
                 }
                 //=====================================⠁⠄⠄=====================================
                 #endregion
@@ -1018,22 +1041,12 @@ namespace UseMapEditor.Tools
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Right, tx - 2, ty - 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx - 2, ty + 1);
 
-                    if (R.Check(uptile, TileBorder.DownBorder))
+                    if (IsTileChange)
                     {
-                        if (IsTileChange)
-                        {
-                            ISOMRightFill(mapeditor, uptile, lowtile, checker, RRT, RRTT, RRB, RRBB, tx, ty);
-                        }
+                        ISOMRightFill(mapeditor, uptile, lowtile, checker, R, RRT, RRTT, RRB, RRBB, tx, ty);
+                        ISOMLeftFill(mapeditor, uptile, lowtile, checker, L, LLT, LLTT, LLB, LLBB, tx, ty);
                     }
-
-                    if (L.Check(uptile, TileBorder.DownBorder))
-                    {
-                        if (IsTileChange)
-                        {
-                            ISOMLeftFill(mapeditor, uptile, lowtile, checker, LLT, LLTT, LLB, LLBB, tx, ty);
-                        }
-                    }
-                    return;
+                    return true;
                 }
                 //=====================================⠅⠀⠅=====================================
 
@@ -1053,15 +1066,15 @@ namespace UseMapEditor.Tools
                         if (IsTileChange)
                         {
                             DrawISOMFlatTile(mapeditor, uptile, DrawDirection.Left, tx, ty - 1);
-                            ISOMLeftFill(mapeditor, uptile, lowtile, checker, LLT, LLTT, LLB, LLBB, tx, ty);
                         }
                     }
 
                     if (IsTileChange)
                     {
+                        ISOMLeftFill(mapeditor, uptile, lowtile, checker, L, LLT, LLTT, LLB, LLBB, tx, ty);
                         ISOMUpFill(mapeditor, uptile, lowtile, checker, LTT, LLTT, RTT, RRTT, tx, ty);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠅⠁⠁=====================================
 
@@ -1082,7 +1095,7 @@ namespace UseMapEditor.Tools
                     {
                         ISOMUpFill(mapeditor, uptile, lowtile, checker, LTT, LLTT, RTT, RRTT, tx, ty);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠁⠅⠁=====================================
 
@@ -1106,15 +1119,15 @@ namespace UseMapEditor.Tools
                         if (IsTileChange)
                         {
                             DrawISOMFlatTile(mapeditor, uptile, DrawDirection.Right, tx, ty - 1);
-                            ISOMRightFill(mapeditor, uptile, lowtile, checker, RRT, RRTT, RRB, RRBB, tx, ty);
                         }
                     }
 
                     if (IsTileChange)
                     {
+                        ISOMRightFill(mapeditor, uptile, lowtile, checker, R, RRT, RRTT, RRB, RRBB, tx, ty);
                         ISOMUpFill(mapeditor, uptile, lowtile, checker, LTT, LLTT, RTT, RRTT, tx, ty);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠁⠁⠅=====================================
 
@@ -1132,11 +1145,9 @@ namespace UseMapEditor.Tools
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Right, tx - 2, ty - 1);
                     if (L.Check(uptile, TileBorder.DownBorder))
                     {
-
                         if (IsTileChange)
                         {
                             DrawISOMFlatTile(mapeditor, uptile, DrawDirection.Left, tx, ty);
-                            ISOMLeftFill(mapeditor, uptile, lowtile, checker, LLT, LLTT, LLB, LLBB, tx, ty);
                         }
                     }
                     else
@@ -1149,13 +1160,14 @@ namespace UseMapEditor.Tools
 
                     if (IsTileChange)
                     {
+                        ISOMLeftFill(mapeditor, uptile, lowtile, checker, L, LLT, LLTT, LLB, LLBB, tx, ty);
                         ISOMDownFill(mapeditor, uptile, lowtile, checker, LBB, LLBB, RBB, RRBB, tx, ty);
                     }
                     if (IsTileChange && uptile.IsMiniISOM && uptile.IsNoEdge)
                     {
                         DrawISOMFlatTile(mapeditor, uptile, DrawDirection.All, tx, ty);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠅⠄⠄=====================================
 
@@ -1176,7 +1188,7 @@ namespace UseMapEditor.Tools
                     {
                         ISOMDownFill(mapeditor, uptile, lowtile, checker, LBB, LLBB, RBB, RRBB, tx, ty);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠄⠅⠄=====================================
 
@@ -1197,7 +1209,6 @@ namespace UseMapEditor.Tools
                         if (IsTileChange)
                         {
                             DrawISOMFlatTile(mapeditor, uptile, DrawDirection.Right, tx, ty);
-                            ISOMRightFill(mapeditor, uptile, lowtile, checker, RRT, RRTT, RRB, RRBB, tx, ty);
                         }
                     }
                     else
@@ -1210,9 +1221,10 @@ namespace UseMapEditor.Tools
 
                     if (IsTileChange)
                     {
+                        ISOMRightFill(mapeditor, uptile, lowtile, checker, R, RRT, RRTT, RRB, RRBB, tx, ty);
                         ISOMDownFill(mapeditor, uptile, lowtile, checker, LBB, LLBB, RBB, RRBB, tx, ty);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠄⠄⠅=====================================
 
@@ -1230,14 +1242,11 @@ namespace UseMapEditor.Tools
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Right, tx - 2, ty + 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty);
 
-                    if (L.Check(uptile, TileBorder.DownBorder))
+                    if (IsTileChange)
                     {
-                        if (IsTileChange)
-                        {
-                            ISOMLeftFill(mapeditor, uptile, lowtile, checker, LLT, LLTT, LLB, LLBB, tx, ty);
-                        }
+                        ISOMLeftFill(mapeditor, uptile, lowtile, checker, L, LLT, LLTT, LLB, LLBB, tx, ty);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠅⠅⠀=====================================
 
@@ -1254,14 +1263,11 @@ namespace UseMapEditor.Tools
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Left, tx + 2, ty + 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx, ty);
 
-                    if (R.Check(uptile, TileBorder.DownBorder))
+                    if (IsTileChange)
                     {
-                        if (IsTileChange)
-                        {
-                            ISOMRightFill(mapeditor, uptile, lowtile, checker, RRT, RRTT, RRB, RRBB, tx, ty);
-                        }
+                        ISOMRightFill(mapeditor, uptile, lowtile, checker, R, RRT, RRTT, RRB, RRBB, tx, ty);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠀⠅⠅=====================================
 
@@ -1277,7 +1283,7 @@ namespace UseMapEditor.Tools
                 {
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx, ty);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Left, tx, ty);
-                    return;
+                    return true;
                 }
                 //=====================================⠄⠅⠁=====================================
 
@@ -1292,7 +1298,7 @@ namespace UseMapEditor.Tools
                 {
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx, ty);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Right, tx, ty);
-                    return;
+                    return true;
                 }
                 //=====================================⠁⠅⠄=====================================
 
@@ -1310,14 +1316,11 @@ namespace UseMapEditor.Tools
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx + 2, ty + 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Right, tx - 2, ty - 1);
 
-                    if (L.Check(uptile, TileBorder.DownBorder))
+                    if (IsTileChange)
                     {
-                        if (IsTileChange)
-                        {
-                            ISOMLeftFill(mapeditor, uptile, lowtile, checker, LLT, LLTT, LLB, LLBB, tx, ty);
-                        }
+                        ISOMLeftFill(mapeditor, uptile, lowtile, checker, L, LLT, LLTT, LLB, LLBB, tx, ty);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠅⠁⠄=====================================
 
@@ -1334,14 +1337,11 @@ namespace UseMapEditor.Tools
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx + 2, ty + 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Left, tx + 2, ty - 1);
 
-                    if (R.Check(uptile, TileBorder.DownBorder))
+                    if (IsTileChange)
                     {
-                        if (IsTileChange)
-                        {
-                            ISOMRightFill(mapeditor, uptile, lowtile, checker, RRT, RRTT, RRB, RRBB, tx, ty);
-                        }
+                        ISOMRightFill(mapeditor, uptile, lowtile, checker, R, RRT, RRTT, RRB, RRBB, tx, ty);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠄⠁⠅=====================================
 
@@ -1359,14 +1359,11 @@ namespace UseMapEditor.Tools
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Left, tx + 2, ty - 1);
 
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Right, tx - 2, ty + 1);
-                    if (L.Check(uptile, TileBorder.DownBorder))
+                    if (IsTileChange)
                     {
-                        if (IsTileChange)
-                        {
-                            ISOMLeftFill(mapeditor, uptile, lowtile, checker, LLT, LLTT, LLB, LLBB, tx, ty);
-                        }
+                        ISOMLeftFill(mapeditor, uptile, lowtile, checker, L, LLT, LLTT, LLB, LLBB, tx, ty);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠅⠄⠁=====================================
 
@@ -1383,14 +1380,12 @@ namespace UseMapEditor.Tools
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Left, tx + 2, ty - 1);
 
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Left, tx + 2, ty + 1);
-                    if (R.Check(uptile, TileBorder.DownBorder))
+
+                    if (IsTileChange)
                     {
-                        if (IsTileChange)
-                        {
-                            ISOMRightFill(mapeditor, uptile, lowtile, checker, RRT, RRTT, RRB, RRBB, tx, ty);
-                        }
+                        ISOMRightFill(mapeditor, uptile, lowtile, checker, R, RRT, RRTT, RRB, RRBB, tx, ty);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠁⠄⠅=====================================
                 #endregion
@@ -1418,7 +1413,6 @@ namespace UseMapEditor.Tools
                         if (IsTileChange)
                         {
                             DrawISOMFlatTile(mapeditor, uptile, DrawDirection.Right, tx, ty);
-                            ISOMRightFill(mapeditor, uptile, lowtile, checker, RRT, RRTT, RRB, RRBB, tx, ty);
                         }
 
                     }
@@ -1432,9 +1426,10 @@ namespace UseMapEditor.Tools
 
                     if (IsTileChange)
                     {
+                        ISOMRightFill(mapeditor, uptile, lowtile, checker, R, RRT, RRTT, RRB, RRBB, tx, ty);
                         ISOMDownFill(mapeditor, uptile, lowtile, checker, LBB, LLBB, RBB, RRBB, tx, ty);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠄⠅⠅=====================================
 
@@ -1460,7 +1455,6 @@ namespace UseMapEditor.Tools
                         if (IsTileChange)
                         {
                             DrawISOMFlatTile(mapeditor, uptile, DrawDirection.Right, tx, ty);
-                            ISOMRightFill(mapeditor, uptile, lowtile, checker, RRT, RRTT, RRB, RRBB, tx, ty);
                         }
                     }
 
@@ -1469,16 +1463,17 @@ namespace UseMapEditor.Tools
                         if (IsTileChange)
                         {
                             DrawISOMFlatTile(mapeditor, uptile, DrawDirection.Left, tx, ty);
-                            ISOMLeftFill(mapeditor, uptile, lowtile, checker, LLT, LLTT, LLB, LLBB, tx, ty);
 
                         }
                     }
 
                     if (IsTileChange)
                     {
+                        ISOMRightFill(mapeditor, uptile, lowtile, checker, R, RRT, RRTT, RRB, RRBB, tx, ty);
+                        ISOMLeftFill(mapeditor, uptile, lowtile, checker, L, LLT, LLTT, LLB, LLBB, tx, ty);
                         ISOMDownFill(mapeditor, uptile, lowtile, checker, LBB, LLBB, RBB, RRBB, tx, ty);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠅⠄⠅=====================================
 
@@ -1504,9 +1499,7 @@ namespace UseMapEditor.Tools
                         if (IsTileChange)
                         {
                             DrawISOMFlatTile(mapeditor, uptile, DrawDirection.Left, tx, ty);
-                            ISOMLeftFill(mapeditor, uptile, lowtile, checker, LLT, LLTT, LLB, LLBB, tx, ty);
                         }
-
                     }
                     else
                     {
@@ -1518,9 +1511,10 @@ namespace UseMapEditor.Tools
 
                     if (IsTileChange)
                     {
+                        ISOMLeftFill(mapeditor, uptile, lowtile, checker, L, LLT, LLTT, LLB, LLBB, tx, ty);
                         ISOMDownFill(mapeditor, uptile, lowtile, checker, LBB, LLBB, RBB, RRBB, tx, ty);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠅⠅⠄=====================================
 
@@ -1551,7 +1545,6 @@ namespace UseMapEditor.Tools
                                 DrawISOMFlatTile(mapeditor, uptile, DrawDirection.Right, tx + 2, ty - 1);
                             }
                             DrawISOMFlatTile(mapeditor, uptile, DrawDirection.Right, tx, ty - 1);
-                            ISOMRightFill(mapeditor, uptile, lowtile, checker, RRT, RRTT, RRB, RRBB, tx, ty);
                         }
                     }
                     else if (R.Check(lowtile, TileBorder.FlatDownBorder))
@@ -1561,13 +1554,14 @@ namespace UseMapEditor.Tools
 
                     if (IsTileChange)
                     {
+                        ISOMRightFill(mapeditor, uptile, lowtile, checker, R, RRT, RRTT, RRB, RRBB, tx, ty);
                         if (RRTT.Check(uptile, TileBorder.FlatDownBorder) && RTT.Check(uptile, TileBorder.FlatDownBorder))
                         {
                             DrawISOMFlatTile(mapeditor, uptile, DrawDirection.Right, tx, ty - 2);
                         }
                         ISOMUpFill(mapeditor, uptile, lowtile, checker, LTT, LLTT, RTT, RRTT, tx, ty);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠁⠅⠅=====================================
 
@@ -1593,7 +1587,6 @@ namespace UseMapEditor.Tools
                         if (IsTileChange)
                         {
                             DrawISOMFlatTile(mapeditor, uptile, DrawDirection.Right, tx, ty - 1);
-                            ISOMRightFill(mapeditor, uptile, lowtile, checker, RRT, RRTT, RRB, RRBB, tx, ty);
                         }
                     }
 
@@ -1602,12 +1595,13 @@ namespace UseMapEditor.Tools
                         if (IsTileChange)
                         {
                             DrawISOMFlatTile(mapeditor, uptile, DrawDirection.Left, tx, ty - 1);
-                            ISOMLeftFill(mapeditor, uptile, lowtile, checker, LLT, LLTT, LLB, LLBB, tx, ty);
                         }
                     }
 
                     if (IsTileChange)
                     {
+                        ISOMRightFill(mapeditor, uptile, lowtile, checker, R, RRT, RRTT, RRB, RRBB, tx, ty);
+                        ISOMLeftFill(mapeditor, uptile, lowtile, checker, L, LLT, LLTT, LLB, LLBB, tx, ty);
                         if (RRTT.Check(uptile, TileBorder.FlatDownBorder) && RTT.Check(uptile, TileBorder.FlatDownBorder))
                         {
                             DrawISOMFlatTile(mapeditor, uptile, DrawDirection.Right, tx, ty - 2);
@@ -1618,7 +1612,7 @@ namespace UseMapEditor.Tools
                         }
                         ISOMUpFill(mapeditor, uptile, lowtile, checker, LTT, LLTT, RTT, RRTT, tx, ty);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠅⠁⠅=====================================
 
@@ -1649,7 +1643,6 @@ namespace UseMapEditor.Tools
                                 DrawISOMFlatTile(mapeditor, uptile, DrawDirection.Left, tx - 2, ty - 1);
                             }
                             DrawISOMFlatTile(mapeditor, uptile, DrawDirection.Left, tx, ty - 1);
-                            ISOMLeftFill(mapeditor, uptile, lowtile, checker, LLT, LLTT, LLB, LLBB, tx, ty);
                         }
                     }
                     else if (L.Check(lowtile, TileBorder.FlatDownBorder))
@@ -1659,6 +1652,7 @@ namespace UseMapEditor.Tools
 
                     if (IsTileChange)
                     {
+                        ISOMLeftFill(mapeditor, uptile, lowtile, checker, L, LLT, LLTT, LLB, LLBB, tx, ty);
                         if (LLTT.Check(uptile, TileBorder.FlatDownBorder) && LTT.Check(uptile, TileBorder.FlatDownBorder))
                         {
                             DrawISOMFlatTile(mapeditor, uptile, DrawDirection.Left, tx, ty - 2);
@@ -1666,7 +1660,7 @@ namespace UseMapEditor.Tools
 
                         ISOMUpFill(mapeditor, uptile, lowtile, checker, LTT, LLTT, RTT, RRTT, tx, ty);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠅⠅⠁=====================================
                 #endregion
@@ -1687,23 +1681,10 @@ namespace UseMapEditor.Tools
                     }
 
 
-                    if (L.Check(uptile, TileBorder.FlatDownBorder))
-                    {
-                        if (IsTileChange)
-                        {
-                            ISOMLeftFill(mapeditor, uptile, lowtile, checker, LLT, LLTT, LLB, LLBB, tx, ty);
-                        }
-                    }
-                    if (R.Check(uptile, TileBorder.FlatDownBorder))
-                    {
-                        if (IsTileChange)
-                        {
-                            ISOMRightFill(mapeditor, uptile, lowtile, checker, RRT, RRTT, RRB, RRBB, tx, ty);
-                        }
-                    }
-
                     if (IsTileChange)
                     {
+                        ISOMLeftFill(mapeditor, uptile, lowtile, checker, L, LLT, LLTT, LLB, LLBB, tx, ty);
+                        ISOMRightFill(mapeditor, uptile, lowtile, checker, R, RRT, RRTT, RRB, RRBB, tx, ty);
                         ISOMUpFill(mapeditor, uptile, lowtile, checker, LTT, LLTT, RTT, RRTT, tx, ty);
                         ISOMDownFill(mapeditor, uptile, lowtile, checker, LBB, LLBB, RBB, RRBB, tx, ty);
                     }
@@ -1746,15 +1727,17 @@ namespace UseMapEditor.Tools
                             DrawISOMFlatTile(mapeditor, uptile, DrawDirection.Right, tx, ty);
                         }
                     }
-                    else if (L.Check(lowtile, TileBorder.FlatDownBorder))
+
+                    if (L.Check(lowtile, TileBorder.FlatDownBorder))
                     {
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Left, tx, ty);
                     }
-                    else if (R.Check(lowtile, TileBorder.FlatDownBorder))
+                    if (R.Check(lowtile, TileBorder.FlatDownBorder))
                     {
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Right, tx, ty);
                     }
-                    return;
+
+                    return true;
                 }
                 #endregion
             }
@@ -1782,7 +1765,7 @@ namespace UseMapEditor.Tools
 
 
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
-                    return;
+                    return true;
                 }
                 #endregion
 
@@ -1807,7 +1790,7 @@ namespace UseMapEditor.Tools
                     DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.All, tx, ty - 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx - 2, ty - 1);
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
-                    return;
+                    return true;
                 }
 
 
@@ -1825,13 +1808,16 @@ namespace UseMapEditor.Tools
                         {
                             DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.All, tx, ty + 1);
                         }
+                        else
+                        {
+                            DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.All, tx, ty - 1);
+                        }
                     }
 
                     DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.All, tx, ty);
-                    DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.All, tx, ty - 1);
                     ISOMExecute(mapeditor, tileSet, uptile, tx, ty - 2);
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
-                    return;
+                    return true;
                 }
 
 
@@ -1855,7 +1841,7 @@ namespace UseMapEditor.Tools
                     DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.All, tx, ty - 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx + 2, ty - 1);
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
-                    return;
+                    return true;
                 }
 
 
@@ -1882,7 +1868,7 @@ namespace UseMapEditor.Tools
                     DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.All, tx, ty - 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx + 2, ty + 1);
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
-                    return;
+                    return true;
                 }
 
 
@@ -1909,7 +1895,7 @@ namespace UseMapEditor.Tools
                     DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.All, tx, ty - 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx - 2, ty + 1);
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
-                    return;
+                    return true;
                 }
 
 
@@ -1921,19 +1907,39 @@ namespace UseMapEditor.Tools
                     && B.Check(uptile, TileBorder.DownBorder)
                     )
                 {
-                    if (IsTileChange)
-                    {
-                        if (!uptile.IsMiniISOM)
-                        {
-                            DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.All, tx, ty + 1);
-                        }
-                    }
-
                     DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.All, tx, ty);
                     DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.All, tx, ty - 1);
 
-                    ISOMExecute(mapeditor, tileSet, uptile, tx, ty + 2);
-                    return;
+                    if (LBB.Check(uptile, TileBorder.DownBorder))
+                    {
+                        DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Left, tx, ty + 2);
+                    }
+                    else
+                    {
+                        DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx, ty + 2);
+                    }
+
+                    if (RBB.Check(uptile, TileBorder.DownBorder))
+                    {
+                        DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Right, tx, ty + 2);
+                    }
+                    else
+                    {
+                        DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty + 2);
+                    }
+
+                    //if (IsTileChange)
+                    //{
+                    //    if (!uptile.IsMiniISOM)
+                    //    {
+                    //        DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.All, tx, ty + 1);
+                    //    }
+                    //}
+
+            
+
+                    //ISOMExecute(mapeditor, tileSet, uptile, tx, ty + 2);
+                    return true;
                 }
                 #endregion
 
@@ -1967,7 +1973,7 @@ namespace UseMapEditor.Tools
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Right, tx - 4, ty);
                     }
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
-                    return;
+                    return true;
                 }
 
                 if (LT.Check(lowtile, TileBorder.FlatDownBorder)
@@ -1997,7 +2003,7 @@ namespace UseMapEditor.Tools
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Left, tx + 4, ty);
                     }
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
-                    return;
+                    return true;
                 }
 
                 //--------------------------------------------------------------------------------------------------------------------
@@ -2034,7 +2040,7 @@ namespace UseMapEditor.Tools
                     //ISOMExecute(mapeditor, tileSet, uptile, tx - 2, ty - 1);
                     //ISOMExecute(mapeditor, tileSet, uptile, tx, ty - 2);
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
-                    return;
+                    return true;
                 }
 
                 if (LT.Check(lowtile, TileBorder.FlatDownBorder)
@@ -2069,7 +2075,7 @@ namespace UseMapEditor.Tools
                     //ISOMExecute(mapeditor, tileSet, uptile, tx + 2, ty - 1);
                     //ISOMExecute(mapeditor, tileSet, uptile, tx, ty - 2);
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
-                    return;
+                    return true;
                 }
 
                 //--------------------------------------------------------------------------------------------------------------------
@@ -2091,7 +2097,7 @@ namespace UseMapEditor.Tools
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Left, tx, ty + 2);
                     else
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx, ty + 2);
-                    return;
+                    return true;
                 }
 
                 if (LT.Check(lowtile, TileBorder.FlatDownBorder)
@@ -2111,7 +2117,7 @@ namespace UseMapEditor.Tools
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Right, tx, ty + 2);
                     else
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty + 2);
-                    return;
+                    return true;
                 }
 
                 //--------------------------------------------------------------------------------------------------------------------
@@ -2130,7 +2136,7 @@ namespace UseMapEditor.Tools
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx - 2, ty + 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx + 2, ty + 1);
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
-                    return;
+                    return true;
                 }
 
                 if (LT.Check(uptile, TileBorder.DownBorder)
@@ -2158,7 +2164,7 @@ namespace UseMapEditor.Tools
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx - 2, ty - 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx + 2, ty - 1);
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
-                    return;
+                    return true;
                 }
 
                 //--------------------------------------------------------------------------------------------------------------------
@@ -2172,12 +2178,15 @@ namespace UseMapEditor.Tools
                     )
                 {
                     DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.All, tx, ty);
-                    DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.All, tx, ty - 1);
+                    if (uptile.IsMiniISOM)
+                    {
+                        DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.All, tx, ty - 1);
+                    }
 
 
                     ISOMExecute(mapeditor, tileSet, uptile, tx, ty - 2);
                     ISOMExecute(mapeditor, tileSet, uptile, tx, ty + 2);
-                    return;
+                    return true;
                 }
 
                 if (LT.Check(lowtile, TileBorder.FlatDownBorder)
@@ -2207,7 +2216,7 @@ namespace UseMapEditor.Tools
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx - 2, ty + 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx + 2, ty - 1);
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
-                    return;
+                    return true;
                 }
 
                 if (LT.Check(uptile, TileBorder.DownBorder)
@@ -2233,7 +2242,7 @@ namespace UseMapEditor.Tools
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx - 2, ty - 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx + 2, ty + 1);
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
-                    return;
+                    return true;
                 }
 
                 //--------------------------------------------------------------------------------------------------------------------
@@ -2256,7 +2265,7 @@ namespace UseMapEditor.Tools
                     ISOMExecute(mapeditor, tileSet, uptile, tx, ty - 2);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx + 2, ty + 1);
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
-                    return;
+                    return true;
                 }
 
                 if (LT.Check(lowtile, TileBorder.FlatDownBorder)
@@ -2277,7 +2286,7 @@ namespace UseMapEditor.Tools
                     ISOMExecute(mapeditor, tileSet, uptile, tx, ty - 2);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx - 2, ty + 1);
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
-                    return;
+                    return true;
                 }
 
                 //--------------------------------------------------------------------------------------------------------------------
@@ -2295,7 +2304,7 @@ namespace UseMapEditor.Tools
 
                     ISOMExecute(mapeditor, tileSet, uptile, tx, ty + 2);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx - 2, ty - 1);
-                    return;
+                    return true;
                 }
 
                 if (LT.Check(lowtile, TileBorder.FlatDownBorder)
@@ -2311,7 +2320,7 @@ namespace UseMapEditor.Tools
 
                     ISOMExecute(mapeditor, tileSet, uptile, tx, ty + 2);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx + 2, ty - 1);
-                    return;
+                    return true;
                 }
 
                 #endregion
@@ -2340,9 +2349,8 @@ namespace UseMapEditor.Tools
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx - 2, ty - 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx + 2, ty - 1);
 
-
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
-                    return;
+                    return true;
                 }
                 //=====================================⠁⠁⠁=====================================
 
@@ -2363,7 +2371,7 @@ namespace UseMapEditor.Tools
 
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Right, tx - 2, ty + 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Left, tx + 2, ty + 1);
-                    return;
+                    return true;
                 }
                 //=====================================⠄⠄⠄=====================================
                 //--------------------------------------------------------------------------------------------------------------------
@@ -2407,7 +2415,7 @@ namespace UseMapEditor.Tools
                     }
 
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
-                    return;
+                    return true;
                 }
                 //=====================================⠅⠁⠀=====================================
 
@@ -2449,7 +2457,7 @@ namespace UseMapEditor.Tools
                     }
 
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
-                    return;
+                    return true;
                 }
                 //=====================================⠀⠁⠅=====================================
                 //--------------------------------------------------------------------------------------------------------------------
@@ -2485,7 +2493,7 @@ namespace UseMapEditor.Tools
                     {
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx, ty + 2);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠀⠄⠅=====================================
 
@@ -2518,7 +2526,7 @@ namespace UseMapEditor.Tools
                     {
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty + 2);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠅⠄⠀=====================================
                 //--------------------------------------------------------------------------------------------------------------------
@@ -2565,7 +2573,7 @@ namespace UseMapEditor.Tools
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx - 2, ty + 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx + 2, ty + 1);
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
-                    return;
+                    return true;
                 }
                 //=====================================⠄⠁⠁=====================================
 
@@ -2602,7 +2610,7 @@ namespace UseMapEditor.Tools
 
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx - 2, ty - 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx + 2, ty - 1);
-                    return;
+                    return true;
                 }
                 //=====================================⠁⠄⠄=====================================
                 //--------------------------------------------------------------------------------------------------------------------
@@ -2651,7 +2659,7 @@ namespace UseMapEditor.Tools
                     //    DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx, ty - 2);
                     //else
                     //    DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty - 2);
-                    return;
+                    return true;
                 }
 
                 if (LT.Check(uptile, TileBorder.DownBorder)
@@ -2697,7 +2705,7 @@ namespace UseMapEditor.Tools
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx, ty - 2);
                     else
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty - 2);
-                    return;
+                    return true;
                 }
                 //--------------------------------------------------------------------------------------------------------------------
 
@@ -2745,7 +2753,7 @@ namespace UseMapEditor.Tools
                         else
                             DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty - 2);
                     }
-                    return;
+                    return true;
                 }
 
                 if (LT.Check(lowtile, TileBorder.FlatDownBorder)
@@ -2791,7 +2799,7 @@ namespace UseMapEditor.Tools
                         else
                             DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty - 2);
                     }
-                    return;
+                    return true;
                 }
                 //--------------------------------------------------------------------------------------------------------------------
 
@@ -2825,7 +2833,7 @@ namespace UseMapEditor.Tools
                             DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx, ty - 2);
                     }
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
-                    return;
+                    return true;
                 }
 
                 if (LT.Check(uptile, TileBorder.DownBorder)
@@ -2857,7 +2865,7 @@ namespace UseMapEditor.Tools
                             DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty - 2);
                     }
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
-                    return;
+                    return true;
                 }
                 //--------------------------------------------------------------------------------------------------------------------
 
@@ -2887,7 +2895,7 @@ namespace UseMapEditor.Tools
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Right, tx, ty + 2);
                     else
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty + 2);
-                    return;
+                    return true;
                 }
 
                 if (LT.Check(uptile, TileBorder.DownBorder)
@@ -2915,7 +2923,7 @@ namespace UseMapEditor.Tools
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Left, tx, ty + 2);
                     else
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx, ty + 2);
-                    return;
+                    return true;
                 }
                 //--------------------------------------------------------------------------------------------------------------------
 
@@ -2940,7 +2948,7 @@ namespace UseMapEditor.Tools
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Right, tx - 4, ty);
                     }
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
-                    return;
+                    return true;
                 }
 
                 if (LT.Check(lowtile, TileBorder.FlatDownBorder)
@@ -2963,7 +2971,7 @@ namespace UseMapEditor.Tools
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Left, tx + 4, ty);
                     }
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
-                    return;
+                    return true;
                 }
                 //--------------------------------------------------------------------------------------------------------------------
 
@@ -2997,7 +3005,7 @@ namespace UseMapEditor.Tools
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Right, tx - 4, ty);
                     }
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
-                    return;
+                    return true;
                 }
 
                 if (LT.Check(uptile, TileBorder.DownBorder)
@@ -3029,7 +3037,7 @@ namespace UseMapEditor.Tools
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Left, tx + 4, ty);
                     }
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
-                    return;
+                    return true;
                 }
                 //--------------------------------------------------------------------------------------------------------------------
                 #endregion
@@ -3061,7 +3069,7 @@ namespace UseMapEditor.Tools
                     }
 
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
-                    return;
+                    return true;
                 }
                 //=====================================⠅⠀⠅=====================================
 
@@ -3096,7 +3104,7 @@ namespace UseMapEditor.Tools
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Right, tx - 4, ty);
                     }
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
-                    return;
+                    return true;
                 }
                 //=====================================⠅⠁⠁=====================================
 
@@ -3133,7 +3141,7 @@ namespace UseMapEditor.Tools
                         else
                             DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty + 2);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠁⠅⠁=====================================
 
@@ -3168,7 +3176,7 @@ namespace UseMapEditor.Tools
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Left, tx + 4, ty);
                     }
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
-                    return;
+                    return true;
                 }
                 //=====================================⠁⠁⠅=====================================
 
@@ -3195,7 +3203,7 @@ namespace UseMapEditor.Tools
                     {
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Right, tx - 4, ty);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠅⠄⠄=====================================
 
@@ -3225,7 +3233,7 @@ namespace UseMapEditor.Tools
                         else
                             DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty - 2);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠄⠅⠄=====================================
 
@@ -3251,7 +3259,7 @@ namespace UseMapEditor.Tools
                     {
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Left, tx + 4, ty);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠄⠄⠅=====================================
 
@@ -3291,7 +3299,7 @@ namespace UseMapEditor.Tools
                         else
                             DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty + 2);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠅⠅⠀=====================================
 
@@ -3330,7 +3338,7 @@ namespace UseMapEditor.Tools
                         else
                             DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx, ty + 2);
                     }
-                    return;
+                    return true;
                 }
                 //=====================================⠀⠅⠅=====================================
 
@@ -3363,7 +3371,7 @@ namespace UseMapEditor.Tools
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Right, tx, ty + 2);
                     else
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty + 2);
-                    return;
+                    return true;
                 }
                 //=====================================⠄⠅⠁=====================================
 
@@ -3395,7 +3403,7 @@ namespace UseMapEditor.Tools
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Left, tx, ty + 2);
                     else
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx, ty + 2);
-                    return;
+                    return true;
                 }
                 //=====================================⠁⠅⠄=====================================
 
@@ -3426,7 +3434,7 @@ namespace UseMapEditor.Tools
                     else
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty - 2);
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
-                    return;
+                    return true;
                 }
                 //=====================================⠅⠁⠄=====================================
 
@@ -3456,7 +3464,7 @@ namespace UseMapEditor.Tools
                     else
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx, ty - 2);
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
-                    return;
+                    return true;
                 }
                 //=====================================⠄⠁⠅=====================================
 
@@ -3490,7 +3498,7 @@ namespace UseMapEditor.Tools
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Right, tx, ty + 2);
                     else
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty + 2);
-                    return;
+                    return true;
                 }
                 //=====================================⠅⠄⠁=====================================
 
@@ -3523,7 +3531,7 @@ namespace UseMapEditor.Tools
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Left, tx, ty + 2);
                     else
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx, ty + 2);
-                    return;
+                    return true;
                 }
                 //=====================================⠁⠄⠅=====================================
                 #endregion
@@ -3560,7 +3568,7 @@ namespace UseMapEditor.Tools
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx, ty - 2);
                     else
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx, ty - 2);
-                    return;
+                    return true;
                 }
 
                 if (LT.Check(uptile, TileBorder.FlatDownBorder)
@@ -3592,7 +3600,7 @@ namespace UseMapEditor.Tools
                     {
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Right, tx - 4, ty);
                     }
-                    return;
+                    return true;
                 }
 
                 if (LT.Check(uptile, TileBorder.FlatDownBorder)
@@ -3626,7 +3634,7 @@ namespace UseMapEditor.Tools
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx, ty - 2);
                     else
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty - 2);
-                    return;
+                    return true;
                 }
 
                 if (LT.Check(uptile, TileBorder.FlatDownBorder)
@@ -3658,7 +3666,7 @@ namespace UseMapEditor.Tools
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Left, tx, ty + 2);
                     else
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx, ty + 2);
-                    return;
+                    return true;
                 }
 
                 if (LT.Check(uptile, TileBorder.FlatDownBorder)
@@ -3693,7 +3701,7 @@ namespace UseMapEditor.Tools
 
 
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
-                    return;
+                    return true;
                 }
 
                 if (LT.Check(uptile, TileBorder.FlatDownBorder)
@@ -3725,7 +3733,7 @@ namespace UseMapEditor.Tools
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Right, tx, ty + 2);
                     else
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty + 2);
-                    return;
+                    return true;
                 }
                 #endregion
 
@@ -3768,10 +3776,12 @@ namespace UseMapEditor.Tools
 
                     //DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Right, tx - 2, ty + 1);
                     //DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Left, tx + 2, ty + 1);
-                    return;
+                    return true;
                 }
                 #endregion
             }
+
+            return false;
         }
     }
 }

@@ -209,6 +209,8 @@ namespace UseMapEditor.FileData
             //Rest unknown/unused.;
         }
 
+        public Dictionary<TileType, Dictionary<ushort, ushort>> TileFlipList;
+
         public Dictionary<TileType, List<ISOMTile>> ISOMdata;
         public Dictionary<TileType, List<ISOMTile>> CustomISOMdata;
 
@@ -513,7 +515,7 @@ namespace UseMapEditor.FileData
         private void LoadPalletData()
         {
             ISOMdata = new Dictionary<TileType, List<ISOMTile>>();
-
+            TileFlipList = new Dictionary<TileType, Dictionary<ushort, ushort>>();
 
 
             foreach (var cv in cv5data)
@@ -608,10 +610,6 @@ namespace UseMapEditor.FileData
 
                     }
 
-              
-
-
-
                     workBook.SaveAs(filepath);
 
                     //변경점 저장하면서 닫기
@@ -623,9 +621,7 @@ namespace UseMapEditor.FileData
                     ReleaseExcelObject(application);
                 }
 
-
                 string fname = AppDomain.CurrentDomain.BaseDirectory + $"Data\\TileSet\\ISOM\\{cv.Key.ToString()}.json";
-
 
                 // Json 파일 읽기
                 if (File.Exists(fname))
@@ -677,7 +673,6 @@ namespace UseMapEditor.FileData
                                 }
                             }
 
-
                             foreach (var isomitem in isoms)
                             {
                                 if(isomitem.ConnectLowTile != null)
@@ -694,6 +689,13 @@ namespace UseMapEditor.FileData
                                     }
                                 }
                             }
+                            Dictionary<ushort, ushort> fliplist = new Dictionary<ushort, ushort>();
+                            foreach (var item in isoms)
+                            {
+                                item.AddFlipList(fliplist);
+                            }
+                            this.TileFlipList.Add(cv.Key, fliplist);
+
 
                             ISOMdata.Add(cv.Key, isoms);
                         }
@@ -701,7 +703,6 @@ namespace UseMapEditor.FileData
                 }
             }
         }
-
 
 
 
@@ -717,9 +718,6 @@ namespace UseMapEditor.FileData
 
             return ISOMdata[tileType];
         }
-
-
-
 
 
 
@@ -780,7 +778,17 @@ namespace UseMapEditor.FileData
         }
 
 
-
+        public ushort TileFlip(TileType tileType, ushort MTXM)
+        {
+            if (TileFlipList[tileType].ContainsKey(MTXM))
+            {
+                return TileFlipList[tileType][MTXM];
+            }
+            else
+            {
+                return MTXM;
+            }
+        }
 
 
         public Texture2D GetTile(Control.MapEditor.DrawType drawType, TileType tileType, ushort MTXM)

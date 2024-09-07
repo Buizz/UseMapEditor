@@ -1527,7 +1527,6 @@ namespace UseMapEditor.Control
             editorTextureData.TilePaletteRefresh();
             //tile_PasteStart();
         }
-
         private void EmptyButton_Click(object sender, RoutedEventArgs e)
         {
             EditCommand();

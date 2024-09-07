@@ -209,6 +209,16 @@ namespace UseMapEditor.FileData
             if (tip_default.PartLength == 4) IsMiniISOM = true;
 
 
+            groups.Add(tip_default);
+            groups.Add(tip_top);
+            groups.Add(tip_bottom);
+            groups.Add(tip_double);
+            groups.Add(tip_toplong);
+            groups.Add(tip_bottomlong);
+            groups.Add(tip_doublelong);
+            groups.Add(tip_doubletoplong);
+            groups.Add(tip_doublebottomlong);
+
             groups.Add(cliff_default);
             groups.Add(cliff_slimtop);
             groups.Add(cliff_slim);
@@ -227,16 +237,10 @@ namespace UseMapEditor.FileData
             groups.Add(edgebottom_cornerslim);
             groups.Add(edgebottom_cornerslimbottom);
 
-            groups.Add(tip_default);
-            groups.Add(tip_top);
-            groups.Add(tip_bottom);
-            groups.Add(tip_double);
-            groups.Add(tip_toplong);
-            groups.Add(tip_bottomlong);
-            groups.Add(tip_doublelong);
-            groups.Add(tip_doubletoplong);
-            groups.Add(tip_doublebottomlong);
-
+            groups.Add(cliff_down);
+            groups.Add(tip_down);
+            groups.Add(tip_downedge);
+            groups.Add(cliff_downedge);
 
             tip_default.AddToDict(tip_right_mtxmlist, false);
             tip_top.AddToDict(tip_right_mtxmlist, false);
@@ -288,6 +292,13 @@ namespace UseMapEditor.FileData
             }
         }
 
+        public void AddFlipList(Dictionary<ushort, ushort> fliplist)
+        {
+            foreach (var item in groups)
+            {
+                item.AddFlipList(fliplist);
+            }
+        }
 
         public void AddTipToFlat(ISOMTile groupISOM)
         {
@@ -598,6 +609,41 @@ namespace UseMapEditor.FileData
                 }
             }
 
+            public void AddFlipList(Dictionary<ushort, ushort> fliplist)
+            {
+                if(left_tiles.Count == right_tiles.Count)
+                {
+                    for (int i = 0; i < left_tiles.Count; i++)
+                    {
+                        int ri = i;
+
+                        if(i % 2 == 0)
+                        {
+                            ri += 1;
+                        }
+                        else
+                        {
+                            ri -= 1;
+                        }
+
+                        if (left_tiles[i].mtxmlist.Count() == right_tiles[ri].mtxmlist.Count())
+                        {
+                            for (int j = 0; j < left_tiles[i].mtxmlist.Count(); j++)
+                            {
+                                if (!fliplist.ContainsKey(left_tiles[i].mtxmlist[j]))
+                                {
+                                    fliplist.Add(left_tiles[i].mtxmlist[j], right_tiles[ri].mtxmlist[j]);
+                                }
+
+                                if (!fliplist.ContainsKey(right_tiles[ri].mtxmlist[j]))
+                                {
+                                    fliplist.Add(right_tiles[ri].mtxmlist[j], left_tiles[i].mtxmlist[j]);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             public void AddToDictOneLine(Dictionary<ushort, bool> dic, bool IsLeft)
             {
