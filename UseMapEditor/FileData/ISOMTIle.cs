@@ -98,6 +98,7 @@ namespace UseMapEditor.FileData
         public Dictionary<ushort, bool> tip_right_mtxmlist;
         public Dictionary<ushort, bool> tip_left_mtxmlist;
 
+        public Dictionary<ushort, bool> tip_top_mtxmlist;
 
         public Dictionary<ushort, bool> topdonwlist;
 
@@ -129,6 +130,8 @@ namespace UseMapEditor.FileData
             flat_mtxmlist = new Dictionary<ushort, bool>();
             tip_right_mtxmlist = new Dictionary<ushort, bool>();
             tip_left_mtxmlist = new Dictionary<ushort, bool>();
+
+            tip_top_mtxmlist = new Dictionary<ushort, bool>();
 
             topdonwlist = new Dictionary<ushort, bool>();
 
@@ -262,6 +265,9 @@ namespace UseMapEditor.FileData
             tip_doubletoplong.AddToDict(tip_left_mtxmlist, true);
             tip_doublebottomlong.AddToDict(tip_left_mtxmlist, true);
 
+            tip_top.AddToDictTop(tip_top_mtxmlist);
+            edgetop_top.AddToDictTop(tip_top_mtxmlist);
+            edgetop_toplong.AddToDictTop(tip_top_mtxmlist);
 
             cliff_default.AddToDict(cliff_flat_right_mtxmlist, false);
             cliff_slim.AddToDict(cliff_flat_right_mtxmlist, false);
@@ -329,7 +335,7 @@ namespace UseMapEditor.FileData
             FlatDownBorder,
             None
         }
-        public TileBorder CheckTile(ushort LT, ushort RT, ushort LB, ushort RB)
+        public TileBorder CheckTile(ushort LT, ushort RT, ushort LB, ushort RB, int tx, int ty)
         {
             bool isFlatLT = flat_mtxmlist.ContainsKey(LT);
             bool isFlatRT = flat_mtxmlist.ContainsKey(RT);
@@ -340,6 +346,71 @@ namespace UseMapEditor.FileData
             bool isEdgeRT = edge_mtxmlist.ContainsKey(RT);
             bool isEdgeLB = edge_mtxmlist.ContainsKey(LB);
             bool isEdgeRB = edge_mtxmlist.ContainsKey(RB);
+
+            if(ty < -1)
+            {
+                if(isFlatLT || isFlatRT || isFlatLB || isFlatRB)
+                {
+                    return TileBorder.Flat;
+                }
+            }
+
+
+            if (tx == 40 && ty == -1)
+            {
+                if (name == "High Dirt")
+                {
+
+                }
+            }
+
+            if (ty == -1)
+            {
+                if (isEdgeLB && isEdgeRB)
+                {
+                    return TileBorder.DownBorder;
+                }
+
+                if (isFlatLT && isFlatRT && !isFlatLB && !isFlatRB)
+                {
+                    return TileBorder.None;
+                }
+
+                if (isEdgeLB && isEdgeRB)
+                {
+                    if (isEdgeLT)
+                    {
+                        return TileBorder.DownBorder;
+                    }
+                    else if (isEdgeRT)
+                    {
+                        return TileBorder.DownBorder;
+                    }
+                }
+
+                if (ConnectHighTile != null && !ConnectHighTile.IsMiniISOM)
+                {
+                    if (ConnectHighTile.edge_mtxmlist.ContainsKey(RB)
+                        && ConnectHighTile.edge_mtxmlist.ContainsKey(LB)
+                        && !ConnectHighTile.tip_top_mtxmlist.ContainsKey(RB)
+                        && !ConnectHighTile.tip_top_mtxmlist.ContainsKey(LB)
+                        )
+                    {
+                        return TileBorder.Flat;
+                    }
+
+
+                    //if (connecthightile.tip_left_mtxmlist.ContainsKey(RT)
+                    //    && connecthightile.tip_left_mtxmlist.ContainsKey(RB)
+                    //    && connecthightile.tip_right_mtxmlist.ContainsKey(LT)
+                    //    && connecthightile.tip_right_mtxmlist.ContainsKey(LB))
+                    //{
+                    //    return TileBorder.Flat;
+                    //}
+                }
+            }
+
+
 
 
 
@@ -417,8 +488,9 @@ namespace UseMapEditor.FileData
                     && ConnectHighTile.cliff_flat_right_mtxmlist.ContainsKey(LT)
                     && ConnectHighTile.edge_mtxmlist.ContainsKey(RB)
                     && ConnectHighTile.edge_mtxmlist.ContainsKey(LB)
-                    //&& connecthightile.cliff_flat_left_mtxmlist.ContainsKey(RB)
-                    //&& connecthightile.cliff_flat_right_mtxmlist.ContainsKey(LB)
+                    && ConnectHighTile.cliff_flat_left_mtxmlist.ContainsKey(RB)
+                    && ConnectHighTile.cliff_flat_right_mtxmlist.ContainsKey(LB)
+                    && ty != 0
                     )
                 {
                     return TileBorder.Flat;
@@ -671,6 +743,19 @@ namespace UseMapEditor.FileData
                 }
             }
 
+            public void AddToDictTop(Dictionary<ushort, bool> dic)
+            {
+                if (left_tiles.Count > 1)
+                {
+                    left_tiles[0].AddToDict(dic);
+                    left_tiles[1].AddToDict(dic);
+                }
+                if (right_tiles.Count > 1)
+                {
+                    right_tiles[0].AddToDict(dic);
+                    right_tiles[1].AddToDict(dic);
+                }
+            }
 
             public void AddToDictLeftTop(Dictionary<ushort, bool> dic)
             {

@@ -1760,9 +1760,37 @@ namespace UseMapEditor.Tools
                         }
                     }
 
-                    DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.All, tx, ty);
-                    DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.All, tx, ty - 1);
 
+                    if(lowtile.ConnectLowTile != null)
+                    {
+                        if(L.Tile != lowtile.ConnectLowTile)
+                        {
+                            DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.Left, tx, ty);
+                            DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.Left, tx, ty - 1);
+                        }
+                    }
+                    else
+                    {
+                        DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.Left, tx, ty);
+                        DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.Left, tx, ty - 1);
+                    }
+
+
+                    if (lowtile.ConnectLowTile != null && R.Tile != lowtile.ConnectLowTile)
+                    {
+                        if (R.Tile != lowtile.ConnectLowTile)
+                        {
+                            DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.Right, tx, ty);
+                            DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.Right, tx, ty - 1);
+                        }
+                    }
+                    else
+                    {
+                        DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.Right, tx, ty);
+                        DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.Right, tx, ty - 1);
+                    }
+
+        
 
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
                     return true;

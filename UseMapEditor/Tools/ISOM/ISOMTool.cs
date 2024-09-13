@@ -178,6 +178,22 @@ namespace UseMapEditor.Tools
             ushort LB = GetMapTile(mapeditor, tileSet, tilex - 1, tiley);
             ushort RB = GetMapTile(mapeditor, tileSet, tilex, tiley);
 
+            if(tiley <= -2)
+            {
+                ushort t = LT;
+                LT = LB;
+                LB = t;
+
+                t = RT;
+                RT = RB;
+                RB = t;
+            }
+
+
+            if(tilex == 40 && tiley == -1)
+            {
+
+            }
 
             //if (mapeditor.mapdata.CheckTILERange(tilex - 1, tiley - 1)) LT = mapeditor.mapdata.TILE[tilex - 1 + (tiley - 1) * mapeditor.mapdata.WIDTH];
             //if (mapeditor.mapdata.CheckTILERange(tilex, tiley - 1)) RT = mapeditor.mapdata.TILE[tilex + (tiley - 1) * mapeditor.mapdata.WIDTH];
@@ -188,7 +204,7 @@ namespace UseMapEditor.Tools
 
             foreach (var item in iSOMTIles)
             {
-                TileBorder border = item.CheckTile(LT, RT, LB, RB);
+                TileBorder border = item.CheckTile(LT, RT, LB, RB, tilex, tiley);
 
                 if(border == TileBorder.None)
                 {
@@ -481,7 +497,7 @@ namespace UseMapEditor.Tools
             {
                 return false;
             }
-            if (ty < 0 || ty > mapeditor.mapdata.HEIGHT)
+            if (ty <= -2 || ty >= mapeditor.mapdata.HEIGHT + 2)
             {
                 return false;
             }
@@ -665,6 +681,15 @@ namespace UseMapEditor.Tools
                 checker.TileCheck(IWay.R, tx, ty, false).Border = TileBorder.DownBorder;
                 R.Tile = isomtile;
                 R.Border = TileBorder.DownBorder;
+            }
+
+
+            if (T.Point.Y == -1 && T.Tile.elevation < isomtile.elevation)
+            {
+                //checker.TileCheck(IWay.T, tx, ty, false).Tile = isomtile;
+                //checker.TileCheck(IWay.T, tx, ty, false).Border = TileBorder.DownBorder;
+                //T.Tile = isomtile;
+                //T.Border = TileBorder.DownBorder;
             }
 
 
