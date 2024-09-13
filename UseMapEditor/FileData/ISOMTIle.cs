@@ -265,6 +265,10 @@ namespace UseMapEditor.FileData
             tip_doubletoplong.AddToDict(tip_left_mtxmlist, true);
             tip_doublebottomlong.AddToDict(tip_left_mtxmlist, true);
 
+
+            //tip인지 cliff인지 edge인지 확인하는 함수 필요..
+            //끝자리 판단용
+
             tip_top.AddToDictTop(tip_top_mtxmlist);
             edgetop_top.AddToDictTop(tip_top_mtxmlist);
             edgetop_toplong.AddToDictTop(tip_top_mtxmlist);
