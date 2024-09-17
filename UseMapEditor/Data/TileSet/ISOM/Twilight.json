@@ -1,0 +1,45 @@
+[
+  {
+    "name": "Dirt",
+    "is_no_edge": false,
+    "is_custom": false,
+    "flattile": [ 2 ],
+    "connectedtile": [ "HighDirt" ],
+    "elevation": 0
+  },
+  {
+    "name": "HighDirt",
+    "is_no_edge": false,
+    "is_custom": false,
+    "flattile": [4],
+    "connectedtile": ["Dirt"],
+    "elevation": 1,
+    "tip_default": [[64,66,68],[70,72,74]],
+    "tip_top": [[96,66,68],[98,72,74]],
+    "tip_bottom": [[64,66,96],[70,72,98]],
+    "tip_double": [[96,66,96],[98,72,98]],
+    "tip_toplong": [[92,66,68],[94,72,74]],
+    "tip_bottomlong": [[64,66,88],[70,72,90]],
+    "tip_doublelong": [[92,66,88],[94,72,90]],
+    "tip_doubletoplong": [[92,66,96],[94,72,98]],
+    "tip_doublebottomlong": [[96,66,88],[98,72,90]],
+    
+    "cliff_default": [[52,54,56],[58,60,62]],
+    "cliff_slimtop": [[104,54,56],[106,60,62]],
+    "cliff_slim": [[100,54,56],[102,60,62]],
+    
+    "edgetop_default": [[46],[50]],
+    "edgetop_top": [[88],[90]],
+    "edgetop_toplong": [[84],[86]],
+    "edgetop_corner": [[76],[80]],
+    "edgetop_cornerslim": [[110],[108]],
+    "edgetop_cornerslimtop": [[112],[114]],
+    
+    "edgebottom_default": [[44],[48]],
+    "edgebottom_slim": [[102],[100]],
+    "edgebottom_slimbottom": [[108],[110]],
+    "edgebottom_corner": [[78],[82]],
+    "edgebottom_cornerslim": [[106],[104]],
+    "edgebottom_cornerslimbottom": [[114],[112]]
+  }
+]

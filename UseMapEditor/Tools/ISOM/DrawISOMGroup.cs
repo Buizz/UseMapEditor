@@ -16,6 +16,19 @@ namespace UseMapEditor.Tools
         {
             if (!checker.AddDrawList(isomtile, grouptype, direction, tx, ty)) return;
 
+            if(ty < -4)
+            {
+                return;
+            }
+
+            if(grouptype == ISOMGroupType.tip && ty == -1)
+            {
+                grouptype = ISOMGroupType.cliff;
+            }
+
+            if(tx == 74 && ty == 114)
+            {
+            }
 
             TileType R = checker.TileCheck(IWay.R, tx, ty);
             TileType L = checker.TileCheck(IWay.L, tx, ty);
@@ -37,12 +50,84 @@ namespace UseMapEditor.Tools
             TileType BB = checker.TileCheck(IWay.BB, tx, ty);
             TileType TT = checker.TileCheck(IWay.TT, tx, ty);
 
+            if(ty <= 0 && TT.IsNull())
+            {
+                TT.Tile = isomtile;
+                TT.Border = TileBorder.Flat;
+            }
+            if (ty <= -1 && RTT.IsNull())
+            {
+                RTT.Tile = isomtile;
+                RTT.Border = TileBorder.Flat;
+            }
+            if (ty <= -1 && LTT.IsNull())
+            {
+                LTT.Tile = isomtile;
+                LTT.Border = TileBorder.Flat;
+            }
+
+            if (ty <= -4)
+            {
+                if (LT.IsNull())
+                {
+                    LT.Tile = isomtile;
+                    LT.Border = TileBorder.Flat;
+                }
+                if (RT.IsNull())
+                {
+                    RT.Tile = isomtile;
+                    RT.Border = TileBorder.Flat;
+                }
+            }
+
+            if(ty >= mapeditor.mapdata.HEIGHT - 2)
+            {
+                if (B.IsNull())
+                {
+                    B.Tile = isomtile;
+                    B.Border = TileBorder.Flat;
+                }
+
+                if (BB.IsNull())
+                {
+                    BB.Tile = isomtile;
+                    BB.Border = TileBorder.Flat;
+                }
+
+                if (RBB.IsNull())
+                {
+                    RBB.Tile = isomtile;
+                    RBB.Border = TileBorder.Flat;
+                }
+
+                if (LBB.IsNull())
+                {
+                    LBB.Tile = isomtile;
+                    LBB.Border = TileBorder.Flat;
+                }
+
+                if (LB.IsNull())
+                {
+                    LB.Tile = isomtile;
+                    LB.Border = TileBorder.Flat;
+                }
+
+                if (RB.IsNull())
+                {
+                    RB.Tile = isomtile;
+                    RB.Border = TileBorder.Flat;
+                }
+            }
+
 
             if (R.IsNull() || L.IsNull() || T.IsNull() || B.IsNull()
              || LT.IsNull() || RT.IsNull() || LB.IsNull() || RB.IsNull()
              || RBB.IsNull() || LBB.IsNull() || RTT.IsNull() || LTT.IsNull()
              || BB.IsNull() || TT.IsNull() || LLBB.IsNull() || RRBB.IsNull()
-             ) return;
+             )
+            {
+                return;
+            };
 
             if (R.Tile != isomtile && R.Tile != lowtile && (isomtile.ConnectedEqualTile.Contains(R.Tile) || (isomtile.ConnectHighTile == R.Tile)) && isomtile.elevation < R.Tile.elevation) R.Tile = isomtile;
             if (L.Tile != isomtile && L.Tile != lowtile && (isomtile.ConnectedEqualTile.Contains(L.Tile) || (isomtile.ConnectHighTile == L.Tile)) && isomtile.elevation < L.Tile.elevation) L.Tile = isomtile;
@@ -837,7 +922,7 @@ namespace UseMapEditor.Tools
                                     DrawISOMGroup(mapeditor, lowtile, lowtile.ConnectLowTile, checker, ISOMGroupType.cliff, direction, tx, ty + 2, gindex);
                                     DrawISOMTile(mapeditor, lowtile.cliff_down, direction, drawx, drawy + 2, gindex);
                                 }
-                                else if (B.Check(lowtile, TileBorder.DownBorder)
+                                else if (B.Check(lowtile, TileBorder.FlatDownBorder)
                                     && LB.Check(lowtile, TileBorder.DownBorder)
                                     && LBB.Check(lowtile, TileBorder.DownBorder)
                                     && LLBB.Check(lowtile.ConnectLowTile, TileBorder.Flat))
@@ -854,7 +939,7 @@ namespace UseMapEditor.Tools
                                     DrawISOMGroup(mapeditor, lowtile, lowtile.ConnectLowTile, checker, ISOMGroupType.cliff, direction, tx, ty + 2, gindex);
                                     DrawISOMTile(mapeditor, lowtile.cliff_down, direction, drawx, drawy + 2, gindex);
                                 }
-                                else if (B.Check(lowtile, TileBorder.DownBorder)
+                                else if (B.Check(lowtile, TileBorder.FlatDownBorder)
                                     && RB.Check(lowtile, TileBorder.DownBorder)
                                     && RBB.Check(lowtile, TileBorder.DownBorder)
                                     && RRBB.Check(lowtile.ConnectLowTile, TileBorder.Flat))

@@ -33,7 +33,7 @@
                             <ComboBoxItem Content="256"/>
                         </ComboBox>
                     </UniformGrid>
-                    <ListBox x:Name="TileTypeListbox">
+                    <ListBox x:Name="TileTypeListbox" SelectionChanged="TileTypeListbox_SelectionChanged">
                         <ListBoxItem Content="배드랜드"/>
                         <ListBoxItem Content="우주"/>
                         <ListBoxItem Content="군사시설"/>

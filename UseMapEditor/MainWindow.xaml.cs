@@ -163,7 +163,7 @@ namespace UseMapEditor
                 }
             }
 
-
+            mapcreate.OpenInit();
             mapcreate.Visibility = Visibility.Visible;
             mapEditorGrid.Children.Clear();
             startpage.Visibility = Visibility.Collapsed;

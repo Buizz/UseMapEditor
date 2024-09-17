@@ -388,6 +388,7 @@
     <Compile Include="FileData\ExcelData.cs" />
     <Compile Include="FileData\ExcelProcess.cs" />
     <Compile Include="FileData\Iscript.cs" />
+    <Compile Include="FileData\ISOMTile_CheckTile.cs" />
     <Compile Include="FileData\ISOMTile.cs" />
     <Compile Include="FileData\StromLib.cs" />
     <Compile Include="FileData\tblreader.cs" />
@@ -738,6 +739,24 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Data\TileSet\install.vf4">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\TileSet\ISOM\AshWorld.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\TileSet\ISOM\Desert.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\TileSet\ISOM\Ice.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\TileSet\ISOM\Twilight.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\TileSet\ISOM\platform.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\TileSet\ISOM\install.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Data\TileSet\ISOM\Jungle.json">

@@ -14,7 +14,7 @@ using static UseMapEditor.FileData.TileSet;
 
 namespace UseMapEditor.FileData
 {
-    public class ISOMTile
+    public partial class ISOMTile
     {
         public override string ToString()
         {
@@ -91,6 +91,10 @@ namespace UseMapEditor.FileData
         public ISOMPart group1list;
         public ISOMPart group2list;
 
+        public Dictionary<ushort, bool> edge_nocorner_mtxmlist;
+
+        public Dictionary<ushort, bool> edge_top_connect_mtxmlist;
+
         public Dictionary<ushort, bool> edge_mtxmlist;
         public Dictionary<ushort, bool> flat_mtxmlist;
         public Dictionary<ushort, bool> cliff_flat_right_mtxmlist;
@@ -99,6 +103,11 @@ namespace UseMapEditor.FileData
         public Dictionary<ushort, bool> tip_left_mtxmlist;
 
         public Dictionary<ushort, bool> tip_top_mtxmlist;
+        public Dictionary<ushort, bool> cliff_down_mtxmlist;
+        public Dictionary<ushort, bool> cliff_mtxmlist;
+        public Dictionary<ushort, bool> cliff_donwmtxmlist;
+
+        public Dictionary<ushort, bool> cliff_middlebottom_mtxmlist;
 
         public Dictionary<ushort, bool> topdonwlist;
 
@@ -124,6 +133,8 @@ namespace UseMapEditor.FileData
             IsCustom = (bool)jobject["is_custom"];
             IsNoEdge = (bool)jobject["is_no_edge"];
 
+            edge_nocorner_mtxmlist = new Dictionary<ushort, bool>();
+
             cliff_flat_right_mtxmlist = new Dictionary<ushort, bool>();
             cliff_flat_left_mtxmlist = new Dictionary<ushort, bool>();
             edge_mtxmlist = new Dictionary<ushort, bool>();
@@ -132,6 +143,14 @@ namespace UseMapEditor.FileData
             tip_left_mtxmlist = new Dictionary<ushort, bool>();
 
             tip_top_mtxmlist = new Dictionary<ushort, bool>();
+            cliff_down_mtxmlist = new Dictionary<ushort, bool>();
+
+            cliff_middlebottom_mtxmlist = new Dictionary<ushort, bool>();
+
+            cliff_mtxmlist = new Dictionary<ushort, bool>();
+            cliff_donwmtxmlist = new Dictionary<ushort, bool>();
+
+            edge_top_connect_mtxmlist = new Dictionary<ushort, bool>();
 
             topdonwlist = new Dictionary<ushort, bool>();
 
@@ -265,9 +284,43 @@ namespace UseMapEditor.FileData
             tip_doubletoplong.AddToDict(tip_left_mtxmlist, true);
             tip_doublebottomlong.AddToDict(tip_left_mtxmlist, true);
 
+            
+
+
+            cliff_default.AddToDictExceptTop(cliff_middlebottom_mtxmlist);
+            cliff_slim.AddToDictExceptTop(cliff_middlebottom_mtxmlist);
+            cliff_slimtop.AddToDictExceptTop(cliff_middlebottom_mtxmlist);
+
+            //tip_default.AddToDictExceptTop(cliff_middlebottom_mtxmlist);
+
+
+
+            cliff_default.AddToDict(cliff_mtxmlist);
+            cliff_slim.AddToDict(cliff_mtxmlist);
+            cliff_slimtop.AddToDict(cliff_mtxmlist);
+
+
+            tip_top.AddToDictTop(edge_top_connect_mtxmlist);
+            tip_toplong.AddToDictTop(edge_top_connect_mtxmlist);
+
 
             //tip인지 cliff인지 edge인지 확인하는 함수 필요..
             //끝자리 판단용
+            cliff_default.AddToDictDown(cliff_down_mtxmlist);
+            cliff_slim.AddToDictDown(cliff_down_mtxmlist);
+            cliff_slimtop.AddToDictDown(cliff_down_mtxmlist);
+            edgetop_toplong.AddToDict(cliff_down_mtxmlist);
+
+
+            edgetop_default.AddToDict(edge_nocorner_mtxmlist);
+            edgebottom_default.AddToDict(edge_nocorner_mtxmlist);
+            edgebottom_slim.AddToDict(edge_nocorner_mtxmlist);
+            edgebottom_slimbottom.AddToDict(edge_nocorner_mtxmlist);
+            tip_default.AddToDict(edge_nocorner_mtxmlist);
+            //edgetop_top.AddToDict(edge_nocorner_mtxmlist);
+            //edgetop_toplong.AddToDict(edge_nocorner_mtxmlist);
+
+
 
             tip_top.AddToDictTop(tip_top_mtxmlist);
             edgetop_top.AddToDictTop(tip_top_mtxmlist);
@@ -339,194 +392,10 @@ namespace UseMapEditor.FileData
             FlatDownBorder,
             None
         }
-        public TileBorder CheckTile(ushort LT, ushort RT, ushort LB, ushort RB, int tx, int ty)
-        {
-            bool isFlatLT = flat_mtxmlist.ContainsKey(LT);
-            bool isFlatRT = flat_mtxmlist.ContainsKey(RT);
-            bool isFlatLB = flat_mtxmlist.ContainsKey(LB);
-            bool isFlatRB = flat_mtxmlist.ContainsKey(RB);
-
-            bool isEdgeLT = edge_mtxmlist.ContainsKey(LT);
-            bool isEdgeRT = edge_mtxmlist.ContainsKey(RT);
-            bool isEdgeLB = edge_mtxmlist.ContainsKey(LB);
-            bool isEdgeRB = edge_mtxmlist.ContainsKey(RB);
-
-            if(ty < -1)
-            {
-                if(isFlatLT || isFlatRT || isFlatLB || isFlatRB)
-                {
-                    return TileBorder.Flat;
-                }
-            }
-
-
-            if (tx == 40 && ty == -1)
-            {
-                if (name == "High Dirt")
-                {
-
-                }
-            }
-
-            if (ty == -1)
-            {
-                if (isEdgeLB && isEdgeRB)
-                {
-                    return TileBorder.DownBorder;
-                }
-
-                if (isFlatLT && isFlatRT && !isFlatLB && !isFlatRB)
-                {
-                    return TileBorder.None;
-                }
-
-                if (isEdgeLB && isEdgeRB)
-                {
-                    if (isEdgeLT)
-                    {
-                        return TileBorder.DownBorder;
-                    }
-                    else if (isEdgeRT)
-                    {
-                        return TileBorder.DownBorder;
-                    }
-                }
-
-                if (ConnectHighTile != null && !ConnectHighTile.IsMiniISOM)
-                {
-                    if (ConnectHighTile.edge_mtxmlist.ContainsKey(RB)
-                        && ConnectHighTile.edge_mtxmlist.ContainsKey(LB)
-                        && !ConnectHighTile.tip_top_mtxmlist.ContainsKey(RB)
-                        && !ConnectHighTile.tip_top_mtxmlist.ContainsKey(LB)
-                        )
-                    {
-                        return TileBorder.Flat;
-                    }
-
-
-                    //if (connecthightile.tip_left_mtxmlist.ContainsKey(RT)
-                    //    && connecthightile.tip_left_mtxmlist.ContainsKey(RB)
-                    //    && connecthightile.tip_right_mtxmlist.ContainsKey(LT)
-                    //    && connecthightile.tip_right_mtxmlist.ContainsKey(LB))
-                    //{
-                    //    return TileBorder.Flat;
-                    //}
-                }
-            }
 
 
 
-
-
-            if (topdonwlist.ContainsKey(LT)) return TileBorder.DownBorder;
-            else if (topdonwlist.ContainsKey(RT)) return TileBorder.DownBorder;
-            else if (topdonwlist.ContainsKey(LB)) return TileBorder.DownBorder;
-            else if (topdonwlist.ContainsKey(RB)) return TileBorder.DownBorder;
-
-            if (ConnectHighTile != null && !ConnectHighTile.IsMiniISOM)
-            {
-                if (isEdgeLB && isEdgeRB
-                    && (ConnectHighTile.tip_right_mtxmlist.ContainsKey(RT) || ConnectHighTile.cliff_flat_right_mtxmlist.ContainsKey(RT))
-                    && (ConnectHighTile.tip_left_mtxmlist.ContainsKey(LT) || ConnectHighTile.cliff_flat_left_mtxmlist.ContainsKey(LT)))
-                {
-                    return TileBorder.DownBorder;
-                }
-            }
-
-
-
-            //4개가 전부 플랫 타일일 경우 (무조건 플랫타일)
-            if (isFlatLT && isFlatRT && isFlatLB && isFlatRB) return TileBorder.Flat;
-
-
-            //하나라도 플랫 타일이 있을 경우
-            if (isFlatLT || isFlatRT || isFlatLB || isFlatRB)
-            {
-                bool alledge = true;
-                if (!isFlatLT) alledge &= isEdgeLT;
-                if (!isFlatRT) alledge &= isEdgeRT;
-                if (!isFlatLB) alledge &= isEdgeLB;
-                if (!isFlatRB) alledge &= isEdgeRB;
-
-                //1. 나머지 타일이 전부 해당 타일의 Edge일 경우 -> 경계타일
-                if (alledge)
-                {
-                    return TileBorder.DownBorder;
-                }
-
-                //2. 나머지 타일이 전부 HighTile의 Edge일 경우 -> 플랫타일
-                if(ConnectHighTile != null)
-                {
-                    alledge = true;
-                    if (!isFlatLT) alledge &= ConnectHighTile.edge_mtxmlist.ContainsKey(LT);
-                    if (!isFlatRT) alledge &= ConnectHighTile.edge_mtxmlist.ContainsKey(RT);
-                    if (!isFlatLB) alledge &= ConnectHighTile.edge_mtxmlist.ContainsKey(LB);
-                    if (!isFlatRB) alledge &= ConnectHighTile.edge_mtxmlist.ContainsKey(RB);
-
-                    if (alledge)
-                    {
-                        return TileBorder.Flat;
-                    }
-                
-                    if(ConnectHighTile.edge_mtxmlist.ContainsKey(LT) && ConnectHighTile.edge_mtxmlist.ContainsKey(RT))
-                    {
-                        if (isFlatLB && isEdgeRB)
-                        {
-                            return TileBorder.DownBorder;
-                        }else if (isFlatRB && isEdgeLB)
-                        {
-                            return TileBorder.DownBorder;
-                        }
-                    }
-                
-                }
-            }
-
-
-
-            //하나라도 플랫 타일이 없을 경우
-            //1. 4개가 LT,LB는 HighTile의 Cliff, RT,RB가 HighTile의 Cliff일 경우 플랫타일
-            if (ConnectHighTile != null)
-            {
-                if(ConnectHighTile.cliff_flat_left_mtxmlist.ContainsKey(RT)
-                    && ConnectHighTile.cliff_flat_right_mtxmlist.ContainsKey(LT)
-                    && ConnectHighTile.edge_mtxmlist.ContainsKey(RB)
-                    && ConnectHighTile.edge_mtxmlist.ContainsKey(LB)
-                    && ConnectHighTile.cliff_flat_left_mtxmlist.ContainsKey(RB)
-                    && ConnectHighTile.cliff_flat_right_mtxmlist.ContainsKey(LB)
-                    && ty != 0
-                    )
-                {
-                    return TileBorder.Flat;
-                }
-
-
-                //if (connecthightile.tip_left_mtxmlist.ContainsKey(RT)
-                //    && connecthightile.tip_left_mtxmlist.ContainsKey(RB)
-                //    && connecthightile.tip_right_mtxmlist.ContainsKey(LT)
-                //    && connecthightile.tip_right_mtxmlist.ContainsKey(LB))
-                //{
-                //    return TileBorder.Flat;
-                //}
-            }
-
-
-            //2. 모두 Edge일 경우 -> 경계타일
-            if (isEdgeLT && isEdgeRT && isEdgeLB && isEdgeRB)
-            {
-                //모두 Tip일 경우 아무것도 아님.
-                if (!tip_left_mtxmlist.ContainsKey(RT) && !tip_left_mtxmlist.ContainsKey(RB) && !tip_right_mtxmlist.ContainsKey(LT) && !tip_right_mtxmlist.ContainsKey(LB))
-                {
-                    return TileBorder.DownBorder;
-                }
-            }
-
-
-
-
-            //그 외는 None처리
-            return TileBorder.None;
-        }
+     
 
 
         public ushort GetFlatTile(int x, int y, MapData refmapdata)
@@ -761,6 +630,21 @@ namespace UseMapEditor.FileData
                 }
             }
 
+
+            public void AddToDictDown(Dictionary<ushort, bool> dic)
+            {
+                if (left_tiles.Count > 1)
+                {
+                    left_tiles[left_tiles.Count - 2].AddToDict(dic);
+                    left_tiles[left_tiles.Count - 1].AddToDict(dic);
+                }
+                if (right_tiles.Count > 1)
+                {
+                    right_tiles[right_tiles.Count - 2].AddToDict(dic);
+                    right_tiles[right_tiles.Count - 1].AddToDict(dic);
+                }
+            }
+
             public void AddToDictLeftTop(Dictionary<ushort, bool> dic)
             {
                 if (left_tiles.Count > 0)
@@ -795,6 +679,18 @@ namespace UseMapEditor.FileData
                 foreach (var item in right_tiles)
                 {
                     item.AddToDict(dic);
+                }
+            }
+            public void AddToDictExceptTop(Dictionary<ushort, bool> dic)
+            {
+                for (int i = 2; i < left_tiles.Count; i++)
+                {
+                    left_tiles[i].AddToDict(dic);
+                }
+
+                for (int i = 2; i < right_tiles.Count; i++)
+                {
+                    right_tiles[i].AddToDict(dic);
                 }
             }
 

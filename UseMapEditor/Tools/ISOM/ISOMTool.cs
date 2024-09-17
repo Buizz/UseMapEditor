@@ -149,10 +149,14 @@ namespace UseMapEditor.Tools
                 tilex = (mapeditor.mapdata.WIDTH) - (tilex - (mapeditor.mapdata.WIDTH - 1));
                 IsTileXFlip = true;
             }
-            if (tiley < 0)
+            if (tiley < 0)// && tiley >= -4)
             {
-                tiley = -(tiley + 1);
+                tiley = 0;
             }
+            //else if (tiley < -4)
+            //{
+            //    tiley = -(tiley + 1);
+            //}
             else if (tiley >= mapeditor.mapdata.HEIGHT)
             {
                 tiley = (mapeditor.mapdata.HEIGHT) - (tiley - (mapeditor.mapdata.HEIGHT - 1));
@@ -190,9 +194,15 @@ namespace UseMapEditor.Tools
             }
 
 
-            if(tilex == 40 && tiley == -1)
+            if (tiley > mapeditor.mapdata.HEIGHT)
             {
+                ushort t = LT;
+                LT = LB;
+                LB = t;
 
+                t = RT;
+                RT = RB;
+                RB = t;
             }
 
             //if (mapeditor.mapdata.CheckTILERange(tilex - 1, tiley - 1)) LT = mapeditor.mapdata.TILE[tilex - 1 + (tiley - 1) * mapeditor.mapdata.WIDTH];
@@ -204,7 +214,7 @@ namespace UseMapEditor.Tools
 
             foreach (var item in iSOMTIles)
             {
-                TileBorder border = item.CheckTile(LT, RT, LB, RB, tilex, tiley);
+                TileBorder border = item.CheckTile(LT, RT, LB, RB, tilex, tiley, mapeditor.mapdata.HEIGHT);
 
                 if(border == TileBorder.None)
                 {
@@ -417,6 +427,11 @@ namespace UseMapEditor.Tools
 
                 Vector2 vec = new Vector2(ctilex, ctiley);
 
+                if(ctilex == 74 && ctiley == 118)
+                {
+
+                }
+
                 if (!keys.ContainsKey(vec))
                 {
                     TileType tileType = ISOMCheckTile(mapeditor, tileSet, ctilex, ctiley);
@@ -529,6 +544,8 @@ namespace UseMapEditor.Tools
 
             TileType RRTT = checker.TileCheck(IWay.RRTT, tx, ty);
             TileType LLTT = checker.TileCheck(IWay.LLTT, tx, ty);
+
+            TileType TT = checker.TileCheck(IWay.TT, tx, ty);
 
             bool IsTileChange;
 
@@ -653,7 +670,24 @@ namespace UseMapEditor.Tools
 
             ISOMCheckList.AddRange(tileList);
 
+            if(C.Point.Y == -1)
+            {
+                if (Math.Floor(C.Tile.elevation) == Math.Floor(isomtile.elevation))
+                {
+                    if (LB.Tile == isomtile && LB.Border == TileBorder.DownBorder)
+                    {
+                        C.Tile = isomtile;
+                        C.Border = TileBorder.DownBorder;
+                    }
 
+
+                    if (RB.Tile == isomtile && RB.Border == TileBorder.DownBorder)
+                    {
+                        C.Tile = isomtile;
+                        C.Border = TileBorder.DownBorder;
+                    }
+                }
+            }
 
             if (C.Tile.name == isomtile.name)
             {
@@ -683,13 +717,47 @@ namespace UseMapEditor.Tools
                 R.Border = TileBorder.DownBorder;
             }
 
-
-            if (T.Point.Y == -1 && T.Tile.elevation < isomtile.elevation)
+            if (R.Point.Y == mapeditor.mapdata.HEIGHT - 1 && B.Tile.elevation < isomtile.elevation)
             {
-                //checker.TileCheck(IWay.T, tx, ty, false).Tile = isomtile;
-                //checker.TileCheck(IWay.T, tx, ty, false).Border = TileBorder.DownBorder;
-                //T.Tile = isomtile;
-                //T.Border = TileBorder.DownBorder;
+                checker.TileCheck(IWay.B, tx, ty, false).Tile = isomtile;
+                checker.TileCheck(IWay.B, tx, ty, false).Border = TileBorder.DownBorder;
+                B.Tile = isomtile;
+                B.Border = TileBorder.DownBorder;
+            }
+
+            if (LT.Tile == isomtile && RT.Tile == isomtile && T.Point.Y == -1 && T.Tile.elevation < isomtile.elevation)
+            {
+                checker.TileCheck(IWay.T, tx, ty, false).Tile = isomtile;
+                checker.TileCheck(IWay.T, tx, ty, false).Border = TileBorder.DownBorder;
+                T.Tile = isomtile;
+                T.Border = TileBorder.DownBorder;
+            }
+
+            
+            if (R.Tile == isomtile && RB.Tile == isomtile && RT.Point.Y == -1 && RT.Tile.elevation < isomtile.elevation)
+            {
+                checker.TileCheck(IWay.RT, tx, ty, false).Tile = isomtile;
+                checker.TileCheck(IWay.RT, tx, ty, false).Border = TileBorder.DownBorder;
+                RT.Tile = isomtile;
+                RT.Border = TileBorder.DownBorder;
+            }
+
+            if (L.Tile == isomtile && LB.Tile == isomtile && LT.Point.Y == -1 && LT.Tile.elevation < isomtile.elevation)
+            {
+                checker.TileCheck(IWay.LT, tx, ty, false).Tile = isomtile;
+                checker.TileCheck(IWay.LT, tx, ty, false).Border = TileBorder.DownBorder;
+                LT.Tile = isomtile;
+                LT.Border = TileBorder.DownBorder;
+            }
+
+
+            //위에 넣은 기둥은 부착되기
+            if (T.Point.Y == -3 && !isomtile.IsMiniISOM && isomtile.elevation > RT.Tile.elevation && isomtile.elevation > LT.Tile.elevation)
+            {
+                checker.TileCheck(IWay.RT, tx, ty, false).Tile = isomtile;
+                checker.TileCheck(IWay.RT, tx, ty, false).Border = TileBorder.DownBorder;
+                checker.TileCheck(IWay.LT, tx, ty, false).Tile = isomtile;
+                checker.TileCheck(IWay.LT, tx, ty, false).Border = TileBorder.DownBorder;
             }
 
 

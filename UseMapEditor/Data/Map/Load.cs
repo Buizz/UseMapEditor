@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using UseMapEditor.FileData;
+using UseMapEditor.Tools;
 
 namespace Data.Map
 {
@@ -30,7 +31,7 @@ namespace Data.Map
         }
 
 
-        public bool NewMap(int Width, int Height, int TileType, int startTile)
+        public bool NewMap(int Width, int Height, int TileType, ISOMTile startTile)
         {
             filepath = "제목없음";
             MapDataReset();
@@ -60,6 +61,20 @@ namespace Data.Map
             //TODO:스타트타일에 맞게금 시작 타일 까는 로직 필요
             TILE = new ushort[Width * Height];
             MTXM = new ushort[Width * Height];
+
+            if(startTile != null)
+            {
+                //시작타일 까는 로직
+                for (int y = 0; y < Height; y++)
+                {
+                    for (int x = 0; x < Width; x+=2)
+                    {
+                        ISOMTool.DrawISOMFlatTile(mapEditor, startTile, ISOMTool.DrawDirection.All, x, y);
+                    }
+                }
+            }
+
+
 
             IOWN = new byte[12];
             for (int i = 0; i < 12; i++)

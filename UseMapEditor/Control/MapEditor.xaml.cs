@@ -849,7 +849,7 @@ namespace UseMapEditor.Control
         }
 
 
-        public bool NewMap(int Width, int Height, int TileType, int startTile)
+        public bool NewMap(int Width, int Height, int TileType, ISOMTile startTile)
         {
             //이름을 아무것도 안넣으면 새 맵
             bool Loadcmp = mapdata.NewMap(Width, Height, TileType, startTile);

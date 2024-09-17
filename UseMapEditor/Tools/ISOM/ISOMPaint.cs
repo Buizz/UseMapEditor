@@ -16,7 +16,7 @@ namespace UseMapEditor.Tools
     {
         public static void ISOMLeftFill(MapEditor mapeditor, ISOMTile uptile, ISOMTile lowtile, ISOMChecker checker, TileType L, TileType LLT, TileType LLTT, TileType LLB, TileType LLBB, int tx, int ty)
         {
-            if(!L.Check(uptile, TileBorder.DownBorder))
+            if(!L.Check(uptile, TileBorder.FlatDownBorder))
             {
                 return;
             }
@@ -83,7 +83,7 @@ namespace UseMapEditor.Tools
 
         public static void ISOMRightFill(MapEditor mapeditor, ISOMTile uptile, ISOMTile lowtile, ISOMChecker checker, TileType R, TileType RRT, TileType RRTT, TileType RRB, TileType RRBB, int tx, int ty)
         {
-            if (!R.Check(uptile, TileBorder.DownBorder))
+            if (!R.Check(uptile, TileBorder.FlatDownBorder))
             {
                 return;
             }
@@ -1061,7 +1061,7 @@ namespace UseMapEditor.Tools
                 {
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx, ty);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx - 2, ty + 1);
-                    if (L.Check(uptile, TileBorder.DownBorder))
+                    if (L.Check(uptile, TileBorder.FlatDownBorder))
                     {
                         if (IsTileChange)
                         {
@@ -1114,7 +1114,7 @@ namespace UseMapEditor.Tools
                     }
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx, ty);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx + 2, ty + 1);
-                    if (R.Check(uptile, TileBorder.DownBorder))
+                    if (R.Check(uptile, TileBorder.FlatDownBorder))
                     {
                         if (IsTileChange)
                         {
@@ -1690,7 +1690,7 @@ namespace UseMapEditor.Tools
                     }
 
 
-                    if (L.Check(uptile, TileBorder.DownBorder) && R.Check(uptile, TileBorder.DownBorder))
+                    if (L.Check(uptile, TileBorder.FlatDownBorder) && R.Check(uptile, TileBorder.FlatDownBorder))
                     {
                         C.Tile = uptile;
                         C.Border = TileBorder.Flat;
@@ -1707,7 +1707,7 @@ namespace UseMapEditor.Tools
 
 
                     }
-                    else if (L.Check(uptile, TileBorder.DownBorder) && R.Check(lowtile, TileBorder.FlatDownBorder))
+                    else if (L.Check(uptile, TileBorder.FlatDownBorder) && R.Check(lowtile, TileBorder.FlatDownBorder))
                     {
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Right, tx, ty);
 
@@ -1717,7 +1717,7 @@ namespace UseMapEditor.Tools
                             DrawISOMFlatTile(mapeditor, uptile, DrawDirection.Left, tx, ty);
                         }
                     }
-                    else if (L.Check(lowtile, TileBorder.FlatDownBorder) && R.Check(uptile, TileBorder.DownBorder))
+                    else if (L.Check(lowtile, TileBorder.FlatDownBorder) && R.Check(uptile, TileBorder.FlatDownBorder))
                     {
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Left, tx, ty);
 
@@ -1843,7 +1843,23 @@ namespace UseMapEditor.Tools
                     }
 
                     DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.All, tx, ty);
-                    ISOMExecute(mapeditor, tileSet, uptile, tx, ty - 2);
+                    if (LTT.Check(uptile, TileBorder.DownBorder))
+                    {
+                        DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx, ty - 2);
+                    }
+                    else
+                    {
+                        DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx, ty - 2);
+                    }
+                    if (RTT.Check(uptile, TileBorder.DownBorder))
+                    {
+                        DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx, ty - 2);
+                    }
+                    else
+                    {
+                        DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty - 2);
+                    }
+                    //ISOMExecute(mapeditor, tileSet, uptile, tx, ty - 2);
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
                     return true;
                 }
@@ -2211,8 +2227,23 @@ namespace UseMapEditor.Tools
                         DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.All, tx, ty - 1);
                     }
 
-
-                    ISOMExecute(mapeditor, tileSet, uptile, tx, ty - 2);
+                    if (LTT.Check(uptile, TileBorder.DownBorder))
+                    {
+                        DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx, ty - 2);
+                    }
+                    else
+                    {
+                        DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx, ty - 2);
+                    }
+                    if (RTT.Check(uptile, TileBorder.DownBorder))
+                    {
+                        DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx, ty - 2);
+                    }
+                    else
+                    {
+                        DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty - 2);
+                    }
+                    //ISOMExecute(mapeditor, tileSet, uptile, tx, ty - 2);
                     ISOMExecute(mapeditor, tileSet, uptile, tx, ty + 2);
                     return true;
                 }
@@ -2290,7 +2321,26 @@ namespace UseMapEditor.Tools
                     DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.Left, tx, ty + 1);
                     DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.Left, tx, ty);
 
-                    ISOMExecute(mapeditor, tileSet, uptile, tx, ty - 2);
+
+                    if (LTT.Check(uptile, TileBorder.DownBorder))
+                    {
+                        DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx, ty - 2);
+                    }
+                    else
+                    {
+                        DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx, ty - 2);
+                    }
+                    if (RTT.Check(uptile, TileBorder.DownBorder))
+                    {
+                        DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx, ty - 2);
+                    }
+                    else
+                    {
+                        DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty - 2);
+                    }
+                    //ISOMExecute(mapeditor, tileSet, uptile, tx, ty - 2);
+
+
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx + 2, ty + 1);
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
                     return true;
@@ -2311,7 +2361,23 @@ namespace UseMapEditor.Tools
                     DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.Right, tx, ty + 1);
                     DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.Right, tx, ty);
 
-                    ISOMExecute(mapeditor, tileSet, uptile, tx, ty - 2);
+                    if (LTT.Check(uptile, TileBorder.DownBorder))
+                    {
+                        DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx, ty - 2);
+                    }
+                    else
+                    {
+                        DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx, ty - 2);
+                    }
+                    if (RTT.Check(uptile, TileBorder.DownBorder))
+                    {
+                        DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx, ty - 2);
+                    }
+                    else
+                    {
+                        DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty - 2);
+                    }
+                    //ISOMExecute(mapeditor, tileSet, uptile, tx, ty - 2);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx - 2, ty + 1);
                     ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
                     return true;
@@ -2428,7 +2494,7 @@ namespace UseMapEditor.Tools
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx - 2, ty - 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx - 2, ty + 1);
 
-                    if(IsTileChange && L.Check(uptile, TileBorder.FlatDownBorder))
+                    if(IsTileChange && !uptile.IsNoEdge && L.Check(uptile, TileBorder.FlatDownBorder))
                     {
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Right, tx - 4, ty);
                     }
@@ -2470,7 +2536,7 @@ namespace UseMapEditor.Tools
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx + 2, ty - 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx + 2, ty + 1);
 
-                    if (IsTileChange && R.Check(uptile, TileBorder.FlatDownBorder))
+                    if (IsTileChange && !uptile.IsNoEdge && R.Check(uptile, TileBorder.FlatDownBorder))
                     {
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Left, tx + 4, ty);
                     }
@@ -3452,7 +3518,7 @@ namespace UseMapEditor.Tools
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx - 2, ty + 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx + 2, ty + 1);
 
-                    if (IsTileChange && L.Check(uptile, TileBorder.FlatDownBorder))
+                    if (IsTileChange && !uptile.IsNoEdge && L.Check(uptile, TileBorder.FlatDownBorder))
                     {
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Right, tx - 4, ty);
                     }
@@ -3469,7 +3535,7 @@ namespace UseMapEditor.Tools
                 //=====================================⠄⠁⠅=====================================
                 if (LT.Check(lowtile, TileBorder.FlatDownBorder)
                     && T.Check(uptile, TileBorder.DownBorder)
-                    && RT.Check(uptile, TileBorder.DownBorder)
+                    && RT.Check(uptile, TileBorder.FlatDownBorder)
                     && LB.Check(uptile, TileBorder.DownBorder)
                     && B.Check(lowtile, TileBorder.FlatDownBorder)
                     && RB.Check(uptile, TileBorder.DownBorder)
@@ -3482,7 +3548,7 @@ namespace UseMapEditor.Tools
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx + 2, ty + 1);
                     DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx - 2, ty + 1);
 
-                    if (IsTileChange && R.Check(uptile, TileBorder.FlatDownBorder))
+                    if (IsTileChange && !uptile.IsNoEdge && R.Check(uptile, TileBorder.FlatDownBorder))
                     {
                         DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.edge, DrawDirection.Left, tx + 4, ty);
                     }

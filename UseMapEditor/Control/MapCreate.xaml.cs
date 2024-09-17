@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using UseMapEditor.FileData;
 
 namespace UseMapEditor.Control
 {
@@ -25,6 +26,12 @@ namespace UseMapEditor.Control
         public MapCreate()
         {
             InitializeComponent();
+        }
+
+        public void OpenInit()
+        {
+            TileTypeListbox.SelectedIndex = 0;
+            StartTileListbox.SelectedIndex = 1;
         }
 
         private void Cancle_Click(object sender, RoutedEventArgs e)
@@ -58,7 +65,7 @@ namespace UseMapEditor.Control
 
             MapEditor mapeditor = new MapEditor(mainWindow);
 
-            mapeditor.NewMap(Width, Height, TileType, startTile);
+            mapeditor.NewMap(Width, Height, TileType, (ISOMTile)((ListBoxItem)StartTileListbox.SelectedItem).Tag);
             mapeditor.InitControl();
 
 
@@ -68,6 +75,34 @@ namespace UseMapEditor.Control
             mainWindow.WindowState = WindowState.Maximized;
             mainWindow.mapeditor = mapeditor;
             mainWindow.SetWindowName();
+        }
+
+        private void TileTypeListbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+            TileSet.TileType tiletype = (TileSet.TileType)TileTypeListbox.SelectedIndex;
+
+
+            StartTileListbox.Items.Clear();
+            {
+                ListBoxItem listBoxItem = new ListBoxItem();
+                listBoxItem.Content = "Null";
+                listBoxItem.Tag = null;
+                StartTileListbox.Items.Add(listBoxItem);
+            }
+
+
+
+            foreach (var item in Global.WindowTool.MapViewer.tileSet.ISOMdata[tiletype])
+            {
+
+                ListBoxItem listBoxItem = new ListBoxItem();
+                listBoxItem.Content = item.name;
+                listBoxItem.Tag = item;
+                StartTileListbox.Items.Add(listBoxItem);
+            }
+
+            StartTileListbox.SelectedIndex = 1;
         }
     }
 }

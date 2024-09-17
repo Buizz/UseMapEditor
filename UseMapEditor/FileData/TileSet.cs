@@ -658,7 +658,17 @@ namespace UseMapEditor.FileData
                                     {
                                         //더 낮은 지형
                                         isomitem.ConnectHighTile = cisom;
-                                    }else if (Math.Floor(isomitem.elevation) == Math.Floor(cisom.elevation))
+
+                                        if(isomitem.cliff_down.PartLength > 0)
+                                        {
+                                            isomitem.cliff_down.AddToDict(cisom.cliff_donwmtxmlist);
+                                            isomitem.cliff_downedge.AddToDict(cisom.cliff_donwmtxmlist);
+                                            isomitem.tip_down.AddToDict(cisom.cliff_donwmtxmlist);
+                                            isomitem.tip_downedge.AddToDict(cisom.cliff_donwmtxmlist);
+                                        }
+                                      
+                                    }
+                                    else if (Math.Floor(isomitem.elevation) == Math.Floor(cisom.elevation))
                                     {
                                         isomitem.ConnectedEqualTile.Add(cisom);
                                         if(isomitem.elevation > cisom.elevation)
