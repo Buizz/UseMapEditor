@@ -301,6 +301,7 @@ namespace UseMapEditor.Tools
         {
             private MapEditor mapeditor;
             private TileSet tileSet;
+            private ISOMTile mainisom;
 
             private Dictionary<Vector2, TileType> keys = new Dictionary<Vector2, TileType>();
 
@@ -317,10 +318,11 @@ namespace UseMapEditor.Tools
             }
 
 
-            public ISOMChecker(MapEditor mapeditor, TileSet tileSet)
+            public ISOMChecker(MapEditor mapeditor, TileSet tileSet, ISOMTile mainisom)
             {
                 this.mapeditor = mapeditor;
                 this.tileSet = tileSet;
+                this.mainisom = mainisom;
             }
 
 
@@ -432,6 +434,8 @@ namespace UseMapEditor.Tools
 
                 }
 
+                TileType returnval = null;
+
                 if (!keys.ContainsKey(vec))
                 {
                     TileType tileType = ISOMCheckTile(mapeditor, tileSet, ctilex, ctiley);
@@ -440,13 +444,21 @@ namespace UseMapEditor.Tools
                 }
                 if (IsCopy)
                 {
-                    return new TileType(keys[vec]);
-
+                    returnval = new TileType(keys[vec]);
                 }
                 else
                 {
-                    return keys[vec];
+                    returnval = keys[vec];
                 }
+
+                if(returnval.Tile == null)
+                {
+                    returnval.Tile = mainisom;
+                    returnval.Border = TileBorder.Flat;
+                }
+
+
+                return returnval;
             }
         }
 
@@ -518,7 +530,7 @@ namespace UseMapEditor.Tools
             }
 
 
-            ISOMChecker checker = new ISOMChecker(mapeditor, tileSet);
+            ISOMChecker checker = new ISOMChecker(mapeditor, tileSet, isomtile);
 
             List<ISOMTile> tileList = new List<ISOMTile>();
             List<ISOMTile> ISOMCheckList = new List<ISOMTile>();

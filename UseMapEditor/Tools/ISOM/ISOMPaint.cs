@@ -3875,6 +3875,81 @@ namespace UseMapEditor.Tools
                 #endregion
             }
 
+            //아무것도 칠하지 못할 경우
+            if (IsTileStack)
+            {
+                #region 기둥 세우기
+                if (T.Check(uptile, TileBorder.DownBorder) && LTT.Check(uptile, TileBorder.DownBorder))
+                {
+                    int gindex = GetRdindex(uptile.tip_default);
+                    DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Left, tx, ty - 2, gindex);
+                    DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx, ty, gindex);
+                }
+                else
+                {
+                    DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Left, tx, ty);
+                }
+
+
+                if (T.Check(uptile, TileBorder.DownBorder) && RTT.Check(uptile, TileBorder.DownBorder))
+                {
+                    int gindex = GetRdindex(uptile.tip_default);
+                    DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.cliff, DrawDirection.Right, tx, ty - 2, gindex);
+                    DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty, gindex);
+                }
+                else
+                {
+                    DrawISOMGroup(mapeditor, uptile, lowtile, checker, ISOMGroupType.tip, DrawDirection.Right, tx, ty);
+                }
+                #endregion
+            }
+            else
+            {
+                #region 기둥 지우기
+                if (IsTileChange)
+                {
+                    if (!uptile.IsMiniISOM)
+                    {
+                        DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.All, tx, ty + 1);
+                    }
+                }
+
+
+                if (lowtile.ConnectLowTile != null)
+                {
+                    if (L.Tile != lowtile.ConnectLowTile)
+                    {
+                        DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.Left, tx, ty);
+                        DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.Left, tx, ty - 1);
+                    }
+                }
+                else
+                {
+                    DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.Left, tx, ty);
+                    DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.Left, tx, ty - 1);
+                }
+
+
+                if (lowtile.ConnectLowTile != null && R.Tile != lowtile.ConnectLowTile)
+                {
+                    if (R.Tile != lowtile.ConnectLowTile)
+                    {
+                        DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.Right, tx, ty);
+                        DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.Right, tx, ty - 1);
+                    }
+                }
+                else
+                {
+                    DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.Right, tx, ty);
+                    DrawISOMFlatTile(mapeditor, lowtile, DrawDirection.Right, tx, ty - 1);
+                }
+
+
+
+                ISOMDownWaterFill(mapeditor, uptile, lowtile, checker, LBB, RBB, LLBB, RRBB, tx, ty);
+                #endregion
+            }
+
             return false;
         }
     }
