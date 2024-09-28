@@ -1,5 +1,4 @@
 [
-
   {
     "name": "Water",
     "is_no_edge": false,
@@ -42,7 +41,6 @@
     "edgebottom_corner": [[142],[146]],
     "edgebottom_cornerslim": [[170],[168]],
     "edgebottom_cornerslimbottom": [[178],[176]],
-
 
     "cliff_down": [[560],[562]],
     "tip_down": [[564],[566]],
